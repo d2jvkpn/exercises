@@ -1,0 +1,4 @@
+# workspace_demo/Cargo.toml
+
+[workspace]
+members = ["app", "my_crate"]
