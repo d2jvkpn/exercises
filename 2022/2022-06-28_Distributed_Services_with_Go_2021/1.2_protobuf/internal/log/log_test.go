@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	"os"
 	"testing"
+	"strings"
 
 	api "proglog/api/v1"
 
@@ -12,9 +13,7 @@ import (
 )
 
 func TestLog(t *testing.T) {
-	for scenario, fn := range map[string]func(
-		t *testing.T, log *Log,
-	){
+	for scenario, fn := range map[string]func(t *testing.T, log *Log){
 		"append and read a record succeeds": testAppendRead,
 		"offset out of range error":         testOutOfRangeErr,
 		"init with existing segments":       testInitExisting,
@@ -22,9 +21,12 @@ func TestLog(t *testing.T) {
 		"truncate":                          testTruncate,
 	} {
 		t.Run(scenario, func(t *testing.T) {
-			dir, err := ioutil.TempDir("", "store-test")
-			require.NoError(t, err)
-			defer os.RemoveAll(dir)
+			// dir, err := ioutil.TempDir("", "store-test")
+			// require.NoError(t, err)
+			// defer os.RemoveAll(dir)
+			dir := "tmp/" +strings.Replace(scenario, " ", "_", -1)
+			os.RemoveAll(dir)
+			os.MkdirAll(dir, 0755)
 
 			c := Config{}
 			c.Segment.MaxStoreBytes = 32
