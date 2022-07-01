@@ -1,6 +1,7 @@
 package log
 
 import (
+	"fmt"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -35,6 +36,38 @@ func TestLog(t *testing.T) {
 			fn(t, log)
 		})
 	}
+}
+
+func TestLogAppend(t *testing.T) {
+	dir := "tmp/test_append"
+	os.RemoveAll(dir)
+	os.MkdirAll(dir, 0755)
+
+	c := Config{}
+	c.Segment.MaxStoreBytes = 1024
+	log, err := NewLog(dir, c)
+	require.NoError(t, err)
+
+	for i := 0; i < 64; i++ {
+		record := &api.Record{Value: []byte("Hello")}
+
+		off, err := log.Append(record)
+		require.NoError(t, err)
+		require.Equal(t, uint64(i), off)
+		fmt.Println("~~~", i, off)
+
+		read, err := log.Read(off)
+		require.NoError(t, err)
+		require.Equal(t, record.Value, read.Value)
+	}
+
+	bts, err := ioutil.ReadFile("tmp/test_append/0.index")
+	require.NoError(t, err)
+	fmt.Println(len(bts), bts)
+
+	bts, err = ioutil.ReadFile("tmp/test_append/0.store")
+	require.NoError(t, err)
+	fmt.Println(len(bts), bts)
 }
 
 func testAppendRead(t *testing.T, log *Log) {
