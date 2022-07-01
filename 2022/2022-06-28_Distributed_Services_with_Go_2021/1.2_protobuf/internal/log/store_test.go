@@ -1,6 +1,9 @@
 package log
 
 import (
+	"bytes"
+	"encoding/binary"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
@@ -105,4 +108,13 @@ func openFile(name string) (file *os.File, size int64, err error) {
 	}
 
 	return f, fi.Size(), nil
+}
+
+func TestEnc(t *testing.T) {
+	buf := bytes.NewBuffer(nil)
+
+	err := binary.Write(buf, enc, uint64(42))
+	require.NoError(t, err)
+	bts := buf.Bytes()
+	fmt.Println(len(bts), bts)
 }
