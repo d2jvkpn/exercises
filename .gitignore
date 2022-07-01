@@ -10,3 +10,4 @@ exercises/clippy/Cargo.lock
 *.iml
 
 wk*/
+tmp/

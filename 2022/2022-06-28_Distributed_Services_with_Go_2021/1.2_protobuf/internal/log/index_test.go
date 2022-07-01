@@ -65,7 +65,7 @@ func TestFileTruncate(t *testing.T) {
 }
 
 func TestGommap(t *testing.T) {
-	fp := "wk_data/mmap.data"
+	fp := "tmp/mmap.data"
 	file, err := os.Create(fp)
 	noErr(t, err)
 	defer file.Close()
