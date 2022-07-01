@@ -17,13 +17,15 @@ var (
 
 func TestIndex(t *testing.T) {
 	f, err := ioutil.TempFile(os.TempDir(), "index_test")
-	fmt.Println(f.Name())
+	fmt.Println(">>>", f.Name())
 	require.NoError(t, err)
 	defer os.Remove(f.Name())
+
 	c := Config{}
 	c.Segment.MaxIndexBytes = 1024
 	idx, err := newIndex(f, c)
 	require.NoError(t, err)
+	fmt.Println("~~~", len(idx.mmap))
 	_, _, err = idx.Read(-1)
 	require.Error(t, err)
 	require.Equal(t, f.Name(), idx.Name())
@@ -63,27 +65,37 @@ func TestFileTruncate(t *testing.T) {
 }
 
 func TestGommap(t *testing.T) {
-	file, err := os.Create("wk_data/a.txt")
+	fp := "wk_data/a.txt"
+	file, err := os.Create(fp)
 	noErr(t, err)
 	defer file.Close()
 
+	fi, err := os.Stat(fp)
+	noErr(t, err)
+	fmt.Println("~~~ 1", fi.Size())
+
 	err = os.Truncate(file.Name(), 1024)
 	noErr(t, err)
+
+	// fi, err = os.Stat(fp)
+	// noErr(t, err)
+	// fmt.Println("~~~ 2", fi.Size())
 
 	mmap, err := gommap.Map(
 		file.Fd(),
 		gommap.PROT_READ|gommap.PROT_WRITE,
 		gommap.MAP_SHARED,
 	)
+	/// fmt.Println("~~~ 3", len(mmap))
 
 	off, pos := uint32(32), uint64(64)
 	enc.PutUint32(mmap[0:4], off)
-	enc.PutUint64(mmap[4:8], pos)
-
-	// file.Write([]byte{'A', 'B', 'C', 'D'})
-
-	fmt.Println("~~~", mmap)
+	fmt.Println(">>> 2:", mmap[:32])
 	err = mmap.Sync(gommap.MS_SYNC)
 	noErr(t, err)
-	fmt.Println("~~~", mmap)
+
+	enc.PutUint64(mmap[4:12], pos)
+	err = mmap.Sync(gommap.MS_SYNC)
+	noErr(t, err)
+	fmt.Println(">>> 3:", mmap[:32])
 }
