@@ -48,7 +48,7 @@ func TestLogAppend(t *testing.T) {
 	log, err := NewLog(dir, c)
 	require.NoError(t, err)
 
-	for i := 0; i < 64; i++ {
+	for i := 0; i < 1024; i++ {
 		record := &api.Record{Value: []byte("Hello")}
 
 		off, err := log.Append(record)
