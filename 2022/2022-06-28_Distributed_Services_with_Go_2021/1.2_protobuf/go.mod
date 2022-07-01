@@ -1,4 +1,4 @@
-module x
+module proglog
 
 go 1.18
 

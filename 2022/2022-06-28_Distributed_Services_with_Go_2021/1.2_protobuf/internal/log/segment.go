@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	api "x/api/v1"
+	api "proglog/api/v1"
 
 	"google.golang.org/protobuf/proto"
 )

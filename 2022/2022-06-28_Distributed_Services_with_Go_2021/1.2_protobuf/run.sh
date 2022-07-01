@@ -19,7 +19,7 @@ cat > api/v1/log.proto << EOF
 syntax = "proto3";
 package log.v1;
 
-option go_package = "github.com/travisjeffery/api/log_v1";
+option go_package = "prolog/api/log_v1";
 
 message Record {
   bytes value = 1;
