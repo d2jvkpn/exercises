@@ -117,4 +117,6 @@ func TestEnc(t *testing.T) {
 	require.NoError(t, err)
 	bts := buf.Bytes()
 	fmt.Println(len(bts), bts)
+
+	// require.NoError(t, fmt.Errorf("!"))
 }

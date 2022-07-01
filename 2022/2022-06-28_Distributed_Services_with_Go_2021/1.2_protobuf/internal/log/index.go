@@ -21,13 +21,12 @@ type index struct {
 }
 
 func newIndex(f *os.File, c Config) (*index, error) {
-	idx := &index{file: f}
 	fi, err := os.Stat(f.Name())
 	if err != nil {
 		return nil, err
 	}
 
-	idx.size = uint64(fi.Size())
+	idx := &index{file: f, size: uint64(fi.Size())}
 
 	if err = os.Truncate(f.Name(), int64(c.Segment.MaxIndexBytes)); err != nil {
 		return nil, err

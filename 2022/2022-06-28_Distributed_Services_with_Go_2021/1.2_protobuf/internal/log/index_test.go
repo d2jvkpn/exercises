@@ -1,16 +1,23 @@
 package log
 
 import (
+	"fmt"
 	"io"
 	"io/ioutil"
 	"os"
 	"testing"
 
 	"github.com/stretchr/testify/require"
+	"github.com/tysonmote/gommap"
+)
+
+var (
+	noErr = require.NoError
 )
 
 func TestIndex(t *testing.T) {
 	f, err := ioutil.TempFile(os.TempDir(), "index_test")
+	fmt.Println(f.Name())
 	require.NoError(t, err)
 	defer os.Remove(f.Name())
 	c := Config{}
@@ -48,4 +55,35 @@ func TestIndex(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, uint32(1), off)
 	require.Equal(t, entries[1].Pos, pos)
+}
+
+func TestFileTruncate(t *testing.T) {
+	err := os.Truncate("wk_data/a.sh", 8)
+	noErr(t, err)
+}
+
+func TestGommap(t *testing.T) {
+	file, err := os.Create("wk_data/a.txt")
+	noErr(t, err)
+	defer file.Close()
+
+	err = os.Truncate(file.Name(), 1024)
+	noErr(t, err)
+
+	mmap, err := gommap.Map(
+		file.Fd(),
+		gommap.PROT_READ|gommap.PROT_WRITE,
+		gommap.MAP_SHARED,
+	)
+
+	off, pos := uint32(32), uint64(64)
+	enc.PutUint32(mmap[0:4], off)
+	enc.PutUint64(mmap[4:8], pos)
+
+	// file.Write([]byte{'A', 'B', 'C', 'D'})
+
+	fmt.Println("~~~", mmap)
+	err = mmap.Sync(gommap.MS_SYNC)
+	noErr(t, err)
+	fmt.Println("~~~", mmap)
 }
