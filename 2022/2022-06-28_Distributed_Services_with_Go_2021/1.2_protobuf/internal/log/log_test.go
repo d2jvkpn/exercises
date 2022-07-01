@@ -3,8 +3,8 @@ package log
 import (
 	"io/ioutil"
 	"os"
-	"testing"
 	"strings"
+	"testing"
 
 	api "proglog/api/v1"
 
@@ -24,7 +24,7 @@ func TestLog(t *testing.T) {
 			// dir, err := ioutil.TempDir("", "store-test")
 			// require.NoError(t, err)
 			// defer os.RemoveAll(dir)
-			dir := "tmp/" +strings.Replace(scenario, " ", "_", -1)
+			dir := "tmp/" + strings.Replace(scenario, " ", "_", -1)
 			os.RemoveAll(dir)
 			os.MkdirAll(dir, 0755)
 
