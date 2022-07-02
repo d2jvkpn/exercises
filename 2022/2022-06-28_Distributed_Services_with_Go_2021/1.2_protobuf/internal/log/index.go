@@ -11,13 +11,13 @@ var (
 	offWidth uint64 = 4
 	posWidth uint64 = 8
 
-	entWidth = offWidth + posWidth
+	entWidth = offWidth + posWidth // blocksize: 12
 )
 
 type index struct {
 	file *os.File
-	mmap gommap.MMap
 	size uint64
+	mmap gommap.MMap
 }
 
 func newIndex(f *os.File, c Config) (*index, error) {

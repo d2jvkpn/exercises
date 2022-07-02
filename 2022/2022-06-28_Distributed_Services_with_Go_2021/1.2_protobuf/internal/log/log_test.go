@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -146,4 +147,26 @@ func testTruncate(t *testing.T, log *Log) {
 
 	_, err = log.Read(0)
 	require.Error(t, err)
+}
+
+// echo "hello" > tmp/aa.txt
+// echo "world" > tmp/bb.txt
+func TestMultiReader(t *testing.T) {
+	f1, err := os.Open("tmp/aa.txt")
+	require.NoError(t, err)
+
+	f2, err := os.Open("tmp/bb.txt")
+	require.NoError(t, err)
+
+	reader := io.MultiReader(f1, f2)
+
+	bts := make([]byte, 6) // 1, 3, 5, 6, 8
+	n, err := reader.Read(bts)
+	require.NoError(t, err)
+	fmt.Println("~~~ 1", n, string(bts))
+
+	bts = make([]byte, 6)
+	n, err = reader.Read(bts)
+	require.NoError(t, err)
+	fmt.Println("~~~ 2", n, string(bts))
 }
