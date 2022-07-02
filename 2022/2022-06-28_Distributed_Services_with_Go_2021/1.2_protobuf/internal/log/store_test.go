@@ -30,7 +30,7 @@ func TestStoreAppendRead(t *testing.T) {
 	s, err = newStore(f)
 	require.NoError(t, err)
 
-	testRead(t, s)
+	// testRead(t, s)
 }
 
 func testAppend(t *testing.T, s *store) {
@@ -40,6 +40,7 @@ func testAppend(t *testing.T, s *store) {
 		n, pos, err := s.Append(write)
 		require.NoError(t, err)
 		require.Equal(t, pos+n, width*i)
+		fmt.Printf("~~~ testAppend %d: n=%d, pos=%d\n", i, n, pos)
 	}
 }
 
@@ -51,6 +52,7 @@ func testRead(t *testing.T, s *store) {
 		read, err := s.Read(pos)
 		require.NoError(t, err)
 		require.Equal(t, write, read)
+		fmt.Printf("~~~ testRead %d: %s\n", i, read)
 		pos += width
 	}
 }
