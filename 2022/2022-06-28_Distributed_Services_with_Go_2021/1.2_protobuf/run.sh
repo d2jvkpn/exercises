@@ -11,6 +11,8 @@ unzip protoc-21.2-linux-x86_64.zip -d /opt/protoc
 
 
 go get google.golang.org/protobuf/...@v1.25.0
+go get google.golang.org/grpc
+go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
 #
 mkdir -p api/v1/

@@ -83,11 +83,11 @@ func testAppendRead(t *testing.T, log *Log) {
 	require.Equal(t, record.Value, read.Value)
 }
 
-func testOutOfRangeErr(t *testing.T, log *Log) {
-	read, err := log.Read(1)
-	require.Nil(t, read)
-	require.Error(t, err)
-}
+//func testOutOfRangeErr(t *testing.T, log *Log) {
+//	read, err := log.Read(1)
+//	require.Nil(t, read)
+//	require.Error(t, err)
+//}
 
 func testInitExisting(t *testing.T, o *Log) {
 	record := &api.Record{Value: []byte("hello world")}
@@ -169,4 +169,11 @@ func TestMultiReader(t *testing.T) {
 	n, err = reader.Read(bts)
 	require.NoError(t, err)
 	fmt.Println("~~~ 2", n, string(bts))
+}
+
+func testOutOfRangeErr(t *testing.T, log *Log) {
+	read, err := log.Read(1)
+	require.Nil(t, read)
+	apiErr := err.(api.ErrOffsetOutOfRange)
+	require.Equal(t, uint64(1), apiErr.Offset)
 }
