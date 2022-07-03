@@ -25,14 +25,12 @@ type grpcServer struct {
 }
 
 func newgrpcServer(config *Config) (srv *grpcServer, err error) {
-	srv = &grpcServer{
-		Config: config,
-	}
-	return srv, nil
+	return &grpcServer{Config: config}, nil
 }
 
 func (s *grpcServer) Produce(ctx context.Context, req *api.ProduceRequest) (
 	*api.ProduceResponse, error) {
+
 	offset, err := s.CommitLog.Append(req.Record)
 	if err != nil {
 		return nil, err
@@ -48,9 +46,7 @@ func (s *grpcServer) Consume(ctx context.Context, req *api.ConsumeRequest) (
 	return &api.ConsumeResponse{Record: record}, nil
 }
 
-func (s *grpcServer) ProduceStream(
-	stream api.Log_ProduceStreamServer,
-) error {
+func (s *grpcServer) ProduceStream(stream api.Log_ProduceStreamServer) error {
 	for {
 		req, err := stream.Recv()
 		if err != nil {
@@ -74,6 +70,7 @@ func (s *grpcServer) ConsumeStream(req *api.ConsumeRequest, stream api.Log_Consu
 			return nil
 		default:
 			res, err := s.Consume(stream.Context(), req)
+
 			switch err.(type) {
 			case nil:
 			case api.ErrOffsetOutOfRange:
