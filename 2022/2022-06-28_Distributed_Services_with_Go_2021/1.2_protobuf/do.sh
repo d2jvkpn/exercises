@@ -34,3 +34,12 @@ cat api/v1/log.proto
 protoc api/v1/*.proto --go_out=. --go_opt=paths=source_relative --proto_path=.
 
 cat api/v1/log.pb.go
+
+
+#
+go get github.com/cloudflare/cfssl/cmd/cfssl
+
+go get github.com/cloudflare/cfssl/cmd/cfssljson
+
+
+
