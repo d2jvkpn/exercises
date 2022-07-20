@@ -5,7 +5,7 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 
 input=$1
 
-sed -ir 's: : :g' $input
+sed -ir 's: : :g; s:: :g' $input
 
 go fmt $input
 go vet $input
