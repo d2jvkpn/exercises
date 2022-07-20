@@ -5,11 +5,12 @@ import (
 )
 
 type Ordered interface {
-	~float64 | ~int | ~string
+	~float64 | ~int64 | ~string
 }
 
 func bubblesort[T Ordered](data []T) {
 	n := len(data)
+
 	for i := 0; i < n-1; i++ {
 		for j := 0; j < n-1-i; j++ {
 			if data[j] > data[j+1] {
@@ -18,6 +19,7 @@ func bubblesort[T Ordered](data []T) {
 		}
 	}
 }
+
 func main() {
 	numbers := []float64{3.5, -2.4, 12.8, 9.1}
 	bubblesort[float64](numbers)
