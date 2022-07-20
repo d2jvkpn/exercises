@@ -42,7 +42,7 @@ func Merge[T Ordered](left, right []T) []T {
 	result := make([]T, len(left)+len(right))
 	i, j, k := 0, 0, 0
 
-	for ;i < len(left) && j < len(right); k++ {
+	for ; i < len(left) && j < len(right); k++ {
 		if left[i] < right[j] {
 			result[k] = left[i]
 			i++
@@ -52,12 +52,12 @@ func Merge[T Ordered](left, right []T) []T {
 		}
 	}
 
-	for ;i < len(left); k++ {
+	for ; i < len(left); k++ {
 		result[k] = left[i]
 		i++
 	}
 
-	for ;j < len(right); k++ {
+	for ; j < len(right); k++ {
 		result[k] = right[j]
 		j++
 	}
