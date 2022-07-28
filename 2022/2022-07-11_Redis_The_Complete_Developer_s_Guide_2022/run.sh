@@ -5,4 +5,6 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 
 docker run -p=6379:6379 --name=redis_db -d --restart=always redis:7-alpine \
   redis-server --save 60 1 --loglevel warning
-# /usr/local/etc/redis/redis.conf 
+# /usr/local/etc/redis/redis.conf
+
+docker exec -it redis_db redis-cli

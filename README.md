@@ -41,6 +41,12 @@ are highly available, resilient, and scalable. This book is just what you need t
 real-world situations. Level up your engineering skills today.
 
 
+#### 2022/2022-07-11_Redis_The_Complete_Developer_s_Guide_2022
+- date: 2022-07-11
+- links:
+  - https://www.udemy.com/course/redis-the-complete-developers-guide-p/
+
+
 #### 2022/2022-07-20_Generic_Data_Structures_and_Algorithms_in_Go_2022
 - date: 2022-07-20
 - description: This book is aimed at practicing Go software developers and students who wish to
