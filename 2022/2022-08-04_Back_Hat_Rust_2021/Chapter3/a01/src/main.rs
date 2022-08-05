@@ -7,16 +7,16 @@ use tokio::spawn;
 use tokio::sync::{broadcast, mpsc, oneshot, Mutex};
 use tokio::time::sleep;
 
+fn now() -> String {
+    let now: DateTime<Local> = Local::now();
+    return now.to_rfc3339_opts(SecondsFormat::Millis, true);
+}
+
 async fn some_computation(input: u32) -> String {
-    sleep(Duration::from_millis(200)).await;
+    sleep(Duration::from_millis(500)).await;
     // "represents the result of the computation".to_string()
 
-    let now: DateTime<Local> = Local::now();
-    format!(
-        "~~~ {} the result of computation {}",
-        now.to_rfc3339_opts(SecondsFormat::Millis, true),
-        input,
-    )
+    format!("the result of computation {}", input)
 }
 
 #[tokio::main]
@@ -43,7 +43,7 @@ async fn main() {
     //        }
     //    });
     for i in 0..16 {
-        let txc = tx.clone();
+        let txc = tx.clone(); // TODO: limit concurrency number
         spawn(async move {
             let res = some_computation(i).await;
             txc.send(res).await.unwrap();
@@ -52,7 +52,7 @@ async fn main() {
     drop(tx);
 
     while let Some(res) = rx.recv().await {
-        println!("{}", res);
+        println!("~~~ {} {}", now(), res);
     }
 
     // broadcast
