@@ -1,0 +1,168 @@
+# Install k8s
+----
+
+#### 2.1 install kubectl kubeadm kubelet
+```bash
+# prepare
+apt-get update && apt -y upgrade
+
+apt-get install -y socat conntrack nfs-kernel-server nfs-common  nftables
+
+cat >> ~/.bash_aliases << 'EOF'
+for d in $(ls -d /opt/*/ 2> /dev/null); do
+  [[ -d $d ]] || continue
+  d=${d%/}
+  [[ -d $d/bin ]] && d=$d/bin
+  export PATH=$d:$PATH
+done
+
+for d in $(ls -d ~/Apps/*/ 2>/dev/null); do
+    d=${d%/}
+    test -d $d/bin && d=$d/bin
+    export PATH=$d:$PATH
+done
+
+alias nerdctl='nerdctl -n k8s.io'
+EOF
+
+# install
+version=1.24.4
+
+# use aliyun source mirror
+curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
+
+cat > /etc/apt/sources.list.d/kubernetes.list <<EOF
+deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main
+EOF
+
+# gpg --keyserver keyserver.ubuntu.com --recv-keys BA07F4FB
+# gpg --export --armor BA07F4FB | apt-key add -
+
+apt update && apt install -y kubelet=${version}-00 kubeadm=${version}-00 kubectl=${version}-00
+
+# google source mirror
+# curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+# echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" |
+#  sudo tee /etc/apt/sources.list.d/kubernetes.list
+
+apt-get update
+apt-get install -y kubectl kubeadm kubelet
+
+#
+apt-mark hold kubelet kubeadm kubectl
+# apt-mark unhold kubelet kubeadm kubectl
+kubectl version --output=yaml
+```
+
+#### 2.2 install containerd
+```bash
+# containerd
+apt update && apt -y upgrade
+apt install -y containerd runc
+
+containerd config default | grep SystemdCgroup
+containerd config default | grep sandbox_image
+
+# replace with correct versions
+pause=$(kubeadm config images list | grep pause)
+
+mkdir -p /etc/containerd
+
+containerd config default | sed '/SystemdCgroup/{s/false/true/}'   |
+  awk -v pause=$pause '/k8s.gcr.io\/pause/{sub("k8s.gcr.io/pause.*", pause"\"")} {print}' \
+  > /etc/containerd/config.toml
+
+systemctl restart containerd
+systemctl status containerd
+
+#!! "2.4 mannual import images", if you can't pull images normally
+```
+
+#### 2.3 install nerdctl
+```bash
+# nerdctl
+version=0.22.2
+# wget https://github.com/containerd/nerdctl/releases/download/v${version}/nerdctl-full-${version}-linux-amd64.tar.gz
+
+mkdir -p /opt/nerdctl-full-$version-linux-amd64
+tar -xf apps/nerdctl-full-$version-linux-amd64.tar.gz -C /opt/nerdctl-full-$version-linux-amd64
+
+mkdir -p /opt/cni/bin
+cp -r /opt/nerdctl-full-$version-linux-amd64/libexec/cni/* /opt/cni/bin
+
+nerdctl -n k8s.io images
+
+nerdctl ps -a
+nerdctl -n k8s.io ps -a
+```
+
+##### 2.4 config k8s and system
+- https://kubernetes.io/docs/setup/production-environment/container-runtimes/#containerd
+- https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/#configure-cgroup-driver-used-by-kubelet-on-control-plane-node
+```bash
+#
+# kubeadm config images list | xargs -i docker pull {}
+# kubeadm config images pull
+
+cp /etc/systemd/system/kubelet.service.d/10-kubeadm.conf \
+  /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.bk
+
+sed -i '/$KUBELET_EXTRA_ARGS/s/$/ --fail-swap-on=false/' \
+  /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
+systemctl daemon-reload
+systemctl enable kubelet.service
+systemctl status kubelet.service
+#!! kubelet.server will started by kubeadm init
+
+kubectl completion bash > /etc/bash_completion.d/kubectl
+kubeadm config images list
+
+#
+cat <<EOF | tee /etc/modules-load.d/k8s.conf
+overlay
+br_netfilter
+EOF
+
+modprobe overlay
+modprobe br_netfilter
+lsmod | grep overlay
+lsmod | grep br_netfilter
+
+cat <<EOF | tee /etc/sysctl.d/99-kubernetes-cri.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+
+sysctl --system
+```
+
+#### 2.5 mannual import images
+```bash
+ls kubernetes_v1.24 calico ingress-nginx
+
+# scp -r apps calico ingress-nginx kubernetes_v1.24 root@vm1:/root/
+# prepare images
+for f in $(ls {kubernetes_v1.24,calico,ingress-nginx}/*.tar.gz); do
+    echo ">>> load image from $f"
+    pigz -dc $f | ctr -n=k8s.io image import -
+done
+# pigz -dc $f | docker load
+
+rm -r apps calico ingress-nginx kubernetes_v1.24
+
+# calico/cni:v3.23.3
+# calico/kube-controllers:v3.23.3
+# calico/node:v3.23.3
+# k8s.gcr.io/coredns/coredns:v1.8.6
+# k8s.gcr.io/etcd:3.5.3-0
+# k8s.gcr.io/kube-apiserver:v1.24.4
+# k8s.gcr.io/kube-controller-manager:v1.24.4
+# k8s.gcr.io/kube-proxy:v1.24.4
+# k8s.gcr.io/kube-scheduler:v1.24.4
+# k8s.gcr.io/pause:3.7
+# registry.k8s.io/ingress-nginx/controller:v1.3.0
+# registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.1.1
+# registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.3.0
+```

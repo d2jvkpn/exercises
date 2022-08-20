@@ -1,0 +1,125 @@
+### Setup control-plane
+---
+
+#### 3.1 clone vm1 to vm2
+reference: "1.6 clone ubuntu"
+
+#### 3.2 configuration
+```bash
+ssh root@vm2
+
+ctr -n=k8s.io images list | awk '/k8s/{print $1}'
+nerdctl -n k8s.io images
+
+# kubeadm
+podSubnet="10.96.2.10/16"
+nodeName=k8scp
+version=1.24.4
+
+ip=$(hostname -I | awk '{print $1}')
+echo ">>> ip: $ip"
+cp /etc/hosts /etc/hosts.bk
+[[ -z "$(grep $nodeName /etc/hosts)" ]] && echo -e "\n\n$ip $nodeName" >> /etc/hosts
+
+kubeadm config print init-defaults
+# kubeadm reset -f
+
+cat | tee kubeadm-config.yaml << EOF
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+kubernetesVersion: $version
+controlPlaneEndpoint: "$nodeName:6443"
+kubeletConfiguration:
+  allowSwap: true
+networking:
+  podSubnet: ${podSubnet}
+EOF
+
+kubeadm init --config=kubeadm-config.yaml --upload-certs \
+  --ignore-preflight-errors=Swap -v 5 |
+  tee kubeadm-init.$(date +%FT%T | sed 's/:/-/g').out
+
+#...
+systemctl status containerd
+systemctl status kubelet
+journalctl -xeu kubelet
+nerdctl -n k8s.io ps
+
+mkdir -p $HOME/.kube
+cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+chown $(id -u):$(id -g) $HOME/.kube/config
+# export KUBECONFIG=/etc/kubernetes/admin.conf
+# echo -e '\n\nexport KUBECONFIG=/etc/kubernetes/admin.conf' > ~/.bashrc
+
+# kubeadm token list
+# kubeadm token create --print-join-command
+
+kubectl get pods --all-namespaces
+# kubectl -n kube-system describe pod/kube-scheduler-vm2
+```
+
+#### 3.3 calico network
+```bash
+wget https://docs.projectcalico.org/manifests/calico.yaml
+# !! calico/node is not ready: BIRD is not ready: BGP not established
+# add to calico.yaml after section "-name: CLUSTER_TYPE"
+# - name: IP_AUTODETECTION_METHOD
+#   value: "interface=enp3"
+
+interface=$(ip -o -4 route show to default | awk '{print $5}')
+
+sed -i "/k8s,bgp/a \            - name: IP_AUTODETECTION_METHOD\
+\n              value: \"interface=${interface}\"" calico.yaml
+
+sed -i '/image:/s#docker.io/##' calico.yaml
+
+grep -A 8 'value: "k8s,bgp"' calico.yaml
+grep "image:" calico.yaml
+
+awk '/image:/{print $NF}' calico.yaml | sort -u
+
+nerdctl -n k8s.io images
+
+kubectl apply -f calico.yaml
+
+# kubectl describe pod/calico-node-d8nxw -n kube-system
+
+kubectl get node
+kubectl get pod --all-namespaces
+```
+
+#### 3.4 ingress-nginx
+```bash
+kubectl get node --show-labels
+# NAME   STATUS   ROLES           AGE   VERSION   LABELS
+# vm2    Ready    control-plane   11m   v1.24.4   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=vm2,kubernetes.io/os=linux,node-role.kubernetes.io/control-plane=,node.kubernetes.io/exclude-from-external-load-balancers=
+
+wget -O ingress-nginx_kind.yaml https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+
+sed -i '/image:/s/@sha256:.*//' ingress-nginx_kind.yaml
+awk '/image:/{print $NF}' ingress-nginx_kind.yaml | sort -u
+
+kubectl label nodes/$(hostname) ingress-ready=true
+kubectl label nodes vm2 nodePool=cluster
+# kubectl taint nodes --all node-role.kubernetes.io/master-
+# kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+
+kubectl get nodes --show-labels
+
+kubectl apply -f ingress-nginx_kind.yaml
+# kubectl delete -f ingress-nginx_kind.yaml
+# kubectl describe pod/ingress-nginx-controller-7fc55d9c8f-ctr68 -n ingress-nginx
+
+kubectl describe node/vm2
+
+systemctl status kubelet
+journalctl -xefu kubelet
+vim /var/log/pods/kube-system_kube-apiserver
+
+# kubectl taint nodes k8scp node-role.kubernetes.io/master-
+# ?? MountVolume.SetUp failed for volume "webhook-cert" : secret "ingress-nginx-admission" not found
+# undo taint
+# kubectl taint nodes k8scp node-role.kubernetes.io/master:NoSchedule
+
+kubectl get pods --all-namespaces
+```

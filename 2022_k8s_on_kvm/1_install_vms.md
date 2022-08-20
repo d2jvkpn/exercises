@@ -4,7 +4,7 @@
 #### references:
 - https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/virtualization_deployment_and_administration_guide/sect-statlists
 
-#### 1. Install kvm
+#### 1.1 Install kvm
 ```bash
 grep -Eoc '(vmx|svm)' /proc/cpuinfo
 apt install cpu-checker
@@ -18,8 +18,7 @@ usermod -aG kvm $USER
 brctl show
 ```
 
-#### 2. Create virtual machine
-##### 2.1 start
+#### 1.2. Create virtual machine
 ```bash
 vm=ubuntu
 
@@ -27,10 +26,10 @@ virt-install --name=$vm --os-variant=generic --vcpus=2 --memory=2048 \
   --disk path=/var/lib/libvirt/images/$vm.qcow2,size=20              \
   --cdrom=/home/hello/Work/kvm/ubuntu-22.04.1-live-server-amd64.iso
 ```
-##### 2.2 install UI
+#### 1.3 install UI
 ...username: hello
 
-##### 2.3 ssh vm
+#### 1.3 ssh vm
 ```bash
 vm=ubuntu
 
@@ -61,7 +60,7 @@ passwd
 exit
 ```
 
-#### 2.4 fix ip
+#### 1.5 fix ip
 ```bash
 vm=ubuntu
 
@@ -95,10 +94,10 @@ virsh start $vm
 ssh root@$vm
 ```
 
-##### 2.5 clone ubuntu
+##### 1.6 clone ubuntu
 ```bash
 src=ubuntu
-vm=vm1 # vm2, vm3, vm4...
+vm=vm1
 
 virsh shutdown $src
 virt-clone --original $src --name $vm --file /var/lib/libvirt/images/$vm.qcow2
@@ -124,12 +123,12 @@ dbus-uuidgen --ensure=/etc/machine-id
 shutdown now
 
 vm=vm2
-### 2.4 fix ip...
+#!! "2.4 fix ip"
 
 ssh root@$vm
 ```
 
-#### 2.6 extend vm disk size
+#### 1.7 extend vm disk size
 ```bash
 vm=vm1
 
@@ -152,7 +151,7 @@ lvextend -L +10G /dev/mapper/ubuntu--vg-ubuntu--lv
 resize2fs /dev/mapper/ubuntu--vg-ubuntu--lv
 ```
 
-##### 3. other vrish commands
+##### 1.8 other vrish commands
 ```bash
 virsh edit $VHOST
 
