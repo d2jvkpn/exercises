@@ -56,3 +56,7 @@ zrange products 50 0 byscore rev withscores limit 0 1
 zrange products 0 1 
 // the last two elements
 zrange products 0 1 rev
+
+use cases:
+- tabulating of a collection of hashes
+- creating relationships between records, sorted by some criteria
