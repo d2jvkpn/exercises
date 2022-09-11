@@ -29,5 +29,5 @@ kind create cluster --config cluster2.yaml # --name cluster2
 
 kubectl cluster-info --context kind-cluster2
 
-kind export logs /home/hello/Work/kind/logs
+kind export logs --name cluster2 /home/hello/Work/kind/logs
 # # kind delete cluster --name cluster2
