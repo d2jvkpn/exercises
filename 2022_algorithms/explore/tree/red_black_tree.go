@@ -1,18 +1,20 @@
-package explore
+package tree
 
 import (
 	"fmt"
 )
 
-type Node struct {
+type RBT struct {
 	Value  int64
 	Color  bool // false represents black
-	Parent *Node
-	Left   *Node
-	Right  *Node
+	Parent *RBT
+	Left   *RBT
+	Right  *RBT
 }
 
-/* Rules:
+/*
+	Rules:
+
 1. Every node has a colour either red or black.
 2. The root of the tree is always black.
 3. There are no two adjacent red nodes (A red node cannot have a red parent or red child).
@@ -20,7 +22,7 @@ type Node struct {
 number of black nodes.
 5. All leaf nodes are black nodes.
 */
-func (node *Node) Valid() (err error) {
+func (node *RBT) Valid() (err error) {
 	if node.Parent == nil && !node.Parent.Color {
 		return fmt.Errorf("rule 2")
 	}
