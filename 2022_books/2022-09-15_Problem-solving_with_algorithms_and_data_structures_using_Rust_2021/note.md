@@ -19,4 +19,3 @@
 - rustup default nightly
 - rustup default stable
 - rustup toolchain list
-- 
