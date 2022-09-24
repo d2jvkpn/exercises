@@ -25,9 +25,9 @@ fn rec_mc2(cashes: &[u32], amount: u32) -> Option<Vec<u32>> {
         }
     }
 
-    // println!("==> {:?}", min);
     if min.len() > 0 {
         min.push(c);
+        println!("======= {:?}", min);
         Some(min)
     } else {
         None
@@ -40,7 +40,6 @@ fn main() {
 
     let args: Vec<String> = env::args().collect();
     println!("~~~ args: {:?}, cashes: {:?}", args, cashes);
-
     let amount = args[1].parse::<u32>().unwrap();
 
     let refund = match rec_mc2(&cashes[..], amount) {
