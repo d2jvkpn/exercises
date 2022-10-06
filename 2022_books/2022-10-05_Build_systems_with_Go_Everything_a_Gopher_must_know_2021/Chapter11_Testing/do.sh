@@ -3,6 +3,9 @@ set -eu -o pipefail
 _wd=$(pwd)
 _path=$(dirname $0 | xargs -i readlink -f {})
 
+#### testflag
+go help testflag
+
 #### test
 go test -run TestMe
 
@@ -15,7 +18,7 @@ go test -v -bench .
 
 go test --run none -bench ^BenchmarkSum$ -v
 
-go test --run none -bench BenchmarkSumParallel -cpu 1,4,16
+go test --run none -bench BenchmarkSumParallel -cpu 1,4,16 -count 5 -parallel 10
 
 #### coverage
 go test -run TestOptions -v -cover
@@ -41,3 +44,11 @@ go tool pprof cpu.pprof # interactive mode commands:
 # q
 
 go tool pprof mem.pprof
+
+#### doc
+go doc -all
+go doc Periods
+
+go doc -src Periods
+
+godoc -http=:8080
