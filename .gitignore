@@ -13,3 +13,6 @@ tmp/
 *.test
 *.log
 target/
+*.out
+*.pprof
+*.pprof.pdf

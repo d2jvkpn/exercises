@@ -1,6 +1,5 @@
 package main
 
-
 func Periods(year int) string {
 	switch {
 	case year < -3000:
