@@ -4,7 +4,7 @@ import (
 	"fmt"
 )
 
-func QuickSort(slice []int) (out []int) {
+func QuickSort2(slice []int) (out []int) {
 	if len(slice) < 2 {
 		return slice
 	}
@@ -21,18 +21,18 @@ func QuickSort(slice []int) (out []int) {
 	fmt.Printf("    s1 = %v, s2 = %v\n", s1, s2)
 
 	out = make([]int, 0, len(slice))
-	out = append(QuickSort(s1), slice[0]) // recursion
-	out = append(out, QuickSort(s2)...)   // recursion
+	out = append(QuickSort2(s1), slice[0]) // recursion
+	out = append(out, QuickSort2(s2)...)   // recursion
 
 	return
 }
 
-func InstQuickSort() {
+func InstQuickSort2() {
 	fmt.Println(">>> InstQuickSort:")
 	slice := []int{14, 33, 10, 27, 19, 35, 42, 44, 18}
 	fmt.Printf("    slice = %v\n", slice)
 
-	out := QuickSort(slice)
+	out := QuickSort2(slice)
 	fmt.Printf("    out = %v\n", out)
 }
 

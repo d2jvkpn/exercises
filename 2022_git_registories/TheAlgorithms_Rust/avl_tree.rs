@@ -4,7 +4,7 @@ use std::mem;
 use std::ops::Not;
 
 /// An internal node of an `AVLTree`.
-struct AVLNode<T: Ord> {
+pub struct AVLNode<T: Ord> {
     value: T,
     height: usize,
     left: Option<Box<AVLNode<T>>>,
@@ -30,9 +30,9 @@ enum Side {
 
 impl<T: Ord> AVLTree<T> {
     /// Creates an empty `AVLTree`.
-    pub fn new(value: Option<T>) -> AVLTree<T> {
+    pub fn new(value: Option<AVLNode<T>>) -> AVLTree<T> {
         match value {
-            Some(v) => AVLTree { root: Some(Box::new(AVLNode::new(v))), length: 1 },
+            Some(v) => AVLTree { root: Some(Box::new(v)), length: 1 },
             None => AVLTree { root: None, length: 0 },
         }
     }
@@ -168,20 +168,21 @@ fn merge<T: Ord>(left: Box<AVLNode<T>>, right: Box<AVLNode<T>>) -> Box<AVLNode<T
 
 /// Removes the smallest node from the tree, if one exists.
 fn take_min<T: Ord>(tree: &mut Option<Box<AVLNode<T>>>) -> Option<Box<AVLNode<T>>> {
-    if let Some(mut node) = tree.take() {
-        // Recurse along the left side
-        if let Some(small) = take_min(&mut node.left) {
-            // Took the smallest from below; update this node and put it back in the tree
-            node.rebalance();
-            *tree = Some(node);
-            Some(small)
-        } else {
-            // Take this node and replace it with its right child
-            *tree = node.right.take();
-            Some(node)
-        }
+    let mut node = match tree.take() {
+        Some(v) => v,
+        None => return None,
+    };
+
+    // Recurse along the left side
+    if let Some(small) = take_min(&mut node.left) {
+        // Took the smallest from below; update this node and put it back in the tree
+        node.rebalance();
+        *tree = Some(node);
+        Some(small)
     } else {
-        None
+        // Take this node and replace it with its right child
+        *tree = node.right.take();
+        Some(node)
     }
 }
 

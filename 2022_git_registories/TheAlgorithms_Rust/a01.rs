@@ -1,9 +1,9 @@
 fn main() {
-    println!("Hello, wrold!");
-
-    let a = Some(42_i64);
+    let mut a = Some(42_i64);
     println!("{:?}", a);
 
+    echo(a);
+    a = None;
     echo(a);
 }
 
