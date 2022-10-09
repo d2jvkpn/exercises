@@ -23,7 +23,6 @@ func getSum(a, b int) int {
 	return b
 }
 
-////
 func mean(a, b int) int {
 	return a>>1 + b>>1 + a&b&1
 }

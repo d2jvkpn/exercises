@@ -14,7 +14,7 @@ import (
 	api "proglog/api/v1"
 )
 
-////
+//
 type Log struct {
 	Dir    string
 	Config Config
@@ -199,7 +199,7 @@ func (l *Log) Reader() io.Reader {
 	return io.MultiReader(readers...)
 }
 
-////
+//
 type originReader struct {
 	*store
 	off int64

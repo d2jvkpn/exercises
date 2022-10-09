@@ -19,7 +19,7 @@ fn get_sum(mut a: i64, mut b: i64) -> i64 {
     return b;
 }
 
-////
+//
 fn mean(a: i64, b: i64) -> i64 {
     return a >> 1 + b >> 1 + a & b & 1;
 }
