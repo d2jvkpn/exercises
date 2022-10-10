@@ -34,22 +34,22 @@ impl List {
 
     pub fn reverse(&mut self) {
         let mut prev = None;
-        let mut current = self.head.take();
+        let mut curr = self.head.take();
 
-        while let Some(mut tmp) = current.take() {
+        while let Some(mut tmp) = curr.take() {
             let next = tmp.next.take();
             tmp.next = prev.take();
             prev = Some(tmp);
-            current = next;
+            curr = next;
         }
 
         self.head = prev.take();
     }
 }
 
-fn reverse(list: &mut List) {
-    list.reverse()
-}
+//fn reverse(list: &mut List) {
+//    list.reverse()
+//}
 
 fn main() {
     let mut list = List::new(ListNode::new(5));
