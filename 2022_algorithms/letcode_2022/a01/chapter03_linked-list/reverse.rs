@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 // Definition for singly-linked list.
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode {
@@ -11,25 +13,22 @@ impl ListNode {
     }
 }
 
-type Link = Option<Box<ListNode>>;
-
 #[derive(Debug)]
 struct List {
-    head: Link,
+    head: Option<Box<ListNode>>,
 }
 
 impl List {
+    pub fn empty() -> Self {
+        Self { head: None }
+    }
+
     pub fn new(node: ListNode) -> Self {
-        List {
-            head: Some(Box::new(node)),
-        }
+        Self { head: Some(Box::new(node)) }
     }
 
     pub fn push_front(&mut self, val: i32) -> &mut Self {
-        self.head = Some(Box::new(ListNode {
-            val,
-            next: self.head.take(),
-        }));
+        self.head = Some(Box::new(ListNode { val, next: self.head.take() }));
         self
     }
 
