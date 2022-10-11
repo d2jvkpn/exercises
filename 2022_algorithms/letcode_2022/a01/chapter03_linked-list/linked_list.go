@@ -39,7 +39,7 @@ func PrintListNode(head *ListNode) {
 		if curr == nil {
 			break
 		}
-		fmt.Print(curr.Val)
+		fmt.Print(curr.Val, " ")
 		curr = curr.Next
 	}
 
@@ -78,4 +78,37 @@ func RemoveNthFromEnd(head *ListNode, n int) *ListNode {
 	}
 
 	return head
+}
+
+func Reverse(head *ListNode) *ListNode {
+	var (
+		prev *ListNode = nil
+		curr *ListNode = head
+	)
+
+	for curr != nil {
+		tmp, next := curr, curr.Next
+		tmp.Next = prev
+		prev = tmp
+		curr = next
+	}
+
+	return prev
+}
+
+func HasCycle(head *ListNode) bool {
+	if head == nil {
+		return false
+	}
+
+	mp := make(map[*ListNode]bool)
+
+	for curr := head; curr.Next != nil; curr = curr.Next {
+		if mp[curr] {
+			return true
+		}
+		mp[curr] = true
+	}
+
+	return false
 }

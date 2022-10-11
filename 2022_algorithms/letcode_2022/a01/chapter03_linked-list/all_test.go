@@ -19,3 +19,10 @@ func TestRemoveNthFromEnd(t *testing.T) {
 	fmt.Println(">>>", out)
 	PrintListNode(head)
 }
+
+func TestReverse(t *testing.T) {
+	head := NewListNode([]int{1, 2, 3, 4, 5})
+	PrintListNode(head)
+
+	PrintListNode(Reverse(head))
+}

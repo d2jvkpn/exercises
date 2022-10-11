@@ -47,9 +47,60 @@ impl List {
     }
 }
 
-//fn reverse(list: &mut List) {
-//    list.reverse()
-//}
+fn reverse(list: &mut List) {
+    list.reverse()
+}
+
+// https://gist.github.com/Coutlaw/e974e6b130255fa99edc6173f9008bd1
+pub fn merge_two_lists(
+    list1: Option<Box<ListNode>>,
+    list2: Option<Box<ListNode>>,
+) -> Option<Box<ListNode>> {
+    let (l, r) = match (list1, list2) {
+        (None, None) => return None,
+        (None, Some(v)) | (Some(v), None) => return Some(v),
+        (Some(l), Some(r)) => (l, r),
+    };
+
+    let node = if l.val < r.val {
+        ListNode { val: l.val, next: merge_two_lists(l.next, Some(r)) }
+    } else {
+        ListNode { next: merge_two_lists(Some(l), r.next), val: r.val }
+    };
+
+    Some(Box::new(node))
+}
+
+pub fn is_palindrome(head: Option<Box<ListNode>>) -> bool {
+    let mut stack = Vec::new();
+
+    // ListNode
+    let mut curr = match head {
+        None => return true,
+        Some(v) => v,
+    };
+
+    loop {
+        //        if stack.len() > 0 && stack[stack.len() - 1] == curr.val {
+        //            stack.pop();
+        //        } else {
+        //            stack.push(curr.val);
+        //        }
+        stack.push(curr.val);
+
+        curr = match curr.next {
+            None => break,
+            Some(v) => v,
+        };
+    }
+
+    for i in 0..stack.len() / 2 {
+        if stack[i] != stack[stack.len() - i - 1] {
+            return false;
+        }
+    }
+    return true;
+}
 
 fn main() {
     let mut list = List::new(ListNode::new(5));
@@ -59,4 +110,13 @@ fn main() {
     // list.reverse();
     reverse(&mut list);
     println!("{:?}", list);
+
+    let mut list = List::new(ListNode::new(1));
+    list.push_front(2).push_front(2).push_front(1);
+    println!("~~~ {:?}", list);
+    println!("    {}", is_palindrome(list.head));
+
+    let mut list = List::new(ListNode::new(1));
+    println!("~~~ {:?}", list);
+    println!("    {}", is_palindrome(list.head));
 }
