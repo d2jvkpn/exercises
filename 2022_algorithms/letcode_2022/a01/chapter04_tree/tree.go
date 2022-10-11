@@ -31,7 +31,7 @@ func MaxDepth(root *TreeNode) int {
 }
 
 func isSymmetricTree(p *TreeNode, q *TreeNode) bool {
-	if p == q {
+	if p == nil && q == nil {
 		return true
 	}
 	if p == nil || q == nil || p.Val != q.Val {
@@ -40,7 +40,7 @@ func isSymmetricTree(p *TreeNode, q *TreeNode) bool {
 	return isSymmetricTree(p.Left, q.Right) && isSymmetricTree(p.Right, q.Left)
 }
 
-func isSymmetric(root *algorithms.TreeNode) bool {
+func isSymmetric(root *TreeNode) bool {
 	if root == nil {
 		return true
 	}
