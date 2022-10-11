@@ -116,7 +116,7 @@ fn main() {
     println!("~~~ {:?}", list);
     println!("    {}", is_palindrome(list.head));
 
-    let mut list = List::new(ListNode::new(1));
+    let list = List::new(ListNode::new(1));
     println!("~~~ {:?}", list);
     println!("    {}", is_palindrome(list.head));
 }
