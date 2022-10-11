@@ -62,3 +62,58 @@ func validBST(node *TreeNode, lower, upper int) bool {
 func IsValidBST(root *TreeNode) bool {
 	return validBST(root, math.MinInt64, math.MaxInt64)
 }
+
+func levelOrderHelper(node *TreeNode) [][]int {
+	if node.Left == nil && node.Right == nil {
+		return nil
+	}
+
+	if node.Left != nil && node.Right == nil {
+		return [][]int{{node.Left.Val}}
+	}
+	if node.Left == nil && node.Right != nil {
+		return [][]int{{node.Right.Val}}
+	}
+
+	p := levelOrderHelper(node.Left)
+	q := levelOrderHelper(node.Right)
+	res := make([][]int, len(p)+len(q)+1)
+	res = append(res, []int{node.Left.Val, node.Right.Val})
+
+	for i, j := 0, 0; i < len(p) || j < len(q); {
+		if i < len(p) {
+			res = append(res, p[i])
+			i++
+		}
+
+		if j < len(q) {
+			res = append(res, q[j])
+			j++
+		}
+	}
+
+	return res
+}
+
+func levelOrder(root *TreeNode) [][]int {
+	if root == nil {
+		return nil
+	}
+
+	res := [][]int{{root.Val}}
+	return append(res, levelOrderHelper(root)...)
+}
+
+func sortedArrayToBST(nums []int) *TreeNode {
+	if len(nums) == 0 {
+		return nil
+	}
+
+	mid := len(nums) / 2
+
+	return &TreeNode{
+		Val:   nums[mid],
+		Left:  sortedArrayToBST(nums[:mid]),
+		Right: sortedArrayToBST(nums[mid+1:]),
+	}
+}
