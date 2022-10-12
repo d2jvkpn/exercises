@@ -38,8 +38,7 @@ func firstBadVersion(n int) int {
 
 		if isBad && mid == 1 {
 			return mid
-		}
-		if !isBad && isBadVersion(mid+1) {
+		} else if !isBad && isBadVersion(mid+1) {
 			return mid + 1
 		}
 
