@@ -58,16 +58,30 @@ func IsAnagram(s string, t string) bool {
 }
 
 func IsPalindrome(s string) bool {
+	// fmt.Printf("%d %d, %d, %d, %d, %d\n", '0', '9', 'A', 'Z', 'a', 'z');
+	// 48 57, 65, 90, 97, 122
 	bts := make([]byte, 0, len(s))
+
 	for _, b := range []byte(s) {
-		if b < 'A' || b > 'z' {
-			continue
-		}
-		if b < 'a' {
+		ok := false
+
+		switch {
+		case b >= '0' && b <= '9':
+			ok = true
+		case b >= 'A' && b <= 'Z':
 			b += 'a' - 'A'
+			ok = true
+		case b >= 'a' && b <= 'z':
+			ok = true
+		default:
+			ok = false
 		}
-		bts = append(bts, b)
+
+		if ok {
+			bts = append(bts, b)
+		}
 	}
+	fmt.Println("~~~", bts)
 
 	for i := 0; i < len(bts)/2; i++ {
 		if bts[i] != bts[len(bts)-i-1] {

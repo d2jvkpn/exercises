@@ -6,7 +6,7 @@ import (
 )
 
 func TestIsPalindrome(t *testing.T) {
-	fmt.Println(IsPalindrome("OP"))
+	fmt.Println(IsPalindrome("0P"))
 }
 
 func TestMyAtoi(t *testing.T) {
