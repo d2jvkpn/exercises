@@ -19,6 +19,7 @@ fn first_uniq_char(s: String) -> i32 {
 
 fn reverse_int(mut x: i32) -> i32 {
     let mut res = 0;
+
     while x != 0 {
         if x > 0 && res > (i32::MAX - x % 10) / 10 {
             return 0;
@@ -28,6 +29,7 @@ fn reverse_int(mut x: i32) -> i32 {
         res = res * 10 + x % 10;
         x /= 10;
     }
+
     res
 }
 

@@ -99,6 +99,9 @@ func MyAtoi(s string) int {
 
 	for i, b := range bts {
 		ok := b >= '0' && b <= '9'
+		if !ok && b != ' ' && b != '-' && b != '+' {
+			return 0
+		}
 		if last > -1 && !ok {
 			break
 		}
