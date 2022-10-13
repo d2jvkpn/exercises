@@ -78,7 +78,6 @@ fn max_sub_array(nums: Vec<i32>) -> i32 {
     }
 
     let max_val = |x1: i32, x2: i32| if x1 > x2 { x1 } else { x2 };
-
     let (mut cur, mut max) = (nums[0], nums[0]);
 
     nums[1..].iter().for_each(|x| {

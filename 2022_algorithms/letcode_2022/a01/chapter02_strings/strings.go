@@ -134,7 +134,7 @@ func StrStr(haystack string, needle string) int {
 	return -1
 }
 
-func longestCommonPrefix(strs []string) string {
+func LongestCommonPrefix(strs []string) string {
 	if len(strs) == 0 {
 		return ""
 	}
