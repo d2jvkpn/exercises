@@ -60,9 +60,13 @@ pub fn max_profit(prices: &Vec<i32>) -> i32 {
     let (mut hold, mut no_hold) = (-prices[0], 0);
 
     prices[1..].iter().for_each(|price| {
-        println!("~~~ {}, {}, {}", price, no_hold, hold);
+        println!("~~~ price={}, no_hold={}, hold={}", price, no_hold, hold);
+        // keep not hold or sellout
         no_hold = max(no_hold, hold + *price);
+
+        // buy
         hold = max(hold, -*price);
+
         println!("    no_hold={}, hold={}", no_hold, hold);
     });
 
