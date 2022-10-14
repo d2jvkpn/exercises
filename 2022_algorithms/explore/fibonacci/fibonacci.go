@@ -16,7 +16,7 @@ func Fib(n int, c *int) int {
 func FibTailRecursion(n, a, b int, c *int) int {
 	*c += 1
 
-	if n == 0 {
+	if n <= 0 {
 		return a
 	}
 	if n == 1 {
