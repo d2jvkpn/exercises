@@ -13,6 +13,8 @@ func TestMyAtoi(t *testing.T) {
 	fmt.Println(MyAtoi("a42"))
 	fmt.Println(MyAtoi("a-42"))
 	fmt.Println(MyAtoi("words and 987"))
+
+	fmt.Println(MyAtoi("-91283472332"))
 }
 
 func TestStrStr(t *testing.T) {
