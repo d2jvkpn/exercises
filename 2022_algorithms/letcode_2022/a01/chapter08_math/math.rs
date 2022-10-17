@@ -1,3 +1,20 @@
+pub fn fizz_buzz(n: i32) -> Vec<String> {
+    let mut output = Vec::with_capacity(n as usize);
+
+    for v in 1..=n {
+        let (t1, t2) = (v % 3 == 0, v % 5 == 0);
+        let s = match v {
+            _v if t1 & !t2 => String::from("Fizz"),
+            _v if !t1 & t2 => String::from("Buzz"),
+            _v if t1 & t2 => String::from("FizzBuzz"),
+            v => v.to_string(),
+        };
+        output.push(s);
+    }
+
+    output
+}
+
 pub fn is_power_of_three(n: i32) -> bool {
     let mut v = n;
 
@@ -18,7 +35,7 @@ pub fn is_power_of_three(n: i32) -> bool {
     false
 }
 
-fn roman_to_int(s: String) -> i32 {
+pub fn roman_to_int(s: String) -> i32 {
     use std::collections::HashMap;
 
     let mp = HashMap::from([
@@ -78,10 +95,19 @@ pub fn count_primes(n: i32) -> i32 {
         i += 1;
     }
 
-    is_prime[2..].iter().filter(|&v| *v).count() as i32
+    // is_prime[2..].iter().filter(|&v| *v).count() as i32
+    let mut result = 0;
+    is_prime[2..].iter().for_each(|&v| {
+        if v {
+            result += 1;
+        }
+    });
+    result
 }
 
 fn main() {
+    println!(">>> fizz_buzz: {:?}", fizz_buzz(15));
+
     println!(">>> is_power_of_three: {}", is_power_of_three(27));
     println!(">>> roman_to_int: {}", roman_to_int("MCMXCIV".to_string()));
     println!(">>> count_primes: {}", count_primes(10));
