@@ -1,8 +1,8 @@
 pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
     let mut nums = nums;
-    let mut out: Vec<Vec<i32>> = Vec::new();
+    let mut result: Vec<Vec<i32>> = Vec::new();
     if nums.len() < 3 {
-        return out;
+        return result;
     }
 
     nums.sort();
@@ -22,7 +22,7 @@ pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
                 continue;
             }
 
-            out.push(vec![nums[i], nums[l], nums[r]]);
+            result.push(vec![nums[i], nums[l], nums[r]]);
 
             while l < r && nums[l] == nums[l + 1] {
                 l += 1;
@@ -41,7 +41,7 @@ pub fn three_sum(nums: Vec<i32>) -> Vec<Vec<i32>> {
         i += 1;
     }
 
-    out
+    result
 }
 
 pub fn set_zeroes(matrix: &mut Vec<Vec<i32>>) {
@@ -66,18 +66,61 @@ pub fn set_zeroes(matrix: &mut Vec<Vec<i32>>) {
     });
 }
 
+pub fn group_anagrams(strs: Vec<&str>) -> Vec<Vec<&str>> {
+    let mut strs = strs;
+    // strs.sort_by(|a, b| a.len().partial_cmp(&b.len()).unwrap());
+    // println!(">>> {:?}", strs);
+
+    let (mut i, n, mut result) = (0, strs.len(), Vec::new());
+    let mut bools = vec![false; n];
+
+    while i < n {
+        if bools[i] {
+            i += 1;
+            continue;
+        }
+
+        let mut chars = strs[i].chars().collect::<Vec<char>>();
+        chars.sort();
+        bools[i] = true;
+        let mut j = i + 1;
+        let mut list = vec![strs[i]];
+
+        while j < n {
+            if bools[j] {
+                j += 1;
+                continue;
+            }
+
+            let mut chars2 = strs[j].chars().collect::<Vec<char>>();
+            chars2.sort();
+            // println!("    {}, {:?}, {}, {:?}", i, chars, j, chars2);
+            if chars == chars2 {
+                list.push(strs[j]);
+                bools[j] = true;
+            }
+            j += 1;
+        }
+
+        i += 1;
+        result.push(list);
+    }
+
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
     fn t_three_sum() {
-        let output = three_sum(vec![-1, 0, 1, 2, -1, -4]);
-        println!("=== {:?}", output);
+        let result = three_sum(vec![-1, 0, 1, 2, -1, -4]);
+        println!("=== {:?}", result);
         // expected [[-1,-1,2],[-1,0,1]]
 
-        let output = three_sum(vec![0, 0, 0, 0]);
-        println!("=== {:?}", output);
+        let result = three_sum(vec![0, 0, 0, 0]);
+        println!("=== {:?}", result);
         // expected [[-1,-1,2],[-1,0,1]]
     }
 
@@ -90,5 +133,12 @@ mod tests {
         let mut matrix = vec![vec![0, 1, 2, 0], vec![3, 4, 5, 2], vec![1, 3, 1, 5]];
         set_zeroes(&mut matrix);
         println!("{:?}", matrix);
+    }
+
+    #[test]
+    fn t_group_anagrams() {
+        let strs = vec!["eat", "tea", "tan", "ate", "nat", "bat"];
+
+        println!("{:?}", group_anagrams(strs));
     }
 }
