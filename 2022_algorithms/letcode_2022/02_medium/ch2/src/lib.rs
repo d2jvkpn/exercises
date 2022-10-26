@@ -12,6 +12,6 @@ impl ListNode {
     }
 }
 
-pub fn odd_even_list(head: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
-    todo!()
+func odd_even_list(head: &ListNode) {
+	todo!()
 }
