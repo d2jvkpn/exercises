@@ -9,7 +9,9 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 
 # curl -Lo ./kind https://kind.sigs.k8s.io/dl/v0.15.0/kind-linux-amd64
 
-go install sigs.k8s.io/kind@v0.15.0
+# https://github.com/kubernetes-sigs/kind
+# https://kind.sigs.k8s.io
+go install sigs.k8s.io/kind@v0.17.0
 
 kind version
 
@@ -29,5 +31,5 @@ kind create cluster --config cluster2.yaml # --name cluster2
 
 kubectl cluster-info --context kind-cluster2
 
-kind export logs --name cluster2 /home/hello/Work/kind/logs
+kind export logs --name cluster2 /home/hello/data/KinD/logs
 # # kind delete cluster --name cluster2

@@ -22,7 +22,7 @@ kubeadmConfigPatches:
 
 nodes:
 - role: control-plane
-  image: kindest/node:v1.25.2
+  image: kindest/node:v1.25.3
   kubeadmConfigPatches:
   - |
     kind: InitConfiguration
@@ -38,15 +38,15 @@ nodes:
 #- role: control-plane
 
 - role: worker
-  image: kindest/node:v1.25.2
+  image: kindest/node:v1.25.3
   extraPortMappings:
   - { containerPort: 30011, hostPort: 30011}
   extraMounts:
-  - { hostPath: /home/hello/Work/kind/worker02, containerPath: /data }
+  - { hostPath: /home/ubuntu/data/KinD/worker01, containerPath: /data }
 
 - role: worker
-  image: kindest/node:v1.25.2
+  image: kindest/node:v1.25.3
   extraPortMappings:
   - { containerPort: 30011, hostPort: 30012}
   extraMounts:
-  - { hostPath: /home/hello/Work/kind/worker02, containerPath: /data }
+  - { hostPath: /home/ubuntu/data/KinD/worker02, containerPath: /data }

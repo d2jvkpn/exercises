@@ -100,7 +100,7 @@ func OddEvenList(head *ListNode) *ListNode {
 	)
 
 	for curr = head; curr != nil; curr = curr.Next {
-		length += 1;
+		length += 1
 	}
 	// fmt.Println("~~~ length:", length)
 
