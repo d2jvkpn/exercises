@@ -31,7 +31,7 @@ impl TreeNode {
     }
 }
 
-pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+pub fn inorder_traversal1(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
     fn traversal(node: &TreeNode) -> Vec<i32> {
         let mut result = Vec::new();
 
@@ -74,8 +74,14 @@ pub fn inorder_traversal2(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
 }
 
 pub fn inorder_traversal3(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
-    let mut stack = Vec::new();
-    let mut curr: Option<Rc<RefCell<TreeNode>>> = root;
+    type Link = Option<Rc<RefCell<TreeNode>>>;
+
+    // let mut stack = Vec::new();
+    // let mut curr: Option<Rc<RefCell<TreeNode>>> = root;
+
+    let mut stack: Vec<Link> = Vec::new();
+    let mut curr: Link = root;
+
     let mut result = Vec::new();
 
     loop {
