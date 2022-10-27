@@ -55,6 +55,45 @@ pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
     }
 }
 
+// https://www.jianshu.com/p/7a62dcc96304
 pub fn inorder_traversal2(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
-    todo!()
+    fn inorder_dfs(node: &Option<Rc<RefCell<TreeNode>>>, ans: &mut Vec<i32>) {
+        match node {
+            None => {}
+            Some(x) => {
+                inorder_dfs(&x.borrow().left, ans);
+                ans.push(x.borrow().val);
+                inorder_dfs(&x.borrow().right, ans);
+            }
+        }
+    }
+
+    let mut ans = vec![];
+    inorder_dfs(&root, &mut ans);
+    ans
+}
+
+pub fn inorder_traversal3(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+    let mut stack = Vec::new();
+    let mut curr: Option<Rc<RefCell<TreeNode>>> = root;
+    let mut result = Vec::new();
+
+    loop {
+        if curr.is_some() {
+            let node = curr.unwrap();
+            curr = node.clone().borrow_mut().left.take();
+            stack.push(Some(node.clone()));
+        } else if !stack.is_empty() {
+            let node = stack.pop().flatten().unwrap();
+            // let node = stack.pop().unwrap().unwrap();
+            result.push(node.clone().borrow().val);
+            curr = node.clone().borrow_mut().right.take();
+        } else {
+            break;
+        }
+    }
+
+    // stack.iter().map(|v| v.as_ref().unwrap().borrow().val).collect()
+    // stack.into_iter().map(|v| v.unwrap().borrow().val).collect()
+    result
 }

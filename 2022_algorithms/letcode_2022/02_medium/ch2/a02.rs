@@ -23,6 +23,7 @@ fn type_name_of<T>(_: &T) -> String {
 
 fn demo() {
     //
+    println!("\n>>>");
     let node = Some(Rc::new(RefCell::new(42_i32))); // Option<Rc<RefCell<i32>>>
 
     if let Some(ref e1) = node {
@@ -38,6 +39,7 @@ fn demo() {
     println!("{:?}", node); // Some(RefCell { value: 42 })
 
     //
+    println!("\n>>>");
     let node = Rc::new(RefCell::new(24));
     println!("{:?}, {}", node, type_name_of(&node));
 
@@ -49,8 +51,22 @@ fn demo() {
     println!("{:?}", val);
 
     //
+    println!("\n>>>");
     let node = Rc::new(RefCell::new(24));
     let n1 = node.clone();
     let n2 = node.clone();
     println!("n1={:?}, n2={:?}", n1, n2);
+
+    *n1.borrow_mut() += 1;
+    *n2.borrow_mut() += 1;
+    println!("n1={:?}, n2={:?}", n1, n2);
+
+    //
+    println!("\n>>>");
+    let mut a = Some(42);
+    let mut b: Option<i32> = None;
+    println!("a={:?}, b={:?}", a, b);
+
+    b = a.take();
+    println!("a={:?}, b={:?}", a, b);
 }
