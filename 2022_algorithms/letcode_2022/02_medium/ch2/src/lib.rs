@@ -80,9 +80,8 @@ pub fn inorder_traversal3(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
     // let mut curr: Option<Rc<RefCell<TreeNode>>> = root;
 
     let mut stack: Vec<Link> = Vec::new();
-    let mut curr: Link = root;
-
     let mut result = Vec::new();
+    let mut curr: Link = root;
 
     loop {
         if curr.is_some() {
