@@ -102,3 +102,38 @@ pub fn inorder_traversal3(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
     // stack.into_iter().map(|v| v.unwrap().borrow().val).collect()
     result
 }
+
+pub fn zigzag_level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> {
+    fn traverse(node: &TreeNode, mut depth: usize, ans: &mut Vec<Vec<i32>>) {
+        if ans.len() < depth {
+            (0..depth - ans.len()).for_each(|_| ans.push(vec![]));
+        }
+        ans[depth - 1].push(node.val);
+
+        depth += 1;
+
+        if node.left.is_some() {
+            traverse(&node.left.as_ref().unwrap().borrow(), depth, ans);
+        }
+
+        if node.right.is_some() {
+            traverse(&node.right.as_ref().unwrap().borrow(), depth, ans);
+        }
+    }
+
+    let mut ans = if let Some(node) = root {
+        let mut ans = vec![];
+        traverse(&node.borrow(), 1, &mut ans);
+        ans
+    } else {
+        vec![]
+    };
+
+    (0..ans.len()).for_each(|idx| {
+        if idx % 2 == 1 {
+            ans[idx].reverse();
+        }
+    });
+
+    ans
+}
