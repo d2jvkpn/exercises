@@ -129,11 +129,7 @@ pub fn zigzag_level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> 
         vec![]
     };
 
-    (0..ans.len()).for_each(|idx| {
-        if idx % 2 == 1 {
-            ans[idx].reverse();
-        }
-    });
+    (1..ans.len()).step_by(2).for_each(|idx| ans[idx].reverse());
 
     ans
 }
