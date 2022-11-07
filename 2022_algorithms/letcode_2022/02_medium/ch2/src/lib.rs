@@ -230,6 +230,49 @@ fn kth_smallest(root: Option<Rc<RefCell<TreeNode>>>, k: i32) -> i32 {
     return 0;
 }
 
+pub fn num_islands(grid: Vec<Vec<char>>) -> i32 {
+    let mut grid = grid;
+    let (m, n) = (grid.len(), grid[0].len());
+    let mut count: i32 = 0;
+
+    fn clear(grid: &mut Vec<Vec<char>>, i: usize, j: usize) {
+        // println!("~~~ {}, {}", i, j);
+        let (m, n) = (grid.len(), grid[0].len());
+        if i < m && j < n {
+            if grid[i][j] == '0' {
+                return;
+            }
+            grid[i][j] = '0';
+        }
+
+        if i > 0 {
+            clear(grid, i - 1, j);
+        }
+        if i < m - 1 {
+            clear(grid, i + 1, j);
+        }
+
+        if j > 0 {
+            clear(grid, i, j - 1);
+        }
+        if j < n - 1 {
+            clear(grid, i, j + 1);
+        }
+    }
+
+    for i in 0..m {
+        for j in 0..n {
+            if grid[i][j] == '0' {
+                continue;
+            }
+            count += 1;
+            clear(&mut grid, i, j);
+        }
+    }
+
+    count
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -263,5 +306,17 @@ mod tests {
         root.right = Some(n2.as_child());
 
         assert_eq!(kth_smallest(Some(root.as_child()), 3), 4);
+    }
+
+    #[test]
+    fn t_num_islands() {
+        let grid = vec![
+            vec!['1', '1', '1', '1', '0'],
+            vec!['1', '1', '0', '1', '0'],
+            vec!['1', '1', '0', '0', '0'],
+            vec!['0', '0', '0', '0', '0'],
+        ];
+
+        assert_eq!(num_islands(grid), 1);
     }
 }
