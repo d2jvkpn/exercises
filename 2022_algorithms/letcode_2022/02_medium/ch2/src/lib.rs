@@ -27,7 +27,34 @@ pub struct TreeNode {
 impl TreeNode {
     #[inline]
     pub fn new(val: i32) -> Self {
-        TreeNode { val, left: None, right: None }
+        Self { val, left: None, right: None }
+    }
+
+    pub fn child(val: i32) -> Rc<RefCell<Self>> {
+        let node = Self { val, left: None, right: None };
+        Rc::new(RefCell::new(node))
+    }
+
+    pub fn as_child(self: Self) -> Rc<RefCell<Self>> {
+        Rc::new(RefCell::new(self))
+    }
+
+    pub fn subtree(parent: i32, left: i32, right: i32) -> Self {
+        let mut node = Self::new(parent);
+        node.left = Some(Self::child(left));
+        node.right = Some(Self::child(right));
+        node
+    }
+
+    pub fn partial_tree(parent: i32, is_left: bool, val: i32) -> Self {
+        let mut node = Self::new(parent);
+        let child = Self::child(val);
+        if is_left {
+            node.left = Some(child);
+        } else {
+            node.right = Some(child);
+        }
+        node
     }
 }
 
@@ -121,15 +148,120 @@ pub fn zigzag_level_order(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<Vec<i32>> 
         }
     }
 
-    let mut ans = if let Some(node) = root {
+    if let Some(node) = root {
         let mut ans = vec![];
         traverse(&node.borrow(), 1, &mut ans);
+        (1..ans.len()).step_by(2).for_each(|idx| ans[idx].reverse());
         ans
     } else {
         vec![]
-    };
+    }
+}
 
-    (1..ans.len()).step_by(2).for_each(|idx| ans[idx].reverse());
+pub fn build_tree(preorder: Vec<i32>, inorder: Vec<i32>) -> Option<Rc<RefCell<TreeNode>>> {
+    fn new_child(val: i32) -> Rc<RefCell<TreeNode>> {
+        let node = TreeNode { val, left: None, right: None };
+        Rc::new(RefCell::new(node))
+    }
 
-    ans
+    if preorder.is_empty() {
+        return None;
+    }
+
+    let root = new_child(preorder[0]);
+    let mut stack: Vec<Rc<RefCell<TreeNode>>> = Vec::with_capacity(preorder.len());
+
+    let mut curr = root.clone();
+    let mut j = 0;
+
+    for i in 1..preorder.len() {
+        if curr.borrow().val != inorder[j] {
+            let left = new_child(preorder[i]);
+            curr.borrow_mut().left = Some(left.clone());
+            stack.push(curr);
+            curr = left;
+            continue;
+        }
+
+        j += 1;
+        while let Some(v) = stack.last() {
+            if v.borrow().val == inorder[j] {
+                curr = v.clone();
+                stack.pop();
+                j += 1;
+            } else {
+                break;
+            }
+        }
+
+        let right = new_child(preorder[i]);
+        curr.borrow_mut().right = Some(right.clone());
+        curr = right;
+    }
+
+    return Some(root);
+}
+
+fn kth_smallest(root: Option<Rc<RefCell<TreeNode>>>, k: i32) -> i32 {
+    let (mut curr, mut mark) = (root, 1);
+    let mut stack = Vec::new();
+
+    while !stack.is_empty() || curr.is_some() {
+        if curr.is_some() {
+            let node = curr.unwrap();
+            println!("~~~ curr: {:?}", node.borrow().val);
+            stack.push(Some(node.clone()));
+            curr = node.borrow_mut().left.take();
+        } else {
+            let node = stack.pop().flatten().unwrap();
+            println!("~~~ pop: {:?}", node.borrow().val);
+
+            if k == mark {
+                return node.borrow().val;
+            } else {
+                mark += 1;
+            }
+            if let Some(v) = &node.borrow().right {
+                curr = Some(v.clone());
+            };
+        }
+    }
+
+    return 0;
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    // [3,9,20,15,7], [9,3,15,20,7]
+    #[test]
+    fn t_build_tree() {
+        let ans = build_tree(vec![3, 9, 20, 15, 7], vec![9, 3, 15, 20, 7]);
+        println!("<<< {:?}", ans);
+
+        let mut tree = TreeNode::partial_tree(3, true, 9);
+        let node = TreeNode::subtree(20, 15, 7);
+        tree.right = Some(node.as_child());
+
+        assert_eq!(ans, Some(tree.as_child()));
+    }
+
+    #[test]
+    fn t_kth_smallest() {
+        // https://en.wikipedia.org/wiki/File:Binary_search_tree.svg
+        let mut n1 = TreeNode::partial_tree(3, true, 1);
+        let node = TreeNode::subtree(6, 4, 7);
+        n1.right = Some(node.as_child());
+
+        let mut n2 = TreeNode::new(10);
+        let node = TreeNode::partial_tree(14, true, 13);
+        n2.right = Some(node.as_child());
+
+        let mut root = TreeNode::new(8);
+        root.left = Some(n1.as_child());
+        root.right = Some(n2.as_child());
+
+        assert_eq!(kth_smallest(Some(root.as_child()), 3), 4);
+    }
 }
