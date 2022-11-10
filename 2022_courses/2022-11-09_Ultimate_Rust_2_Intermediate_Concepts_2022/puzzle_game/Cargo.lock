@@ -18,6 +18,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "puzzle_game"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+]
+
+[[package]]
 name = "quote"
 version = "1.0.21"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -62,11 +70,3 @@ name = "unicode-ident"
 version = "1.0.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6ceab39d59e4c9499d4e5a8ee0e2735b891bb7308ac83dfb4e80cad195c9f6f3"
-
-[[package]]
-name = "x02"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "thiserror",
-]

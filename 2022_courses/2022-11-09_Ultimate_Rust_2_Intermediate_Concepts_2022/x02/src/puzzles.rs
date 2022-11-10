@@ -18,6 +18,7 @@ pub enum PuzzleType {
 }
 
 #[derive(Debug, Clone, Copy)]
+#[non_exhaustive]
 pub enum PuzzleError {
     WontFit(u16),
     MissingPieces,
