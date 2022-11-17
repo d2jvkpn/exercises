@@ -12,7 +12,6 @@ import (
 
 const (
 	_TargetBits = 24
-	_MaxNonce   = math.MaxInt64
 )
 
 func main() {
@@ -109,7 +108,6 @@ func (pow *ProofOfWork) prepareData(nonce int) []byte {
 
 func (pow *ProofOfWork) Run() (int, []byte) {
 	var (
-		count   int64
 		hashInt big.Int
 		hash    [32]byte
 		data    []byte
@@ -121,8 +119,7 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		start.Format(time.RFC3339), pow.block.Data,
 	)
 
-	for nonce < _MaxNonce {
-		count++
+	for nonce < math.MaxInt64 {
 		data = pow.prepareData(nonce)
 		hash = sha256.Sum256(data)
 		fmt.Printf("\r%x", hash)
@@ -136,7 +133,7 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 	}
 
 	// fmt.Println("\n~~~", hashInt, pow.target)
-	fmt.Printf("\n    %d times, %s\n\n", count, time.Since(start))
+	fmt.Printf("\n    %d times, %s\n\n", nonce+1, time.Since(start))
 
 	return nonce, hash[:]
 }
