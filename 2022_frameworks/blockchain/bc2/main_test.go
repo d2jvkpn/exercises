@@ -23,4 +23,8 @@ func TestBigint(t *testing.T) {
 
 	val.SetBytes([]byte{255, 255})
 	fmt.Printf("%v\n", val)
+
+	target := big.NewInt(1)
+	target.Lsh(target, uint(256-_TargetBits))
+	fmt.Println("target =", target)
 }

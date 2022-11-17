@@ -28,15 +28,15 @@ type Block struct {
 
 func (b Block) String() string {
 	return fmt.Sprintf(
-		"Timestamp: %s\n  Data: %s\n  PrevBlockHash: %x\n  Hash: %x",
+		"Timestamp: %s\n    Data: %s\n    PrevBlockHash: %x\n    Hash: %x",
 		time.Unix(b.Timestamp, 0), b.Data,
 		b.PrevBlockHash, b.Hash,
 	)
 }
 
 func (b *Block) SetHash() {
-	timestamp := []byte(strconv.FormatInt(b.Timestamp, 10))
-	headers := bytes.Join([][]byte{b.PrevBlockHash, b.Data, timestamp}, []byte{})
+	timestampBts := []byte(strconv.FormatInt(b.Timestamp, 10))
+	headers := bytes.Join([][]byte{timestampBts, b.Data, b.PrevBlockHash}, []byte{})
 	hash := sha256.Sum256(headers)
 
 	b.Hash = hash[:]

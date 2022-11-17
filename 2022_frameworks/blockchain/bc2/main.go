@@ -1,3 +1,4 @@
+// https://jeiwan.net/posts/building-blockchain-in-go-part-2/
 package main
 
 import (
@@ -11,7 +12,7 @@ import (
 )
 
 const (
-	_TargetBits = 24
+	_TargetBits = 20 // 24
 )
 
 func main() {
@@ -41,14 +42,6 @@ func (b Block) String() string {
 		time.Unix(b.Timestamp, 0), b.Data,
 		b.PrevBlockHash, b.Hash, b.Nonce,
 	)
-}
-
-func (b *Block) SetHash() {
-	timestamp := IntToHex(b.Timestamp)
-	headers := bytes.Join([][]byte{b.PrevBlockHash, b.Data, timestamp}, []byte{})
-	hash := sha256.Sum256(headers)
-
-	b.Hash = hash[:]
 }
 
 func NewBlock(data string, prevBlockHash []byte) *Block {
@@ -97,7 +90,7 @@ func NewProofOfWork(b *Block) *ProofOfWork {
 func (pow *ProofOfWork) prepareData(nonce int) []byte {
 	data := bytes.Join(
 		[][]byte{
-			pow.block.PrevBlockHash, pow.block.Data, IntToHex(pow.block.Timestamp),
+			IntToHex(pow.block.Timestamp), pow.block.Data, pow.block.PrevBlockHash,
 			IntToHex(_TargetBits), IntToHex(nonce),
 		},
 		[]byte{},
@@ -125,6 +118,7 @@ func (pow *ProofOfWork) Run() (int, []byte) {
 		fmt.Printf("\r%x", hash)
 		hashInt.SetBytes(hash[:])
 
+		// fmt.Printf("\n~~~ %s\n    %s\n", hashInt.String(), pow.target.String())
 		if hashInt.Cmp(pow.target) == -1 { // less than
 			break
 		} else {
