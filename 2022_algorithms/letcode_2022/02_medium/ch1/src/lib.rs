@@ -162,6 +162,55 @@ pub fn group_anagrams2(strs: Vec<&str>) -> Vec<Vec<&str>> {
     result
 }
 
+pub fn group_anagrams3(strs: Vec<String>) -> Vec<Vec<String>> {
+    let mut bools = vec![false; strs.len()];
+    let mut ans: Vec<Vec<String>> = Vec::new();
+
+    for i in 0..strs.len() {
+        if bools[i] {
+            continue;
+        }
+        bools[i] = true;
+
+        let mut target: Vec<char> = strs[i].chars().collect();
+        target.sort();
+
+        let mut elem: Vec<String> = Vec::new();
+        elem.push(strs[i].clone());
+
+        for j in i + 1..strs.len() {
+            if bools[j] {
+                continue;
+            }
+
+            let mut chars: Vec<char> = strs[j].chars().collect();
+            chars.sort();
+            if chars == target {
+                bools[j] = true;
+                elem.push(strs[j].clone());
+            }
+        }
+        ans.push(elem);
+    }
+
+    ans
+}
+
+pub fn group_anagrams4(strs: Vec<String>) -> Vec<Vec<String>> {
+    use std::collections::HashMap;
+    let mut data: HashMap<Vec<char>, Vec<String>> = HashMap::with_capacity(strs.len()/2);
+
+    strs.into_iter().for_each(|v| {
+        let mut key: Vec<char> = v.chars().collect();
+        key.sort();
+
+        let d = data.entry(key).or_insert(Vec::new());
+        d.push(v);
+    });
+
+    data.into_values().collect()
+}
+
 pub fn length_of_longest_substring(s: String) -> i32 {
     use std::collections::HashSet;
 

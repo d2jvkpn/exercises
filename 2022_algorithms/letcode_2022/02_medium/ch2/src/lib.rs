@@ -275,6 +275,53 @@ pub fn num_islands(grid: Vec<Vec<char>>) -> i32 {
     count
 }
 
+pub fn add_two_numbers(
+    l1: Option<Box<ListNode>>,
+    l2: Option<Box<ListNode>>,
+) -> Option<Box<ListNode>> {
+    let mut n1 = l1;
+    let mut n2 = l2;
+
+    let mut carry: i32 = 0;
+    let mut list = Vec::new();
+
+    while n1.is_some() || n2.is_some() {
+        let v1 = n1.unwrap_or(Box::new(ListNode::new(0)));
+        n1 = v1.next;
+
+        let v2 = n2.unwrap_or(Box::new(ListNode::new(0)));
+        n2 = v2.next;
+
+        let mut val = v1.val + v2.val + carry;
+        (val, carry) = if val < 10 { (val, 0) } else { (val % 10, val / 10) };
+        // println!("~~~ {}, {}, {}, {}", v1.val, v2.val, carry, val);
+        list.push(val);
+    }
+
+    if carry > 0 {
+        list.push(1);
+    }
+
+    into_list_node(list)
+}
+
+fn into_list_node(list: Vec<i32>) -> Option<Box<ListNode>> {
+    if list.is_empty() {
+        return None;
+    }
+
+    let len = list.len();
+    let mut head = Some(Box::new(ListNode::new(list[len - 1])));
+
+    list[..len - 1].iter().rev().for_each(|&v| {
+        let mut node = Box::new(ListNode::new(v));
+        node.next = head.take();
+        head = Some(node);
+    });
+
+    head
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -320,5 +367,20 @@ mod tests {
         ];
 
         assert_eq!(num_islands(grid), 1);
+    }
+
+    #[test]
+    fn t_add_two_numbers() {
+        let n1 = into_list_node(vec![9, 9, 9, 9, 9, 9, 9]);
+        let n2 = into_list_node(vec![9, 9, 9, 9]);
+        let ans = into_list_node(vec![8, 9, 9, 9, 0, 0, 0, 1]);
+
+        assert_eq!(add_two_numbers(n1, n2), ans);
+
+        let n1 = into_list_node(vec![2, 4, 3]);
+        let n2 = into_list_node(vec![5, 6, 4]);
+        let ans = into_list_node(vec![7, 0, 8]);
+
+        assert_eq!(add_two_numbers(n1, n2), ans);
     }
 }
