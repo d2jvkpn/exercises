@@ -38,8 +38,9 @@ type User struct {
 
 func main() {
 	var (
-		err error
-		vc  *viper.Viper
+		err    error
+		vc     *viper.Viper
+		result *gorm.DB
 	)
 
 	defer func() {
@@ -68,11 +69,34 @@ func main() {
 
 	if err = _DB.Table("users").Create(&jane).Error; err != nil {
 		if e, ok := err.(*pgconn.PgError); ok && e.Code == "23505" {
-			fmt.Println("user already exists:", e.ConstraintName)
+			fmt.Println("!!! user already exists:", e.ConstraintName)
 			err = nil
 		} else {
 			return
 		}
+	}
+
+	//
+	doe := User{}
+	result = _DB.Table("users").Where("id = 101").Limit(1).Find(&doe)
+	if err = result.Error; err != nil {
+		fmt.Printf("%#v\n", err)
+		return
+	} else if result.RowsAffected == 0 {
+		fmt.Println("!!! not found")
+	} else {
+		fmt.Println("~~~", doe)
+	}
+
+	result = _DB.Table("users").Where("id = 101").First(&doe)
+	if err = result.Error; err != nil {
+		if err.Error() == "record not found" {
+			fmt.Println("!!! not found")
+		} else {
+			return
+		}
+	} else {
+		fmt.Println("~~~", doe)
 	}
 
 	///
