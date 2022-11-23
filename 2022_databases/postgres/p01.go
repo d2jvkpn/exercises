@@ -26,7 +26,7 @@ type User struct {
 	ID        int64     `gorm:"column:id" json:"id,omitempty"`
 	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"createdAt,omitempty"`
 	UpdatedAt time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt,omitempty"`
-	Status    string    `gorm:"column:status;type:enum('ok','blocked','deleted');default:'ok'" json:"status,omitempty"`
+	Status    string    `gorm:"column:status;type;default:'ok'" json:"status,omitempty"`
 
 	Name         string          `gorm:"column:name" json:"name,omitempty"`
 	Email        string          `gorm:"column:email" json:"email,omitempty"`
@@ -74,5 +74,5 @@ func main() {
 	if err = _DB.Table("users").Find(&users).Error; err != nil {
 		return
 	}
-	fmt.Println("~~~", users)
+	fmt.Printf("~~~ %#v\n", users)
 }
