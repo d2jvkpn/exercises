@@ -7,7 +7,8 @@ target/
 .vscode
 *.iml
 
-wk*/
+wk_*
+*.auth
 tmp/
 *.out
 *.test
