@@ -8,6 +8,7 @@ import (
 	"github.com/d2jvkpn/go-web/pkg/misc"
 	"github.com/d2jvkpn/go-web/pkg/orm"
 	"github.com/d2jvkpn/go-web/pkg/wrap"
+	"github.com/jackc/pgconn"
 	"github.com/spf13/viper"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -66,7 +67,12 @@ func main() {
 	}
 
 	if err = _DB.Table("users").Create(&jane).Error; err != nil {
-		return
+		if e, ok := err.(*pgconn.PgError); ok && e.Code == "23505" {
+			fmt.Println("user already exists:", e.ConstraintName)
+			err = nil
+		} else {
+			return
+		}
 	}
 
 	///
