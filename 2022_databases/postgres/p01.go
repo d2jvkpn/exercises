@@ -54,20 +54,14 @@ func main() {
 	conf := &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{SingularTable: true},
 	}
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Shanghai",
-		vc.GetString("host"), vc.GetString("user"),
-		vc.GetString("password"), vc.GetString("database"),
-	)
-	if _DB, err = gorm.Open(postgres.Open(dsn), conf); err != nil {
+	// dsn: "host=%s user=%s password=%s dbname=%s port=5432 sslmode=disable TimeZone=Asia/Shanghai"
+	if _DB, err = gorm.Open(postgres.Open(vc.GetString("dsn")), conf); err != nil {
 		return
 	}
 	_DB = _DB.Debug()
 
 	jane := User{
-		Name:         "Jone",
-		Email:        "jone@gmail.com",
-		Birthday:     "2000-01-01",
+		Name: "Jone", Email: "jone@gmail.com", Birthday: "2000-01-01",
 		Attributions: map[string]string{"gender": "female"},
 	}
 
