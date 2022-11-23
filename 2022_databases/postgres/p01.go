@@ -23,16 +23,16 @@ func init() {
 }
 
 type User struct {
-	ID        int64     `gorm:"column:id;"`
-	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime"`
-	UpdatedAt time.Time `gorm:"column:updated_at;autoUpdateTime"`
-	Status    string    `gorm:"column:status;type:enum('ok','blocked','deleted');default:'ok'"`
+	ID        int64     `gorm:"column:id" json:"id,omitempty"`
+	CreatedAt time.Time `gorm:"column:created_at;autoCreateTime" json:"createdAt,omitempty"`
+	UpdatedAt time.Time `gorm:"column:updated_at;autoUpdateTime" json:"updatedAt,omitempty"`
+	Status    string    `gorm:"column:status;type:enum('ok','blocked','deleted');default:'ok'" json:"status,omitempty"`
 
-	Name         string          `gorm:"column:name"`
-	Email        string          `gorm:"column:email"`
-	Phone        string          `gorm:"column:phone"`
-	Birthday     string          `gorm:"column:birthday"`
-	Attributions orm.Map[string] `gorm:"column:attributions;type:json"`
+	Name         string          `gorm:"column:name" json:"name,omitempty"`
+	Email        string          `gorm:"column:email" json:"email,omitempty"`
+	Phone        string          `gorm:"column:phone" json:"phone,omitempty"`
+	Birthday     string          `gorm:"column:birthday" json:"birthday,omitempty"`
+	Attributions orm.Map[string] `gorm:"column:attributions;type:json" json:"attributions,omitempty"`
 }
 
 func main() {

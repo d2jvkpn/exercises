@@ -36,7 +36,7 @@ func MaxProfit(prices []int) int {
 			p, max = v, prices[i]
 			continue
 		}
-		
+
 		if v2 := max - prices[i]; v2 > p {
 			p, min = v2, prices[i]
 		}
