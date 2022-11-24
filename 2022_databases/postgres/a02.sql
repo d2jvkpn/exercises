@@ -1,4 +1,3 @@
-```postgres
 create role king login password 'king' valid until 'infinity' createdb;
 create role queen login password 'queen' valid until '2023-1-1 00:00' superuser;
 -- alter role king with superuser;
@@ -32,4 +31,3 @@ SELECT * FROM ROWS FROM (
   jsonb_each('{"a":"foo1","b":"bar"}'::jsonb),
   jsonb_each('{"c":"foo2"}'::jsonb))
   x (a1,a1_val,a2_val);
-```
