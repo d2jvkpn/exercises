@@ -5,3 +5,8 @@ build:
 	mkdir -p target
 	GOOS=linux GOARCH=amd64 go build -o target/main -ldflags="-w -s" ./
 	ls -lh target/
+
+run:
+	mkdir -p target
+	GOOS=linux GOARCH=amd64 go build -o target/main -ldflags="-w -s" ./
+	target/main

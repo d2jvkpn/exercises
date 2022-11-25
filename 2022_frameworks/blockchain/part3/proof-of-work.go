@@ -3,11 +3,19 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
+	"encoding/binary"
 	"fmt"
 	"math"
 	"math/big"
 	"time"
 )
+
+func IntToHex[T int64 | int](num T) []byte {
+	buff := new(bytes.Buffer)
+	_ = binary.Write(buff, binary.BigEndian, int64(num)) // ignore error
+
+	return buff.Bytes()
+}
 
 type ProofOfWork struct {
 	block  *Block
