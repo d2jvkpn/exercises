@@ -9,7 +9,7 @@ import (
 
 // Blockchain keeps a sequence of Blocks
 type Blockchain struct {
-	bucket   []byte // blockchain buckey key in blotdb
+	bucket   []byte // bucket key of blockchain in blotdb
 	lastHash []byte // hash of last block
 	dbPath   string
 	db       *bolt.DB
