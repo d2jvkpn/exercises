@@ -17,8 +17,8 @@ type Block struct {
 
 func (b Block) String() string {
 	return fmt.Sprintf(
-		"--> Timestamp: %s\n    Data: %s\n    PrevBlockHash: %x\n    Hash: %x\n    Nonce: %d",
-		time.Unix(b.Timestamp, 0), b.Data,
+		"Timestamp: %s, Data: %s, PrevBlockHash: %x, Hash: %x, Nonce: %d",
+		time.Unix(b.Timestamp, 0).Format(time.RFC3339), b.Data,
 		b.PrevBlockHash, b.Hash, b.Nonce,
 	)
 }

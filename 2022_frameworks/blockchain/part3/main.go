@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
 )
 
 var (
@@ -14,13 +15,14 @@ var (
 
 func main() {
 	var (
-		err error
-		bc  *Blockchain
+		count int
+		err   error
+		bc    *Blockchain
 	)
 
 	flag.IntVar(&_TargetBits, "targetBits", _TargetBits, "target bits")
 	flag.Parse()
-	fmt.Println("~~~ target bits:", _TargetBits)
+	log.Println("Target bits:", _TargetBits)
 
 	if err = os.MkdirAll("data", 0755); err != nil {
 		log.Fatalln(err)
@@ -49,7 +51,10 @@ func main() {
 		if block := iter.Next(); block == nil {
 			break
 		} else {
-			fmt.Println(block)
+			count++
+			fmt.Println(">>>", strings.Replace(block.String(), ", ", "\n    ", -1))
 		}
 	}
+
+	fmt.Printf("~~~ %d blocks in total\n", count)
 }
