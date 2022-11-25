@@ -9,7 +9,7 @@ import (
 
 // Blockchain keeps a sequence of Blocks
 type Blockchain struct {
-	bucket   []byte // key in blotdb
+	bucket   []byte // blockchain buckey key in blotdb
 	lastHash []byte // hash of last block
 	dbPath   string
 	db       *bolt.DB
@@ -35,11 +35,7 @@ func NewBlockchain(dbPath, bucket string) (bc *Blockchain, err error) {
 	}
 
 	err = bc.db.Update(func(tx *bolt.Tx) (err error) {
-		var (
-			bts     []byte
-			genesis *Block
-			bucket  *bolt.Bucket
-		)
+		var bucket *bolt.Bucket
 
 		if bucket = tx.Bucket(bc.bucket); bucket != nil {
 			bc.lastHash = bucket.Get(bc.lastHashKey())
@@ -51,8 +47,8 @@ func NewBlockchain(dbPath, bucket string) (bc *Blockchain, err error) {
 		}
 
 		log.Println("No existing blockchain found. Creating a new one...")
-		genesis = NewGenesisBlock()
-		bts, _ = genesis.Serialize()
+		genesis := NewGenesisBlock()
+		bts, _ := genesis.Serialize()
 		bc.lastHash = genesis.Hash
 		if err = bucket.Put(bc.lastHash, bts); err != nil {
 			return err
