@@ -23,7 +23,7 @@ type BlockchainIterator struct {
 }
 
 func (bc *Blockchain) lastHashKey() []byte {
-	return []byte("lastHashKey")
+	return []byte("last-hash-key")
 }
 
 func (bc *Blockchain) Close() error {
