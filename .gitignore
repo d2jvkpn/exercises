@@ -18,3 +18,4 @@ target/
 *.pprof
 *.pprof.pdf
 *.expect
+data/
