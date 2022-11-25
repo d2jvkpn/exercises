@@ -26,6 +26,10 @@ func (bc *Blockchain) lastHashKey() []byte {
 	return []byte("lastHashKey")
 }
 
+func (bc *Blockchain) Close() error {
+	return bc.db.Close()
+}
+
 // NewBlockchain creates a new Blockchain with genesis Block
 func NewBlockchain(dbPath, bucket string) (bc *Blockchain, err error) {
 	bc = &Blockchain{dbPath: dbPath, bucket: []byte(bucket)}
@@ -108,7 +112,6 @@ func (bc *Blockchain) AddBlock(data string) (err error) {
 	})
 
 	if err != nil {
-		log.Printf("!!! AddBlock: %v\n", err)
 		return err
 	}
 

@@ -26,12 +26,23 @@ func main() {
 		log.Fatalln(err)
 	}
 
+	defer func() {
+		if err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
 	if bc, err = NewBlockchain("data/blockchain.db", "theBlockchain"); err != nil {
 		log.Fatalf("NewBlockchain: %v\n", err)
 	}
+	defer bc.Close()
 
-	_ = bc.AddBlock("Send 1 BTC to Ivan")
-	_ = bc.AddBlock("Send 2 more BTC to Ivan")
+	if err = bc.AddBlock("Send 1 BTC to Ivan"); err != nil {
+		return
+	}
+	if err = bc.AddBlock("Send 2 more BTC to Ivan"); err != nil {
+		return
+	}
 
 	iter := bc.Iterator()
 	for {
