@@ -1,9 +1,9 @@
-use a01::{run, run2};
+use ch03::{run, run2};
 use std::net::TcpListener;
 
 #[actix_rt::test]
-async fn health_check_works() {
-    spawn_app("0.0.0.0:8000");
+async fn health_check_works1() {
+    spawn_app1("0.0.0.0:8000");
 
     let client = reqwest::Client::new();
     // Act
@@ -17,14 +17,14 @@ async fn health_check_works() {
     assert_eq!(Some(0), response.content_length());
 }
 
-fn spawn_app(addr: &str) {
+fn spawn_app1(addr: &str) {
     let server = run(addr).expect("Failed to bind addrress");
     let _ = tokio::spawn(server);
 }
 
 #[actix_rt::test]
-async fn health_check_works_v2() {
-    let address = spawn_app2();
+async fn health_check_works2() {
+    let address = spawn_app();
 
     let client = reqwest::Client::new();
     // Act
@@ -38,7 +38,7 @@ async fn health_check_works_v2() {
     assert_eq!(Some(0), response.content_length());
 }
 
-fn spawn_app2() -> String {
+fn spawn_app() -> String {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
 
