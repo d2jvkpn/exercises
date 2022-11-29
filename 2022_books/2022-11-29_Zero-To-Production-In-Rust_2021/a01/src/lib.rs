@@ -1,5 +1,5 @@
 use actix_web::{dev::Server, web, App, HttpRequest, HttpResponse, HttpServer, Responder};
-use std::io;
+use std::{io, net::TcpListener};
 
 async fn greet(req: HttpRequest) -> impl Responder {
     let name = req.match_info().get("name").unwrap_or("World");
@@ -11,7 +11,7 @@ async fn health_check() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-pub fn run(addr: &str) -> Result<Server, io::Error> {
+pub fn run(addr: &str) -> io::Result<Server> {
     let server = HttpServer::new(|| {
         App::new()
             .route("/", web::get().to(greet))
@@ -19,6 +19,19 @@ pub fn run(addr: &str) -> Result<Server, io::Error> {
             .route("/health_check", web::get().to(health_check))
     })
     .bind(addr)?
+    .run();
+
+    Ok(server)
+}
+
+pub fn run2(listener: TcpListener) -> io::Result<Server> {
+    let server = HttpServer::new(|| {
+        App::new()
+            .route("/", web::get().to(greet))
+            .route("/greet/{name}", web::get().to(greet))
+            .route("/health_check", web::get().to(health_check))
+    })
+    .listen(listener)?
     .run();
 
     Ok(server)
