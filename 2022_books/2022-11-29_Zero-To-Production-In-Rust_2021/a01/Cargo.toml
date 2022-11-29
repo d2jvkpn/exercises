@@ -1,8 +1,14 @@
 [package]
-name = "zero2prod"
+name = "a01"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+actix-rt = "2.7.0"
+actix-web = "4.2.1"
+tokio = "1.22.0"
+
+[dev-dependencies]
+reqwest = "0.11.13"
