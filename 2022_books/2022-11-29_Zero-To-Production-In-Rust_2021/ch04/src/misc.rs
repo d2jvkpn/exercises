@@ -41,6 +41,16 @@ pub fn load_open(config: &mut ServiceConfig) {
     config.route("/open/hello/{platform}", web::post().to(hello));
 }
 
+pub fn load_open2(config: &mut ServiceConfig) {
+    let router = web::scope("/open")
+        .service(web::resource("/subscribe").route(web::post().to(subscribe)))
+        .service(web::resource("/greet/{name}").route(web::get().to(greet)))
+        .service(web::resource("/hello").route(web::post().to(hello)))
+        .service(web::resource("/hello/{platform}").route(web::post().to(hello)));
+
+    config.service(router);
+}
+
 pub async fn greet(req: HttpRequest) -> String {
     let name = req.match_info().get("name").unwrap_or("World");
     let name = &name;
@@ -80,15 +90,11 @@ async fn hello(
     };
 
     if name.is_empty() {
-        return (
-            Json(Resp { code: -1, msg: format!("name isn't provided"), data }),
-            StatusCode::BAD_REQUEST,
-        );
+        let resp = Resp { code: -1, msg: format!("name isn't provided"), data };
+        return (Json(resp), StatusCode::BAD_REQUEST);
     } else if name.len() > 32 {
-        return (
-            Json(Resp { code: -1, msg: format!("the length of name excceds limit 32"), data }),
-            StatusCode::BAD_REQUEST,
-        );
+        let resp = Resp { code: -1, msg: format!("the length of name excceds limit 32"), data };
+        return (Json(resp), StatusCode::BAD_REQUEST);
     }
 
     (Json(Resp { code: 0, msg: format!("Hello, {}!", name), data }), StatusCode::OK)

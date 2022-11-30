@@ -25,14 +25,14 @@ struct Opt {
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     let opt = Opt::from_args();
+
     if !opt.release {
-        println!("~~~ {:?}", opt);
+        println!("~~~ StructOpt: {:?}", opt);
     }
 
     let config = configuration::open(&opt.config).expect("Failed to read configuration.");
-
-    let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
     let listener = net::TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
+    let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
 
     run(listener, pool, opt.threads)?.await
 }
