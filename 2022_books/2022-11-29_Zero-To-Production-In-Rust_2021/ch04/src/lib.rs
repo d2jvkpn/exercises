@@ -1,10 +1,8 @@
 pub mod configuration;
+pub mod misc;
 pub mod routes;
 
-use actix_web::{
-    dev::Server, get, http::header::ContentType, web, App, HttpResponse, HttpServer, Responder,
-};
-use routes::subscribe;
+use actix_web::{dev::Server, web, App, HttpServer};
 use sqlx::PgPool;
 use std::{io, net, thread};
 
@@ -20,9 +18,9 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
         println!("~~~ start http server");
 
         App::new()
-            .route("/health", web::get().to(health_check))
-            .service(healthy)
-            .route("/open/subscribe", web::post().to(subscribe))
+            .route("/health", web::get().to(misc::health_check))
+            .service(misc::healthy)
+            .configure(misc::load_open)
             // Register the connection as part of the application state
             .app_data(conn.clone())
     })
@@ -33,22 +31,9 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
     Ok(server)
 }
 
-pub async fn health_check() -> HttpResponse {
-    // return "impl Responder" is ok too
-    HttpResponse::Ok().finish()
-}
-
-#[get("/healthy")]
-pub async fn healthy() -> impl Responder {
-    HttpResponse::Ok()
-        .content_type(ContentType::plaintext())
-        .insert_header(("X-Version", "0.1.0"))
-        .body("Ok")
-}
-
 #[cfg(test)]
 mod tests {
-    use super::health_check;
+    use crate::misc::health_check;
 
     #[actix_rt::test]
     async fn health_check_succeeds() {

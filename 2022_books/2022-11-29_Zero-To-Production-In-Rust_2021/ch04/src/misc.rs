@@ -1,0 +1,88 @@
+use crate::routes::subscribe;
+use actix_web::{
+    get,
+    http::{header::ContentType, StatusCode},
+    web::{self, Json, Query, ServiceConfig},
+    HttpRequest, HttpResponse, Responder,
+};
+use chrono::{Local, SecondsFormat};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
+
+#[derive(Deserialize, Serialize)]
+pub struct User {
+    name: Option<String>,
+}
+
+#[derive(Deserialize, Serialize)]
+pub struct Resp<T> {
+    code: i16,
+    msg: String,
+    data: HashMap<String, T>,
+}
+
+pub async fn health_check() -> HttpResponse {
+    // return "impl Responder" is ok too
+    HttpResponse::Ok().finish()
+}
+
+#[get("/healthy")]
+pub async fn healthy() -> impl Responder {
+    HttpResponse::Ok()
+        .content_type(ContentType::plaintext())
+        .insert_header(("X-Version", "0.1.0"))
+        .body("Ok")
+}
+
+pub fn load_open(config: &mut ServiceConfig) {
+    config.route("/open/subscribe", web::post().to(subscribe));
+    config.route("/open/hello", web::post().to(hello));
+}
+
+async fn hello(
+    req: HttpRequest,
+    query: Query<HashMap<String, String>>,
+    user: Json<User>,
+) -> impl Responder {
+    let id: i64 = match query.get("id") {
+        Some(v) => v.parse().unwrap_or(0),
+        None => 0,
+    };
+
+    let now = Local::now();
+
+    println!(
+        "~~~ {} /open/hello method={}, platform={:?}, version: {:?}, id={}",
+        now.to_rfc3339_opts(SecondsFormat::Millis, true),
+        req.method(),
+        req.match_info().get("platform"),
+        req.headers().get("X-Version"),
+        id,
+    );
+
+    let mut data = HashMap::new();
+
+    let name = match &user.name {
+        Some(v) => &v,
+        None => "",
+    };
+
+    if name.is_empty() {
+        return (
+            Json(Resp { code: -1, msg: format!("name isn't provided"), data }),
+            StatusCode::BAD_REQUEST,
+        );
+    } else if name.len() > 32 {
+        return (
+            Json(Resp { code: -1, msg: format!("the length of name excceds 32"), data }),
+            StatusCode::BAD_REQUEST,
+        );
+    }
+
+    // let data = HashMap::from([("now".to_string(), now.format("%Y-%m-%dT%H:%M:%S%:z").to_string())]);
+    data.insert("now".to_string(), now.format("%Y-%m-%dT%H:%M:%S%:z").to_string());
+
+    (Json(Resp { code: 0, msg: format!("Hello, {}!", name), data }), StatusCode::OK)
+    // use serde_json::json;
+    // Ok(Json(json!({"code": 0, "msg": "welcome"})))
+}
