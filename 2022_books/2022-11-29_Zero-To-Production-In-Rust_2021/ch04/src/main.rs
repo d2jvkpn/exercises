@@ -9,7 +9,7 @@ struct Opt {
     #[structopt(long = "config", default_value = "configs/local.yaml")]
     config: String,
 
-    #[structopt(long = "addr", default_value = "127.0.0.1")]
+    #[structopt(long = "addr", default_value = "0.0.0.0")]
     addr: String,
 
     #[structopt(long = "port", default_value = "8000")]
