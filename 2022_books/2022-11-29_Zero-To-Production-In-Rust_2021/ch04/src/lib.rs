@@ -21,7 +21,7 @@ pub mod configuration;
 pub mod routes;
 
 use actix_web::{dev::Server, web, App, HttpServer};
-use routes::{common, misc};
+// use routes::misc::{health_check, healthy, load_open};
 use sqlx::PgPool;
 use std::{io, net, thread, time::Duration};
 
@@ -37,9 +37,9 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
         println!("~~~ start http server: {}", func!());
 
         App::new()
-            .route("/health", web::get().to(misc::health_check))
-            .service(misc::healthy)
-            .configure(misc::load_open)
+            .route("/health", web::get().to(routes::health_check))
+            .service(routes::healthy)
+            .configure(routes::load_open)
             // Register the connection as part of the application state
             .app_data(data.clone())
     })

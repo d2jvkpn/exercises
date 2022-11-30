@@ -1,4 +1,6 @@
-use crate::{common::Resp, routes::subscribe};
+// use crate::{common::Resp};
+use super::common::Resp;
+use super::subscriptions::subscribe;
 use actix_web::{
     get,
     http::{header::ContentType, StatusCode},
