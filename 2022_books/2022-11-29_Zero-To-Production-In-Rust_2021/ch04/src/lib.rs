@@ -11,11 +11,9 @@ macro_rules! func {
         let list: Vec<&str> = name.split("::").collect();
         // println!("??? {:?}", list);
         let length = list.len();
+        let idx = if list[length - 2] == "{{closure}}" { length - 3 } else { length - 2 };
 
-        let name =
-            if list[length - 2] == "{{closure}}" { list[length - 3] } else { list[length - 2] };
-
-        format!("{}:{}:{}", caller.file(), caller.line(), name)
+        format!("{}:{}:{}", caller.file(), caller.line(), list[idx])
     }};
 }
 
