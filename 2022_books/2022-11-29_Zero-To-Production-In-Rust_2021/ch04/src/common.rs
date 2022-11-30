@@ -1,7 +1,27 @@
 use actix_web::{http::StatusCode, web::Json};
+use anyhow;
 use serde::{self, Deserialize, Serialize};
 use std::panic; // collections::HashMap
+use thiserror;
 use uuid::Uuid;
+
+#[derive(Debug, thiserror::Error)]
+#[non_exhaustive]
+pub enum Error {
+    #[error("bad request: {msg}")]
+    BadRequest { msg: String, cause: anyhow::Error },
+
+    #[error("invalid parameter: {msg}")]
+    InvalidParameter { msg: String, cause: anyhow::Error },
+
+    #[error("internal server error")]
+    Internal(anyhow::Error),
+}
+
+#[allow(dead_code)]
+fn demo_bad_request<S: AsRef<str>>(msg: S, err: anyhow::Error) -> Error {
+    Error::BadRequest { msg: msg.as_ref().to_string(), cause: err.context(func!()) }
+}
 
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
