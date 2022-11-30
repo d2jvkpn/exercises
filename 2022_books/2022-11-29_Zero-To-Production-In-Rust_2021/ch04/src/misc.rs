@@ -68,7 +68,7 @@ async fn hello(
     println!("==> caller: {}", func!());
 
     println!(
-        "~~~ {} /open/hello method={}, platform={:?}, version: {:?}, id={}",
+        "~~~ {} /open/hello: method={}, platform={:?}, version={:?}, id={}",
         now.to_rfc3339_opts(SecondsFormat::Millis, true),
         req.method(),
         req.match_info().get("platform"),
