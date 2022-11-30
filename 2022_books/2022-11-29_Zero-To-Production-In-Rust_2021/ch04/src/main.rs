@@ -1,6 +1,6 @@
 use ch04::{configuration, run};
 use sqlx::PgPool;
-use std::{io, net::TcpListener};
+use std::{io, net};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -26,11 +26,11 @@ async fn main() -> io::Result<()> {
         println!("~~~ {:?}", opt);
     }
 
-    let config = configuration::parse(&opt.config).expect("Failed to read configuration.");
+    let config = configuration::open(&opt.config).expect("Failed to read configuration.");
 
     let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
 
-    let listener = TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
+    let listener = net::TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
 
-    run(listener, pool)?.await
+    run(listener, pool, 0)?.await
 }

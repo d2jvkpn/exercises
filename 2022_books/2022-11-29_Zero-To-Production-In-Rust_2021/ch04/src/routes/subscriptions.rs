@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
 use serde::Deserialize;
-use sqlx::{Error::Database, PgPool};
+use sqlx::{self, PgPool};
 use uuid::Uuid;
 
 #[derive(Deserialize)]
@@ -33,7 +33,7 @@ INSERT INTO subscriptions (id, email, name, subscribed_at)
 
     println!("Failed to execute query: {:?}", err);
 
-    if let Database(e) = err {
+    if let sqlx::Error::Database(e) = err {
         if e.code().unwrap() == "23505" {
             return HttpResponse::Ok().finish();
         }

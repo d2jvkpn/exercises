@@ -15,7 +15,7 @@ async fn spawn_app() -> TestApp {
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
 
-    let config = configuration::parse("configs/local.yaml").expect("Failed to read configuration");
+    let config = configuration::open("configs/local.yaml").expect("Failed to read configuration");
 
     let mut conn =
         PgConnection::connect(&config.database).await.expect("Failed to connect to Postgres");
@@ -30,7 +30,7 @@ async fn spawn_app() -> TestApp {
     let pool = PgPool::connect(&dsn).await.expect("Failed to connect to Postgres.");
     sqlx::migrate!("./migrations").run(&pool).await.expect("Failed to migrate the database");
 
-    let server = run(listener, pool.clone()).expect("Failed to bind addrress");
+    let server = run(listener, pool.clone(), 0).expect("Failed to bind addrress");
     let _ = tokio::spawn(server);
 
     TestApp { address, pool }
@@ -43,7 +43,7 @@ async fn health_check() {
     let client = reqwest::Client::new();
     // Act
     let response = client
-        .get(&format!("{}/health_check", &app.address))
+        .get(&format!("{}/health", &app.address))
         .send()
         .await
         .expect("Failed to execute request.");
@@ -60,7 +60,7 @@ async fn subscribe() {
     let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
     // Act
     let response = client
-        .post(&format!("{}/subscriptions", &app.address))
+        .post(&format!("{}/subscribe", &app.address))
         .header("Content-Type", "application/x-www-form-urlencoded")
         .body(body)
         .send()
@@ -78,7 +78,7 @@ async fn subscribe() {
     for (invalid_body, error_message) in test_cases {
         // Act
         let response = client
-            .post(&format!("{}/subscriptions", &app.address))
+            .post(&format!("{}/subscribe", &app.address))
             .header("Content-Type", "application/x-www-form-urlencoded")
             .body(invalid_body)
             .send()

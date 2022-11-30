@@ -7,7 +7,7 @@ pub struct Settings {
     // pub port: u16,
 }
 
-pub fn parse(yaml: &str) -> Result<Settings, ConfigError> {
+pub fn open(yaml: &str) -> Result<Settings, ConfigError> {
     let mut builder = Config::builder();
 
     builder = builder

@@ -370,6 +370,7 @@ dependencies = [
  "actix-web",
  "chrono",
  "config",
+ "num_cpus",
  "reqwest",
  "serde",
  "sqlx",
