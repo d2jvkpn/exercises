@@ -1,6 +1,6 @@
 use actix_web::{http::StatusCode, web::Json};
 use serde::{self, Deserialize, Serialize};
-use std::{collections::HashMap, panic::Location};
+use std::{collections::HashMap, panic};
 use uuid::Uuid;
 
 #[derive(Deserialize, Serialize)]
@@ -41,7 +41,7 @@ impl<T: Serialize> Resp<T> {
 
     #[track_caller]
     pub fn ok(self) -> (Json<Resp<T>>, StatusCode) {
-        let caller = Location::caller();
+        let caller = panic::Location::caller();
         // println!("{}:{}", file!(), line!());
         println!("requestId: {}, caller: {}:{}", self.request_id, caller.file(), caller.line());
         (Json(self), StatusCode::OK)
@@ -49,7 +49,7 @@ impl<T: Serialize> Resp<T> {
 
     #[track_caller]
     pub fn bad_request(self) -> (Json<Resp<T>>, StatusCode) {
-        let caller = Location::caller();
+        let caller = panic::Location::caller();
         println!("requestId: {}, caller: {}:{}", self.request_id, caller.file(), caller.line());
         (Json(self), StatusCode::BAD_REQUEST)
     }

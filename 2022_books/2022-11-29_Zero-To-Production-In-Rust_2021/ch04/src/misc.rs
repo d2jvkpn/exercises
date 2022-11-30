@@ -65,6 +65,8 @@ async fn hello(
 
     let now = Local::now();
 
+    println!("==> caller: {}", func!());
+
     println!(
         "~~~ {} /open/hello method={}, platform={:?}, version: {:?}, id={}",
         now.to_rfc3339_opts(SecondsFormat::Millis, true),

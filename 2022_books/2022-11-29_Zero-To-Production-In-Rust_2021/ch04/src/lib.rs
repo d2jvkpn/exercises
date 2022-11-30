@@ -6,10 +6,16 @@ macro_rules! func {
             std::any::type_name::<T>()
         }
 
+        let caller = std::panic::Location::caller();
         let name = type_name_of(f);
         let list: Vec<&str> = name.split("::").collect();
+        // println!("??? {:?}", list);
+        let length = list.len();
 
-        list[list.len() - 2].to_string()
+        let name =
+            if list[length - 2] == "{{closure}}" { list[length - 3] } else { list[length - 2] };
+
+        format!("{}:{}:{}", caller.file(), caller.line(), name)
     }};
 }
 
@@ -31,7 +37,7 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
     }
 
     let server = HttpServer::new(move || {
-        println!("~~~ start http server");
+        println!("~~~ start http server: {}", func!());
 
         App::new()
             .route("/health", web::get().to(misc::health_check))
