@@ -53,7 +53,7 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
 
 #[cfg(test)]
 mod tests {
-    use crate::misc::health_check;
+    use crate::routes::health_check;
 
     #[actix_rt::test]
     async fn health_check_succeeds() {
