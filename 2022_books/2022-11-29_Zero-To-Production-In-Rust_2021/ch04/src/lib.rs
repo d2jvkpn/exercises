@@ -17,12 +17,11 @@ macro_rules! func {
     }};
 }
 
-pub mod common;
 pub mod configuration;
-pub mod misc;
 pub mod routes;
 
 use actix_web::{dev::Server, web, App, HttpServer};
+use routes::{common, misc};
 use sqlx::PgPool;
 use std::{io, net, thread, time::Duration};
 

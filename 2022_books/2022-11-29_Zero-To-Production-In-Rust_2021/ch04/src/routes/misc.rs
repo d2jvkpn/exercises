@@ -7,6 +7,7 @@ use actix_web::{
 };
 use chrono::{Local, SecondsFormat};
 use serde::{self, Deserialize, Serialize};
+use serde_json::json;
 use std::collections::HashMap;
 
 #[derive(Deserialize, Serialize)]
@@ -22,10 +23,15 @@ pub async fn health_check() -> HttpResponse {
 
 #[get("/healthy")]
 pub async fn healthy() -> impl Responder {
+    //    HttpResponse::Ok()
+    //        .content_type(ContentType::plaintext())
+    //        .insert_header(("X-Version", "0.1.0"))
+    //        .body("Ok")
+
     HttpResponse::Ok()
-        .content_type(ContentType::plaintext())
+        .content_type(ContentType::json())
         .insert_header(("X-Version", "0.1.0"))
-        .body("Ok")
+        .body(json!({"code":0,"msg":"ok"}).to_string())
 }
 
 pub fn load_open(config: &mut ServiceConfig) {
