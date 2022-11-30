@@ -16,3 +16,9 @@ curl -i -X POST -H "Content-Type: application/json" \
 
 curl -i -X POST -H "Content-Type: application/json" \
   $addr/open/hello -d '{"name": "Evol Mason"}'
+
+curl -i -X POST -H "Content-Type: application/json" \
+  $addr/open/hello?id=101 -d '{"name": "Evol Mason"}'
+
+curl -i -X POST -H "Content-Type: application/json" \
+  $addr/open/hello/h5 -d '{"name": "Evol Mason, Evol Mason, Evol Mason, Evol Mason, Evol Mason"}'

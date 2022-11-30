@@ -36,7 +36,16 @@ pub async fn healthy() -> impl Responder {
 
 pub fn load_open(config: &mut ServiceConfig) {
     config.route("/open/subscribe", web::post().to(subscribe));
+    config.route("/open/greet/{name}", web::get().to(greet));
     config.route("/open/hello", web::post().to(hello));
+    config.route("/open/hello/{platform}", web::post().to(hello));
+}
+
+pub async fn greet(req: HttpRequest) -> String {
+    let name = req.match_info().get("name").unwrap_or("World");
+    let name = &name;
+
+    format!("Hello {}!\n", name)
 }
 
 async fn hello(
@@ -60,7 +69,10 @@ async fn hello(
         id,
     );
 
-    let mut data = HashMap::new();
+    // let mut data = HashMap::new();
+    // data.insert("now".to_string(), now.format("%FT%T%:z").to_string());
+    // # now.format("%Y-%m-%dT%H:%M:%S%:z")
+    let data = HashMap::from([("now".to_string(), now.format("%FT%T%:z").to_string())]);
 
     let name = match &user.name {
         Some(v) => &v,
@@ -74,13 +86,10 @@ async fn hello(
         );
     } else if name.len() > 32 {
         return (
-            Json(Resp { code: -1, msg: format!("the length of name excceds 32"), data }),
+            Json(Resp { code: -1, msg: format!("the length of name excceds limit 32"), data }),
             StatusCode::BAD_REQUEST,
         );
     }
-
-    // let data = HashMap::from([("now".to_string(), now.format("%Y-%m-%dT%H:%M:%S%:z").to_string())]);
-    data.insert("now".to_string(), now.format("%Y-%m-%dT%H:%M:%S%:z").to_string());
 
     (Json(Resp { code: 0, msg: format!("Hello, {}!", name), data }), StatusCode::OK)
     // use serde_json::json;
