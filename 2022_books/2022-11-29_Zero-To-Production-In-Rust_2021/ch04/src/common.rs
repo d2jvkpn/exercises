@@ -49,18 +49,21 @@ impl<T: Serialize> Resp<T> {
             caller.file(),
             caller.line()
         );
+
         (Json(self), StatusCode::OK)
     }
 
     #[track_caller]
     pub fn bad_request(self) -> (Json<Resp<T>>, StatusCode) {
         let caller = panic::Location::caller();
+
         println!(
             "~~~ bad_request: requestId={}, caller={}:{}",
             self.request_id,
             caller.file(),
             caller.line()
         );
+
         (Json(self), StatusCode::BAD_REQUEST)
     }
 }

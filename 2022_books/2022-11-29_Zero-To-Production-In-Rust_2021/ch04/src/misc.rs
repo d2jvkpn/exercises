@@ -65,12 +65,13 @@ async fn hello(
 
     let now = Local::now();
 
-    println!("==> caller: {}", func!());
-
     println!(
-        "~~~ {} /open/hello: method={}, platform={:?}, version={:?}, id={}",
+        "~~~ {} {}: method={}, path: {}?{}, platform={:?}, version={:?}, id={}",
         now.to_rfc3339_opts(SecondsFormat::Millis, true),
+        func!(),
         req.method(),
+        req.path(),
+        req.query_string(),
         req.match_info().get("platform"),
         req.headers().get("X-Version"),
         id,
