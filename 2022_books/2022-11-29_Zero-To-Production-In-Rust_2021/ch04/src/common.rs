@@ -1,6 +1,6 @@
 use actix_web::{http::StatusCode, web::Json};
 use serde::{self, Deserialize, Serialize};
-use std::{collections::HashMap, panic};
+use std::panic; // collections::HashMap
 use uuid::Uuid;
 
 #[derive(Deserialize, Serialize)]
@@ -8,7 +8,8 @@ use uuid::Uuid;
 pub struct Resp<T: Serialize> {
     pub code: i16,
     pub msg: String,
-    pub data: HashMap<String, T>,
+    // pub data: HashMap<String, T>,
+    pub data: Option<T>,
     pub request_id: String,
 }
 //#[serde(requestId)]
@@ -19,7 +20,8 @@ impl<T: Serialize> Resp<T> {
         Resp {
             code: 0,
             msg: "ok".into(),
-            data: HashMap::new(),
+            // data: HashMap::new(),
+            data: None,
             request_id: Uuid::new_v4().to_string(),
         }
     }
@@ -34,8 +36,8 @@ impl<T: Serialize> Resp<T> {
         self
     }
 
-    pub fn data(&mut self, data: HashMap<String, T>) -> &mut Self {
-        self.data = data;
+    pub fn data(&mut self, data: T) -> &mut Self {
+        self.data = Some(data);
         self
     }
 
