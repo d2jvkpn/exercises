@@ -3,6 +3,16 @@ set -eu -o pipefail
 _wd=$(pwd)
 _path=$(dirname $0 | xargs -i readlink -f {})
 
+#### cargo test
+cargo test --lib
+
+cargo test --lib -- common --show-output
+
+cargo test --bins
+
+cargo test --test "*" -- health_check --exact
+
+#### test by using curl
 addr=http://localhost:8000
 
 curl -i -X GET $addr/healthy

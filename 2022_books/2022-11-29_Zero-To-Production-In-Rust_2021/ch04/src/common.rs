@@ -15,12 +15,7 @@ pub enum Error {
     InvalidParameter { msg: String, cause: anyhow::Error },
 
     #[error("internal server error")]
-    Internal(anyhow::Error),
-}
-
-#[allow(dead_code)]
-fn demo_bad_request<S: AsRef<str>>(msg: S, err: anyhow::Error) -> Error {
-    Error::BadRequest { msg: msg.as_ref().to_string(), cause: err.context(func!()) }
+    InternalError(anyhow::Error),
 }
 
 #[derive(Deserialize, Serialize)]
@@ -87,5 +82,32 @@ impl<T: Serialize> Resp<T> {
         );
 
         (Json(self), StatusCode::BAD_REQUEST)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Error::{self, BadRequest};
+
+    fn demo_bad_request() -> Error {
+        // let err = anyhow::Error::new(instance_of(std::error::Error));
+        let err = anyhow::anyhow!("something is wrong");
+        BadRequest { msg: "a message to frontend".to_string(), cause: err.context(func!()) }
+    }
+
+    #[test]
+    fn bad_request() {
+        let err = demo_bad_request();
+        println!(">>> {}", err);
+
+        if let Error::BadRequest { msg, cause } = err {
+            println!(
+                ">>> msg: {}, casese: {:?}",
+                msg,
+                cause.chain().map(|v| v.to_string()).collect::<Vec<String>>()
+            );
+        } else {
+            panic!("not a BadRequest");
+        }
     }
 }
