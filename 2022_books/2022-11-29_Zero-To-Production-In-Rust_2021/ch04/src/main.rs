@@ -26,11 +26,12 @@ struct Opt {
 async fn main() -> io::Result<()> {
     let opt = Opt::from_args();
 
+    let config = configuration::open(&opt.config).expect("Failed to read configuration.");
+
     if !opt.release {
-        println!("~~~ StructOpt: {:?}", opt);
+        println!("~~~ flags: {:?}, version: {}", opt, config.version);
     }
 
-    let config = configuration::open(&opt.config).expect("Failed to read configuration.");
     let listener = net::TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
     let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
 

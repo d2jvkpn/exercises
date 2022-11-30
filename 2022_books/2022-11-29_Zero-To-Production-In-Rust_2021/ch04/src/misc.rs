@@ -80,7 +80,7 @@ async fn hello(
     // let mut data = HashMap::new();
     // data.insert("now".to_string(), now.format("%FT%T%:z").to_string());
     // # now.format("%Y-%m-%dT%H:%M:%S%:z")
-    let data = HashMap::from([("now".to_string(), now.format("%FT%T%:z").to_string())]);
+    let data = HashMap::from([("now", now.format("%FT%T%:z").to_string())]);
     let mut resp = Resp::new();
     resp.data(data);
 
