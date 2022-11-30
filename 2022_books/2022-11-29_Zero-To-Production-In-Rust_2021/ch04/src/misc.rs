@@ -1,3 +1,4 @@
+use crate::common::Resp;
 use crate::routes::subscribe;
 use actix_web::{
     get,
@@ -6,19 +7,13 @@ use actix_web::{
     HttpRequest, HttpResponse, Responder,
 };
 use chrono::{Local, SecondsFormat};
-use serde::{Deserialize, Serialize};
+use serde::{self, Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub struct User {
     name: Option<String>,
-}
-
-#[derive(Deserialize, Serialize)]
-pub struct Resp<T> {
-    code: i16,
-    msg: String,
-    data: HashMap<String, T>,
 }
 
 pub async fn health_check() -> HttpResponse {
@@ -67,6 +62,7 @@ async fn hello(
         Some(v) => v.parse().unwrap_or(0),
         None => 0,
     };
+    // let id: i64 = req.match_info().query("id").parse::<i64>().unwrap_or(0);
 
     let now = Local::now();
 
@@ -83,6 +79,8 @@ async fn hello(
     // data.insert("now".to_string(), now.format("%FT%T%:z").to_string());
     // # now.format("%Y-%m-%dT%H:%M:%S%:z")
     let data = HashMap::from([("now".to_string(), now.format("%FT%T%:z").to_string())]);
+    let mut resp = Resp::new();
+    resp.data(data);
 
     let name = match &user.name {
         Some(v) => &v,
@@ -90,14 +88,16 @@ async fn hello(
     };
 
     if name.is_empty() {
-        let resp = Resp { code: -1, msg: format!("name isn't provided"), data };
+        // (resp.code, resp.msg) = (-1, format!("name isn't provided"));
+        resp.code(-1).msg("name isn't provided");
         return (Json(resp), StatusCode::BAD_REQUEST);
     } else if name.len() > 32 {
-        let resp = Resp { code: -1, msg: format!("the length of name excceds limit 32"), data };
+        resp.code(-2).msg("the length of name excceds limit 32");
         return (Json(resp), StatusCode::BAD_REQUEST);
     }
 
-    (Json(Resp { code: 0, msg: format!("Hello, {}!", name), data }), StatusCode::OK)
+    resp.msg = format!("Hello, {}!", name);
+    (Json(resp), StatusCode::OK)
     // use serde_json::json;
     // Ok(Json(json!({"code": 0, "msg": "welcome"})))
 }

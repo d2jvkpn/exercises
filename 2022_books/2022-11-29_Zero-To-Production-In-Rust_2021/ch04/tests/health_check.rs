@@ -1,4 +1,4 @@
-use ch04::{configuration, run};
+use ch04::{common, run};
 use std::net::TcpListener;
 
 // use sqlx::{Connection, PgConnection};
@@ -15,7 +15,7 @@ async fn spawn_app() -> TestApp {
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
 
-    let config = configuration::open("configs/local.yaml").expect("Failed to read configuration");
+    let config = common::open_config("configs/local.yaml").expect("Failed to read configuration");
 
     let mut conn =
         PgConnection::connect(&config.database).await.expect("Failed to connect to Postgres");
