@@ -15,6 +15,9 @@ struct Opt {
     #[structopt(long = "port", default_value = "8000")]
     port: u16,
 
+    #[structopt(long = "threads", default_value = "0")]
+    threads: usize,
+
     #[structopt(long)]
     release: bool,
 }
@@ -29,8 +32,7 @@ async fn main() -> io::Result<()> {
     let config = configuration::open(&opt.config).expect("Failed to read configuration.");
 
     let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
-
     let listener = net::TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
 
-    run(listener, pool, 0)?.await
+    run(listener, pool, opt.threads)?.await
 }

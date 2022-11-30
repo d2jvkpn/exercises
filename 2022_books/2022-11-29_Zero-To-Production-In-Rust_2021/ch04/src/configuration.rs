@@ -4,7 +4,6 @@ use serde::Deserialize;
 #[derive(Deserialize)]
 pub struct Settings {
     pub database: String,
-    // pub port: u16,
 }
 
 pub fn open(yaml: &str) -> Result<Settings, ConfigError> {

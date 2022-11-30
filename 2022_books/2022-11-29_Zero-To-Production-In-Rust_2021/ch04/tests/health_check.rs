@@ -57,10 +57,11 @@ async fn subscribe() {
     // Arrange
     let app = spawn_app().await;
     let client = reqwest::Client::new();
+    let path = format!("{}/open/subscribe", &app.address);
     let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
     // Act
     let response = client
-        .post(&format!("{}/subscribe", &app.address))
+        .post(&path)
         .header("Content-Type", "application/x-www-form-urlencoded")
         .body(body)
         .send()
@@ -78,7 +79,7 @@ async fn subscribe() {
     for (invalid_body, error_message) in test_cases {
         // Act
         let response = client
-            .post(&format!("{}/subscribe", &app.address))
+            .post(&path)
             .header("Content-Type", "application/x-www-form-urlencoded")
             .body(invalid_body)
             .send()
