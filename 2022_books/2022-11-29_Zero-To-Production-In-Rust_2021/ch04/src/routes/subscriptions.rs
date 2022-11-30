@@ -1,6 +1,7 @@
-use actix_web::{web, HttpResponse};
+use actix_web::{http::header::ContentType, web, HttpResponse};
 use chrono::Utc;
 use serde::Deserialize;
+use serde_json::json;
 use sqlx::{self, PgPool};
 use uuid::Uuid;
 
@@ -26,18 +27,32 @@ INSERT INTO subscriptions (id, email, name, subscribed_at)
     .execute(pool.get_ref())
     .await;
 
+    let mut resp = json!({"code": 0,"msg": "ok"});
+
     let err = match result {
-        Ok(_) => return HttpResponse::Ok().finish(),
+        Ok(_) => {
+            // return HttpResponse::Ok().finish()
+            return HttpResponse::Ok().content_type(ContentType::json()).body(resp.to_string());
+        }
         Err(e) => e,
     };
 
-    println!("Failed to execute query: {:?}", err);
+    // println!("Failed to execute query: {:?}", err);
 
     if let sqlx::Error::Database(e) = err {
         if e.code().unwrap() == "23505" {
-            return HttpResponse::Ok().finish();
+            // return HttpResponse::Ok().finish();
+            resp["msg"] = "you have already subscribed".into();
+
+            return HttpResponse::Conflict()
+                .content_type(ContentType::json())
+                .body(resp.to_string());
         }
     }
 
-    HttpResponse::InternalServerError().finish()
+    // HttpResponse::InternalServerError().finish()
+    resp["code"] = 1.into();
+    resp["msg"] = "internal server error".into();
+
+    HttpResponse::InternalServerError().content_type(ContentType::json()).body(resp.to_string())
 }

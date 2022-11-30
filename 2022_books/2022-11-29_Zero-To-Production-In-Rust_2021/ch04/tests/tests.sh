@@ -17,7 +17,7 @@ addr=http://localhost:8000
 
 curl -i -X GET $addr/healthy
 
-curl -i -X POST $addr/subscribe \
+curl -i -X POST $addr/open/subscribe \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d 'name=le%20guin&email=ursula_le_guin%40gmail.com'
 
