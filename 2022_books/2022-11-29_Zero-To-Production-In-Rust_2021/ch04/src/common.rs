@@ -1,27 +1,11 @@
-use config::{self, Config, ConfigError};
+use actix_web::{http::StatusCode, web::Json};
 use serde::{self, Deserialize, Serialize};
 use std::collections::HashMap;
 use uuid::Uuid;
 
-#[derive(Deserialize)]
-pub struct Settings {
-    pub database: String,
-}
-
-pub fn open_config(yaml: &str) -> Result<Settings, ConfigError> {
-    let mut builder = Config::builder();
-
-    builder = builder
-        .set_default("default", "1")?
-        .add_source(config::File::new(yaml, config::FileFormat::Yaml))
-        .set_override("override", "1")?;
-
-    builder.build()?.try_deserialize::<Settings>()
-}
-
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Resp<T> {
+pub struct Resp<T: Serialize> {
     pub code: i16,
     pub msg: String,
     pub data: HashMap<String, T>,
@@ -30,7 +14,7 @@ pub struct Resp<T> {
 //#[serde(requestId)]
 //request_id: String,
 
-impl<T> Resp<T> {
+impl<T: Serialize> Resp<T> {
     pub fn new() -> Resp<T> {
         Resp {
             code: 0,
@@ -53,5 +37,13 @@ impl<T> Resp<T> {
     pub fn data(&mut self, data: HashMap<String, T>) -> &mut Self {
         self.data = data;
         self
+    }
+
+    pub fn ok(self) -> (Json<Resp<T>>, StatusCode) {
+        (Json(self), StatusCode::OK)
+    }
+
+    pub fn bad_request(self) -> (Json<Resp<T>>, StatusCode) {
+        (Json(self), StatusCode::BAD_REQUEST)
     }
 }

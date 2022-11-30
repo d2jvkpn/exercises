@@ -1,4 +1,4 @@
-use ch04::{common, run};
+use ch04::{configuration, run};
 use sqlx::PgPool;
 use std::{io, net};
 use structopt::StructOpt;
@@ -30,7 +30,7 @@ async fn main() -> io::Result<()> {
         println!("~~~ StructOpt: {:?}", opt);
     }
 
-    let config = common::open_config(&opt.config).expect("Failed to read configuration.");
+    let config = configuration::open(&opt.config).expect("Failed to read configuration.");
     let listener = net::TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
     let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
 

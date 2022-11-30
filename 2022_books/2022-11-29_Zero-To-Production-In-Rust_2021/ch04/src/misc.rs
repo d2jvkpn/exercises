@@ -93,11 +93,12 @@ async fn hello(
         return (Json(resp), StatusCode::BAD_REQUEST);
     } else if name.len() > 32 {
         resp.code(-2).msg("the length of name excceds limit 32");
-        return (Json(resp), StatusCode::BAD_REQUEST);
+        return resp.bad_request();
     }
 
-    resp.msg = format!("Hello, {}!", name);
-    (Json(resp), StatusCode::OK)
+    resp.msg("Hello, {}!");
+    resp.ok()
+    // (Json(resp), StatusCode::OK)
     // use serde_json::json;
     // Ok(Json(json!({"code": 0, "msg": "welcome"})))
 }
