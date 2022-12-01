@@ -13,12 +13,7 @@ use serde::{self, Deserialize, Serialize};
 use serde_json::json;
 use std::collections::HashMap;
 
-#[derive(Deserialize, Serialize)]
-#[serde(rename_all = "camelCase")]
-pub struct User {
-    name: Option<String>,
-}
-
+// health check
 pub async fn healthz() -> HttpResponse {
     // return "impl Responder" is ok too
     HttpResponse::Ok().finish()
@@ -37,6 +32,7 @@ pub async fn healthy() -> impl Responder {
         .body(json!({"code":0,"msg":"ok"}).to_string())
 }
 
+// load serivces
 pub fn load_open_v1(config: &mut ServiceConfig) {
     config
         .route("/open/subscribe", web::post().to(subscribe))
@@ -59,13 +55,13 @@ pub fn load_open(config: &mut ServiceConfig) {
     config.service(info).service(router);
 }
 
+// extract data from path and query
 #[derive(Deserialize)]
 struct Info {
     user_id: u32,
     friend: String,
 }
 
-/// extract path info using serde
 #[get("/open/info/{user_id}/{friend}")] // <- define path parameters
 async fn info(info: web::Path<Info>) -> Result<String> {
     Ok(format!("Welcome {}, user_id {}!\n", info.friend, info.user_id))
@@ -83,6 +79,13 @@ pub async fn greet(req: HttpRequest, params: web::Query<Params>) -> String {
     let name = &name;
 
     format!("Hello {}, {:?}!\n", name, params)
+}
+
+//
+#[derive(Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct User {
+    name: Option<String>,
 }
 
 async fn hello(
