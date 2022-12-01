@@ -42,15 +42,25 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
         App::new()
             // middlewares .wrap(f1).wrap(f2).wrap(f3), execution order f3() -> f2() -> f1()
             .wrap_fn(|req, srv| {
-                println!("--> Hi from start. You requested: {}", req.path());
+                println!(
+                    "--> Hi from start. You requested: method={}, path={}",
+                    req.method(),
+                    req.path()
+                );
+
                 srv.call(req).map(|res| {
-                    println!("<-- Hi from response");
+                    let status = match &res {
+                        Ok(v) => v.status().as_u16(),
+                        Err(_) => 0,
+                    };
+
+                    println!("<-- Hi from response. Your response: status={}", status);
                     res
                 })
             })
             // .wrap(routes::middlewares::SimpleLogger)
             .route("/healthz", web::get().to(routes::healthz))
-            .service(routes::healthy)
+            //.service(routes::healthy)
             .configure(routes::open_scope)
             // Register the connection as part of the application state
             .app_data(data.clone())

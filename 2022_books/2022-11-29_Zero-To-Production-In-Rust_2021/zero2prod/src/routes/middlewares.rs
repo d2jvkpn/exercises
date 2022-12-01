@@ -78,7 +78,7 @@ where
             println!(
                 "<== elapsed: {:.3}ms, status: {}",
                 (elapsed as f64) / 1e3,
-                res.status().as_u16(),
+                &res.status().as_u16(),
             );
 
             Ok(res)

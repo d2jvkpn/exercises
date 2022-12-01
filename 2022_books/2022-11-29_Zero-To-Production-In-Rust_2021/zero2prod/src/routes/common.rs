@@ -47,17 +47,17 @@ impl<T: Serialize> Resp<T> {
         }
     }
 
-    pub fn code(&mut self, code: i16) -> &mut Self {
+    pub fn with_code(&mut self, code: i16) -> &mut Self {
         self.code = code;
         self
     }
 
-    pub fn msg<S: AsRef<str>>(&mut self, msg: S) -> &mut Self {
+    pub fn with_msg<S: AsRef<str>>(&mut self, msg: S) -> &mut Self {
         self.msg = msg.as_ref().to_string();
         self
     }
 
-    pub fn data(&mut self, data: T) -> &mut Self {
+    pub fn with_data(&mut self, data: T) -> &mut Self {
         self.data = Some(data);
         self
     }

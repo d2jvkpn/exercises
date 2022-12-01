@@ -18,17 +18,22 @@ pub async fn healthz() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-#[get("/healthy")]
-pub async fn healthy() -> impl Responder {
+#[get("/v1/healthy")]
+pub(super) async fn healthy(request_id: Option<web::ReqData<Uuid>>) -> impl Responder {
     //    HttpResponse::Ok()
     //        .content_type(ContentType::plaintext())
     //        .insert_header(("X-Version", "0.1.0"))
     //        .body("Ok")
 
+    let request_id: Uuid = match request_id {
+        Some(v) => v.into_inner(), // v: web::ReqData<Uuid>
+        None => Uuid::new_v4(),
+    };
+
     HttpResponse::Ok()
         .content_type(ContentType::json())
         .insert_header(("X-Version", "0.1.0"))
-        .body(json!({"code":0,"msg":"ok"}).to_string())
+        .body(json!({"code":0,"msg":"ok","requestId":request_id}).to_string())
 }
 
 // extract data from path and query
@@ -38,7 +43,7 @@ pub(super) struct Info {
     friend: String,
 }
 
-#[get("/open/info/{user_id}/{friend}")] // <- define path parameters
+#[get("/v1/info/{user_id}/{friend}")] // <- define path parameters
 pub(super) async fn info(info: web::Path<Info>) -> Result<String> {
     Ok(format!("Welcome {}, user_id {}!\n", info.friend, info.user_id))
 }
@@ -50,15 +55,11 @@ pub(super) struct Params {
     page_size: Option<u16>,
 }
 
-pub(super) async fn greet(
-    req: HttpRequest,
-    params: web::Query<Params>,
-    request_id: Option<web::ReqData<Uuid>>,
-) -> String {
+pub(super) async fn greet(req: HttpRequest, params: web::Query<Params>) -> String {
     let name = req.match_info().get("name").unwrap_or("World");
     let name = &name;
 
-    format!("Hello {}, {:?}, request_id: {:?}!\n", name, params, request_id)
+    format!("Hello {}, {:?}!\n", name, params)
 }
 
 // query, json body, and middleware-ext-mut
@@ -73,7 +74,8 @@ pub(super) async fn hello(
     req: HttpRequest,
     query: Query<HashMap<String, String>>,
     user: Json<User>,
-    request_id: Option<web::ReqData<Uuid>>,
+    request_id: web::ReqData<Uuid>,
+    // return 500 internal server error, if an Uuid wasn't added to request
 ) -> impl Responder {
     let id: i64 = match query.get("id") {
         Some(v) => v.parse().unwrap_or(0),
@@ -100,25 +102,21 @@ pub(super) async fn hello(
     // # now.format("%Y-%m-%dT%H:%M:%S%:z")
     let data = HashMap::from([("now", now.format("%FT%T%:z").to_string())]);
 
-    let request_id: Uuid = match request_id {
-        Some(v) => v.into_inner(), // v: web::ReqData<Uuid>
-        None => Uuid::new_v4(),
-    };
-    let mut resp = Resp::new(Some(request_id));
-    resp.data(data);
+    let mut resp = Resp::new(Some(request_id.into_inner()));
+    resp.with_data(data);
 
     let name = user.name.as_deref().unwrap_or("");
 
     if name.is_empty() {
         // (resp.code, resp.msg) = (-1, format!("name isn't provided"));
-        resp.code(-1).msg("name isn't provided");
+        resp.with_code(-1).with_msg("name isn't provided");
         return (Json(resp), StatusCode::BAD_REQUEST);
     } else if name.len() > 32 {
-        resp.code(-2).msg("the length of name excceds limit 32");
+        resp.with_code(-2).with_msg("the length of name excceds limit 32");
         return resp.bad_request();
     }
 
-    resp.msg("Hello, {}!");
+    resp.with_msg("Hello, {}!");
     resp.ok()
     // (Json(resp), StatusCode::OK)
     // use serde_json::json;

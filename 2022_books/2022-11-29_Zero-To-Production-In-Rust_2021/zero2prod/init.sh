@@ -3,16 +3,16 @@ set -eu -o pipefail
 _wd=$(pwd)
 _path=$(dirname $0 | xargs -i readlink -f {})
 
-
 rustc --version
 cargo --version
 
 cargo install cargo-tarpaulin cargo-audit cargo-edit cargo-expand
 rustup component add clippy rustfm
 
+# cargo new zero2prod && cd zero2prod
+mkdir -p zero2prod && cd zero2prod
+cargo init
 
-cargo new zero2prod
-cd zero2prod
 mkdir -p tests
 cargo add actix-web actix_rt tokio config chrono
 cargo add sqlx --features "runtime-actix-rustls macros postgres uuid chrono migrate"

@@ -5,6 +5,6 @@ mod subscriptions;
 
 pub mod middlewares;
 
-pub use apis::{healthy, healthz};
+pub use apis::healthz;
 pub use common::*;
 pub use load::*;

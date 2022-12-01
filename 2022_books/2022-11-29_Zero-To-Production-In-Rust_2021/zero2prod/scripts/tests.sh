@@ -15,7 +15,9 @@ cargo test --test "*" -- health_check --exact
 #### test by using curl
 addr=http://localhost:8000
 
-curl -i -X GET $addr/healthy
+curl -i -X GET $addr/healthz
+
+curl -i -X GET $addr/v1/healthy
 
 curl -i -X GET $addr/open/info/42/Mason
 

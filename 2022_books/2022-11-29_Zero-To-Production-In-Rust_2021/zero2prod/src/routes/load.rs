@@ -10,7 +10,8 @@ pub fn open_route(config: &mut ServiceConfig) {
         .route("/open/greet/{name}", get().to(greet))
         .route("/open/hello", post().to(hello))
         .route("/open/hello/{platform}", post().to(hello))
-        .service(info);
+        .service(info)
+        .service(healthy);
 }
 
 pub fn open_scope(config: &mut ServiceConfig) {
@@ -24,5 +25,5 @@ pub fn open_scope(config: &mut ServiceConfig) {
         .service(resource("/hello").route(post().to(hello)))
         .service(resource("/hello/{platform}").route(post().to(hello)));
 
-    config.service(info).service(router);
+    config.service(info).service(healthy).service(router);
 }
