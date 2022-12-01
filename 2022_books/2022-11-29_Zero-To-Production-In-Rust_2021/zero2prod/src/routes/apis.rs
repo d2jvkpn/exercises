@@ -1,11 +1,9 @@
 // use crate::{common::Resp};
 use super::common::Resp;
-use super::middlewares;
-use super::subscriptions::subscribe;
 use actix_web::{
     get,
     http::{header::ContentType, StatusCode},
-    web::{self, Json, Query, ServiceConfig},
+    web::{self, Json, Query},
     HttpRequest, HttpResponse, Responder, Result,
 };
 use chrono::{Local, SecondsFormat};
@@ -33,51 +31,26 @@ pub async fn healthy() -> impl Responder {
         .body(json!({"code":0,"msg":"ok"}).to_string())
 }
 
-// load serivces
-pub fn load_open_v1(config: &mut ServiceConfig) {
-    config
-        .route("/open/subscribe", web::post().to(subscribe))
-        .route("/open/greet", web::get().to(greet))
-        .route("/open/greet/{name}", web::get().to(greet))
-        .route("/open/hello", web::post().to(hello))
-        .route("/open/hello/{platform}", web::post().to(hello))
-        .service(info);
-}
-
-pub fn load_open(config: &mut ServiceConfig) {
-    let logger = middlewares::SimpleLogger {};
-
-    let router = web::scope("/open")
-        .wrap(logger)
-        .service(web::resource("/subscribe").route(web::post().to(subscribe)))
-        .service(web::resource("/greet").route(web::get().to(greet)))
-        .service(web::resource("/greet/{name}").route(web::get().to(greet)))
-        .service(web::resource("/hello").route(web::post().to(hello)))
-        .service(web::resource("/hello/{platform}").route(web::post().to(hello)));
-
-    config.service(info).service(router);
-}
-
 // extract data from path and query
 #[derive(Deserialize)]
-struct Info {
+pub(super) struct Info {
     user_id: u32,
     friend: String,
 }
 
 #[get("/open/info/{user_id}/{friend}")] // <- define path parameters
-async fn info(info: web::Path<Info>) -> Result<String> {
+pub(super) async fn info(info: web::Path<Info>) -> Result<String> {
     Ok(format!("Welcome {}, user_id {}!\n", info.friend, info.user_id))
 }
 
 #[derive(Debug, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Params {
+pub(super) struct Params {
     page_no: Option<u16>,
     page_size: Option<u16>,
 }
 
-pub async fn greet(
+pub(super) async fn greet(
     req: HttpRequest,
     params: web::Query<Params>,
     request_id: Option<web::ReqData<Uuid>>,
@@ -92,11 +65,11 @@ pub async fn greet(
 // https://github.com/actix/examples/tree/master/middleware/middleware-ext-mut
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct User {
+pub(super) struct User {
     name: Option<String>,
 }
 
-async fn hello(
+pub(super) async fn hello(
     req: HttpRequest,
     query: Query<HashMap<String, String>>,
     user: Json<User>,

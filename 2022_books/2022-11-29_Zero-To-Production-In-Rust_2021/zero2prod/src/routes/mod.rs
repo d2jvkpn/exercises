@@ -1,6 +1,8 @@
+mod apis;
 pub mod common;
+mod load;
 pub mod middlewares;
-pub mod misc;
 mod subscriptions;
 
-pub use misc::*;
+pub use apis::{healthy, healthz};
+pub use load::*;
