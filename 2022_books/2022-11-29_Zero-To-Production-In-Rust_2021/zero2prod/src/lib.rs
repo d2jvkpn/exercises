@@ -50,7 +50,7 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
                 })
             })
             // .wrap(routes::middlewares::SimpleLogger)
-            .route("/health", web::get().to(routes::health_check))
+            .route("/healthz", web::get().to(routes::healthz))
             .service(routes::healthy)
             .configure(routes::load_open)
             // Register the connection as part of the application state
@@ -66,11 +66,11 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
 
 #[cfg(test)]
 mod tests {
-    use crate::routes::health_check;
+    use crate::routes::healthz;
 
     #[actix_rt::test]
     async fn health_check_succeeds() {
-        let response = health_check().await;
+        let response = healthz().await;
         assert!(response.status().is_success())
     }
 }

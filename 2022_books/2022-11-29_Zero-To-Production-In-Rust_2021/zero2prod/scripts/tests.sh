@@ -32,3 +32,8 @@ curl -i -X POST -H "Content-Type: application/json" \
 
 curl -i -X POST -H "Content-Type: application/json" \
   $addr/open/hello/h5 -d '{"name": "Evol Mason, Evol Mason, Evol Mason, Evol Mason, Evol Mason"}'
+
+# plow "http://$addr/api/open/sign_in" -T 'application/json' -m POST \
+#   -c 10 -d 30s --timeout 2s --body "@data.json"
+
+plow $addr/healthz -c 100 -d 30s --timeout 2s

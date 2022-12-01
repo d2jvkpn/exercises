@@ -1,7 +1,7 @@
-use zero2prod::{configuration, run};
 use sqlx::PgPool;
 use std::{io, net};
 use structopt::StructOpt;
+use zero2prod::{configuration, run};
 
 #[allow(dead_code)]
 #[derive(Debug, StructOpt)]

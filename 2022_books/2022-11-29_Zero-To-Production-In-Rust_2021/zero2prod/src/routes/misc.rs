@@ -19,7 +19,7 @@ pub struct User {
     name: Option<String>,
 }
 
-pub async fn health_check() -> HttpResponse {
+pub async fn healthz() -> HttpResponse {
     // return "impl Responder" is ok too
     HttpResponse::Ok().finish()
 }

@@ -1,5 +1,5 @@
-use zero2prod::{configuration, run};
 use std::net::TcpListener;
+use zero2prod::{configuration, run};
 
 // use sqlx::{Connection, PgConnection};
 use sqlx::{Connection, Executor, PgConnection, PgPool};
@@ -12,7 +12,7 @@ pub struct TestApp {
 }
 
 // connect to database in config
-async fn spawn_app() -> TestApp {
+async fn spawn_app_without_create() -> TestApp {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
@@ -29,7 +29,7 @@ async fn spawn_app() -> TestApp {
 }
 
 // create a temporary database
-async fn spawn_app_tmpdb() -> TestApp {
+async fn spawn_app_create_db() -> TestApp {
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
@@ -69,12 +69,12 @@ async fn spawn_app_tmpdb() -> TestApp {
 
 #[actix_rt::test]
 async fn health_check() {
-    let app = spawn_app().await;
+    let app = spawn_app_without_create().await;
 
     let client = reqwest::Client::new();
     // Act
     let response = client
-        .get(&format!("{}/health", &app.address))
+        .get(&format!("{}/healthz", &app.address))
         .send()
         .await
         .expect("Failed to execute request.");
@@ -86,7 +86,7 @@ async fn health_check() {
 #[actix_rt::test]
 async fn subscribe() {
     // Arrange
-    let app = spawn_app_tmpdb().await;
+    let app = spawn_app_create_db().await;
     let client = reqwest::Client::new();
     let path = format!("{}/open/subscribe", &app.address);
     let body = "name=le%20guin&email=ursula_le_guin%40gmail.com";
