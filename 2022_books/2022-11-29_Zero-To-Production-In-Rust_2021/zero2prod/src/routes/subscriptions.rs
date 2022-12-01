@@ -13,7 +13,15 @@ pub struct SubscribeData {
 
 pub async fn subscribe(pool: web::Data<PgPool>, form: web::Form<SubscribeData>) -> HttpResponse {
     let subscriber_id = Uuid::new_v4();
-    let mut resp = json!({"code": 0,"msg": "ok"});
+    let mut resp = json!({"code": 0,"msg": "ok", "data": {}});
+
+    if form.email.is_empty() || form.name.is_empty() {
+        resp["code"] = (-1).into();
+        resp["msg"] = "email or name is unset".into();
+
+        return HttpResponse::BadRequest().content_type(ContentType::json()).body(resp.to_string());
+    }
+    // TODO email length and name length check
 
     let result = sqlx::query!(
         r#"
