@@ -36,6 +36,7 @@ pub async fn healthy() -> impl Responder {
 pub fn load_open_v1(config: &mut ServiceConfig) {
     config
         .route("/open/subscribe", web::post().to(subscribe))
+        .route("/open/greet", web::get().to(greet))
         .route("/open/greet/{name}", web::get().to(greet))
         .route("/open/hello", web::post().to(hello))
         .route("/open/hello/{platform}", web::post().to(hello))
@@ -48,6 +49,7 @@ pub fn load_open(config: &mut ServiceConfig) {
     let router = web::scope("/open")
         .wrap(logger)
         .service(web::resource("/subscribe").route(web::post().to(subscribe)))
+        .service(web::resource("/greet").route(web::get().to(greet)))
         .service(web::resource("/greet/{name}").route(web::get().to(greet)))
         .service(web::resource("/hello").route(web::post().to(hello)))
         .service(web::resource("/hello/{platform}").route(web::post().to(hello)));
@@ -120,10 +122,7 @@ async fn hello(
     let mut resp = Resp::new();
     resp.data(data);
 
-    let name = match &user.name {
-        Some(v) => &v,
-        None => "",
-    };
+    let name = user.name.as_deref().unwrap_or("");
 
     if name.is_empty() {
         // (resp.code, resp.msg) = (-1, format!("name isn't provided"));

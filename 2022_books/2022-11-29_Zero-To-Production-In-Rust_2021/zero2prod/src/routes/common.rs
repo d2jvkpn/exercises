@@ -30,6 +30,12 @@ pub struct Resp<T: Serialize> {
 //#[serde(requestId)]
 //request_id: String,
 
+impl<T: Serialize> Default for Resp<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: Serialize> Resp<T> {
     pub fn new() -> Resp<T> {
         Resp {
@@ -60,12 +66,10 @@ impl<T: Serialize> Resp<T> {
     pub fn ok(self) -> (Json<Resp<T>>, StatusCode) {
         let caller = panic::Location::caller();
         println!(
-            "~~~ ok: requestId={}, caller={}:{}, {}:{}",
+            "~~~ ok: requestId={}, caller={}:{}, file!():line!()",
             self.request_id,
             caller.file(),
             caller.line(),
-            file!(),
-            line!(),
         );
 
         (Json(self), StatusCode::OK)
@@ -75,12 +79,10 @@ impl<T: Serialize> Resp<T> {
     pub fn bad_request(self) -> (Json<Resp<T>>, StatusCode) {
         let caller = panic::Location::caller();
         println!(
-            "~~~ bad_request: requestId={}, caller={}:{}, {}:{}",
+            "~~~ bad_request: requestId={}, caller={}:{}, file!():line!()",
             self.request_id,
             caller.file(),
             caller.line(),
-            file!(),
-            line!(),
         );
 
         (Json(self), StatusCode::BAD_REQUEST)
