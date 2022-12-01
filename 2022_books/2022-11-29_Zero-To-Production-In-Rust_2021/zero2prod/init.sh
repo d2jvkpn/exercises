@@ -11,8 +11,8 @@ cargo install cargo-tarpaulin cargo-audit cargo-edit cargo-expand
 rustup component add clippy rustfm
 
 
-cargo new a01
-cd a01
+cargo new zero2prod
+cd zero2prod
 mkdir -p tests
 cargo add actix-web actix_rt tokio config chrono
 cargo add sqlx --features "runtime-actix-rustls macros postgres uuid chrono migrate"
@@ -69,6 +69,6 @@ EOF
 
 sqlx migrate run
 
-echo "export DATABASE_URL=$DATABASE_URL" > .env
+# echo "export DATABASE_URL=$DATABASE_URL" > .env
 
 cargo check

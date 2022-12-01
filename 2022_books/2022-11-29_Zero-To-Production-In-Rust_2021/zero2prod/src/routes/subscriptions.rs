@@ -13,6 +13,7 @@ pub struct SubscribeData {
 
 pub async fn subscribe(pool: web::Data<PgPool>, form: web::Form<SubscribeData>) -> HttpResponse {
     let subscriber_id = Uuid::new_v4();
+    let mut resp = json!({"code": 0,"msg": "ok"});
 
     let result = sqlx::query!(
         r#"
@@ -26,8 +27,6 @@ INSERT INTO subscriptions (id, email, name, subscribed_at)
     )
     .execute(pool.get_ref())
     .await;
-
-    let mut resp = json!({"code": 0,"msg": "ok"});
 
     let err = match result {
         Ok(_) => {

@@ -12,6 +12,7 @@ use chrono::{Local, SecondsFormat};
 use serde::{self, Deserialize, Serialize};
 use serde_json::json;
 use std::collections::HashMap;
+use uuid::Uuid;
 
 // health check
 pub async fn healthz() -> HttpResponse {
@@ -76,14 +77,19 @@ pub struct Params {
     page_size: Option<u16>,
 }
 
-pub async fn greet(req: HttpRequest, params: web::Query<Params>) -> String {
+pub async fn greet(
+    req: HttpRequest,
+    params: web::Query<Params>,
+    request_id: Option<web::ReqData<Uuid>>,
+) -> String {
     let name = req.match_info().get("name").unwrap_or("World");
     let name = &name;
 
-    format!("Hello {}, {:?}!\n", name, params)
+    format!("Hello {}, {:?}, request_id: {:?}!\n", name, params, request_id)
 }
 
-//
+// query, json body, and middleware-ext-mut
+// https://github.com/actix/examples/tree/master/middleware/middleware-ext-mut
 #[derive(Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct User {
@@ -94,6 +100,7 @@ async fn hello(
     req: HttpRequest,
     query: Query<HashMap<String, String>>,
     user: Json<User>,
+    request_id: Option<web::ReqData<Uuid>>,
 ) -> impl Responder {
     let id: i64 = match query.get("id") {
         Some(v) => v.parse().unwrap_or(0),
@@ -119,7 +126,12 @@ async fn hello(
     // data.insert("now".to_string(), now.format("%FT%T%:z").to_string());
     // # now.format("%Y-%m-%dT%H:%M:%S%:z")
     let data = HashMap::from([("now", now.format("%FT%T%:z").to_string())]);
-    let mut resp = Resp::new();
+
+    let request_id: Uuid = match request_id {
+        Some(v) => v.into_inner(), // v: web::ReqData<Uuid>
+        None => Uuid::new_v4(),
+    };
+    let mut resp = Resp::new(Some(request_id));
     resp.data(data);
 
     let name = user.name.as_deref().unwrap_or("");

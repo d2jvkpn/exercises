@@ -2,11 +2,12 @@
 use actix_web::{
     dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
     http::header::{HeaderName, HeaderValue},
-    Error,
+    Error, HttpMessage,
 };
 use chrono::{DateTime, Local, SecondsFormat};
 use futures_util::future::LocalBoxFuture;
 use std::future::{ready, Ready};
+use uuid::Uuid;
 
 // There are two steps in middleware processing.
 // 1. Middleware initialization, middleware factory gets called with
@@ -59,6 +60,8 @@ where
             req.method(),
             req.path(),
         );
+
+        req.extensions_mut().insert(Uuid::new_v4());
 
         req.headers_mut().insert(
             HeaderName::from_lowercase(b"z-log-version").unwrap(),

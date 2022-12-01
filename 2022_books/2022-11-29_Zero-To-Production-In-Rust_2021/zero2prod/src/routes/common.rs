@@ -32,18 +32,18 @@ pub struct Resp<T: Serialize> {
 
 impl<T: Serialize> Default for Resp<T> {
     fn default() -> Self {
-        Self::new()
+        Self::new(None)
     }
 }
 
 impl<T: Serialize> Resp<T> {
-    pub fn new() -> Resp<T> {
+    pub fn new(request_id: Option<Uuid>) -> Resp<T> {
         Resp {
             code: 0,
             msg: "ok".into(),
             // data: HashMap::new(),
             data: None,
-            request_id: Uuid::new_v4(),
+            request_id: request_id.unwrap_or(Uuid::new_v4()),
         }
     }
 
