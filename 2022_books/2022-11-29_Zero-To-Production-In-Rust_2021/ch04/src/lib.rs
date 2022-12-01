@@ -20,8 +20,12 @@ macro_rules! func {
 pub mod configuration;
 pub mod routes;
 
-use actix_web::{dev::Server, web, App, HttpServer};
+use actix_web::{
+    dev::{Server, Service as _},
+    web, App, HttpServer,
+};
 // use routes::misc::{health_check, healthy, load_open};
+use futures_util::future::FutureExt;
 use sqlx::PgPool;
 use std::{io, net, thread, time::Duration};
 
@@ -37,6 +41,15 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
         println!("~~~ start http server: {}", func!());
 
         App::new()
+            .wrap_fn(|req, srv| {
+                println!("--> Hi from start. You requested: {}", req.path());
+
+                srv.call(req).map(|res| {
+                    println!("<-- Hi from response");
+                    res
+                })
+            })
+            .wrap(routes::middlewares::Logger)
             .route("/health", web::get().to(routes::health_check))
             .service(routes::healthy)
             .configure(routes::load_open)

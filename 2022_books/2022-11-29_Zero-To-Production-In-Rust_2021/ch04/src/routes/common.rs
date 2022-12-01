@@ -25,7 +25,7 @@ pub struct Resp<T: Serialize> {
     pub msg: String,
     // pub data: HashMap<String, T>,
     pub data: Option<T>,
-    pub request_id: String,
+    pub request_id: Uuid,
 }
 //#[serde(requestId)]
 //request_id: String,
@@ -37,7 +37,7 @@ impl<T: Serialize> Resp<T> {
             msg: "ok".into(),
             // data: HashMap::new(),
             data: None,
-            request_id: Uuid::new_v4().to_string(),
+            request_id: Uuid::new_v4(),
         }
     }
 
@@ -59,12 +59,13 @@ impl<T: Serialize> Resp<T> {
     #[track_caller]
     pub fn ok(self) -> (Json<Resp<T>>, StatusCode) {
         let caller = panic::Location::caller();
-        // println!("{}:{}", file!(), line!());
         println!(
-            "~~~ ok: requestId={}, caller={}:{}",
+            "~~~ ok: requestId={}, caller={}:{}, {}:{}",
             self.request_id,
             caller.file(),
-            caller.line()
+            caller.line(),
+            file!(),
+            line!(),
         );
 
         (Json(self), StatusCode::OK)
@@ -73,12 +74,13 @@ impl<T: Serialize> Resp<T> {
     #[track_caller]
     pub fn bad_request(self) -> (Json<Resp<T>>, StatusCode) {
         let caller = panic::Location::caller();
-
         println!(
-            "~~~ bad_request: requestId={}, caller={}:{}",
+            "~~~ bad_request: requestId={}, caller={}:{}, {}:{}",
             self.request_id,
             caller.file(),
-            caller.line()
+            caller.line(),
+            file!(),
+            line!(),
         );
 
         (Json(self), StatusCode::BAD_REQUEST)

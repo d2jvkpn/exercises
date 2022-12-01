@@ -3,6 +3,7 @@ use sqlx::PgPool;
 use std::{io, net};
 use structopt::StructOpt;
 
+#[allow(dead_code)]
 #[derive(Debug, StructOpt)]
 #[structopt(name = "zero2prod", about = "zero to production in rust")]
 struct Opt {
@@ -25,12 +26,12 @@ struct Opt {
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     let opt = Opt::from_args();
-
     let config = configuration::open(&opt.config).expect("Failed to read configuration.");
 
-    if !opt.release {
-        println!("~~~ flags: {:?}, version: {}", opt, config.version);
-    }
+    println!(
+        ">>> HTTP listening on {}:{}, config={:?}, version={:?}",
+        opt.addr, opt.port, opt.config, config.version,
+    );
 
     let listener = net::TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
     let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
