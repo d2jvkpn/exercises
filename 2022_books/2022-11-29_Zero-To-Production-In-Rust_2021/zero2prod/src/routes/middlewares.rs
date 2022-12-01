@@ -73,7 +73,7 @@ where
             let elapsed = end.signed_duration_since(start).num_microseconds().unwrap_or(0);
 
             println!(
-                "<== elapsed: {}ms, status: {}",
+                "<== elapsed: {:.3}ms, status: {}",
                 (elapsed as f64) / 1e3,
                 res.status().as_u16(),
             );

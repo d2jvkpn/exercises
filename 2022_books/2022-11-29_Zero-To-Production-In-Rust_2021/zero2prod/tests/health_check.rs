@@ -1,4 +1,4 @@
-use ch04::{configuration, run};
+use zero2prod::{configuration, run};
 use std::net::TcpListener;
 
 // use sqlx::{Connection, PgConnection};

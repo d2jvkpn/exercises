@@ -1,4 +1,4 @@
-use ch04::{configuration, run};
+use zero2prod::{configuration, run};
 use sqlx::PgPool;
 use std::{io, net};
 use structopt::StructOpt;

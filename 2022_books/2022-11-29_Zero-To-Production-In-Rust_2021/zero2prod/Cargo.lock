@@ -369,27 +369,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
-name = "ch04"
-version = "0.1.0"
-dependencies = [
- "actix-rt",
- "actix-web",
- "anyhow",
- "chrono",
- "config",
- "futures-util",
- "num_cpus",
- "reqwest",
- "serde",
- "serde_json",
- "sqlx",
- "structopt",
- "thiserror",
- "tokio",
- "uuid",
-]
-
-[[package]]
 name = "chrono"
 version = "0.4.23"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2570,6 +2549,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "56c1936c4cc7a1c9ab21a1ebb602eb942ba868cbd44a99cb7cdc5892335e1c85"
 dependencies = [
  "linked-hash-map",
+]
+
+[[package]]
+name = "zero2prod"
+version = "0.1.0"
+dependencies = [
+ "actix-rt",
+ "actix-web",
+ "anyhow",
+ "chrono",
+ "config",
+ "futures-util",
+ "num_cpus",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "sqlx",
+ "structopt",
+ "thiserror",
+ "tokio",
+ "uuid",
 ]
 
 [[package]]
