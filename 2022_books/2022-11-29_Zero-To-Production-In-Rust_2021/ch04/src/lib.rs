@@ -49,7 +49,7 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
                     res
                 })
             })
-            .wrap(routes::middlewares::Logger)
+            // .wrap(routes::middlewares::SimpleLogger)
             .route("/health", web::get().to(routes::health_check))
             .service(routes::healthy)
             .configure(routes::load_open)

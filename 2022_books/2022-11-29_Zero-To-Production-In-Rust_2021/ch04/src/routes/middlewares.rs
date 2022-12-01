@@ -12,12 +12,12 @@ use std::future::{ready, Ready};
 // 1. Middleware initialization, middleware factory gets called with
 //    next service in chain as parameter.
 // 2. Middleware's call method gets called with normal request.
-pub struct Logger;
+pub struct SimpleLogger;
 
 // Middleware factory is `Transform` trait
 // `S` - type of the next service
 // `B` - type of response's body
-impl<S, B> Transform<S, ServiceRequest> for Logger
+impl<S, B> Transform<S, ServiceRequest> for SimpleLogger
 where
     S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
     S::Future: 'static,
@@ -26,19 +26,19 @@ where
     type Response = ServiceResponse<B>;
     type Error = Error;
     type InitError = ();
-    type Transform = LoggerMiddleware<S>;
+    type Transform = SimpleLoggerMiddleware<S>;
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
 
     fn new_transform(&self, service: S) -> Self::Future {
-        ready(Ok(LoggerMiddleware { service }))
+        ready(Ok(SimpleLoggerMiddleware { service }))
     }
 }
 
-pub struct LoggerMiddleware<S> {
+pub struct SimpleLoggerMiddleware<S> {
     service: S,
 }
 
-impl<S, B> Service<ServiceRequest> for LoggerMiddleware<S>
+impl<S, B> Service<ServiceRequest> for SimpleLoggerMiddleware<S>
 where
     S: Service<ServiceRequest, Response = ServiceResponse<B>, Error = Error>,
     S::Future: 'static,
@@ -57,7 +57,7 @@ where
             "==> {} {} {}",
             start.to_rfc3339_opts(SecondsFormat::Millis, true),
             req.method(),
-            req.path()
+            req.path(),
         );
 
         req.headers_mut().insert(
@@ -75,7 +75,7 @@ where
             println!(
                 "<== elapsed: {}ms, status: {}",
                 (elapsed as f64) / 1e3,
-                res.status().as_u16()
+                res.status().as_u16(),
             );
 
             Ok(res)

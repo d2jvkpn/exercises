@@ -1,5 +1,6 @@
 // use crate::{common::Resp};
 use super::common::Resp;
+use super::middlewares;
 use super::subscriptions::subscribe;
 use actix_web::{
     get,
@@ -45,6 +46,7 @@ pub fn load_open(config: &mut ServiceConfig) {
 
 pub fn load_open2(config: &mut ServiceConfig) {
     let router = web::scope("/open")
+        .wrap(middlewares::SimpleLogger)
         .service(web::resource("/subscribe").route(web::post().to(subscribe)))
         .service(web::resource("/greet/{name}").route(web::get().to(greet)))
         .service(web::resource("/hello").route(web::post().to(hello)))
