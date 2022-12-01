@@ -6,7 +6,7 @@ use actix_web::{
     get,
     http::{header::ContentType, StatusCode},
     web::{self, Json, Query, ServiceConfig},
-    HttpRequest, HttpResponse, Responder,
+    HttpRequest, HttpResponse, Responder, Result,
 };
 use chrono::{Local, SecondsFormat};
 use serde::{self, Deserialize, Serialize};
@@ -37,11 +37,13 @@ pub async fn healthy() -> impl Responder {
         .body(json!({"code":0,"msg":"ok"}).to_string())
 }
 
-pub fn load_open_v0(config: &mut ServiceConfig) {
-    config.route("/open/subscribe", web::post().to(subscribe));
-    config.route("/open/greet/{name}", web::get().to(greet));
-    config.route("/open/hello", web::post().to(hello));
-    config.route("/open/hello/{platform}", web::post().to(hello));
+pub fn load_open_v1(config: &mut ServiceConfig) {
+    config
+        .route("/open/subscribe", web::post().to(subscribe))
+        .route("/open/greet/{name}", web::get().to(greet))
+        .route("/open/hello", web::post().to(hello))
+        .route("/open/hello/{platform}", web::post().to(hello))
+        .service(info);
 }
 
 pub fn load_open(config: &mut ServiceConfig) {
@@ -54,14 +56,33 @@ pub fn load_open(config: &mut ServiceConfig) {
         .service(web::resource("/hello").route(web::post().to(hello)))
         .service(web::resource("/hello/{platform}").route(web::post().to(hello)));
 
-    config.service(router);
+    config.service(info).service(router);
 }
 
-pub async fn greet(req: HttpRequest) -> String {
+#[derive(Deserialize)]
+struct Info {
+    user_id: u32,
+    friend: String,
+}
+
+/// extract path info using serde
+#[get("/open/info/{user_id}/{friend}")] // <- define path parameters
+async fn info(info: web::Path<Info>) -> Result<String> {
+    Ok(format!("Welcome {}, user_id {}!\n", info.friend, info.user_id))
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Params {
+    page_no: Option<u16>,
+    page_size: Option<u16>,
+}
+
+pub async fn greet(req: HttpRequest, params: web::Query<Params>) -> String {
     let name = req.match_info().get("name").unwrap_or("World");
     let name = &name;
 
-    format!("Hello {}!\n", name)
+    format!("Hello {}, {:?}!\n", name, params)
 }
 
 async fn hello(

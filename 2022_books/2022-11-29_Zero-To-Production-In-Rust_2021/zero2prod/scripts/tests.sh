@@ -17,6 +17,10 @@ addr=http://localhost:8000
 
 curl -i -X GET $addr/healthy
 
+curl -i -X GET $addr/open/info/42/Mason
+
+curl -i -X GET "$addr/open/greet/Evol?pageNo=1&pageSize=100"
+
 curl -i -X POST $addr/open/subscribe \
   -H "Content-Type: application/x-www-form-urlencoded" \
   -d 'name=le%20guin&email=ursula_le_guin%40gmail.com'

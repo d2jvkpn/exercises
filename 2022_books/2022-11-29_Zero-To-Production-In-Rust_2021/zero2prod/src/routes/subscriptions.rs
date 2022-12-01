@@ -1,17 +1,17 @@
 use actix_web::{http::header::ContentType, web, HttpResponse};
 use chrono::Utc;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use serde_json::json;
 use sqlx::{self, PgPool};
 use uuid::Uuid;
 
-#[derive(Deserialize)]
-pub struct FormData {
+#[derive(Serialize, Deserialize, Debug)]
+pub struct SubscribeData {
     email: String,
     name: String,
 }
 
-pub async fn subscribe(pool: web::Data<PgPool>, form: web::Form<FormData>) -> HttpResponse {
+pub async fn subscribe(pool: web::Data<PgPool>, form: web::Form<SubscribeData>) -> HttpResponse {
     let subscriber_id = Uuid::new_v4();
 
     let result = sqlx::query!(
