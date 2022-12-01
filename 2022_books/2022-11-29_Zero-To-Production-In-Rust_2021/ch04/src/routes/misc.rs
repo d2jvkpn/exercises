@@ -37,16 +37,18 @@ pub async fn healthy() -> impl Responder {
         .body(json!({"code":0,"msg":"ok"}).to_string())
 }
 
-pub fn load_open(config: &mut ServiceConfig) {
+pub fn load_open_v0(config: &mut ServiceConfig) {
     config.route("/open/subscribe", web::post().to(subscribe));
     config.route("/open/greet/{name}", web::get().to(greet));
     config.route("/open/hello", web::post().to(hello));
     config.route("/open/hello/{platform}", web::post().to(hello));
 }
 
-pub fn load_open2(config: &mut ServiceConfig) {
+pub fn load_open(config: &mut ServiceConfig) {
+    let logger = middlewares::SimpleLogger {};
+
     let router = web::scope("/open")
-        .wrap(middlewares::SimpleLogger)
+        .wrap(logger)
         .service(web::resource("/subscribe").route(web::post().to(subscribe)))
         .service(web::resource("/greet/{name}").route(web::get().to(greet)))
         .service(web::resource("/hello").route(web::post().to(hello)))

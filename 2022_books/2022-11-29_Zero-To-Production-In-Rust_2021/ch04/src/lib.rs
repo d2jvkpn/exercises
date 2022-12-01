@@ -41,9 +41,9 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
         println!("~~~ start http server: {}", func!());
 
         App::new()
+            // middlewares .wrap(f1).wrap(f2).wrap(f3), execution order f3() -> f2() -> f1()
             .wrap_fn(|req, srv| {
                 println!("--> Hi from start. You requested: {}", req.path());
-
                 srv.call(req).map(|res| {
                     println!("<-- Hi from response");
                     res
