@@ -12,12 +12,12 @@ type Block struct {
 	Data          []byte
 	PrevBlockHash []byte
 	Hash          []byte
-	Nonce         int
+	Nonce         int64
 }
 
-func (b Block) String() string {
+func (b Block) Yaml() string {
 	return fmt.Sprintf(
-		"Timestamp: %s, Data: %s, PrevBlockHash: %x, Hash: %x, Nonce: %d",
+		"- Timestamp: %s\n  Data: %q\n  PrevBlockHash: %x\n  Hash: %x\n  Nonce: %d",
 		time.Unix(b.Timestamp, 0).Format(time.RFC3339), b.Data,
 		b.PrevBlockHash, b.Hash, b.Nonce,
 	)
@@ -26,7 +26,7 @@ func (b Block) String() string {
 func NewBlock(data string, prevBlockHash []byte) *Block {
 	block := &Block{
 		Timestamp:     time.Now().Unix(),
-		data:          []byte(data),
+		Data:          []byte(data),
 		PrevBlockHash: prevBlockHash,
 		Hash:          []byte{},
 		Nonce:         0,

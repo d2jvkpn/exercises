@@ -10,9 +10,9 @@ import (
 	"time"
 )
 
-func IntToHex[T int64 | int](num T) []byte {
+func IntToHex(num int64) []byte {
 	buff := new(bytes.Buffer)
-	_ = binary.Write(buff, binary.BigEndian, int64(num)) // ignore error
+	_ = binary.Write(buff, binary.BigEndian, num) // ignore error
 
 	return buff.Bytes()
 }
@@ -29,11 +29,14 @@ func NewProofOfWork(b *Block) *ProofOfWork {
 	return &ProofOfWork{b, target}
 }
 
-func (pow *ProofOfWork) prepareData(nonce int) []byte {
+func (pow *ProofOfWork) prepareData(nonce int64) []byte {
 	data := bytes.Join(
 		[][]byte{
-			IntToHex(pow.block.Timestamp), pow.block.Data, pow.block.PrevBlockHash,
-			IntToHex(_TargetBits), IntToHex(nonce),
+			IntToHex(pow.block.Timestamp),
+			pow.block.Data,
+			pow.block.PrevBlockHash,
+			IntToHex(_TargetBits),
+			IntToHex(nonce),
 		},
 		[]byte{},
 	)
@@ -41,13 +44,13 @@ func (pow *ProofOfWork) prepareData(nonce int) []byte {
 	return data
 }
 
-func (pow *ProofOfWork) Run() (int, []byte) {
+func (pow *ProofOfWork) Run() (int64, []byte) {
 	var (
 		hashInt big.Int
 		hash    [32]byte
 		data    []byte
 	)
-	start, nonce := time.Now(), 0
+	start, nonce := time.Now(), int64(0)
 
 	fmt.Printf(
 		">>> %s, Mining the block containing %q\n",

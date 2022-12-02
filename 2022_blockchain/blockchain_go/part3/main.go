@@ -6,11 +6,10 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strings"
 )
 
 var (
-	_TargetBits int = 20
+	_TargetBits int64 = 20
 )
 
 func main() {
@@ -20,7 +19,7 @@ func main() {
 		bc    *Blockchain
 	)
 
-	flag.IntVar(&_TargetBits, "targetBits", _TargetBits, "target bits")
+	flag.Int64Var(&_TargetBits, "targetBits", _TargetBits, "target bits")
 	flag.Parse()
 	log.Println("Target bits:", _TargetBits)
 
@@ -52,7 +51,7 @@ func main() {
 			break
 		} else {
 			count++
-			fmt.Println(">>>", strings.Replace(block.String(), ", ", "\n    ", -1))
+			fmt.Println(block.Yaml())
 		}
 	}
 
