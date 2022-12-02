@@ -60,7 +60,6 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
             })
             // .wrap(routes::middlewares::SimpleLogger)
             .route("/healthz", web::get().to(routes::healthz))
-            //.service(routes::healthy)
             .configure(routes::open_scope)
             // Register the connection as part of the application state
             .app_data(data.clone())

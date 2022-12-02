@@ -1,6 +1,4 @@
-use super::apis::*;
-use super::middlewares::SimpleLogger;
-use super::subscriptions::subscribe;
+use super::{apis::*, middlewares::SimpleLogger, subscriptions::subscribe};
 use actix_web::web::{get, post, resource, scope, ServiceConfig};
 
 pub fn open_route(config: &mut ServiceConfig) {
@@ -17,7 +15,7 @@ pub fn open_route(config: &mut ServiceConfig) {
 pub fn open_scope(config: &mut ServiceConfig) {
     let logger = SimpleLogger {};
 
-    let router = scope("/open")
+    let scope_service = scope("/open")
         .wrap(logger)
         .service(resource("/subscribe").route(post().to(subscribe)))
         .service(resource("/greet").route(get().to(greet)))
@@ -25,5 +23,5 @@ pub fn open_scope(config: &mut ServiceConfig) {
         .service(resource("/hello").route(post().to(hello)))
         .service(resource("/hello/{platform}").route(post().to(hello)));
 
-    config.service(info).service(healthy).service(router);
+    config.service(info).service(healthy).service(scope_service);
 }
