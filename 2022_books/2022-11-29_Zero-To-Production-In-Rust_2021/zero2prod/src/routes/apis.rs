@@ -83,6 +83,8 @@ pub(super) async fn hello(
     };
     // let id: i64 = req.match_info().query("id").parse::<i64>().unwrap_or(0);
 
+    tracing::info!("++++++++");
+
     let now = Local::now();
 
     println!(

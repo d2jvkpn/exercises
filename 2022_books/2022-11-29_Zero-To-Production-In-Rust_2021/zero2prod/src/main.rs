@@ -1,7 +1,7 @@
 use sqlx::PgPool;
-use std::{io, net};
+use std::{io, net::TcpListener};
 use structopt::StructOpt;
-use zero2prod::{configuration::open_yaml, run};
+use zero2prod::{configuration::open_yaml, startup::run};
 
 #[allow(dead_code)]
 #[derive(Debug, StructOpt)]
@@ -27,8 +27,8 @@ struct Opt {
 async fn main() -> io::Result<()> {
     let opt = Opt::from_args();
 
-    let mut config =
-        open_yaml(&opt.config).expect(&format!("Failed to read configuration {}.", &opt.config));
+    let mut config = open_yaml(&opt.config)
+        .unwrap_or_else(|_| panic!("Failed to read configuration {}.", &opt.config));
 
     config.threads = opt.threads;
     config.release = opt.release;
@@ -38,8 +38,28 @@ async fn main() -> io::Result<()> {
         opt.addr, opt.port, opt.config, config.version,
     );
 
-    let listener = net::TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
-    let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
+    let listener = TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
+
+    let pool = PgPool::connect(&config.database.to_string())
+        .await
+        .expect("Failed to connect to Postgres.");
 
     run(listener, pool, config)?.await
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn t_plus() {
+        let ans = 2 + 2;
+        println!("ans = {}", ans);
+        assert_eq!(ans, 4);
+    }
+
+    #[test]
+    fn t_minus() {
+        let ans = 4 - 2;
+        println!("ans = {}", ans);
+        assert_eq!(ans, 2);
+    }
 }

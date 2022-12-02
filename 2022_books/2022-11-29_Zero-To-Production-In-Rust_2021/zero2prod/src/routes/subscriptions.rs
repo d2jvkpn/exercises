@@ -7,6 +7,7 @@ use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use sqlx::{self, PgPool};
+use tracing::{self, info_span, Instrument};
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -23,6 +24,14 @@ pub async fn subscribe(
     let request_id = request_id.into_inner();
     let subscriber_id = Uuid::new_v4();
 
+    let req_span = info_span!(
+        "Adding a new subscriber.",
+        %request_id,
+        email = %form.email,
+        name= %form.name,
+    );
+    let _req_span_guard = req_span.enter();
+
     let mut resp = json!({"code": 0,"msg": "ok", "data": {}, "requestId": request_id});
 
     if form.email.is_empty() || form.name.is_empty() {
@@ -33,6 +42,7 @@ pub async fn subscribe(
     }
     // TODO email length and name length check
 
+    let query_span = tracing::info_span!("Saving new subscriber details in the database");
     let result = sqlx::query!(
         r#"
 INSERT INTO subscriptions (id, email, name, subscribed_at)
@@ -44,6 +54,7 @@ INSERT INTO subscriptions (id, email, name, subscribed_at)
         Utc::now(),
     )
     .execute(pool.get_ref())
+    .instrument(query_span)
     .await;
 
     let err = match result {
@@ -54,18 +65,20 @@ INSERT INTO subscriptions (id, email, name, subscribed_at)
         Err(e) => e,
     };
 
-    // println!("Failed to execute query: {:?}", err);
-
-    if let sqlx::Error::Database(e) = err {
+    if let sqlx::Error::Database(e) = &err {
         if e.code().unwrap() == "23505" {
             // return HttpResponse::Ok().finish();
             resp["msg"] = "you have already subscribed".into();
+            tracing::warn!("The email has already been subscribed.");
 
             return HttpResponse::Conflict()
                 .content_type(ContentType::json())
                 .body(resp.to_string());
         }
     }
+
+    // println!("Failed to execute query: {:?}", err);
+    tracing::error!("Failed to execute query: {:?}", err);
 
     // HttpResponse::InternalServerError().finish()
     resp["code"] = 1.into();

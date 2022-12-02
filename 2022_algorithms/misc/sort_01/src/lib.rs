@@ -8,7 +8,7 @@ pub fn bubble_sort<T: PartialOrd>(items: &mut Vec<T>) {
 
     for i in 0..len {
         for j in i + 1..len {
-            if items[j] < items[i] {
+            if items[i] > items[j] {
                 items.swap(i, j)
             }
         }

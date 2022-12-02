@@ -1,8 +1,8 @@
 use config::{self, Config, ConfigError};
-use serde::Deserialize;
-use std::env;
+use serde::{Deserialize, Serialize};
+use std::{env, fmt};
 
-#[derive(Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Settings {
     // read from env or set mannual
     pub version: String,
@@ -11,7 +11,13 @@ pub struct Settings {
 
     // load from yaml file or use default
     pub keep_alive: u64,
-    pub database: String,
+    pub database: Database,
+}
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+pub struct Database {
+    pub conn: String,
+    pub db: String,
 }
 
 impl Default for Settings {
@@ -22,8 +28,14 @@ impl Default for Settings {
             release: false,
 
             keep_alive: 60,
-            database: "".into(),
+            database: Database::default(),
         }
+    }
+}
+
+impl fmt::Display for Database {
+    fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
+        write!(w, "{}/{}", &self.conn, &self.db)
     }
 }
 
