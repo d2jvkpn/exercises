@@ -3,7 +3,7 @@ use super::common::Resp;
 use actix_web::{
     get,
     http::{header::ContentType, StatusCode},
-    web::{self, Json, Query},
+    web::{Json, Path, Query, ReqData},
     HttpRequest, HttpResponse, Responder, Result,
 };
 use chrono::{Local, SecondsFormat};
@@ -19,14 +19,14 @@ pub async fn healthz() -> HttpResponse {
 }
 
 #[get("/v1/healthy")]
-pub(super) async fn healthy(request_id: Option<web::ReqData<Uuid>>) -> impl Responder {
+pub(super) async fn healthy(request_id: Option<ReqData<Uuid>>) -> impl Responder {
     //    HttpResponse::Ok()
     //        .content_type(ContentType::plaintext())
     //        .insert_header(("X-Version", "0.1.0"))
     //        .body("Ok")
 
     let request_id: Uuid = match request_id {
-        Some(v) => v.into_inner(), // v: web::ReqData<Uuid>
+        Some(v) => v.into_inner(), // v: ReqData<Uuid>
         None => Uuid::new_v4(),
     };
 
@@ -44,7 +44,7 @@ pub(super) struct Info {
 }
 
 #[get("/v1/info/{user_id}/{friend}")] // <- define path parameters
-pub(super) async fn info(info: web::Path<Info>) -> Result<String> {
+pub(super) async fn info(info: Path<Info>) -> Result<String> {
     Ok(format!("Welcome {}, user_id {}!\n", info.friend, info.user_id))
 }
 
@@ -55,7 +55,7 @@ pub(super) struct Params {
     page_size: Option<u16>,
 }
 
-pub(super) async fn greet(req: HttpRequest, params: web::Query<Params>) -> String {
+pub(super) async fn greet(req: HttpRequest, params: Query<Params>) -> String {
     let name = req.match_info().get("name").unwrap_or("World");
     let name = &name;
 
@@ -74,7 +74,7 @@ pub(super) async fn hello(
     req: HttpRequest,
     query: Query<HashMap<String, String>>,
     user: Json<User>,
-    request_id: web::ReqData<Uuid>,
+    request_id: ReqData<Uuid>,
     // return 500 internal server error, if an Uuid wasn't added to request
 ) -> impl Responder {
     let id: i64 = match query.get("id") {

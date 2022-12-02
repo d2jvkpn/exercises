@@ -1,12 +1,12 @@
 // https://actix.rs/docs/middleware/
 use actix_web::{
-    dev::{forward_ready, Service, ServiceRequest, ServiceResponse, Transform},
+    dev::{self, Service, ServiceRequest, ServiceResponse, Transform},
     http::header::{HeaderName, HeaderValue},
     Error, HttpMessage,
 };
 use chrono::{DateTime, Local, SecondsFormat};
 use futures_util::future::LocalBoxFuture;
-use std::future::{ready, Ready};
+use std::future::{self, Ready};
 use uuid::Uuid;
 
 // There are two steps in middleware processing.
@@ -31,7 +31,7 @@ where
     type Future = Ready<Result<Self::Transform, Self::InitError>>;
 
     fn new_transform(&self, service: S) -> Self::Future {
-        ready(Ok(SimpleLoggerMiddleware { service }))
+        future::ready(Ok(SimpleLoggerMiddleware { service }))
     }
 }
 
@@ -49,7 +49,7 @@ where
     type Error = Error;
     type Future = LocalBoxFuture<'static, Result<Self::Response, Self::Error>>;
 
-    forward_ready!(service);
+    dev::forward_ready!(service);
 
     fn call(&self, mut req: ServiceRequest) -> Self::Future {
         let start: DateTime<Local> = Local::now();
