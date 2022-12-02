@@ -1,7 +1,7 @@
 use sqlx::PgPool;
 use std::{io, net};
 use structopt::StructOpt;
-use zero2prod::{configuration, run};
+use zero2prod::{configuration::open_yaml, run};
 
 #[allow(dead_code)]
 #[derive(Debug, StructOpt)]
@@ -26,7 +26,12 @@ struct Opt {
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     let opt = Opt::from_args();
-    let config = configuration::open(&opt.config).expect("Failed to read configuration.");
+
+    let mut config =
+        open_yaml(&opt.config).expect(&format!("Failed to read configuration {}.", &opt.config));
+
+    config.threads = opt.threads;
+    config.release = opt.release;
 
     println!(
         ">>> HTTP listening on {}:{}, config={:?}, version={:?}",
@@ -36,5 +41,5 @@ async fn main() -> io::Result<()> {
     let listener = net::TcpListener::bind(format!("{}:{}", opt.addr, opt.port))?;
     let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
 
-    run(listener, pool, opt.threads)?.await
+    run(listener, pool, config)?.await
 }

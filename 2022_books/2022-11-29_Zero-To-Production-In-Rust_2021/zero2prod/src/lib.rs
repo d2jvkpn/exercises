@@ -25,23 +25,27 @@ use actix_web::{
     web::{self, Data},
     App, HttpServer,
 };
+use configuration::Settings;
 use futures_util::future::FutureExt;
 use sqlx::PgPool;
 use std::{io, net, thread, time::Duration};
 
-pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::Result<Server> {
+pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io::Result<Server> {
     let data = Data::new(pool);
 
     let threads = thread::available_parallelism().unwrap().get();
-    if workers == 0 || workers > threads {
-        workers = threads;
+    if config.threads == 0 || config.threads > threads {
+        config.threads = threads;
     }
 
     let server = HttpServer::new(move || {
         println!("~~~ start http server: {}", func!());
 
         App::new()
+            // Register the connection as part of the application state
+            .app_data(data.clone())
             // middlewares .wrap(f1).wrap(f2).wrap(f3), execution order f3() -> f2() -> f1()
+            // .wrap(routes::middlewares::SimpleLogger)
             .wrap_fn(|req, srv| {
                 println!(
                     "--> Hi from start. You requested: method={}, path={}",
@@ -59,15 +63,12 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::
                     res
                 })
             })
-            // .wrap(routes::middlewares::SimpleLogger)
             .route("/healthz", web::get().to(routes::healthz))
             .configure(routes::open_scope)
-            // Register the connection as part of the application state
-            .app_data(data.clone())
     })
-    .keep_alive(Duration::from_secs(60))
+    .keep_alive(Duration::from_secs(config.keep_alive))
     .listen(listener)?
-    .workers(workers)
+    .workers(config.threads)
     .run();
 
     Ok(server)

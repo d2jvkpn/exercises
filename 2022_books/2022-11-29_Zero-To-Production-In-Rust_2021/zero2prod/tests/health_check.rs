@@ -1,5 +1,5 @@
 use std::net::TcpListener;
-use zero2prod::{configuration, run};
+use zero2prod::{configuration::open_yaml, run};
 
 // use sqlx::{Connection, PgConnection};
 use sqlx::{Connection, Executor, PgConnection, PgPool};
@@ -17,12 +17,12 @@ async fn spawn_app_without_create() -> TestApp {
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
 
-    let config = configuration::open("configs/local.yaml").expect("Failed to read configuration");
+    let config = open_yaml("configs/local.yaml").expect("Failed to read configuration");
 
     let pool = PgPool::connect(&config.database).await.expect("Failed to connect to Postgres.");
     sqlx::migrate!("./migrations").run(&pool).await.expect("Failed to migrate the database");
 
-    let server = run(listener, pool.clone(), 0).expect("Failed to bind addrress");
+    let server = run(listener, pool.clone(), Default::default()).expect("Failed to bind addrress");
     let _ = tokio::spawn(server);
 
     TestApp { address, pool, dbname: config.database.clone() }
@@ -34,7 +34,7 @@ async fn spawn_app_create_db() -> TestApp {
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
 
-    let config = configuration::open("configs/local.yaml").expect("Failed to read configuration");
+    let config = open_yaml("configs/local.yaml").expect("Failed to read configuration");
 
     let mut conn =
         PgConnection::connect(&config.database).await.expect("Failed to connect to Postgres");
@@ -61,7 +61,7 @@ async fn spawn_app_create_db() -> TestApp {
     let pool = PgPool::connect(&dsn).await.expect("Failed to connect to Postgres.");
     sqlx::migrate!("./migrations").run(&pool).await.expect("Failed to migrate the database");
 
-    let server = run(listener, pool.clone(), 0).expect("Failed to bind addrress");
+    let server = run(listener, pool.clone(), Default::default()).expect("Failed to bind addrress");
     let _ = tokio::spawn(server);
 
     TestApp { address, pool, dbname }
