@@ -19,7 +19,7 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io
     }
 
     let server = HttpServer::new(move || {
-        println!("~~~ start http server: {}", func!());
+        // println!("~~~ start http server: {}", func!());
 
         App::new()
             // Register the connection as part of the application state
@@ -28,19 +28,10 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io
             // .wrap(routes::middlewares::SimpleLogger)
             // .wrap(Logger::default())
             .wrap_fn(|req, srv| {
-                println!(
-                    "--> Hi from start. You requested: method={}, path={}",
-                    req.method(),
-                    req.path()
-                );
-
+                println!("--> Hi from request start, method={}, path={}", req.method(), req.path());
                 srv.call(req).map(|res| {
-                    let status = match &res {
-                        Ok(v) => v.status().as_u16(),
-                        Err(_) => 0,
-                    };
-
-                    println!("<-- Hi from response. Your response: status={}", status);
+                    let status = res.as_ref().map_or(0, |v| v.status().as_u16());
+                    println!("<-- Hi from response: status={}", status);
                     res
                 })
             })
