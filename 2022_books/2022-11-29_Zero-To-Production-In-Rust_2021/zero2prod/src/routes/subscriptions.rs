@@ -1,4 +1,8 @@
-use actix_web::{http::header::ContentType, web, HttpResponse};
+use actix_web::{
+    http::header::ContentType,
+    web::{Data, Form, ReqData},
+    HttpResponse,
+};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -11,9 +15,15 @@ pub struct SubscribeData {
     name: String,
 }
 
-pub async fn subscribe(pool: web::Data<PgPool>, form: web::Form<SubscribeData>) -> HttpResponse {
+pub async fn subscribe(
+    pool: Data<PgPool>,
+    form: Form<SubscribeData>,
+    request_id: ReqData<Uuid>,
+) -> HttpResponse {
+    let request_id = request_id.into_inner();
     let subscriber_id = Uuid::new_v4();
-    let mut resp = json!({"code": 0,"msg": "ok", "data": {}});
+
+    let mut resp = json!({"code": 0,"msg": "ok", "data": {}, "requestId": request_id});
 
     if form.email.is_empty() || form.name.is_empty() {
         resp["code"] = (-1).into();
@@ -37,9 +47,9 @@ INSERT INTO subscriptions (id, email, name, subscribed_at)
     .await;
 
     let err = match result {
+        // return HttpResponse::Ok().finish()
         Ok(_) => {
-            // return HttpResponse::Ok().finish()
-            return HttpResponse::Ok().content_type(ContentType::json()).body(resp.to_string());
+            return HttpResponse::Ok().content_type(ContentType::json()).body(resp.to_string())
         }
         Err(e) => e,
     };

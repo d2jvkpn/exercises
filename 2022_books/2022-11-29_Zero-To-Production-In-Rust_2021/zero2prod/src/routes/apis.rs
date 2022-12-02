@@ -1,10 +1,10 @@
 // use crate::{common::Resp};
 use super::common::Resp;
 use actix_web::{
-    get,
+    self, get,
     http::{header::ContentType, StatusCode},
     web::{Json, Path, Query, ReqData},
-    HttpRequest, HttpResponse, Responder, Result,
+    HttpRequest, HttpResponse, Responder,
 };
 use chrono::{Local, SecondsFormat};
 use serde::{self, Deserialize, Serialize};
@@ -44,7 +44,7 @@ pub(super) struct Info {
 }
 
 #[get("/v1/info/{user_id}/{friend}")] // <- define path parameters
-pub(super) async fn info(info: Path<Info>) -> Result<String> {
+pub(super) async fn info(info: Path<Info>) -> actix_web::Result<String> {
     Ok(format!("Welcome {}, user_id {}!\n", info.friend, info.user_id))
 }
 

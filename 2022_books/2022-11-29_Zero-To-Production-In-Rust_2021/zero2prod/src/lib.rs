@@ -22,14 +22,15 @@ pub mod routes;
 
 use actix_web::{
     dev::{Server, Service as _},
-    web, App, HttpServer,
+    web::{self, Data},
+    App, HttpServer,
 };
 use futures_util::future::FutureExt;
 use sqlx::PgPool;
 use std::{io, net, thread, time::Duration};
 
 pub fn run(listener: net::TcpListener, pool: PgPool, mut workers: usize) -> io::Result<Server> {
-    let data = web::Data::new(pool);
+    let data = Data::new(pool);
 
     let threads = thread::available_parallelism().unwrap().get();
     if workers == 0 || workers > threads {
