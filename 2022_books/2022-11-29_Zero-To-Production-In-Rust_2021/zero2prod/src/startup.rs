@@ -5,13 +5,9 @@ use actix_web::{
     web::{self, Data},
     App, HttpServer,
 };
-use env_logger::Env;
 use futures_util::future::FutureExt;
 use sqlx::PgPool;
 use std::{io, net, thread, time::Duration};
-use tracing::subscriber::set_global_default;
-use tracing_bunyan_formatter::{BunyanFormattingLayer, JsonStorageLayer};
-use tracing_subscriber::{layer::SubscriberExt, EnvFilter, Registry};
 
 // io::Result<Server>
 pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io::Result<Server> {
@@ -22,19 +18,6 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io
         config.threads = threads;
     }
 
-    // tracing
-    env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
-    let env_filter = EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
-    let formatting_layer = BunyanFormattingLayer::new("zero2prod".into(), std::io::stdout);
-    // The `with` method is provided by `SubscriberExt`, an extension
-    // trait for `Subscriber` exposed by `tracing_subscriber`
-    let subscriber =
-        Registry::default().with(env_filter).with(JsonStorageLayer).with(formatting_layer);
-    // `set_global_default` can be used by applications to specify
-    // what subscriber should be used to process spans.
-    set_global_default(subscriber).expect("Failed to set subscriber");
-
-    // server
     let server = HttpServer::new(move || {
         println!("~~~ start http server: {}", func!());
 
