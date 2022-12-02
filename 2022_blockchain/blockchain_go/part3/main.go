@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 var (
@@ -15,11 +16,13 @@ var (
 func main() {
 	var (
 		count int
+		db    string
 		err   error
 		bc    *Blockchain
 	)
 
 	flag.Int64Var(&_TargetBits, "targetBits", _TargetBits, "target bits")
+	flag.StringVar(&db, "db", "data/blockchain.boltdb", "boltdb file path")
 	flag.Parse()
 	log.Println("Target bits:", _TargetBits)
 
@@ -33,7 +36,11 @@ func main() {
 		}
 	}()
 
-	if bc, err = NewBlockchain("data/blockchain.db", "theBlockchain"); err != nil {
+	if err = os.MkdirAll(filepath.Dir(db), 0755); err != nil {
+		log.Fatalln(err)
+	}
+
+	if bc, err = NewBlockchain(db, "blockchain"); err != nil {
 		log.Fatalf("NewBlockchain: %v\n", err)
 	}
 	defer bc.Close()

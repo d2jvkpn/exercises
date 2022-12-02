@@ -17,7 +17,7 @@ type Block struct {
 
 func (b Block) Yaml() string {
 	return fmt.Sprintf(
-		"- Timestamp: %s\n  Data: %q\n  PrevBlockHash: %x\n  Hash: %x\n  Nonce: %d",
+		"- timestamp: %s\n  data: %q\n  prev_block_hash: %x\n  hash: %x\n  nonce: %d",
 		time.Unix(b.Timestamp, 0).Format(time.RFC3339), b.Data,
 		b.PrevBlockHash, b.Hash, b.Nonce,
 	)
