@@ -10,15 +10,15 @@ import (
 
 // Blockchain keeps a sequence of Blocks
 type Blockchain struct {
-	bucket   []byte // bucket key of blockchain in blotdb
-	lastHash []byte // hash of last block
+	bucket   []byte   // bucket key of blockchain in blotdb
+	lastHash [32]byte // hash of last block
 	dbPath   string
 	db       *bolt.DB
 }
 
 // BlockchainIterator is used to iterate over blockchain blocks
 type BlockchainIterator struct {
-	currentHash []byte
+	currentHash [32]byte
 	bc          *Blockchain
 	db          *bolt.DB
 }
@@ -43,7 +43,7 @@ func NewBlockchain(dbPath, bucket string) (bc *Blockchain, err error) {
 		var bucket *bolt.Bucket
 
 		if bucket = tx.Bucket(bc.bucket); bucket != nil {
-			bc.lastHash = bucket.Get(bc.lastHashKey())
+			copy(bc.lastHash[:], bucket.Get(bc.lastHashKey()))
 			return nil
 		}
 
@@ -55,11 +55,11 @@ func NewBlockchain(dbPath, bucket string) (bc *Blockchain, err error) {
 		genesis := NewGenesisBlock()
 		bts, _ := genesis.Serialize()
 		bc.lastHash = genesis.Hash
-		if err = bucket.Put(bc.lastHash, bts); err != nil {
+		if err = bucket.Put(bc.lastHash[:], bts); err != nil {
 			return err
 		}
 		bc.lastHash = genesis.Hash
-		if err = bucket.Put(bc.lastHashKey(), genesis.Hash); err != nil {
+		if err = bucket.Put(bc.lastHashKey(), genesis.Hash[:]); err != nil {
 			return err
 		}
 
@@ -80,13 +80,13 @@ func (bc *Blockchain) Iterator() *BlockchainIterator {
 // AddBlock saves provided data as a block in the blockchain
 func (bc *Blockchain) AddBlock(data string) (err error) {
 	var (
-		lastHash []byte
+		lastHash [32]byte
 		block    *Block
 	)
 
 	err = bc.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(bc.bucket)
-		lastHash = bucket.Get(bc.lastHashKey())
+		copy(lastHash[:], bucket.Get(bc.lastHashKey()))
 		return nil
 	})
 
@@ -100,11 +100,11 @@ func (bc *Blockchain) AddBlock(data string) (err error) {
 		bucket := tx.Bucket(bc.bucket)
 		bts, _ := block.Serialize()
 
-		if err = bucket.Put(block.Hash, bts); err != nil {
+		if err = bucket.Put(block.Hash[:], bts); err != nil {
 			return err
 		}
 
-		if err = bucket.Put(bc.lastHashKey(), block.Hash); err != nil {
+		if err = bucket.Put(bc.lastHashKey(), block.Hash[:]); err != nil {
 			return err
 		}
 
@@ -128,7 +128,7 @@ func (iter *BlockchainIterator) Next() *Block {
 
 	err = iter.db.View(func(tx *bolt.Tx) error {
 		bucket := tx.Bucket(iter.bc.bucket)
-		bts := bucket.Get(iter.currentHash)
+		bts := bucket.Get(iter.currentHash[:])
 
 		if len(bts) == 0 {
 			return fmt.Errorf("not exist")

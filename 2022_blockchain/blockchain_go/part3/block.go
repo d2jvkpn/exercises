@@ -10,8 +10,8 @@ import (
 type Block struct {
 	Timestamp     int64
 	Data          []byte
-	PrevBlockHash []byte
-	Hash          []byte
+	PrevBlockHash [32]byte
+	Hash          [32]byte
 	Nonce         int64
 }
 
@@ -23,26 +23,26 @@ func (b Block) Yaml() string {
 	)
 }
 
-func NewBlock(data string, prevBlockHash []byte) *Block {
+func NewBlock(data string, prevBlockHash [32]byte) *Block {
 	block := &Block{
 		Timestamp:     time.Now().Unix(),
 		Data:          []byte(data),
 		PrevBlockHash: prevBlockHash,
-		Hash:          []byte{},
+		Hash:          [32]byte{},
 		Nonce:         0,
 	}
 
 	pow := NewProofOfWork(block)
 	nonce, hash := pow.Run()
 
-	block.Hash = hash[:]
+	block.Hash = hash
 	block.Nonce = nonce
 
 	return block
 }
 
 func NewGenesisBlock() *Block {
-	return NewBlock("Genesis Block", []byte{})
+	return NewBlock("Genesis Block", [32]byte{})
 }
 
 // Serialize serializes the block

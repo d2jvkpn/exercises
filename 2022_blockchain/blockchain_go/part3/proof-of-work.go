@@ -34,7 +34,7 @@ func (pow *ProofOfWork) prepareData(nonce int64) []byte {
 		[][]byte{
 			IntToHex(pow.block.Timestamp),
 			pow.block.Data,
-			pow.block.PrevBlockHash,
+			pow.block.PrevBlockHash[:],
 			IntToHex(_TargetBits),
 			IntToHex(nonce),
 		},
@@ -44,7 +44,7 @@ func (pow *ProofOfWork) prepareData(nonce int64) []byte {
 	return data
 }
 
-func (pow *ProofOfWork) Run() (int64, []byte) {
+func (pow *ProofOfWork) Run() (int64, [32]byte) {
 	var (
 		hashInt big.Int
 		hash    [32]byte
@@ -74,7 +74,7 @@ func (pow *ProofOfWork) Run() (int64, []byte) {
 	// fmt.Println("\n~~~", hashInt, pow.target)
 	fmt.Printf("\n    %d times, %s\n\n", nonce+1, time.Since(start))
 
-	return nonce, hash[:]
+	return nonce, hash
 }
 
 func (pow *ProofOfWork) Validate() bool {
