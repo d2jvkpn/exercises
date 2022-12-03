@@ -18,6 +18,7 @@ addr=http://localhost:8000
 curl -i -X GET $addr/healthz
 
 curl -i -X GET $addr/v1/healthy
+curl -i -X POST $addr/v1/healthy -d 'aaa'
 
 curl -i -X GET $addr/open/info/42/Mason
 

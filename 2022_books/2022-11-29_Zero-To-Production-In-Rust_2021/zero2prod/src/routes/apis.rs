@@ -3,7 +3,8 @@ use super::common::Resp;
 use actix_web::{
     self, get,
     http::{header::ContentType, StatusCode},
-    web::{Json, Path, Query, ReqData},
+    post,
+    web::{Bytes, Json, Path, Query, ReqData},
     HttpRequest, HttpResponse, Responder,
 };
 use chrono::{Local, SecondsFormat};
@@ -18,12 +19,14 @@ pub async fn healthz() -> HttpResponse {
     HttpResponse::Ok().finish()
 }
 
-#[get("/v1/healthy")]
-pub(super) async fn healthy(request_id: Option<ReqData<Uuid>>) -> impl Responder {
+#[post("/v1/healthy")]
+pub(super) async fn healthy(request_id: Option<ReqData<Uuid>>, bytes: Bytes) -> impl Responder {
     //    HttpResponse::Ok()
     //        .content_type(ContentType::plaintext())
     //        .insert_header(("X-Version", "0.1.0"))
     //        .body("Ok")
+
+    let name = String::from_utf8_lossy(&bytes);
 
     let request_id: Uuid = match request_id {
         Some(v) => v.into_inner(), // v: ReqData<Uuid>
@@ -33,7 +36,7 @@ pub(super) async fn healthy(request_id: Option<ReqData<Uuid>>) -> impl Responder
     HttpResponse::Ok()
         .content_type(ContentType::json())
         .insert_header(("X-Version", "0.1.0"))
-        .body(json!({"code":0,"msg":"ok","requestId":request_id}).to_string())
+        .body(json!({"code":0,"msg":format!("ok: {}", name),"requestId":request_id}).to_string())
 }
 
 // extract data from path and query
