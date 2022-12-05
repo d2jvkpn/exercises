@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
+// use once_cell::sync::Lazy;
 use std::net::TcpListener;
-use zero2prod::{configuration::open_yaml, run};
+use zero2prod::{configuration::open_yaml, startup::run}; // telemetry::init_subscriber
 
 // use sqlx::{Connection, PgConnection};
 use sqlx::{Connection, Executor, PgConnection, PgPool};
@@ -14,6 +15,8 @@ pub struct TestApp {
 
 // connect to database in config
 pub async fn spawn_app_without_create() -> TestApp {
+    // init_subscriber("tests".into(), "debug".into());
+
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);
@@ -34,6 +37,8 @@ pub async fn spawn_app_without_create() -> TestApp {
 
 // create a temporary database
 pub async fn spawn_app_create_db() -> TestApp {
+    // init_subscriber("tests".into(), "debug".into());
+
     let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind random port");
     let port = listener.local_addr().unwrap().port();
     let address = format!("http://127.0.0.1:{}", port);

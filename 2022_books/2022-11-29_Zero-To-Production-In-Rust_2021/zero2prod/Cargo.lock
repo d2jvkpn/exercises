@@ -2701,6 +2701,7 @@ dependencies = [
  "config",
  "futures-util",
  "num_cpus",
+ "once_cell",
  "reqwest",
  "serde",
  "serde_json",
