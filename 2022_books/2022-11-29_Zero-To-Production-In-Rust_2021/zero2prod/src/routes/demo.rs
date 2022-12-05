@@ -2,10 +2,8 @@
 
 use actix_web::{
     dev::{Server, Service, ServiceResponse},
-    http::{
-        header::{HeaderValue, CONTENT_TYPE},
-        StatusCode,
-    },
+    http::header::{HeaderValue, CONTENT_TYPE},
+    http::StatusCode,
     middleware::{ErrorHandlerResponse, ErrorHandlers},
     web, App, HttpResponse, HttpServer, Result,
 };

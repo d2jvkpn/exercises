@@ -1,6 +1,6 @@
 use actix_web::{
     dev::ServiceResponse,
-    http::{header::HeaderValue, header::CONTENT_TYPE},
+    http::header::{HeaderValue, CONTENT_TYPE},
     middleware::ErrorHandlerResponse,
 };
 

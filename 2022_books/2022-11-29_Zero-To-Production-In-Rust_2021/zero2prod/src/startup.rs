@@ -1,9 +1,7 @@
 use crate::{
     configuration::Settings,
-    routes::{
-        self,
-        handlers::{render_404, render_500},
-    },
+    routes,
+    routes::handlers::{render_404, render_500},
 };
 use actix_web::{
     dev::Server,

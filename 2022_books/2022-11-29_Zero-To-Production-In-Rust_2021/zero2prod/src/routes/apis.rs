@@ -1,7 +1,7 @@
 // use crate::{common::Resp};
 use super::common::Resp;
 use actix_web::{
-    self, get,
+    get,
     http::{header::ContentType, StatusCode},
     post,
     web::{Bytes, Json, Path, Query, ReqData},
