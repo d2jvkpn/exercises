@@ -1,7 +1,15 @@
-use crate::{configuration::Settings, routes};
+use crate::{
+    configuration::Settings,
+    routes::{
+        self,
+        handlers::{render_404, render_500},
+    },
+};
 use actix_web::{
-    dev::{Server, Service as _},
+    dev::{Server, Service},
+    http::StatusCode,
     /* middleware::Logger, */
+    middleware::ErrorHandlers,
     web::{self, Data},
     App, HttpServer,
 };
@@ -20,13 +28,14 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io
 
     let server = HttpServer::new(move || {
         // println!("~~~ start http server: {}", func!());
-
         App::new()
             // Register the connection as part of the application state
             .app_data(data.clone())
             // middlewares .wrap(f1).wrap(f2).wrap(f3), execution order f3() -> f2() -> f1()
             // .wrap(routes::middlewares::SimpleLogger)
             // .wrap(Logger::default())
+            .wrap(ErrorHandlers::new().handler(StatusCode::NOT_FOUND, render_404))
+            .wrap(ErrorHandlers::new().handler(StatusCode::INTERNAL_SERVER_ERROR, render_500))
             .wrap_fn(|req, srv| {
                 println!("--> Hi from request start, method={}, path={}", req.method(), req.path());
                 srv.call(req).map(|res| {

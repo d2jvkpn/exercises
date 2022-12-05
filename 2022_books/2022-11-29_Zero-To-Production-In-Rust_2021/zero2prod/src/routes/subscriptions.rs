@@ -4,16 +4,43 @@ use actix_web::{
     HttpResponse,
 };
 use chrono::Utc;
+use email_address::*;
 use serde::{Deserialize, Serialize};
-use serde_json::json;
+use serde_json;
 use sqlx::{self, PgPool};
 use tracing::{self, info_span, Instrument};
+use unicode_segmentation::UnicodeSegmentation;
 use uuid::Uuid;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SubscribeData {
     email: String,
     name: String,
+}
+
+impl SubscribeData {
+    fn valid(&self) -> Result<(), String> {
+        let (name, email) = (&self.name, &self.email);
+
+        if name.trim().is_empty() || email.trim().is_empty() {
+            return Err("name or empay is empty".into());
+        }
+
+        if name.graphemes(true).count() > 256 || email.graphemes(true).count() > 256 {
+            return Err("name or empay is too long".into());
+        }
+
+        let forbidden_characters = ['/', '(', ')', '"', '<', '>', '\\', '{', '}'];
+        if name.chars().any(|g| forbidden_characters.contains(&g)) {
+            return Err("name contains forbidden characters".into());
+        }
+
+        if !EmailAddress::is_valid(email) {
+            return Err("email contains forbidden characters".into());
+        }
+
+        Ok(())
+    }
 }
 
 pub async fn subscribe(
@@ -32,14 +59,14 @@ pub async fn subscribe(
     );
     let _req_span_guard = req_span.enter();
 
-    let mut resp = json!({"code": 0,"msg": "ok", "data": {}, "requestId": request_id});
+    let mut resp = serde_json::json!({"code": 0,"msg": "ok", "data": {}, "requestId": request_id});
 
-    if form.email.is_empty() || form.name.is_empty() {
+    if let Err(e) = form.valid() {
         resp["code"] = (-1).into();
-        resp["msg"] = "email or name is unset".into();
+        resp["msg"] = serde_json::Value::String(e);
 
         return HttpResponse::BadRequest().content_type(ContentType::json()).body(resp.to_string());
-    }
+    };
     // TODO email length and name length check
 
     let query_span = tracing::info_span!("Saving new subscriber details in the database");
