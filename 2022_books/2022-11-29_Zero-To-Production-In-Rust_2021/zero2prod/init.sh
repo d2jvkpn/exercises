@@ -72,3 +72,11 @@ sqlx migrate run
 # echo "export DATABASE_URL=$DATABASE_URL" > .env
 
 cargo check
+
+#### docker build sqlx offline mode
+# sqlx = { version = "0.6", features = ["runtime-actix-rustls", "macros", "postgres", "uuid", "chrono", "migrate", "offline"] }
+cargo install sqlx-cli # install or upgrade
+cargo sqlx prepare -- --lib
+cat sqlx-data.json
+
+docker build --tag zero2prod:dev --file deployments/Dockerfile .
