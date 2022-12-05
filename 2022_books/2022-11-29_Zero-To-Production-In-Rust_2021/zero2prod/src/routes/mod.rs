@@ -3,6 +3,7 @@ mod common;
 mod load;
 mod subscriptions;
 
+pub mod demo;
 pub mod handlers;
 pub mod middlewares;
 

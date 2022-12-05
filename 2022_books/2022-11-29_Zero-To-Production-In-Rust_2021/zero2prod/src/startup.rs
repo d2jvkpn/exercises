@@ -6,14 +6,13 @@ use crate::{
     },
 };
 use actix_web::{
-    dev::{Server, Service},
+    dev::Server,
     http::StatusCode,
     /* middleware::Logger, */
     middleware::ErrorHandlers,
     web::{self, Data},
     App, HttpServer,
 };
-use futures_util::future::FutureExt;
 use sqlx::PgPool;
 use std::{io, net, thread, time::Duration};
 
@@ -36,14 +35,6 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io
             // .wrap(Logger::default())
             .wrap(ErrorHandlers::new().handler(StatusCode::NOT_FOUND, render_404))
             .wrap(ErrorHandlers::new().handler(StatusCode::INTERNAL_SERVER_ERROR, render_500))
-            .wrap_fn(|req, srv| {
-                println!("--> Hi from request start, method={}, path={}", req.method(), req.path());
-                srv.call(req).map(|res| {
-                    let status = res.as_ref().map_or(0, |v| v.status().as_u16());
-                    println!("<-- Hi from response: status={}", status);
-                    res
-                })
-            })
             .route("/healthz", web::get().to(routes::healthz))
             .configure(routes::open_scope)
     })
