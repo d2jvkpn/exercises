@@ -3,6 +3,7 @@ use actix_web::web::{get, post, resource, scope, ServiceConfig};
 
 pub fn open_route(config: &mut ServiceConfig) {
     config
+        .route("/open/not_found", post().to(subscribe))
         .route("/open/subscribe", post().to(subscribe))
         .route("/open/greet", get().to(greet))
         .route("/open/greet/{name}", get().to(greet))
@@ -17,6 +18,7 @@ pub fn open_scope(config: &mut ServiceConfig) {
 
     let scope_service = scope("/open")
         .wrap(logger)
+        .service(resource("/not_found").route(get().to(not_found)))
         .service(resource("/subscribe").route(post().to(subscribe)))
         .service(resource("/greet").route(get().to(greet)))
         .service(resource("/greet/{name}").route(get().to(greet)))

@@ -1,7 +1,7 @@
 use crate::{
     configuration::Settings,
     routes,
-    routes::handlers::{render_404, render_500},
+    routes::handlers::{render_400, render_404, render_500},
 };
 use actix_web::{
     dev::Server,
@@ -31,6 +31,7 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io
             // middlewares .wrap(f1).wrap(f2).wrap(f3), execution order f3() -> f2() -> f1()
             // .wrap(routes::middlewares::SimpleLogger)
             // .wrap(Logger::default())
+            .wrap(ErrorHandlers::new().handler(StatusCode::BAD_REQUEST, render_400))
             .wrap(ErrorHandlers::new().handler(StatusCode::NOT_FOUND, render_404))
             .wrap(ErrorHandlers::new().handler(StatusCode::INTERNAL_SERVER_ERROR, render_500))
             .route("/healthz", web::get().to(routes::healthz))

@@ -39,6 +39,13 @@ pub(super) async fn healthy(request_id: Option<ReqData<Uuid>>, bytes: Bytes) -> 
         .body(json!({"code":0,"msg":format!("ok: {}", name),"requestId":request_id}).to_string())
 }
 
+//
+pub async fn not_found() -> HttpResponse {
+    HttpResponse::NotFound()
+        .content_type(ContentType::json())
+        .body(json!({"code":0,"msg":"not found"}).to_string())
+}
+
 // extract data from path and query
 #[derive(Deserialize)]
 pub(super) struct Info {
