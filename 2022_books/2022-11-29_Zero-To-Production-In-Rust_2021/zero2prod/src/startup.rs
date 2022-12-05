@@ -39,8 +39,8 @@ pub fn run(listener: net::TcpListener, pool: PgPool, mut config: Settings) -> io
             .configure(routes::open_scope)
     })
     .keep_alive(Duration::from_secs(config.keep_alive))
-    .listen(listener)?
     .workers(config.threads)
+    .listen(listener)?
     .run();
 
     Ok(server)
