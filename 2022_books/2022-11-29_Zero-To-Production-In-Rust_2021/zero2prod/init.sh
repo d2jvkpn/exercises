@@ -78,5 +78,3 @@ cargo check
 cargo install sqlx-cli # install or upgrade
 cargo sqlx prepare -- --lib
 cat sqlx-data.json
-
-docker build --tag zero2prod:dev --file deployments/Dockerfile .
