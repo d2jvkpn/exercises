@@ -15,9 +15,9 @@ cargo init
 
 mkdir -p tests
 cargo add actix-web actix_rt tokio config chrono
-cargo add sqlx --features "runtime-actix-rustls macros postgres uuid chrono migrate offline"
+cargo add sqlx --features=runtime-actix-rustls,macros,postgres,uuid,chrono,migrate,offline
 cargo add serde --features=derive
-cargo add uuid --features "v4 serde"
+cargo add uuid --features=v4,serde
 cargo add --dev reqwest
 cat Cargo.toml
 
