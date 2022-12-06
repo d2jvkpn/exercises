@@ -55,9 +55,9 @@ psql --host 127.0.0.1 --user hello --port 5432 --password \
 sqlx migrate add create_subscriptions_table
 # edit migrations/{timestamp}_create_subscriptions_table.sql
 
-sql_file=$(ls migrations | tail -n 1)
+sql_file=$(ls migrations/*_create_subscriptions_table.sql | tail -n 1)
 
-cat >> migrations/$sql_file <<EOF
+cat >> $sql_file <<EOF
 CREATE TABLE subscriptions (
   id      uuid NOT NULL,
   PRIMARY KEY (id),
@@ -78,3 +78,20 @@ cargo check
 cargo install sqlx-cli # install or upgrade
 cargo sqlx prepare -- --lib
 cat sqlx-data.json
+
+####
+sqlx migrate add create_subscription_tokens_table
+
+sql_file=$(ls migrations/*_create_subscription_tokens_table.sql | tail -n 1)
+
+cat >> $sql_file <<EOF
+CREATE TABLE subscription_tokens(
+  subscription_token TEXT NOT NULL,
+  subscriber_id      uuid NOT NULL
+  REFERENCES         subscriptions (id),
+  created_at         timestamptz NOT NULL,
+  PRIMARY            KEY (subscription_token)
+);
+EOF
+
+sqlx migrate run
