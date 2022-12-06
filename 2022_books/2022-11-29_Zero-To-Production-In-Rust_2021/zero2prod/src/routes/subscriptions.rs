@@ -4,13 +4,13 @@ use actix_web::{
     HttpResponse,
 };
 use chrono::Utc;
-use email_address::*;
 use serde::{Deserialize, Serialize};
 use serde_json;
 use sqlx::{self, PgPool};
 use tracing::{self, info_span, Instrument};
 use unicode_segmentation::UnicodeSegmentation;
 use uuid::Uuid;
+use validator::validate_email;
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SubscribeData {
@@ -26,7 +26,7 @@ impl SubscribeData {
             return Err("name or empay is empty".into());
         }
 
-        if name.graphemes(true).count() > 256 || email.graphemes(true).count() > 256 {
+        if name.graphemes(true).count() > 32 || email.graphemes(true).count() > 128 {
             return Err("name or empay is too long".into());
         }
 
@@ -35,7 +35,7 @@ impl SubscribeData {
             return Err("name contains forbidden characters".into());
         }
 
-        if !EmailAddress::is_valid(email) {
+        if !validate_email(email) {
             return Err("email contains forbidden characters".into());
         }
 
@@ -112,4 +112,16 @@ INSERT INTO subscriptions (id, email, name, subscribed_at)
     resp["msg"] = "internal server error".into();
 
     HttpResponse::InternalServerError().content_type(ContentType::json()).body(resp.to_string())
+}
+
+#[cfg(test)]
+mod tests {
+    use fake::{faker::internet::en::SafeEmail, Fake};
+    use validator::validate_email;
+
+    #[test]
+    fn valid_emails() {
+        let email: _ = SafeEmail().fake::<String>();
+        assert!(validate_email(email));
+    }
 }
