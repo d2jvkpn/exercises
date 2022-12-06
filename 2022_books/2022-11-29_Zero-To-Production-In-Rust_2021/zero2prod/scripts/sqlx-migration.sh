@@ -9,12 +9,13 @@ cargo install --version=0.6.2 sqlx-cli --no-default-features --features native-t
 command -v sqlx
 
 # postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+# ?? postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/${DB_NAME}?sslmode=disable
 export DATABASE_URL=postgres://hello:world@127.0.0.1:5432/newsletter
 echo "export DATABASE_URL=$DATABASE_URL" >> .env
 
 sqlx database create
 
-psql --host 127.0.0.1 --user hello --port 5432 --password \
+psql --host 127.0.0.1 --username hello --port 5432 --password \
   --dbname newsletter -c 'SELECT current_database()'
 
 # sqlx database drop

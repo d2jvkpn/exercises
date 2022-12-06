@@ -26,12 +26,13 @@ struct Opt {
 
 #[actix_web::main]
 async fn main() -> io::Result<()> {
-    // env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
-
-    init_subscriber("zero2prod".into(), "info".into());
-
     // load configurations
     let opt = Opt::from_args();
+
+    // env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info")).init();
+    if !opt.release {
+        init_subscriber("zero2prod".into(), "info".into()).unwrap();
+    }
 
     let mut config = open_yaml(&opt.config)
         .unwrap_or_else(|_| panic!("Failed to read configuration {}.", &opt.config));
