@@ -8,19 +8,19 @@ use zero2prod::{configuration::open_yaml, startup::run, telemetry::init_subscrib
 #[derive(Debug, StructOpt)]
 #[structopt(name = "zero2prod", about = "zero to production in rust")]
 struct Opt {
-    #[structopt(long = "config", default_value = "configs/local.yaml")]
+    #[structopt(long, default_value = "configs/local.yaml", help = "configuration file path")]
     config: String,
 
-    #[structopt(long = "addr", default_value = "0.0.0.0")]
+    #[structopt(long = "addr", default_value = "0.0.0.0", help = "http server address")]
     addr: String,
 
-    #[structopt(long = "port", default_value = "8000")]
+    #[structopt(long, default_value = "8000", help = "http server port")]
     port: u16,
 
-    #[structopt(long = "threads", default_value = "0")]
+    #[structopt(long, default_value = "0", help = "threads limit")]
     threads: usize,
 
-    #[structopt(long)]
+    #[structopt(long, help = "run in release mode")]
     release: bool,
 }
 
