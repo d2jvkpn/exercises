@@ -8,9 +8,16 @@ use log4rs::{
     filter::threshold::ThresholdFilter,
 };
 use serde_json::json;
-use std::thread;
+use std::{fs, io, thread};
 
 fn main() -> Result<(), SetLoggerError> {
+    if let Err(e) = fs::remove_dir_all("logs") {
+        if e.kind() != io::ErrorKind::NotFound {
+            panic!("{e:?}");
+        }
+    };
+    fs::create_dir_all("logs").unwrap();
+
     let level = log::LevelFilter::Info;
     let file_path = "logs/log4rs.log";
 
@@ -49,6 +56,7 @@ fn main() -> Result<(), SetLoggerError> {
 
     let h1 = thread::spawn(|| {
         log_mdc::insert("h1", "foo-bar");
+        log_mdc::insert("ans", "24");
         error!(target:"yak_events", "H1: Goes to stderr and file");
         warn!("H1: Goes to stderr and file");
     });
