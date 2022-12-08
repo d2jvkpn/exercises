@@ -1,4 +1,5 @@
-use log::{debug, error, info, trace, warn, LevelFilter, SetLoggerError};
+use anyhow::Error;
+use log::{debug, error, info, trace, warn, LevelFilter};
 use log4rs::{
     append::console::{ConsoleAppender, Target},
     append::file::FileAppender,
@@ -10,16 +11,15 @@ use log4rs::{
 use serde_json::json;
 use std::{fs, io, thread};
 
-fn main() -> Result<(), SetLoggerError> {
+fn main() -> anyhow::Result<()> {
     if let Err(e) = fs::remove_dir_all("logs") {
         if e.kind() != io::ErrorKind::NotFound {
-            panic!("{e:?}");
+            return Err(Error::new(e).context("remove logs/"));
         }
     };
-    fs::create_dir_all("logs").unwrap();
+    // fs::create_dir_all("logs").map_err(|e| Error::new(e).context("create logs/"))?;
 
-    let level = log::LevelFilter::Info;
-    let file_path = "logs/log4rs.log";
+    let (level, file_path) = (log::LevelFilter::Info, "logs/log4rs.log");
 
     // Build a stderr logger.
     let stderr = ConsoleAppender::builder().target(Target::Stderr).build();
@@ -29,7 +29,7 @@ fn main() -> Result<(), SetLoggerError> {
         // Pattern: https://docs.rs/log4rs/*/log4rs/encode/pattern/index.html
         .encoder(Box::new(JsonEncoder::new()))
         .build(file_path)
-        .unwrap();
+        .map_err(|e| Error::new(e).context("log4rs create logfile from FileAppender"))?;
 
     // Log Trace level output to file where trace is the default level
     // and the programmatically specified level to stderr.
@@ -46,17 +46,18 @@ fn main() -> Result<(), SetLoggerError> {
                 .appender("stderr")
                 .build(LevelFilter::Trace),
         )
-        .unwrap();
+        .map_err(|e| Error::new(e).context("log4rs config builder"))?;
 
     // Use this to change log levels at runtime.
     // This means you can change the default log level to trace
     // if you are trying to debug an issue and need more logs on then turn it off
     // once you are done.
-    let _handle = log4rs::init_config(config)?;
+    let _handle = log4rs::init_config(config)?; // SetLoggerError
 
     let h1 = thread::spawn(|| {
         log_mdc::insert("h1", "foo-bar");
         log_mdc::insert("ans", "24");
+
         error!(target:"yak_events", "H1: Goes to stderr and file");
         warn!("H1: Goes to stderr and file");
     });
@@ -81,6 +82,7 @@ fn main() -> Result<(), SetLoggerError> {
 
     h1.join().unwrap();
     h2.join().unwrap();
+    // TODO: join multiple errors
 
     Ok(())
 }
