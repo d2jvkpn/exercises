@@ -6,8 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-chrono = "0.4"
 log = "0.4"
 log-mdc = "0.1"
-log4rs = { version = "1", features = ["json_encoder"] }
+log4rs = { version = "1" }
 serde_json = "1"

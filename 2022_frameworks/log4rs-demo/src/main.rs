@@ -7,6 +7,7 @@ use log4rs::{
     // encode::pattern::PatternEncoder,
     filter::threshold::ThresholdFilter,
 };
+use serde_json::json;
 use std::thread;
 
 fn main() -> Result<(), SetLoggerError> {
@@ -47,12 +48,24 @@ fn main() -> Result<(), SetLoggerError> {
     let _handle = log4rs::init_config(config)?;
 
     let h1 = thread::spawn(|| {
-        log_mdc::insert("foo", "bar");
+        log_mdc::insert("h1", "foo-bar");
         error!(target:"yak_events", "H1: Goes to stderr and file");
         warn!("H1: Goes to stderr and file");
     });
 
     let h2 = thread::spawn(|| {
+        log_mdc::insert("h2", "thread2");
+        log_mdc::insert("answer", json!({"ans":42}).to_string());
+        log_mdc::remove("h2");
+
+        // clear          Removes all values from the MDC.
+        // extend         Extends the MDC with new entries.
+        // extend_scoped  Extends the MDC with new entries in a scoped fashion.
+        // get            Retrieves a value from the MDC.
+        // insert         Inserts a new entry into the MDC, returning the old value.
+        // insert_scoped  Inserts a new entry into the MDC in a scoped fashion.
+        // iter           Invokes the provided closure for each entry in the MDC.
+        // remove         Removes a value from the MDC.
         info!("H2: Goes to stderr and file");
         debug!("H2: Goes to file only");
         trace!("H2: Goes to file only");

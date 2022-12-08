@@ -289,7 +289,6 @@ dependencies = [
 name = "log4rs-demo"
 version = "0.1.0"
 dependencies = [
- "chrono",
  "log",
  "log-mdc",
  "log4rs",
