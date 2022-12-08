@@ -1,8 +1,11 @@
 // use env_logger;
+use log::LevelFilter;
 use sqlx::PgPool;
 use std::{io, net::TcpListener};
 use structopt::StructOpt;
-use zero2prod::{configuration::open_yaml, startup::run, telemetry::init_subscriber};
+use zero2prod::{
+    configuration::open_yaml, logging::init_env_logger, startup::run, telemetry::init_subscriber,
+};
 
 #[allow(dead_code)]
 #[derive(Debug, StructOpt)]
@@ -33,6 +36,7 @@ async fn main() -> io::Result<()> {
     if !opt.release {
         init_subscriber("zero2prod".into(), "info".into()).unwrap();
     }
+    init_env_logger(LevelFilter::Info);
 
     let mut config = open_yaml(&opt.config)
         .unwrap_or_else(|_| panic!("Failed to read configuration {}.", &opt.config));
