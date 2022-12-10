@@ -2,7 +2,7 @@
 
 use std::time::Duration;
 
-// 04
+//// 04
 enum TrafficLight {
     Green,
     Red,
@@ -23,7 +23,7 @@ impl LastFor for TrafficLight {
     }
 }
 
-// 05
+//// 05
 fn sum_of_u32_slice(slice: &[u32]) -> Option<u32> {
     let mut sum: u32 = 0;
 
@@ -37,19 +37,14 @@ fn sum_of_u32_slice(slice: &[u32]) -> Option<u32> {
     Some(sum)
 }
 
-// 06
-struct Circle {
-    radius: f64,
-}
-
-struct Triangle(f64, f64, f64);
-
-struct Square {
-    side: f64,
-}
-
+//// 06
 pub trait Area {
     fn area(&self) -> f64;
+}
+
+// Circle
+struct Circle {
+    radius: f64,
 }
 
 impl Area for Circle {
@@ -58,11 +53,19 @@ impl Area for Circle {
     }
 }
 
+// Triangle
+struct Triangle(f64, f64, f64);
+
 impl Area for Triangle {
     fn area(&self) -> f64 {
         let s = (self.0 + self.1 + self.2) / 2.0;
         (s * (s - self.0) * (s - self.1) * (s - self.2)).powf(0.5)
     }
+}
+
+// Square
+struct Square {
+    side: f64,
 }
 
 impl Area for Square {

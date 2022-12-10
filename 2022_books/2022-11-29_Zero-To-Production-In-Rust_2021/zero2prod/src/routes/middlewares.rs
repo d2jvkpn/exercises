@@ -64,8 +64,8 @@ where
         req.extensions_mut().insert(Uuid::new_v4());
 
         req.headers_mut().insert(
-            HeaderName::from_lowercase(b"z-log-version").unwrap(),
-            HeaderValue::from_str("0.1.0").unwrap(),
+            HeaderName::from_lowercase(b"simple-logger_version").unwrap(),
+            HeaderValue::from_str("0.1.2").unwrap(),
         );
 
         let fut = self.service.call(req);

@@ -5,9 +5,10 @@ use actix_web::{
     http::{header::ContentType, StatusCode},
     post,
     web::{Bytes, Json, Path, Query, ReqData},
-    HttpRequest, HttpResponse, Responder,
+    HttpMessage, HttpRequest, HttpResponse, Responder,
 };
 use chrono::{Local, SecondsFormat};
+use log::*;
 use serde::{self, Deserialize, Serialize};
 use serde_json::json;
 use std::collections::HashMap;
@@ -40,7 +41,13 @@ pub(super) async fn healthy(request_id: Option<ReqData<Uuid>>, bytes: Bytes) -> 
 }
 
 //
-pub async fn not_found() -> HttpResponse {
+pub async fn not_found(req: HttpRequest) -> HttpResponse {
+    info!(
+        "~~~ simple-logger_version: {:?}, request_id: {:?}",
+        req.headers().get("simple-logger_version"),
+        req.extensions().get::<Uuid>().unwrap(),
+    );
+
     HttpResponse::NotFound()
         .content_type(ContentType::json())
         .body(json!({"code":0,"msg":"not found"}).to_string())

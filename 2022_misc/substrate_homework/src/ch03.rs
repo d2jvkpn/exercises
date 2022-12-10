@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use std::cmp::PartialOrd;
+// use std::cmp::PartialOrd;
 
 pub fn bubble_sort<T: PartialOrd>(items: &mut Vec<T>) {
     let len = items.len();

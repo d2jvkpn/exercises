@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 // use env_logger;
 use log::LevelFilter;
 use sqlx::PgPool;
@@ -36,7 +38,6 @@ async fn main() -> io::Result<()> {
     if !opt.release {
         init_subscriber("zero2prod".into(), "info".into()).unwrap();
     }
-    init_env_logger(LevelFilter::Info);
 
     let mut config = open_yaml(&opt.config)
         .unwrap_or_else(|_| panic!("Failed to read configuration {}.", &opt.config));
