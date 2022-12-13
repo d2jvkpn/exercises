@@ -1,4 +1,9 @@
-use actix_web::{http::StatusCode, web::Json};
+use actix_web::{
+    http::header::{self, HeaderValue},
+    http::StatusCode,
+    web::Json,
+    HttpResponse, ResponseError,
+};
 use anyhow;
 use serde::{self, Deserialize, Serialize};
 use std::panic; // collections::HashMap
@@ -8,6 +13,9 @@ use uuid::Uuid;
 #[derive(Debug, thiserror::Error)]
 #[non_exhaustive]
 pub enum Error {
+    #[error("unauthorized: {msg}")]
+    Unauthorized { msg: String, cause: anyhow::Error },
+
     #[error("bad request: {msg}")]
     BadRequest { msg: String, cause: anyhow::Error },
 
@@ -38,13 +46,10 @@ impl<T: Serialize> Default for Resp<T> {
 
 impl<T: Serialize> Resp<T> {
     pub fn new(request_id: Option<Uuid>) -> Resp<T> {
-        Resp {
-            code: 0,
-            msg: "ok".into(),
-            // data: HashMap::new(),
-            data: None,
-            request_id: request_id.unwrap_or(Uuid::new_v4()),
-        }
+        let request_id = request_id.unwrap_or(Uuid::new_v4());
+        // data: HashMap::new(),
+
+        Resp { code: 0, msg: "ok".into(), data: None, request_id }
     }
 
     pub fn with_code(&mut self, code: i16) -> &mut Self {
@@ -87,6 +92,30 @@ impl<T: Serialize> Resp<T> {
 
         (Json(self), StatusCode::BAD_REQUEST)
     }
+}
+
+impl ResponseError for Error {
+    fn error_response(&self) -> HttpResponse {
+        match self {
+            Self::Unauthorized { msg: _, cause: _ } => {
+                let mut response = HttpResponse::new(StatusCode::UNAUTHORIZED);
+
+                let header_value = HeaderValue::from_str(r#"Basic realm="publish""#).unwrap();
+                // actix_web::http::header provides a collection of constants
+                // for the names of several well-known/standard HTTP headers
+                response.headers_mut().insert(header::WWW_AUTHENTICATE, header_value);
+                response
+            }
+            Self::BadRequest { msg: _, cause: _ } => HttpResponse::new(StatusCode::BAD_REQUEST),
+            Self::InvalidParameter { msg: _, cause: _ } => {
+                HttpResponse::new(StatusCode::BAD_REQUEST)
+            }
+            Self::InternalError(_cause) => HttpResponse::new(StatusCode::INTERNAL_SERVER_ERROR),
+        }
+    }
+    // `status_code` is invoked by the default `error_response`
+    // implementation. We are providing a bespoke `error_response` implementation
+    // therefore there is no need to maintain a `status_code` implementation anymore.
 }
 
 #[cfg(test)]

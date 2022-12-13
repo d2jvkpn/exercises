@@ -7,7 +7,7 @@ use actix_web::{
     web::{Bytes, Json, Path, Query, ReqData},
     HttpMessage, HttpRequest, HttpResponse, Responder,
 };
-use chrono::{Local, SecondsFormat};
+use chrono::{prelude::*, Local, SecondsFormat};
 use log::*;
 use serde::{self, Deserialize, Serialize};
 use serde_json::json;
@@ -41,11 +41,12 @@ pub(super) async fn healthy(request_id: Option<ReqData<Uuid>>, bytes: Bytes) -> 
 }
 
 //
-pub async fn not_found(req: HttpRequest) -> HttpResponse {
+pub async fn not_found(req: HttpRequest, start_at: ReqData<DateTime<Local>>) -> HttpResponse {
     info!(
-        "~~~ simple-logger_version: {:?}, request_id: {:?}",
+        "~~~ simple-logger_version: {:?}, request_id: {:?}, start_at: {:?}",
         req.headers().get("simple-logger_version"),
         req.extensions().get::<Uuid>().unwrap(),
+        start_at.into_inner(),
     );
 
     HttpResponse::NotFound()

@@ -1221,6 +1221,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "log-mdc"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a94d21414c1f4a51209ad204c1776a3d0765002c76c6abcb602a6f09f1e881c7"
+
+[[package]]
 name = "matchers"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2841,6 +2847,7 @@ dependencies = [
  "fake",
  "futures-util",
  "log",
+ "log-mdc",
  "num_cpus",
  "once_cell",
  "reqwest",

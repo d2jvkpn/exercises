@@ -53,6 +53,7 @@ where
 
     fn call(&self, mut req: ServiceRequest) -> Self::Future {
         let start: DateTime<Local> = Local::now();
+        let request_id = Uuid::new_v4();
 
         println!(
             "==> {} {} {}",
@@ -61,7 +62,8 @@ where
             req.path(),
         );
 
-        req.extensions_mut().insert(Uuid::new_v4());
+        req.extensions_mut().insert(request_id);
+        req.extensions_mut().insert(start);
 
         req.headers_mut().insert(
             HeaderName::from_lowercase(b"simple-logger_version").unwrap(),
@@ -76,8 +78,9 @@ where
             let elapsed = end.signed_duration_since(start).num_microseconds().unwrap_or(0);
 
             println!(
-                "<== elapsed: {:.3}ms, status: {}",
+                "<== elapsed: {:.3}ms, request_id: {}, status: {}",
                 (elapsed as f64) / 1e3,
+                request_id,
                 &res.status().as_u16(),
             );
 
