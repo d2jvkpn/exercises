@@ -126,22 +126,22 @@ impl<T: PartialEq> LinkedList<T> {
         Some(val)
     }
 
-    fn find(&self, val: LLItem<T>) -> Option<usize> {
+    fn find(&self, item: LLItem<T>) -> Option<usize> {
         let mut curr: &LLItem<T> = match &(self.header) {
             None => return None,
             Some(v) => v,
         };
 
-        if curr == &val {
+        if curr == &item {
             return Some(0);
         }
 
-        let val = Box::new(val);
+        let item = Box::new(item);
         let mut ans: usize = 0;
 
         while let Some(v) = &(curr.next) {
             ans += 1;
-            if *v == val {
+            if *v == item {
                 return Some(ans);
             }
             curr = v;
@@ -168,7 +168,7 @@ impl<T: PartialEq> LinkedList<T> {
 
 #[cfg(test)]
 mod tests {
-    // $ cargo test --lib -- arraries --show-output
+    // $ cargo test --lib -- --show-output arraries
     #[test]
     fn arraries() {
         let arr = [1, 2, 3, 4, 5, 6, 7];
@@ -223,11 +223,13 @@ mod tests {
         queue.push(3).push(4);
     }
 
-    // cargo test --lib -- --show-output linked_list
+    // cargo test --lib -- --show-output ch01_structs01::tests::linked_list
     #[test]
     fn linked_list() {
         let mut list = super::LinkedList::new();
         list.push_front(3).push_front(2).push_front(1);
+        dbg!(&list);
+
         assert_eq!(list.len(), 3);
 
         assert_eq!(list.pop_front(), Some(super::LLItem::new(1)));
