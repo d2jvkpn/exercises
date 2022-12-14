@@ -49,6 +49,7 @@ impl<T: PartialEq + Debug> LinkedList<T> {
 
         while let Some(v) = curr.clone().borrow().next.as_ref() {
             if v.borrow().next.is_none() {
+                // the next of curr is the last element
                 // return curr.borrow_mut().next.take(); // panicked at 'already borrowed: BorrowMutError'
                 break;
             }
