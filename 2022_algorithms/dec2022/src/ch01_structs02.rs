@@ -7,30 +7,30 @@ fn type_name_of<T: ?Sized>(_: &T) -> String {
 
 ///
 #[derive(PartialEq, Debug)]
-struct LLItem<T> {
+struct LinkedNode<T> {
     val: T,
-    next: Option<Rc<RefCell<LLItem<T>>>>,
+    next: Option<Rc<RefCell<Self>>>,
 }
 
 // std::collections::LinkedList;
 #[derive(PartialEq, Debug)]
 struct LinkedList<T> {
-    header: Rc<RefCell<LLItem<T>>>,
+    header: Rc<RefCell<LinkedNode<T>>>,
 }
 
-impl<T: PartialEq + Debug> LLItem<T> {
+impl<T: PartialEq + Debug> LinkedNode<T> {
     fn new(val: T) -> Self {
         Self { val, next: None }
     }
 
-    fn as_rc(val: T) -> Rc<RefCell<LLItem<T>>> {
+    fn as_rc(val: T) -> Rc<RefCell<Self>> {
         Rc::new(RefCell::new(Self { val, next: None }))
     }
 }
 
 impl<T: PartialEq + Debug> LinkedList<T> {
     fn new(val: T) -> Self {
-        Self { header: LLItem::as_rc(val) }
+        Self { header: LinkedNode::as_rc(val) }
     }
 
     fn push(&mut self, val: T) -> &mut Self {
@@ -40,11 +40,11 @@ impl<T: PartialEq + Debug> LinkedList<T> {
             curr = v.clone();
         }
 
-        curr.clone().borrow_mut().next = Some(LLItem::as_rc(val));
+        curr.clone().borrow_mut().next = Some(LinkedNode::as_rc(val));
         self
     }
 
-    fn pop(&mut self) -> Option<Rc<RefCell<LLItem<T>>>> {
+    fn pop(&mut self) -> Option<Rc<RefCell<LinkedNode<T>>>> {
         let mut curr = self.header.clone();
 
         while let Some(v) = curr.clone().borrow().next.as_ref() {
@@ -59,7 +59,7 @@ impl<T: PartialEq + Debug> LinkedList<T> {
         ans
     }
 
-    fn pop_front(&mut self) -> Option<Rc<RefCell<LLItem<T>>>> {
+    fn pop_front(&mut self) -> Option<Rc<RefCell<LinkedNode<T>>>> {
         let curr = self.header.clone();
 
         match curr.borrow_mut().next.take() {
@@ -70,7 +70,7 @@ impl<T: PartialEq + Debug> LinkedList<T> {
         Some(curr)
     }
 
-    fn find(&self, item: LLItem<T>) -> Option<usize> {
+    fn find(&self, item: LinkedNode<T>) -> Option<usize> {
         let mut curr = self.header.clone();
         let item = Rc::new(RefCell::new(item));
         if curr.borrow().val == item.borrow().val {
@@ -110,13 +110,13 @@ mod tests {
         let mut list = super::LinkedList::new(1);
         list.push(2).push(3);
 
-        assert_eq!(list.find(super::LLItem::new(1)), Some(0));
-        assert_eq!(list.find(super::LLItem::new(3)), Some(2));
+        assert_eq!(list.find(super::LinkedNode::new(1)), Some(0));
+        assert_eq!(list.find(super::LinkedNode::new(3)), Some(2));
 
-        assert_eq!(list.pop(), Some(super::LLItem::as_rc(3)));
+        assert_eq!(list.pop(), Some(super::LinkedNode::as_rc(3)));
         assert_eq!(list.len(), 2);
         // dbg!(&list);
 
-        assert_eq!(list.pop_front(), Some(super::LLItem::as_rc(1)))
+        assert_eq!(list.pop_front(), Some(super::LinkedNode::as_rc(1)))
     }
 }
