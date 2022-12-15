@@ -72,33 +72,86 @@ pub fn slice2heap<T: Debug + PartialEq + Clone>(node: Rc<RefCell<Node<T>>>, mut 
 }
 
 // https://www.jianshu.com/p/7a62dcc96304
-fn in_order<T: Debug + PartialEq>(node: &Option<Rc<RefCell<Node<T>>>>) {
-    let node = if let Some(v) = node { v } else { return };
+// left..., node, right...
+fn in_order<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
+    let mut result = Vec::new();
 
-    in_order(&node.borrow().left);
-    println!("~~~ {:?}", node.borrow().val);
-    in_order(&node.borrow().right);
+    let node = if let Some(v) = item { v } else { return result };
+
+    result.extend(in_order(&node.borrow().left));
+    result.push(node.borrow().val.clone());
+    result.extend(in_order(&node.borrow().right));
+
+    result
 }
 
-fn post_order<T: Debug + PartialEq>(node: &Option<Rc<RefCell<Node<T>>>>) {
-    let node = if let Some(v) = node { v } else { return };
+pub fn in_order_v2<T: Debug + PartialEq + Clone>(item: Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
+    fn traversal<T: Debug + PartialEq + Clone>(
+        item: &Option<Rc<RefCell<Node<T>>>>,
+        ans: &mut Vec<T>,
+    ) {
+        let node = if let Some(v) = item { v } else { return };
+        traversal(&node.borrow().left, ans);
+        ans.push(node.borrow().val.clone());
+        traversal(&node.borrow().right, ans);
+    }
 
-    post_order(&node.borrow().left);
-    post_order(&node.borrow().right);
-    println!("~~~ {:?}", node.borrow().val);
+    let mut ans = vec![];
+    traversal(&item, &mut ans);
+    ans
+}
+
+// the tree will be destoryed
+pub fn in_order_v3<T: Debug + PartialEq + Clone>(item: Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
+    let mut ans = Vec::new();
+    let mut stack: Vec<Option<Rc<RefCell<Node<T>>>>> = Vec::new();
+    let mut curr: Option<Rc<RefCell<Node<T>>>> = item;
+
+    loop {
+        if curr.is_some() {
+            let node = curr.unwrap();
+            curr = node.clone().borrow_mut().left.take();
+            stack.push(Some(node.clone()));
+        } else if !stack.is_empty() {
+            let node = stack.pop().flatten().unwrap();
+            ans.push(node.clone().borrow().val.clone());
+            curr = node.clone().borrow_mut().right.take();
+        } else {
+            break;
+        }
+    }
+
+    ans
+}
+
+fn post_order<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
+    let mut result = Vec::new();
+    let node = if let Some(v) = item { v } else { return result };
+
+    result.extend(post_order(&node.borrow().left));
+    result.extend(post_order(&node.borrow().right));
+    result.push(node.borrow().val.clone());
+
+    result
 }
 
 #[cfg(test)]
 mod tests {
+    // cargo test --lib -- --show-output slice2heap
     #[test]
-    fn slice2tree() {
-        let mut vec = vec![2, 3, 4, 5, 6, 7, 8, 9];
-        let tree = super::Tree::new(1);
-        super::slice2heap(tree.header.clone(), &mut vec);
+    fn slice2heap() {
+        let mut vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
+        let tree = super::Tree::new(vec[0]);
+        super::slice2heap(tree.header.clone(), &mut vec[1..]);
+        //          1
+        //      2       3
+        //    4   5    7   8
+        //  6         9
 
-        super::in_order(&Some(tree.header.clone()));
-        println!("=====");
-        super::post_order(&Some(tree.header.clone()));
-        // dbg!(&tree);
+        println!(">>> in_order {:?}", super::in_order(&Some(tree.header.clone())));
+        println!(">>> in_order_v2 {:?}", super::in_order_v2(Some(tree.header.clone())));
+        // println!(">>> in_order_v3 {:?}", super::in_order_v3(Some(tree.header.clone())));
+        println!(">>> post_order {:?}", super::post_order(&Some(tree.header.clone())));
+        dbg!(&tree);
     }
 }

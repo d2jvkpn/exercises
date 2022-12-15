@@ -86,18 +86,18 @@ impl<T: Clone> Queue<T> {
 
 ///
 #[derive(PartialEq, Debug)]
-struct LLItem<T> {
+struct LinkedNode<T> {
     val: T,
-    next: Option<Box<LLItem<T>>>,
+    next: Option<Box<LinkedNode<T>>>,
 }
 
 // std::collections::LinkedList;
 #[derive(PartialEq, Debug)]
 struct LinkedList<T> {
-    header: Option<Box<LLItem<T>>>,
+    header: Option<Box<LinkedNode<T>>>,
 }
 
-impl<T> LLItem<T> {
+impl<T> LinkedNode<T> {
     fn new(val: T) -> Self {
         Self { val, next: None }
     }
@@ -109,15 +109,15 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     fn push_front(&mut self, val: T) -> &mut Self {
-        let mut val = LLItem::new(val);
+        let mut val = LinkedNode::new(val);
         let header = self.header.take();
         val.next = header;
         self.header = Some(Box::new(val));
         self
     }
 
-    fn pop_front(&mut self) -> Option<LLItem<T>> {
-        let mut val: LLItem<T> = match self.header.take() {
+    fn pop_front(&mut self) -> Option<LinkedNode<T>> {
+        let mut val: LinkedNode<T> = match self.header.take() {
             Some(v) => *v,
             None => return None,
         };
@@ -126,8 +126,22 @@ impl<T: PartialEq> LinkedList<T> {
         Some(val)
     }
 
-    fn find(&self, item: LLItem<T>) -> Option<usize> {
-        let mut curr: &LLItem<T> = match &(self.header) {
+    pub fn reverse(&mut self) {
+        let mut prev = None;
+        let mut curr = self.header.take();
+
+        while let Some(mut v) = curr.take() {
+            let next = v.next.take();
+            v.next = prev.take();
+            prev = Some(v);
+            curr = next;
+        }
+
+        self.header = prev.take();
+    }
+
+    fn find(&self, item: LinkedNode<T>) -> Option<usize> {
+        let mut curr: &LinkedNode<T> = match &(self.header) {
             None => return None,
             Some(v) => v,
         };
@@ -151,7 +165,7 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     fn len(&self) -> usize {
-        let mut val: &LLItem<T> = match &(self.header) {
+        let mut val: &LinkedNode<T> = match &(self.header) {
             None => return 0,
             Some(v) => v,
         };
@@ -163,6 +177,31 @@ impl<T: PartialEq> LinkedList<T> {
             val = v;
         }
         size
+    }
+
+    pub fn is_palindrome(head: Option<Box<LinkedNode<T>>>) -> bool {
+        let mut stack = Vec::new();
+
+        let mut curr = match head {
+            None => return true,
+            Some(v) => v,
+        };
+
+        loop {
+            stack.push(curr.val);
+
+            curr = match curr.next {
+                None => break,
+                Some(v) => v,
+            };
+        }
+
+        for i in 0..stack.len() / 2 {
+            if stack[i] != stack[stack.len() - i - 1] {
+                return false;
+            }
+        }
+        return true;
     }
 }
 
@@ -232,10 +271,10 @@ mod tests {
 
         assert_eq!(list.len(), 3);
 
-        assert_eq!(list.pop_front(), Some(super::LLItem::new(1)));
+        assert_eq!(list.pop_front(), Some(super::LinkedNode::new(1)));
         assert_eq!(list.len(), 2);
 
-        assert_eq!(list.find(super::LLItem::new(1)), None);
-        assert_eq!(list.find(super::LLItem::new(3)), Some(1));
+        assert_eq!(list.find(super::LinkedNode::new(1)), None);
+        assert_eq!(list.find(super::LinkedNode::new(3)), Some(1));
     }
 }
