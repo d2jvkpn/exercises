@@ -27,6 +27,22 @@ impl<T: Debug + PartialEq> Node<T> {
             self.right = Some(Node::as_rc(v));
         }
     }
+
+    pub fn number(&self) -> usize {
+        let mut num = 1;
+
+        match &self.left {
+            None => {}
+            Some(v) => num += v.borrow().number(),
+        }
+
+        match &self.right {
+            None => {}
+            Some(v) => num += v.borrow().number(),
+        }
+
+        num
+    }
 }
 
 #[derive(Debug)]
@@ -148,10 +164,12 @@ mod tests {
         //    4   5    7   8
         //  6         9
 
+        assert_eq!(tree.header.borrow().number(), 9);
+
         println!(">>> in_order {:?}", super::in_order(&Some(tree.header.clone())));
         println!(">>> in_order_v2 {:?}", super::in_order_v2(Some(tree.header.clone())));
         // println!(">>> in_order_v3 {:?}", super::in_order_v3(Some(tree.header.clone())));
         println!(">>> post_order {:?}", super::post_order(&Some(tree.header.clone())));
-        dbg!(&tree);
+        // dbg!(&tree);
     }
 }
