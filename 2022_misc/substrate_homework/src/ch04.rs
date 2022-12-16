@@ -4,9 +4,9 @@ use std::time::Duration;
 
 //// 04
 enum TrafficLight {
-    Green,
-    Red,
-    Yellow,
+    Green(Duration),
+    Red(Duration),
+    Yellow(Duration),
 }
 
 trait LastFor {
@@ -15,10 +15,15 @@ trait LastFor {
 
 impl LastFor for TrafficLight {
     fn last_for(&self) -> Duration {
+        //        match self {
+        //            Self::Green => Duration::new(10, 0),
+        //            Self::Red => Duration::new(7, 0),
+        //            Self::Yellow => Duration::new(3, 0),
+        //        }
         match self {
-            Self::Green => Duration::new(10, 0),
-            Self::Red => Duration::new(7, 0),
-            Self::Yellow => Duration::new(3, 0),
+            Self::Green(v) => *v,
+            Self::Red(v) => *v,
+            Self::Yellow(v) => *v,
         }
     }
 }
@@ -32,6 +37,16 @@ fn sum_of_u32_slice(slice: &[u32]) -> Option<u32> {
             return None;
         }
         sum += *v;
+    }
+
+    Some(sum)
+}
+
+fn sum_of_u32_slice_v2(slice: &[u32]) -> Option<u32> {
+    let mut sum: u32 = 0;
+
+    for v in slice {
+        sum = sum.checked_add(*v)?;
     }
 
     Some(sum)
@@ -86,7 +101,7 @@ mod tests {
 
     #[test]
     fn t_traffic_light() {
-        let color = TrafficLight::Red;
+        let color = TrafficLight::Red(Duration::new(7, 0));
         assert_eq!(color.last_for(), Duration::new(7, 0));
     }
 
@@ -94,8 +109,10 @@ mod tests {
     fn t_sum_of_u32_slice() {
         let items = vec![1, 2, 3, 4, 5];
         assert_eq!(sum_of_u32_slice(&items), Some(15));
-
         assert_eq!(sum_of_u32_slice(&[u32::MAX - 10, 10, 1]), None);
+
+        assert_eq!(sum_of_u32_slice_v2(&items), Some(15));
+        assert_eq!(sum_of_u32_slice_v2(&[u32::MAX - 10, 10, 1]), None);
     }
 
     #[test]
