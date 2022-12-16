@@ -89,6 +89,19 @@ impl Shape for Square {
     }
 }
 
+// Rectangle
+pub struct Rectangle {
+    width: f64,
+    height: f64,
+}
+
+impl Shape for Rectangle {
+    fn area(&self) -> f64 {
+        self.width * self.height
+    }
+}
+
+//
 fn get_area<T: Shape>(item: T) -> f64 {
     item.area()
 }
@@ -118,15 +131,15 @@ mod tests {
     #[test]
     fn t_get_area() {
         let circle = Circle { radius: 1.0 };
-        assert_eq!(
-            get_area(circle),
-            std::f64::consts::PI * 1.0_f64.powi(2) / 2.0
-        );
+        assert_eq!(get_area(circle), std::f64::consts::PI * 1.0_f64.powi(2) / 2.0);
 
         let triangle = Triangle(3.0, 4.0, 5.0);
         assert_eq!(get_area(triangle), 3.0 * 4.0 / 2.0);
 
         let square = Square { side: 2.0 };
         assert_eq!(get_area(square), 2.0 * 2.0);
+
+        let rectangle = Rectangle { width: 4.0, height: 2.0 };
+        assert_eq!(get_area(rectangle), 4.0 * 2.0);
     }
 }
