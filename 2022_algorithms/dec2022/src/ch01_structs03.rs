@@ -153,15 +153,15 @@ fn post_order<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>)
 
 #[cfg(test)]
 mod tests {
-    // cargo test --lib -- --show-output slice2heap
+    // cargo test --lib -- --show-output tree_01
     #[test]
-    fn slice2heap() {
+    fn tree_01() {
         let mut vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 9];
         let tree = super::Tree::new(vec[0]);
         super::slice2heap(tree.header.clone(), &mut vec[1..]);
         //          1
         //      2       3
-        //    4   5    7   8
+        //    4   5    7  8
         //  6         9
 
         assert_eq!(tree.header.borrow().number(), 9);
