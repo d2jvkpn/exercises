@@ -53,7 +53,7 @@ fn sum_of_u32_slice_v2(slice: &[u32]) -> Option<u32> {
 }
 
 //// 06
-pub trait Area {
+pub trait Shape {
     fn area(&self) -> f64;
 }
 
@@ -62,7 +62,7 @@ struct Circle {
     radius: f64,
 }
 
-impl Area for Circle {
+impl Shape for Circle {
     fn area(&self) -> f64 {
         std::f64::consts::PI * self.radius.powi(2) / 2.0
     }
@@ -71,7 +71,7 @@ impl Area for Circle {
 // Triangle
 struct Triangle(f64, f64, f64);
 
-impl Area for Triangle {
+impl Shape for Triangle {
     fn area(&self) -> f64 {
         let s = (self.0 + self.1 + self.2) / 2.0;
         (s * (s - self.0) * (s - self.1) * (s - self.2)).powf(0.5)
@@ -83,13 +83,13 @@ struct Square {
     side: f64,
 }
 
-impl Area for Square {
+impl Shape for Square {
     fn area(&self) -> f64 {
         self.side.powi(2)
     }
 }
 
-fn get_area<T: Area>(item: T) -> f64 {
+fn get_area<T: Shape>(item: T) -> f64 {
     item.area()
 }
 
