@@ -71,10 +71,7 @@ pub async fn subscribe(
 
     let query_span = tracing::info_span!("Saving new subscriber details in the database");
     let result = sqlx::query!(
-        r#"
-INSERT INTO subscriptions (id, email, name, subscribed_at)
-  VALUES ($1, $2, $3, $4)
-"#,
+        "INSERT INTO subscriptions (id, email, name, subscribed_at) VALUES ($1, $2, $3, $4)",
         subscriber_id,
         form.email,
         form.name,
