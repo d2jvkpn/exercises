@@ -8,11 +8,18 @@ pub fn bubble_sort<T: PartialOrd>(items: &mut Vec<T>) {
         return;
     }
 
+    let mut swapped: bool;
+
     for i in (1..len).rev() {
+        swapped = false;
         for j in 0..i {
             if items[j] > items[j + 1] {
+                swapped = true;
                 items.swap(j, j + 1)
             }
+        }
+        if !swapped {
+            break;
         }
     }
 }
