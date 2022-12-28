@@ -6,7 +6,7 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 rustc --version
 cargo --version
 
-cargo install cargo-tarpaulin cargo-audit cargo-edit cargo-expand cargo-udeps
+cargo install cargo-tarpaulin cargo-audit cargo-edit cargo-expand cargo-udeps cargo-vendor
 rustup component add clippy rustfm
 
 # cargo new zero2prod && cd zero2prod
