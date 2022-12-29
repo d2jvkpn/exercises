@@ -1,4 +1,3 @@
-// console.log("Hello, world!");
 import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
 import { KeyringPair } from "@polkadot/keyring/types";
 import '@polkadot/api-augment';
@@ -48,7 +47,7 @@ const transferFromAliceToBob = async (api: ApiPromise, amount: number) => {
 
   await api.tx.balances.transfer(bob.address, amount)
     .signAndSend(alice, res => {
-      console.log(`Tx status: ${res.status}`);
+      console.log(`==> Tx status: ${res.status}`);
     });
 };
 
