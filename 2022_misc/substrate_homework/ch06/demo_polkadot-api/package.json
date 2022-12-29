@@ -1,0 +1,22 @@
+{
+  "name": "demo_polkadot-api",
+  "version": "1.0.0",
+  "description": "Demo connecting to Substrate Network",
+  "main": "index.js",
+  "author": "Evol",
+  "license": "Unlicense",
+  "private": "false",
+  "scripts": {
+    "start": "node --use_strict index.js",
+    "start:dev": "nodemon --use_strict --inspect index.js",
+    "start:debug": "nodemon --use_struct --inspect index.js"
+  },
+  "dependencies": {
+    "@polkadot/api": "^9.10.5",
+    "@polkadot/types": "^9.10.5",
+    "web3": "^1.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
