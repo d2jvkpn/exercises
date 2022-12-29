@@ -1,7 +1,7 @@
 import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
-import { KeyringPair } from "@polkadot/keyring/types";
 import '@polkadot/api-augment';
-import { metadata } from "@polkadot/types/interfaces/essentials";
+// import { KeyringPair } from "@polkadot/keyring/types";
+// import { metadata } from "@polkadot/types/interfaces/essentials";
 
 const WEN_SOCKET = "ws://localhost:9944";
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -12,7 +12,7 @@ const connectSubstrate = async () => {
   const api = await ApiPromise.create({provider: wsProvider, types: {}});
   await api.isReady;
   console.log(">>> connection to substrate is OK");
-  return api
+  return api;
 };
 
 // get const value
