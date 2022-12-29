@@ -15,7 +15,7 @@
 - https://substrate.recipes
 - https://docs.substrate.io/fundamentals/rust-basics/
 - https://docs.substrate.io/tutorials/
-- https://substrate.io/ecosystem/resources/seminar/
+- https://substrate.io/ecosystem/resources/seminar/, every other Tuesday at 14:00UTC
 
 #### ch03
 ```bash
