@@ -44,3 +44,6 @@ cargo test --lib -- get_area
 
 #### ch05
 https://github.com/d2jvkpn/substrate-node-template/tree/main/docs/homework_ch05/README.md
+
+#### ch06
+ch06/demo_polkadot-api

@@ -3,6 +3,7 @@
 
 #### install packages
 ```bash
+# Node.js v18.12.1
 npm install -g typescript ts-node yarn
 yarn install
 ```
