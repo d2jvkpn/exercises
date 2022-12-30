@@ -21,3 +21,13 @@ output:
 <-- Alice Account (sub): 1152874502981981099
 <<< successfully exited
 ```
+
+#### note
+- yarn add @polkadot/extension-dapp @polkadot/ui-keyring @polkadot/ui-settings
+- console.log(api.genesisHash.toHex())
+- api.consts, api.query, api.tx, api.rpc
+- api.query.poeModule.getMaxClaimLength()
+
+#### docs
+- https://polkaddot.js.org/docs/api
+- https://github.com/polkadot-js/api

@@ -2,6 +2,7 @@ import { ApiPromise, WsProvider, Keyring } from "@polkadot/api";
 import '@polkadot/api-augment';
 // import { KeyringPair } from "@polkadot/keyring/types";
 // import { metadata } from "@polkadot/types/interfaces/essentials";
+import type { EventRecord } from '@polkadot/types/interfaces';
 
 const WEN_SOCKET = "ws://localhost:9944";
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -86,7 +87,6 @@ const main = async() => {
 
   await subscribeAliceBalance(api);
   await sleep(6000);
-
   // await getMetadata(api);
   // console.log("<<< game over");
 };
