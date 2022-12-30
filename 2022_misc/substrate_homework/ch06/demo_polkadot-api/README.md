@@ -20,6 +20,12 @@ output:
 --> Subscribed to alice account.
 <-- Alice Account (sub): 1152874502981981099
 <<< successfully exited
+
+>>> Received 1 events:
+--> system:ExtrinsicSuccess:: (phase={"applyExtrinsic":0})
+~~~ event.data[0]
+    type: {"weight":"SpWeightsWeightV2Weight","class":"FrameSupportDispatchDispatchClass","paysFee":"FrameSupportDispatchPays"}
+    data: {"weight":{"refTime":260558000,"proofSize":0},"class":"Mandatory","paysFee":"Yes"}
 ```
 
 #### note
