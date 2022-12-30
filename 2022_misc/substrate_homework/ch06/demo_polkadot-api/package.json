@@ -2,12 +2,12 @@
   "name": "demo_polkadot-api",
   "version": "1.0.0",
   "description": "Demo connecting to Substrate Network",
-  "main": "index.js",
+  "main": "index.ts",
   "author": "Evol",
   "license": "Unlicense",
   "private": "false",
   "scripts": {
-    "start": "node --use_strict index.js",
+    "start": "ts-node index.ts",
     "start:dev": "nodemon --use_strict --inspect index.js",
     "start:debug": "nodemon --use_struct --inspect index.js"
   },

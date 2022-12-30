@@ -1,16 +1,16 @@
 ### demo polkadot-api
 ---
 
-#### install packages
+#### install packages(Node.js v18.12.1)
 ```bash
-# Node.js v18.12.1
 npm install -g typescript ts-node yarn
 yarn install
 ```
 
 #### run
 ```bash
-ts-node main.ts
+# ts-node main.ts
+ts-node index.ts
 ```
 
 output:
@@ -31,3 +31,4 @@ output:
 #### docs
 - https://polkaddot.js.org/docs/api
 - https://github.com/polkadot-js/api
+- https://github.com/polkadot-js/docs/tree/master/docs/api
