@@ -43,7 +43,8 @@ cargo test --lib -- get_area
 ![get area 01](assets/img/ch04_get_area.png?raw=true "get area 01")
 
 #### ch05
-https://github.com/d2jvkpn/substrate-node-template/tree/main/docs/homework_ch05/README.md
+- code: https://github.com/d2jvkpn/substrate-node-template/tree/main/docs/homework_ch05/README.md
+- readme: ch05/REAMDE.md
 
 #### ch06
 ch06/demo_polkadot-api
