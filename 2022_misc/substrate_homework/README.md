@@ -47,4 +47,4 @@ cargo test --lib -- get_area
 - readme: [ch05/REAMDE.md](https://github.com/d2jvkpn/exercises/blob/master/2022_misc/substrate_homework/ch05/README.md)
 
 #### ch06
-ch06/demo_polkadot-api
+ch06

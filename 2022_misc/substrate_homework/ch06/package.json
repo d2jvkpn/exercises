@@ -1,5 +1,5 @@
 {
-  "name": "demo_polkadot-api",
+  "name": "ch06",
   "version": "1.0.0",
   "description": "Demo connecting to Substrate Network",
   "main": "index.ts",
