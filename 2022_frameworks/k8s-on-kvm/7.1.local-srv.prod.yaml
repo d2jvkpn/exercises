@@ -1,0 +1,29 @@
+# allow pods connect to an external services: local-srv:5432
+apiVersion: v1
+kind: Service
+metadata:
+   name: local-srv
+   namespace: dev
+spec:
+   type: ClusterIP
+   ports:
+   - { protocol: TCP, name: mysql, port: 3306, targetPort: 3306 }
+   - { protocol: TCP, name: postgres, port: 5432, targetPort: 5432 }
+
+---
+apiVersion: v1
+kind: Endpoints
+metadata:
+  name: local-srv
+  namespace: dev
+subsets:
+  - addresses:
+    # localhost ip or the serivce ip
+    - ip: 10.0.4.7
+    ports:
+    - { name: mysql, port: 3306 }
+    - { name: postgres, port: 5432 }
+
+# $ kubectl exec -it PODNAME -- sh
+# $ curl postgres-local:5432
+# $ nc -zv postgres-local 5432

@@ -1,0 +1,18 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: localdev.me
+  namespace: prod
+spec:
+  rules:
+  - host: postgres.localdev.me
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: local-srv
+            port: { number: 5432 }
+
+# psql --username postgres --host postgres.localdev.me --port 5432 --password postgres
