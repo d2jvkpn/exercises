@@ -9,7 +9,8 @@ version=$1
 #### 1. apt install pacakges
 apt-get update && sudo apt -y upgrade
 
-apt-get install -y socat conntrack nfs-kernel-server nfs-common nftables jq
+apt-get install -y socat conntrack nfs-kernel-server nfs-common nftables jq apt-transport-https \
+  ca-certificates curl gnupg lsb-release
 
 
 #### 2. install kubelet kubeadm kubectl and config k8s
@@ -64,6 +65,20 @@ sysctl --system
 
 
 #### 3. install and config containerd
+# https://docs.docker.com/engine/install/ubuntu/
+mkdir -p /etc/apt/keyrings
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg |
+   sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+# chmod a+r /etc/apt/keyrings/docker.gpg
+apt-get update
+
+# apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 apt install -y containerd runc
 
 containerd config default | grep SystemdCgroup

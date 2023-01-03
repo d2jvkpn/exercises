@@ -29,11 +29,12 @@ EOF
 version=1.1.0
 # wget https://github.com/containerd/nerdctl/releases/download/v${version}/nerdctl-full-${version}-linux-amd64.tar.gz
 
-mkdir -p /opt/nerdctl-full-$version-linux-amd64
-tar -xf nerdctl-full-$version-linux-amd64.tar.gz -C /opt/nerdctl-full-$version-linux-amd64
+mkdir -p nerdctl-full-$version-linux-amd64
+tar -xf nerdctl-full-$version-linux-amd64.tar.gz -C nerdctl-full-$version-linux-amd64
 
 mkdir -p /opt/cni/bin
-cp -r /opt/nerdctl-full-$version-linux-amd64/libexec/cni/* /opt/cni/bin
+cp nerdctl-$version-linux-amd64/bin/nerdctl /opt/bin/
+cp -r nerdctl-$version-linux-amd64/libexec/cni/* /opt/cni/bin/
 
 nerdctl -n k8s.io images
 
@@ -51,26 +52,19 @@ rm yq.1 install-man-page.sh
 
 
 #### 4. load images
-ls kubernetes_v1.26 calico ingress-nginx
+ls k8s_images ingress-nginx_kind_images
 
-for f in $(ls kubernetes_v1.26/*.tar.gz); do
+for f in $(ls k8s_images/*.tar.gz); do
     echo ">>> load image from $f"
     pigz -dc $f | ctr -n=k8s.io image import -
 done
 
-for f in $(ls calico/*.tar.gz); do
-    echo ">>> load image from $f"
-    pigz -dc $f | ctr -n=k8s.io image import -
-done
-
-for f in $(ls ingress-nginx/*.tar.gz); do
+for f in $(ls ingress-nginx_kind_images/*.tar.gz); do
     echo ">>> load image from $f"
     pigz -dc $f | ctr -n=k8s.io image import -
 done
 # pigz -dc $f | docker load
 nerdctl -n k8s.io images
-
-rm -r calico ingress-nginx kubernetes_v1.26
 
 # calico/cni:v3.23.3
 # calico/kube-controllers:v3.23.3
