@@ -29,3 +29,13 @@ node=$(hostname | tr '[:upper:]' '[:lower:]')
 kubectl label nodes/$node ingress-ready=true
 kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 # kubectl label nodes/$node nodePool=cluster
+
+
+####
+kubectl -n prod create secret tls localdev.me --key localdev.me.key --cert localdev.me.cer
+kubectl -n prod get secret/localdev.me
+
+####
+kubectl create secret docker-registry my-registry \
+  --docker-server="REGISTRY.SITE.COM" --docker-email="EMAIL" \
+  --docker-username="USERNAME" --docker-password="PASSWORD"

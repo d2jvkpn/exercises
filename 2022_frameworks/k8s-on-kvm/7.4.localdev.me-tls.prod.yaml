@@ -1,7 +1,5 @@
-## kubectl -n prod create secret tls localdev.me --key localdev.me.key --cert localdev.me.cer
 apiVersion: networking.k8s.io/v1
 kind: Ingress
-
 metadata:
   name: local-srv
   namespace: prod
