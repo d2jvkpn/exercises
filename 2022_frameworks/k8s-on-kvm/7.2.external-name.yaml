@@ -1,0 +1,10 @@
+# https://docs.openshift.com/container-platform/3.11/dev_guide/integrating_external_services.html
+kind: "Service"
+apiVersion: "v1"
+metadata:
+  name: "external-name"
+  namespace: dev
+spec:
+  type: ExternalName
+  externalName: example.domain.name
+selector: {}
