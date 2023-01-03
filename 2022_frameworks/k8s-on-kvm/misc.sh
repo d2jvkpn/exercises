@@ -32,8 +32,16 @@ kubectl taint nodes --all node-role.kubernetes.io/control-plane-
 
 
 ####
-kubectl -n prod create secret tls localdev.me --key localdev.me.key --cert localdev.me.cer
+kubectl -n prod create secret tls localdev.me  \
+  --key ~/.acme.sh/localdev.me/localdev.me.key \
+  --cert ~/.acme.sh/localdev.me/localdev.me.cer
+
 kubectl -n prod get secret/localdev.me
+
+kubectl -n prod create secret tls localdev.me --dry-run=client   \
+   --key ~/.acme.sh/localdev.me/localdev.me.key \
+   --cert ~/.acme.sh/localdev.me/localdev.me.cer -o yaml |
+   kubectl apply -f -
 
 ####
 kubectl create secret docker-registry my-registry \
