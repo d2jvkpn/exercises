@@ -7,7 +7,7 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 version=$1
 
 #### 1. apt install pacakges
-apt-get update && sudo apt -y upgrade
+apt-get update && apt -y upgrade
 
 apt-get install -y socat conntrack nfs-kernel-server nfs-common nftables jq apt-transport-https \
   ca-certificates curl gnupg lsb-release
