@@ -78,11 +78,12 @@ echo \
 # chmod a+r /etc/apt/keyrings/docker.gpg
 apt-get update
 
-# apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin
-apt install -y containerd runc
+# apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+apt-get -y install containerd.io
 
 containerd config default | grep SystemdCgroup
 containerd config default | grep sandbox_image
+
 
 k8s_pause=$(kubeadm config images list | grep pause)
 
