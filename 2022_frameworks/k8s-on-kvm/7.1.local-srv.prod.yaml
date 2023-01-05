@@ -19,7 +19,7 @@ metadata:
 subsets:
   - addresses:
     # localhost ip or the serivce ip
-    - ip: 10.0.4.7
+    - ip: 127.0.0.1
     ports:
     - { name: mysql, port: 3306 }
     - { name: postgres, port: 5432 }
