@@ -25,5 +25,5 @@ subsets:
     - { name: postgres, port: 5432 }
 
 # $ kubectl exec -it PODNAME -- sh
-# $ curl postgres-local:5432
-# $ nc -zv postgres-local 5432
+# $ curl local-srv:5432
+# $ nc -zv local-srv 5432
