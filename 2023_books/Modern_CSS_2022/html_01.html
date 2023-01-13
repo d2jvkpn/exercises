@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="keywords" content="HTML5, demo">
+  <meta name="description" content="an HTML5 example">
+  <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width">
+  <!--meta http-equiv="refresh" content="30"-->
+  <title> Hello, HTML5! </title>
+
+  <style>
+    .header {
+      /* this is a comment */
+      background-color: blue;
+      background-color: red;
+      border: 1px solid blue;
+    }
+  </style>
+
+  <link rel="stylesheet" href="/path/to/file.css">
+
+  <script>
+    function helloWorld () {
+      console.debug("~~~ Hello, world!");
+
+      let num = window.prompt("Please enter a number:", "42");
+      num = parseInt(num, 10);
+      if (isNaN(num) || num <= 0) {
+        num = 42;
+      }
+
+      console.log(`~~~ num: ${num}`);
+    }
+  </script>
+</head>
+
+<body>
+  <div>
+    <h2 style="cursor: pointer" onclick=helloWorld()>Hello, world!</h2>
+
+    <p style="color: blue"  class="header">
+      Something
+      <font face="Arial, sans-serif" color="white" size="4"> 2023 </font>
+    </p>
+    
+    https://www.w3schools.com/css/css_selectors.asp
+    <ul>
+      <li>elemet selector: div, "div, p, h1"</li>
+      <li>id selector: #para1</li>
+      <li>class selector: .center, p.center</li>
+      <li>universal selector: *</li>
+      <li>
+        attribute selectors: div[target], div[name="value"], div[name~="value"], div[name*="value"],
+        div[name^="value"], div[name$="value"]
+      </li>
+      <li> compound selectors: a.nav-link[href*="example.com"]</li>
+      <li> descendant combinator: .header div</li>
+      <li> child combinator: .header > div </li>
+      <li> general sibling combinator: .header ~ </li>
+      <li> adjacent sibling combinator: .header + div </li>
+      <li> using multiple combinators: div.header > div + button </li>
+      <li> pseudo-classes: :active, :checked, :focus, :hover, :valid, :invalid, :visited </li>
+      <li>
+        document structure: :first-child, :last-child, :nth-child(n), :nth-of-type(n), :root
+      </li>
+      <li> pseudo-elements: ::first-line, ::first-letter, ::before, ::after </li>
+    </ul>
+
+    <dl> 
+      <dt>name:</dt> <dd> Rover <dd>
+      <dt>gender:</dt> <dd> male <dd>
+    <dl>
+  </div>
+</body>
+
+</html>
