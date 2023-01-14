@@ -58,12 +58,19 @@
       <li> child combinator: .header > div </li>
       <li> general sibling combinator: .header ~ </li>
       <li> adjacent sibling combinator: .header + div </li>
-      <li> using multiple combinators: div.header > div + button </li>
+      <li>
+       using multiple combinators:
+         div.header > div + button,
+         span.class-one.class-two,
+         .class-one, .class-two
+     </li>
       <li> pseudo-classes: :active, :checked, :focus, :hover, :valid, :invalid, :visited </li>
       <li>
         document structure: :first-child, :last-child, :nth-child(n), :nth-of-type(n), :root
       </li>
-      <li> pseudo-elements: ::first-line, ::first-letter, ::before, ::after </li>
+      <li>
+        pseudo-elements: ::first-line, ::first-letter, ::before, ::after, div:not(.fancy)
+      </li>
     </ul>
 
     <dl> 
