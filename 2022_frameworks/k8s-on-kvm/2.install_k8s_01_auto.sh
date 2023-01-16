@@ -30,7 +30,7 @@ apt update && apt install -y kubelet=${version}-00 kubeadm=${version}-00 kubectl
 
 apt-mark hold kubelet kubeadm kubectl
 
-kubectl version --output=yaml
+kubectl version --output=yaml || true
 
 cp /etc/systemd/system/kubelet.service.d/10-kubeadm.conf \
   /etc/systemd/system/kubelet.service.d/10-kubeadm.conf.bk
@@ -40,7 +40,7 @@ sed -i '/$KUBELET_EXTRA_ARGS/s/$/ --fail-swap-on=false/' \
 
 systemctl daemon-reload
 systemctl enable kubelet.service
-systemctl status kubelet.service
+# systemctl status kubelet.service
 
 kubectl completion bash > /etc/bash_completion.d/kubectl
 kubeadm config images list
@@ -85,18 +85,19 @@ containerd config default | grep SystemdCgroup
 containerd config default | grep sandbox_image
 
 
-k8s_pause=$(kubeadm config images list | grep pause)
-
 mkdir -p /etc/containerd
 
-containerd config default | sed '/SystemdCgroup/{s/false/true/}'   |
-  awk -v pause=$k8s_pause '/k8s.gcr.io\/pause/{sub("k8s.gcr.io/pause.*", pause"\"")} {print}' \
+pause=$(kubeadm config images list | grep pause)
+
+containerd config default |
+  sed '/SystemdCgroup/{s/false/true/}' |
+  awk -v pause=$pause '/sandbox_image/{sub("registry.k8s.io/pause.*", pause"\"")} {print}' \
   > /etc/containerd/config.toml
 
 grep pause: /etc/containerd/config.toml
 
 systemctl restart containerd
-systemctl status containerd
+# systemctl status containerd
 
 cat <<EOF | tee /etc/crictl.yaml
 runtime-endpoint: unix:///run/containerd/containerd.sock

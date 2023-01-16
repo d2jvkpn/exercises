@@ -6,6 +6,7 @@
   <meta name="description" content="an HTML5 example">
   <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width">
   <!--meta http-equiv="refresh" content="30"-->
+
   <title> Hello, HTML5! </title>
 
   <style>
@@ -27,6 +28,22 @@
       font-size: 0.9rem;
       color: gray;
     }
+
+    .shadow {
+      border: 1px solid;
+      padding: 10px;
+      background: green;
+      opacity: 0.5;
+      width: 10rem;
+      height: 5rem;
+      box-shadow: 5px 10px 3px black;
+    }
+
+    #example1 {
+      border: 1px solid;
+      padding: 10px;
+      box-shadow: 5px 10px 10px black;
+    }
   </style>
 </head>
 
@@ -36,6 +53,18 @@
     <h2>Subtitle</h2>
     <p>Hello world!</p>
   </div>
+
+  <div class="shadow"> Hello, world!
+  </div>
+
+  <br>
+
+  <div id="example1">
+    <p>
+      A div element with a shadow. The first value is the horizontal offset and the second value is
+      the vertical offset. The shadow color will be inherited from the text color.
+    </p>
+  </div>
 </body>
 
 </html>
