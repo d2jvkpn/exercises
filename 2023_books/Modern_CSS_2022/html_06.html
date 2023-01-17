@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body {
+    margin: 0;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    border: 5px dashed black;
+    box-sizing: border-box;
+  }
+
+  .header {
+    background: skyblue;
+    padding: 1rem;
+  }
+
+  .footer {
+    background: orange;
+    padding: 1rem;
+  }
+
+  .main {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    border: 5px dashed blue;
+  }
+
+  .sidebar-left {
+    background: cornflowerblue;
+    padding: 1rem;
+    max-width: 8rem;
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  .content {
+    flex-grow: 1;
+    background: beige;
+    padding: 1rem;
+  }
+
+  .sidebar-right {
+    background: turquoise;
+    padding: 1rem;
+  }
+</style>
+
+</head>
+
+<body>
+<div class="container">
+  <header class="header">Header</header>
+
+  <main class="main">
+    <div class="sidebar-left" max-width="5rem">
+      <p> Sidebar asoiasjioasjioa  asasas </p>
+      <p> Hello </p>
+    </div>
+    <div class="content">Content</div>
+    <!--div class="sidebar-right">Sidebar 2</div-->
+  </main>
+
+  <footer class="footer">Footer</footer>
+</div>
+</body>
+</html>

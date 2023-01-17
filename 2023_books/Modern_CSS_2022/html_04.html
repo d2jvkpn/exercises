@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="keywords" content="HTML5, demo">
+  <meta name="description" content="an HTML5 example">
+  <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width">
+  <!--meta http-equiv="refresh" content="30"-->
+  <title> Hello, HTML5! </title>
+
+  <!--link rel="stylesheet" href="./03.css"-->
+  <style>
+    .header {
+      background-color: red;
+      color: white;
+      height: 1rem;
+      left: 0;
+      padding: 1rem;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+    }
+
+    .body {
+      margin-top: 3.5rem;
+    }
+
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.5);
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+<div class="container">
+  <div class="header">Header</div>
+  <div class="body">
+    Some other page content
+  </div>
+</div>
+
+</body>
+</html>
