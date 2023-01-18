@@ -26,4 +26,8 @@ line"
 
     let a = "Hello";
     println!("{a}...");
+
+    println!("Hello, \rwrold!");
+
+    println!("2: {2}, 1: {1}, 0: {0}", "A", "B", "C");
 }
