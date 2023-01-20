@@ -49,12 +49,12 @@ rm yq.1 install-man-page.sh
 
 
 #### 4. load images
-for f in $(ls kubernetes_*/*.tar.gz); do
+for f in $(ls k8s/*.tar.gz); do
     echo ">>> load image from $f"
     pigz -dc $f | ctr -n=k8s.io image import -
 done
 
-for f in $(ls ingress-nginx_*/*.tar.gz); do
+for f in $(ls ingress-nginx/*.tar.gz); do
     echo ">>> load image from $f"
     pigz -dc $f | ctr -n=k8s.io image import -
 done
