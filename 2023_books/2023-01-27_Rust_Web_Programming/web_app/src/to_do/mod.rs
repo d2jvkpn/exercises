@@ -1,13 +1,11 @@
 pub mod enums;
+mod items;
 pub mod structs;
-mod to_do_item;
-mod to_do_items;
 pub mod traits;
 
 use enums::TaskStatus;
+pub use items::{ToDoItem, ToDoItems};
 use structs::{Done, Pending};
-pub use to_do_item::ToDoItem;
-pub use to_do_items::ToDoItems;
 
 pub enum ItemTypes {
     Pending(Pending),

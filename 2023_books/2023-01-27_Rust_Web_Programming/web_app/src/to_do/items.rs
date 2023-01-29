@@ -1,9 +1,15 @@
 use actix_web::{body::BoxBody, http::header::ContentType, HttpRequest, HttpResponse, Responder};
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_json::{value::Value, Map};
 
 use crate::state::read_file;
 use crate::to_do::{self, enums::TaskStatus, structs::Base, ItemTypes};
+
+#[derive(Deserialize)]
+pub struct ToDoItem {
+    pub title: String,
+    pub status: String,
+}
 
 #[derive(Serialize)]
 pub struct ToDoItems {
@@ -24,8 +30,10 @@ impl ToDoItems {
                 ItemTypes::Done(packed) => done_array_buffer.push(packed.super_struct),
             }
         }
+
         let done_count: i8 = done_array_buffer.len() as i8;
         let pending_count: i8 = pending_array_buffer.len() as i8;
+
         return ToDoItems {
             pending_items: pending_array_buffer,
             done_item_count: done_count,
@@ -43,6 +51,7 @@ impl ToDoItems {
             let item = to_do::factory(&key, status);
             array_buffer.push(item);
         }
+
         return ToDoItems::new(array_buffer);
     }
 }
