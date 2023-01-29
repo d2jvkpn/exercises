@@ -1,3 +1,3 @@
 pub async fn login() -> String {
-    format!("Login view")
+    format!("Login view\n")
 }

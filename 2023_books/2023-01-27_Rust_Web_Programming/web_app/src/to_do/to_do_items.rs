@@ -35,7 +35,7 @@ impl ToDoItems {
     }
 
     pub fn get_state() -> ToDoItems {
-        let state: Map<String, Value> = read_file(crate::get_state());
+        let state: Map<String, Value> = read_file();
         let mut array_buffer = Vec::new();
 
         for (key, value) in state {

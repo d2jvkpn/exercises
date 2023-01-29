@@ -52,7 +52,7 @@ impl FromRequest for JwToken {
     type Future = Ready<Result<JwToken, Self::Error>>;
 
     fn from_request(req: &HttpRequest, _: &mut Payload) -> Self::Future {
-        match req.headers().get("token") {
+        match req.headers().get("X-Token") {
             Some(data) => future::ok(JwToken { message: data.to_str().unwrap().to_string() }),
             None => future::err(TokenError::TokenNotFound),
         }

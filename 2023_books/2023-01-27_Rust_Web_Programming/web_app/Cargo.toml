@@ -5,9 +5,9 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[[bin]]
-name = "x01"
-path = "bin/x01.rs"
+#[[bin]]
+#name = "x01"
+#path = "bin/x01.rs"
 
 [dependencies]
 actix-web = "4"

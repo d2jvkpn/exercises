@@ -6,7 +6,7 @@ use crate::state::read_file;
 use crate::to_do::{self, enums::TaskStatus};
 
 pub async fn create(req: HttpRequest) -> String {
-    let state: Map<String, Value> = read_file(crate::get_state()); // step 1
+    let state: Map<String, Value> = read_file(); // step 1
 
     let title: String = req.match_info().get("title").unwrap().to_string(); // step 2
 
