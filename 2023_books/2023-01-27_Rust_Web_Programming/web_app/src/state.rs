@@ -10,7 +10,7 @@ pub fn read_file() -> Map<String, Value> {
     let val: Value = serde_json::from_str(&data).unwrap();
     let state: Map<String, Value> = val.as_object().unwrap().clone();
 
-    return state;
+    state
 }
 
 pub fn save_to_file(state: &mut Map<String, Value>) {

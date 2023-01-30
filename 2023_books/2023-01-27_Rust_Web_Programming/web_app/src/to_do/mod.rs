@@ -14,7 +14,7 @@ pub enum ItemTypes {
 
 pub fn factory(title: &str, status: TaskStatus) -> ItemTypes {
     match status {
-        TaskStatus::DONE => ItemTypes::Done(Done::new(title)),
-        TaskStatus::PENDING => ItemTypes::Pending(Pending::new(title)),
+        TaskStatus::Done => ItemTypes::Done(Done::new(title)),
+        TaskStatus::Pending => ItemTypes::Pending(Pending::new(title)),
     }
 }

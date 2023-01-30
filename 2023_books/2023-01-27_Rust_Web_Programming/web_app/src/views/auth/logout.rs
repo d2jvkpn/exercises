@@ -1,3 +1,3 @@
 pub async fn logout() -> String {
-    format!("Logout view\n")
+    "Logout view\n".to_string()
 }

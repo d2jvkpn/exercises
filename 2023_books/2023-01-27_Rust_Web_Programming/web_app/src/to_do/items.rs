@@ -34,12 +34,12 @@ impl ToDoItems {
         let done_count: i8 = done_array_buffer.len() as i8;
         let pending_count: i8 = pending_array_buffer.len() as i8;
 
-        return ToDoItems {
+        ToDoItems {
             pending_items: pending_array_buffer,
             done_item_count: done_count,
             pending_item_count: pending_count,
             done_items: done_array_buffer,
-        };
+        }
     }
 
     pub fn get_state() -> ToDoItems {
@@ -52,7 +52,7 @@ impl ToDoItems {
             array_buffer.push(item);
         }
 
-        return ToDoItems::new(array_buffer);
+        ToDoItems::new(array_buffer)
     }
 }
 

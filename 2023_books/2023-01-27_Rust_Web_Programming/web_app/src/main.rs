@@ -12,7 +12,7 @@ static STATE_FILE: &str = "data/state.json";
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let addr = "127.0.0.1:8080";
-    println!(">>> HTTP Server is listening on {:?}", addr);
+    println!(">>> HTTP Server is listening on {addr:?}");
 
     HttpServer::new(|| {
         println!("    http server factory is firing, ThreadId={:?}", std::thread::current().id());
@@ -22,7 +22,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(middleware::NormalizePath::default())
             .wrap(middlewares::logger::SimpleLogger)
             .wrap_fn(|req, srv| {
-                println!("{:?}", req);
+                println!("{req:?}");
                 let future = srv.call(req);
                 async {
                     let result = future.await?;
@@ -38,5 +38,5 @@ async fn main() -> std::io::Result<()> {
 }
 
 pub fn get_state_filepath() -> &'static str {
-    return STATE_FILE;
+    STATE_FILE
 }

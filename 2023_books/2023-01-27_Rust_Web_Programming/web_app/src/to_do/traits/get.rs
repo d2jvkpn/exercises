@@ -5,8 +5,8 @@ pub trait Get {
         let item: Option<&Value> = state.get(title);
 
         match item {
-            Some(v) => println!(">>> Item: {}, Status: {}", title, v),
-            None => println!("Item: {} was not found", title),
+            Some(v) => println!(">>> Item: {title}, Status: {v}"),
+            None => println!("Item: {title} was not found"),
         }
     }
 }
