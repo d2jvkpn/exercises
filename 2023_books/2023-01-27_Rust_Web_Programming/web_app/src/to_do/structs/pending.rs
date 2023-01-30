@@ -7,8 +7,8 @@ pub struct Pending {
 }
 
 impl Pending {
-    pub fn new(input_title: &str) -> Self {
-        let base = Base { title: input_title.to_string(), status: TaskStatus::Pending };
+    pub fn new(title: &str) -> Self {
+        let base = Base { title: title.to_string(), status: TaskStatus::Pending };
         Pending { super_struct: base }
     }
 }

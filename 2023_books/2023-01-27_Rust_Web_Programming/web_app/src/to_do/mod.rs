@@ -1,9 +1,9 @@
-pub mod enums;
+mod enums;
 mod items;
 pub mod structs;
 pub mod traits;
 
-use enums::TaskStatus;
+pub use enums::TaskStatus;
 pub use items::{ToDoItem, ToDoItems};
 use structs::{Done, Pending};
 

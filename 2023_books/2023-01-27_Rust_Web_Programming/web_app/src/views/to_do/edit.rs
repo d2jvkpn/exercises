@@ -4,7 +4,7 @@ use serde_json::{value::Value, Map};
 use crate::middlewares::jwt::JwToken;
 use crate::processes::process_input;
 use crate::state::read_file;
-use crate::to_do::{self, enums::TaskStatus, ToDoItem, ToDoItems};
+use crate::to_do::{self, TaskStatus, ToDoItem, ToDoItems};
 
 pub async fn edit(to_do_item: web::Json<ToDoItem>, token: JwToken) -> HttpResponse {
     println!("here is the message in the token: {}", token.message);
@@ -19,11 +19,10 @@ pub async fn edit(to_do_item: web::Json<ToDoItem>, token: JwToken) -> HttpRespon
 
     let existing_item = to_do::factory(to_do_item.title.as_str(), status.clone());
 
-    if status.stringify()
-        == TaskStatus::from_string(to_do_item.status.as_str().to_string()).stringify()
-    {
+    if status.as_str() == to_do_item.status.as_str() {
         return HttpResponse::Ok().json(ToDoItems::get_state());
     }
+
     process_input(existing_item, "edit".to_owned(), &state);
     HttpResponse::Ok().json(ToDoItems::get_state())
 }

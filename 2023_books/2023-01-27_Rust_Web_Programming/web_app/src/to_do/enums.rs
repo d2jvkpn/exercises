@@ -7,15 +7,15 @@ pub enum TaskStatus {
 }
 
 impl TaskStatus {
-    pub fn stringify(&self) -> String {
+    pub fn as_str(&self) -> &'static str {
         match self {
-            Self::Done => "Done".to_string(),
-            Self::Pending => "Pending".to_string(),
+            Self::Done => "Done",
+            Self::Pending => "Pending",
         }
     }
 
-    pub fn from_string(input_string: String) -> Self {
-        match input_string.as_str() {
+    pub fn from_string<T: AsRef<str> + std::fmt::Display>(input_string: T) -> Self {
+        match input_string.as_ref() {
             "Done" => TaskStatus::Done,
             "Pending" => TaskStatus::Pending,
             _ => panic!("input {input_string} not supported"),
@@ -29,7 +29,7 @@ impl Serialize for TaskStatus {
         S: Serializer,
     {
         let mut s = serializer.serialize_struct("TaskStatus", 1)?;
-        s.serialize_field("status", &self.stringify())?;
+        s.serialize_field("status", &self.as_str())?;
         s.end()
     }
 }
