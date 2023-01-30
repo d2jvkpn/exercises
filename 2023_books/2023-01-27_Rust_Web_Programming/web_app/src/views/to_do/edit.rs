@@ -13,7 +13,7 @@ pub async fn edit(to_do_item: web::Json<ToDoItem>, token: JwToken) -> HttpRespon
     let status: TaskStatus = match &state.get(&to_do_item.title) {
         Some(result) => TaskStatus::from_string(result.as_str().unwrap().to_string()),
         None => {
-            return HttpResponse::NotFound().json(format!("{} not in state", &to_do_item.title))
+            return HttpResponse::NotFound().json(format!("{} not in state", &to_do_item.title));
         }
     };
 
