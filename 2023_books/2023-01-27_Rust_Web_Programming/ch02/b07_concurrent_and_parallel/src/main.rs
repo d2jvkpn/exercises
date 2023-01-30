@@ -34,14 +34,14 @@ fn call01() {
 fn call02() {
     println!(">>> call02");
     let now = time::Instant::now();
-    let future_four = async {
+    let fut03 = async {
         let fut01 = do01(2);
         let fut02 = do01(3);
         let results = join!(fut01, fut02);
         return results.0 + results.1;
     };
 
-    let outcome = block_on(future_four);
+    let outcome = block_on(fut03);
     println!("    elapsed {:?}, outcome: {}", now.elapsed(), outcome);
 }
 
@@ -65,14 +65,14 @@ fn call04() {
     println!(">>> call04");
     let now = time::Instant::now();
 
-    let async_outcome = async {
+    let fut01 = async {
         let vec = vec![do01(3), do01(4), do01(5)];
         let handles = vec.into_iter().map(task::spawn).collect::<Vec<_>>();
         let results = join_all(handles).await;
         return results.into_iter().sum::<i8>();
     };
 
-    let outcome = block_on(async_outcome);
+    let outcome = block_on(fut01);
     println!("    time elapsed {:?}, outcome: {}", now.elapsed(), outcome);
 }
 
@@ -81,14 +81,14 @@ fn call05() {
     println!(">>> call05");
     let now = time::Instant::now();
 
-    let async_outcome = async {
+    let fut01 = async {
         let vec = vec![do02(3), do02(4), do02(5)];
         let handles = vec.into_iter().map(task::spawn).collect::<Vec<_>>();
         let results = join_all(handles).await;
         return results.into_iter().sum::<i8>();
     };
 
-    let outcome = block_on(async_outcome);
+    let outcome = block_on(fut01);
     println!("    elapsed {:?}, outcome: {}", now.elapsed(), outcome);
 }
 
@@ -97,13 +97,13 @@ fn call06() {
     println!(">>> call06");
     let now = time::Instant::now();
 
-    let async_outcome = async {
+    let fut01 = async {
         let vec = vec![do02(3), do02(4), do02(5)];
         let results = join_all(vec).await;
         return results.into_iter().sum::<i8>();
     };
 
-    let outcome = block_on(async_outcome);
+    let outcome = block_on(fut01);
     println!("    elapsed {:?}, outcome: {}", now.elapsed(), outcome);
 }
 
