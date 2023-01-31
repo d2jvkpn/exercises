@@ -6,7 +6,7 @@ use std::{
 
 fn main() {
     let mut stream = TcpStream::connect("localhost:3000").unwrap();
-    stream.write("Hello".as_bytes()).unwrap();
+    stream.write("Hello from the client".as_bytes()).unwrap();
 
     let mut buffer = [0; 1024];
 
@@ -18,7 +18,7 @@ fn main() {
     let result = buffer.iter().position(|v| *v == '\0' as u8);
     if let Some(v) = result {
         let msg = str::from_utf8(&buffer[..v]).unwrap();
-        println!(">>> Got response from server: {:?}", msg);
+        println!(">>> GOT: {:?}", msg);
     } else {
         println!("!!! Response nothing")
     }

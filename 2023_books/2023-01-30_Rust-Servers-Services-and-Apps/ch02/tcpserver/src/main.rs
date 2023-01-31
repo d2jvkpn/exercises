@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 use std::{
     io::{Read, Write},
     net::TcpListener,
@@ -29,11 +31,13 @@ fn main() {
         // String::from_utf8_lossy(&buffer)
         let result = buffer.iter().position(|v| *v == '\0' as u8);
         if let Some(v) = result {
-            let msg = str::from_utf8(&buffer[..v]).unwrap();
-            println!("~~~ READ: {msg}");
+            // let msg = str::from_utf8(&buffer[..v]).unwrap();
+            let msg = String::from_utf8_lossy(&buffer[..v]);
+            println!("~~~ READ: {msg:?}");
         }
 
-        if let Err(e) = stream.write(&mut buffer) {
+        let bts = "Hello from the server".as_bytes();
+        if let Err(e) = stream.write(&bts) {
             println!("!!! stream write: {e:?}");
             continue;
         }
