@@ -1,4 +1,4 @@
-use actix_web::{web, App, HttpServer};
+use actix_web::{middleware, web, App, HttpServer};
 use std::io;
 
 #[path = "../handlers.rs"]
@@ -19,7 +19,21 @@ async fn main() -> io::Result<()> {
     let share_data = web::Data::new(AppState::default());
 
     println!("=== Http Server is listening on {addr:?}");
-    let app = move || App::new().app_data(share_data.clone()).configure(routes::route);
+    let app = move || {
+        App::new()
+            .app_data(share_data.clone())
+            .wrap(middleware::Compress::default())
+            .wrap(middleware::NormalizePath::default())
+            // .wrap_fn(|req, srv| {
+            //     println!("~~~ {req:?}");
+            //     let future = srv.call(req);
+            //     async {
+            //         let result = future.await?;
+            //         Ok(result)
+            //     }
+            // })
+            .configure(routes::route)
+    };
 
     HttpServer::new(app).bind(addr)?.run().await
 }

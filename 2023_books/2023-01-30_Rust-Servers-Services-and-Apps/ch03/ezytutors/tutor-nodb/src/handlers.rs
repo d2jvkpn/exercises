@@ -16,6 +16,8 @@ pub async fn health_check_handler(app_state: web::Data<AppState>) -> HttpRespons
         .insert_header(("x-app-version", "0.1.0"))
         .insert_header(("date", now.as_str()))
         .body(response)
+
+    // HttpResponse::Ok().finish()
 }
 
 pub async fn new_course(app_state: web::Data<AppState>, course: web::Json<Course>) -> HttpResponse {
