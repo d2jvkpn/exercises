@@ -9,7 +9,8 @@ fn course_routes(cfg: &mut ServiceConfig) {
     let scope = web::scope("/courses")
         .route("/create", post().to(post_new_course))
         .route("/{tutor_id}", get().to(get_courses_for_tutor))
-        .route("/{tutor_id}/{course_id}", get().to(get_course_details));
+        .route("/{tutor_id}/{course_id}", get().to(get_course_details))
+        .route("/v2_{tutor_id}/{course_id}", get().to(get_course_details_v2));
 
     cfg.service(scope);
 }

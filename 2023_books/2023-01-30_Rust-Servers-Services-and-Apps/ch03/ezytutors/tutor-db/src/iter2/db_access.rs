@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 use super::models::Course;
 use sqlx::{self, postgres::PgPool, query};
 
@@ -48,7 +49,7 @@ pub async fn get_course_details(pool: &PgPool, tutor_id: i32, course_id: i32) ->
     Course {
         course_id: row.course_id,
         tutor_id: row.tutor_id,
-        course_name: row.course_name.clone(),
+        course_name: row.course_name,
         posted_time: row.posted_time,
     }
 }
@@ -72,7 +73,7 @@ pub async fn get_course_details_v2(
             return Ok(Course {
                 course_id: row.course_id,
                 tutor_id: row.tutor_id,
-                course_name: row.course_name.clone(),
+                course_name: row.course_name,
                 posted_time: row.posted_time,
             })
         }
