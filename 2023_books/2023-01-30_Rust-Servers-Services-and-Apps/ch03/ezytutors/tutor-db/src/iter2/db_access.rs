@@ -34,7 +34,26 @@ pub enum DBErr {
     Unkonwn,
 }
 
-pub async fn get_course_details(
+pub async fn get_course_details(pool: &PgPool, tutor_id: i32, course_id: i32) -> Course {
+    let row = query!(
+        "SELECT tutor_id, course_id, course_name, posted_time FROM ezy_course_c4
+        WHERE tutor_id = $1 and course_id = $2",
+        tutor_id,
+        course_id,
+    )
+    .fetch_one(pool)
+    .await
+    .unwrap();
+
+    Course {
+        course_id: row.course_id,
+        tutor_id: row.tutor_id,
+        course_name: row.course_name.clone(),
+        posted_time: row.posted_time,
+    }
+}
+
+pub async fn get_course_details_v2(
     pool: &PgPool,
     tutor_id: i32,
     course_id: i32,

@@ -28,7 +28,17 @@ pub async fn get_course_details(
 ) -> HttpResponse {
     let (tutor_id, course_id) = (params.0, params.1);
 
-    let err = match db::get_course_details(&app_state.db, tutor_id, course_id).await {
+    let course = db::get_course_details(&app_state.db, tutor_id, course_id).await;
+    HttpResponse::Ok().json(course)
+}
+
+pub async fn get_course_details_v2(
+    app_state: web::Data<AppState>,
+    params: web::Path<(i32, i32)>,
+) -> HttpResponse {
+    let (tutor_id, course_id) = (params.0, params.1);
+
+    let err = match db::get_course_details_v2(&app_state.db, tutor_id, course_id).await {
         Ok(v) => return HttpResponse::Ok().json(v),
         Err(e) => e,
     };
