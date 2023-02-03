@@ -12,3 +12,5 @@ cargo add actix-web@4 actix-rt@2 serde_json@1 dotenv@0.15
 cargo add chrono --features=serde
 cargo add serde@1 --features=derive
 cargo add sqlx@0.6 --features=runtime-actix-rustls,macros,postgres,uuid,chrono,migrate,offline
+# if openssl isn't installed
+cargo add openssl@0.10 --features=vendored
