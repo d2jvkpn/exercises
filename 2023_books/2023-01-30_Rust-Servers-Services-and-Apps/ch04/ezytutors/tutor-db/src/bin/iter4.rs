@@ -1,4 +1,5 @@
 use actix_web::{dev::Service, middleware, web, App, HttpServer};
+use chrono::{Local, SecondsFormat};
 use dotenv::dotenv;
 use futures_util::future::FutureExt;
 use sqlx::postgres::PgPool;
@@ -38,7 +39,7 @@ async fn main() -> io::Result<()> {
                 let a01 = format!("method={}, path={}", req.method(), req.path());
                 srv.call(req).map(move |res| {
                     let status = res.as_ref().map_or(0, |v| v.status().as_u16());
-                    println!("~~~ response: {a01}, status={}", status);
+                    println!("~~~ {} response: {a01}, status={status}", now());
                     res
                 })
             })
@@ -49,7 +50,7 @@ async fn main() -> io::Result<()> {
                         Ok(v) => return Ok(v),
                         Err(e) => e,
                     };
-                    eprintln!("!!! {err:?}");
+                    eprintln!("!!! {} error: {err:?}", now());
                     Err(err)
                 }
             })
@@ -57,4 +58,8 @@ async fn main() -> io::Result<()> {
     };
 
     HttpServer::new(app).bind(addr)?.run().await
+}
+
+fn now() -> String {
+    format!("{}", Local::now().to_rfc3339_opts(SecondsFormat::Millis, true))
 }
