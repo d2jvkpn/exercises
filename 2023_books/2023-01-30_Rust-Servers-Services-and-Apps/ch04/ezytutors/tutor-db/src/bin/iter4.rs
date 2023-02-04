@@ -1,5 +1,6 @@
 use actix_web::{dev::Service, middleware, web, App, HttpServer};
 use dotenv::dotenv;
+use futures_util::future::FutureExt;
 use sqlx::postgres::PgPool;
 use std::{env, io};
 
@@ -34,15 +35,21 @@ async fn main() -> io::Result<()> {
             .wrap(middleware::Compress::default())
             .wrap(middleware::NormalizePath::default())
             .wrap_fn(|req, srv| {
-                // println!("~~~ {req:?}");
+                let a01 = format!("method={}, path={}", req.method(), req.path());
+                srv.call(req).map(move |res| {
+                    let status = res.as_ref().map_or(0, |v| v.status().as_u16());
+                    println!("~~~ response: {a01}, status={}", status);
+                    res
+                })
+            })
+            .wrap_fn(|req, srv| {
                 let future = srv.call(req);
                 async {
                     let err = match future.await {
                         Ok(v) => return Ok(v),
                         Err(e) => e,
                     };
-
-                    println!("!!! {err:?}");
+                    eprintln!("!!! {err:?}");
                     Err(err)
                 }
             })

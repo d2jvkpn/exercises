@@ -35,12 +35,16 @@ impl<T: Serialize> From<Data<T>> for HttpResponse {
 pub enum Error {
     #[error("no route")]
     NoRoute,
+
     #[error("invalid argument: {0}")]
     InvalidArgument(String),
+
     #[error("not found: {0}")]
     NotFound(String),
+
     #[error("database error")]
     DBError(String),
+
     #[error("internal server error")]
     ActixError(String),
 }
