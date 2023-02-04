@@ -17,6 +17,8 @@ mod response;
 mod routes;
 #[path = "../iter4/state.rs"]
 mod state;
+#[path = "../iter4/middlewares.rs"]
+mod middlewares;
 
 use state::AppState;
 
@@ -35,6 +37,7 @@ async fn main() -> io::Result<()> {
             .app_data(app_data.clone())
             .wrap(middleware::Compress::default())
             .wrap(middleware::NormalizePath::default())
+            .wrap(middlewares::SimpleLogger)
             .wrap_fn(|req, srv| {
                 let a01 = format!("method={}, path={}", req.method(), req.path());
                 srv.call(req).map(move |res| {
