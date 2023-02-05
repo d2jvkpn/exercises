@@ -1,12 +1,14 @@
 use actix_web::{
-    dev::Service,
+    // dev::Service,
     http::StatusCode,
     middleware::{Compress, ErrorHandlers, NormalizePath},
-    web, App, HttpServer,
+    web,
+    App,
+    HttpServer,
 };
 use chrono::{Local, SecondsFormat};
 use dotenv::dotenv;
-use futures_util::future::FutureExt;
+// use futures_util::future::FutureExt;
 use sqlx::postgres::PgPool;
 use std::{env, io};
 
@@ -45,31 +47,32 @@ async fn main() -> io::Result<()> {
             .wrap(NormalizePath::default())
             .wrap(ErrorHandlers::new().handler(StatusCode::NOT_FOUND, no_route))
             .wrap(SimpleLogger)
-            .wrap_fn(|req, srv| {
-                let a01 = format!("method={}, path={}", req.method(), req.path());
-                srv.call(req).map(move |res| {
-                    let status = res.as_ref().map_or(0, |v| v.status().as_u16());
-                    println!("~~~ {} response: {a01}, status={status}", now());
-                    res
-                })
-            })
-            .wrap_fn(|req, srv| {
-                let future = srv.call(req);
-                async {
-                    let err = match future.await {
-                        Ok(v) => return Ok(v),
-                        Err(e) => e,
-                    };
-                    eprintln!("!!! {} error: {err:?}", now());
-                    Err(err)
-                }
-            })
+            //            .wrap_fn(|req, srv| {
+            //                let a01 = format!("method={}, path={}", req.method(), req.path());
+            //                srv.call(req).map(move |res| {
+            //                    let status = res.as_ref().map_or(0, |v| v.status().as_u16());
+            //                    println!("~~~ {} response: {a01}, status={status}", now());
+            //                    res
+            //                })
+            //            })
+            //            .wrap_fn(|req, srv| {
+            //                let future = srv.call(req);
+            //                async {
+            //                    let err = match future.await {
+            //                        Ok(v) => return Ok(v),
+            //                        Err(e) => e,
+            //                    };
+            //                    eprintln!("!!! {} error: {err:?}", now());
+            //                    Err(err)
+            //                }
+            //            })
             .configure(routes::route)
     };
 
     HttpServer::new(app).bind(addr)?.run().await
 }
 
+#[allow(dead_code)]
 fn now() -> String {
     format!("{}", Local::now().to_rfc3339_opts(SecondsFormat::Millis, true))
 }

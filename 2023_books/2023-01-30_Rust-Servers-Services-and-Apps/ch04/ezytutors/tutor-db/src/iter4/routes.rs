@@ -1,4 +1,5 @@
 use super::handlers::*;
+use super::misc::*;
 use actix_web::web::{self, get, post, ServiceConfig};
 
 fn general_routes(cfg: &mut ServiceConfig) {
@@ -11,7 +12,9 @@ fn course_routes(cfg: &mut ServiceConfig) {
         .route("/{tutor_id}", get().to(get_courses_for_tutor))
         .route("/{tutor_id}/{course_id}", get().to(get_course_details));
 
-    cfg.service(scope);
+    let misc = web::scope("/misc").route("/divide/{numerator}/{denominator}", get().to(divide));
+
+    cfg.service(scope).service(misc);
 }
 
 pub fn route(cfg: &mut ServiceConfig) {
