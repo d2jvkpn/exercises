@@ -60,6 +60,10 @@ pub enum Error {
     #[error("not found: {0}")]
     NotFound(String),
 
+    // 6
+    #[error("already exists")]
+    AlreadyExists,
+
     // 7
     #[error("permission denied")]
     PermissionDenied,
@@ -72,11 +76,11 @@ pub enum Error {
     #[error("aboort")]
     Aborted,
 
-    // 13
+    // 13 01
     #[error("database error")]
     DBError(String),
 
-    // 13
+    // 13 02
     #[error("internal server error")]
     ActixError(String),
 
@@ -117,6 +121,7 @@ impl Error {
     //        }
     //    }
 
+    // grpc codes: go doc google.golang.org/grpc/codes.Internal
     fn code(&self) -> i32 {
         match self {
             Self::NoRoute => -1,
@@ -124,10 +129,12 @@ impl Error {
             Self::Unknown => 2,
             Self::InvalidArgument(_) => 3,
             Self::NotFound(_) => 5,
+            Self::AlreadyExists => 6,
             Self::PermissionDenied => 7,
             Self::ResourceExhausted => 8,
             Self::Aborted => 10,
-            Self::DBError(_) | Self::ActixError(_) => 13,
+            Self::DBError(_) => 1301,
+            Self::ActixError(_) => 1302,
             Self::Unauthenticated => 16,
         }
     }
@@ -141,6 +148,7 @@ impl ResponseError for Error {
             Self::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
             Self::InvalidArgument(_) => StatusCode::BAD_REQUEST,
             Self::NotFound(_) => StatusCode::NOT_FOUND,
+            Self::AlreadyExists => StatusCode::NOT_ACCEPTABLE,
             Self::PermissionDenied => StatusCode::FORBIDDEN,
             Self::ResourceExhausted => StatusCode::INTERNAL_SERVER_ERROR,
             Self::Aborted => StatusCode::NOT_ACCEPTABLE,

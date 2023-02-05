@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use super::{models::Course, response::Error};
-use sqlx::{self, postgres::PgPool, query};
+use sqlx::{self, error::Error as SQLxError, postgres::PgPool, query};
 
 pub async fn get_courses_for_tutor(pool: &PgPool, tutor_id: i32) -> Result<Vec<Course>, Error> {
     let result = query!(
@@ -13,7 +13,7 @@ pub async fn get_courses_for_tutor(pool: &PgPool, tutor_id: i32) -> Result<Vec<C
 
     let rows = match result {
         Ok(v) => v,
-        Err(e) => return Err(e.into()),
+        Err(e) => return Err(e.into()), // sqlx::error::Error to response::Error
     };
 
     let courses: Vec<Course> = rows
@@ -32,19 +32,6 @@ pub async fn get_courses_for_tutor(pool: &PgPool, tutor_id: i32) -> Result<Vec<C
     }
 }
 
-// TODO: wrap message and cause(anyhow::Error)
-// go doc google.golang.org/grpc/codes.Internal
-#[allow(dead_code)]
-pub enum DBErr {
-    InvalidArgument,
-    NotFound,
-    Conflict,
-    PermissionDenied,
-    Unauthenticated,
-    Internal,
-    Unkonwn,
-}
-
 pub async fn get_course_details(
     pool: &PgPool,
     tutor_id: i32,
@@ -57,7 +44,14 @@ pub async fn get_course_details(
         course_id,
     )
     .fetch_one(pool)
-    .await?;
+    .await
+    .map_err(|e| {
+        // println!("!!! {:?}", e);
+        match e {
+            SQLxError::RowNotFound => Error::NotFound("course not exists".into()),
+            _ => Error::DBError(e.to_string()),
+        }
+    })?;
 
     Ok(Course {
         course_id: row.course_id,
@@ -68,19 +62,69 @@ pub async fn get_course_details(
 }
 
 pub async fn post_new_course(pool: &PgPool, course: Course) -> Result<Course, Error> {
-    let row = query!(
-        "INSERT INTO ezy_course_c5 (tutor_id, course_name) VALUES ($1, $2)
+    if course.course_id == 0 {
+        let row = query!(
+            "INSERT INTO ezy_course_c5 (tutor_id, course_name) VALUES ($1, $2)
+            RETURNING course_id, tutor_id, course_name, posted_time",
+            course.tutor_id,
+            course.course_name,
+        )
+        .fetch_one(pool)
+        .await?;
+
+        return Ok(Course {
+            course_id: row.course_id,
+            tutor_id: row.tutor_id,
+            course_name: row.course_name,
+            posted_time: row.posted_time,
+        });
+    }
+
+    // NOTE: test conflict
+    let result = query!(
+        "INSERT INTO ezy_course_c5 (course_id, tutor_id, course_name) VALUES ($1, $2, $3)
         RETURNING course_id, tutor_id, course_name, posted_time",
+        course.course_id,
         course.tutor_id,
         course.course_name,
     )
     .fetch_one(pool)
-    .await?;
+    .await;
 
-    Ok(Course {
-        course_id: row.course_id,
-        tutor_id: row.tutor_id,
-        course_name: row.course_name,
-        posted_time: row.posted_time,
-    })
+    let err = match result {
+        Ok(row) => {
+            return Ok(Course {
+                course_id: row.course_id,
+                tutor_id: row.tutor_id,
+                course_name: row.course_name,
+                posted_time: row.posted_time,
+            });
+        }
+
+        Err(e) => e,
+    };
+
+    //    if let sqlx::Error::Database(e) = &err {
+    //        if e.code().unwrap() == "23505" {
+    //            return Err(Error::AlreadyExists);
+    //        }
+    //    }
+
+    dbg!(&err);
+
+    if db_error_code(&err) == Some("23505".into()) {
+        Err(Error::AlreadyExists)
+    } else {
+        Err(Error::DBError(err.to_string()))
+    }
+}
+
+// TODO: sqlx::error::Error, sqlx::postgres::PgDatabaseError,
+pub fn db_error_code(err: &SQLxError) -> Option<String> {
+    let e2 = match err {
+        sqlx::Error::Database(e) => e,
+        _ => return None,
+    };
+
+    e2.code().map(|v| Some(v.into()))? // convert a Result to an option
 }

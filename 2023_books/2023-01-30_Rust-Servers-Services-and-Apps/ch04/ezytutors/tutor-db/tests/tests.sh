@@ -12,3 +12,6 @@ curl -i -X POST -H "content-type: application/json" $addr/courses/create \
 curl -i -X GET $addr/courses/10
 
 curl -i -X GET $addr/courses/10/9
+
+curl -i -X POST -H "content-type: application/json" $addr/courses/create \
+  -d '{"courseId": 1, "tutorId": 10, "courseName": "Fourth course"}'
