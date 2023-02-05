@@ -1,4 +1,9 @@
-use actix_web::{dev::Service, middleware, web, App, HttpServer};
+use actix_web::{
+    dev::Service,
+    http::StatusCode,
+    middleware::{Compress, ErrorHandlers, NormalizePath},
+    web, App, HttpServer,
+};
 use chrono::{Local, SecondsFormat};
 use dotenv::dotenv;
 use futures_util::future::FutureExt;
@@ -20,6 +25,7 @@ mod routes;
 #[path = "../iter4/state.rs"]
 mod state;
 
+use middlewares::{no_route, SimpleLogger};
 use state::AppState;
 
 #[actix_rt::main]
@@ -35,9 +41,10 @@ async fn main() -> io::Result<()> {
     let app = move || {
         App::new()
             .app_data(app_data.clone())
-            .wrap(middleware::Compress::default())
-            .wrap(middleware::NormalizePath::default())
-            .wrap(middlewares::SimpleLogger)
+            .wrap(Compress::default())
+            .wrap(NormalizePath::default())
+            .wrap(ErrorHandlers::new().handler(StatusCode::NOT_FOUND, no_route))
+            .wrap(SimpleLogger)
             .wrap_fn(|req, srv| {
                 let a01 = format!("method={}, path={}", req.method(), req.path());
                 srv.call(req).map(move |res| {
