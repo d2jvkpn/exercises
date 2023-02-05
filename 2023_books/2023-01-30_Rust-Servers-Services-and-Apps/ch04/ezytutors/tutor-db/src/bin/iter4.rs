@@ -9,6 +9,8 @@ use std::{env, io};
 mod db_access;
 #[path = "../iter4/handlers.rs"]
 mod handlers;
+#[path = "../iter4/middlewares.rs"]
+mod middlewares;
 #[path = "../iter4/models.rs"]
 mod models;
 #[path = "../iter4/response.rs"]
@@ -17,8 +19,6 @@ mod response;
 mod routes;
 #[path = "../iter4/state.rs"]
 mod state;
-#[path = "../iter4/middlewares.rs"]
-mod middlewares;
 
 use state::AppState;
 

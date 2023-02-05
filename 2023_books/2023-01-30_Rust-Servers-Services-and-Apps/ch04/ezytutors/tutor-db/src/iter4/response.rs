@@ -5,18 +5,25 @@ use sqlx::error::Error as SQLxError;
 // use std::fmt;
 use thiserror;
 
-#[derive(Serialize)]
-pub struct ResponseOk<T> {
-    pub code: i32,
-    pub msg: String,
-    pub data: Option<T>,
+#[allow(dead_code)]
+pub enum Result {
+    Ok(HttpResponse),
+    Err(Error),
 }
+// from std::result::Result<T, Error> -> Result
 
-impl<T> From<Data<T>> for ResponseOk<T> {
-    fn from(v: Data<T>) -> Self {
-        Self { code: 0, msg: "ok".into(), data: Some(v.0) }
-    }
-}
+//#[derive(Serialize)]
+//pub struct ResponseOk<T> {
+//    pub code: i32,
+//    pub msg: String,
+//    pub data: Option<T>,
+//}
+
+//impl<T> From<Data<T>> for ResponseOk<T> {
+//    fn from(v: Data<T>) -> Self {
+//        Self { code: 0, msg: "ok".into(), data: Some(v.0) }
+//    }
+//}
 
 // response data
 #[derive(Debug, Serialize)]
@@ -24,7 +31,7 @@ pub struct Data<T>(pub T);
 
 impl<T: Serialize> From<Data<T>> for HttpResponse {
     fn from(v: Data<T>) -> Self {
-        HttpResponse::Ok().json(ResponseOk::from(v))
+        HttpResponse::Ok().json(json!({"code": 0, "msg": "ok", "data": v}))
     }
 }
 
@@ -33,20 +40,49 @@ impl<T: Serialize> From<Data<T>> for HttpResponse {
 #[allow(dead_code)]
 #[derive(Debug, Serialize, thiserror::Error)]
 pub enum Error {
+    // -1
     #[error("no route")]
     NoRoute,
 
+    // 1
+    #[error("canceled: {0}")]
+    Canceled(String),
+
+    // 2
+    #[error("unknown")]
+    Unknown,
+
+    // 3
     #[error("invalid argument: {0}")]
     InvalidArgument(String),
 
+    // 5
     #[error("not found: {0}")]
     NotFound(String),
 
+    // 7
+    #[error("permission denied")]
+    PermissionDenied,
+
+    // 8
+    #[error("resource exhausted")]
+    ResourceExhausted,
+
+    // 10
+    #[error("aboort")]
+    Aborted,
+
+    // 13
     #[error("database error")]
     DBError(String),
 
+    // 13
     #[error("internal server error")]
     ActixError(String),
+
+    // 16
+    #[error("unauthenticated")]
+    Unauthenticated,
 }
 
 //impl fmt::Display for Error {
@@ -84,10 +120,15 @@ impl Error {
     fn code(&self) -> i32 {
         match self {
             Self::NoRoute => -1,
-            Self::InvalidArgument(_) => -2,
-            Self::NotFound(_) => -3,
-            Self::DBError(_) => 2,
-            Self::ActixError(_) => 1,
+            Self::Canceled(_) => 1,
+            Self::Unknown => 2,
+            Self::InvalidArgument(_) => 3,
+            Self::NotFound(_) => 5,
+            Self::PermissionDenied => 7,
+            Self::ResourceExhausted => 8,
+            Self::Aborted => 10,
+            Self::DBError(_) | Self::ActixError(_) => 13,
+            Self::Unauthenticated => 16,
         }
     }
 }
@@ -95,9 +136,16 @@ impl Error {
 impl ResponseError for Error {
     fn status_code(&self) -> StatusCode {
         match self {
-            Self::NoRoute | Self::InvalidArgument(_) => StatusCode::BAD_REQUEST,
+            Self::NoRoute => StatusCode::BAD_REQUEST,
+            Self::Canceled(_) => StatusCode::NOT_ACCEPTABLE,
+            Self::Unknown => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::InvalidArgument(_) => StatusCode::BAD_REQUEST,
             Self::NotFound(_) => StatusCode::NOT_FOUND,
+            Self::PermissionDenied => StatusCode::FORBIDDEN,
+            Self::ResourceExhausted => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Aborted => StatusCode::NOT_ACCEPTABLE,
             Self::DBError(_) | Self::ActixError(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            Self::Unauthenticated => StatusCode::UNAUTHORIZED,
         }
     }
 
