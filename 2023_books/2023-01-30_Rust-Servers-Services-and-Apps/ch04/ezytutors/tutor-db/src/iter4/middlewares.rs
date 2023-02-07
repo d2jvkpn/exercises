@@ -74,6 +74,7 @@ where
         let start: DateTime<Local> = Local::now();
         let request_id = Uuid::new_v4();
 
+        println!("==> SimpleLogger");
         let base = format!(
             "start: {}, method: {}, path: {:?}",
             start.to_rfc3339_opts(SecondsFormat::Millis, true),
@@ -102,7 +103,7 @@ where
             let elapsed = end.signed_duration_since(start).num_microseconds().unwrap_or(0);
 
             println!(
-                "<=> {}, elapsed: {:.3}ms, request_id: {}, status: {}",
+                "<== {}, elapsed: {:.3}ms, request_id: {}, status: {}",
                 base,
                 (elapsed as f64) / 1e3,
                 request_id,

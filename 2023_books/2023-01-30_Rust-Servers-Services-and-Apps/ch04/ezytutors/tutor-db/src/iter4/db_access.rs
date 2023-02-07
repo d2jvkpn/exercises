@@ -49,7 +49,7 @@ pub async fn get_course_details(
         // println!("!!! {:?}", e);
         match e {
             SQLxError::RowNotFound => Error::NotFound("course not exists".into()),
-            _ => Error::DBError(e.to_string()),
+            _ => Error::DBError(e),
         }
     })?;
 
@@ -115,7 +115,7 @@ pub async fn post_new_course(pool: &PgPool, course: Course) -> Result<Course, Er
     if db_error_code(&err) == Some("23505".into()) {
         Err(Error::AlreadyExists)
     } else {
-        Err(Error::DBError(err.to_string()))
+        Err(Error::DBError(err))
     }
 }
 

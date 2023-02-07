@@ -1,10 +1,8 @@
 use actix_web::{
-    // dev::Service,
+    dev::Service,
     http::StatusCode,
     middleware::{Compress, ErrorHandlers, NormalizePath},
-    web,
-    App,
-    HttpServer,
+    web, App, HttpServer,
 };
 use chrono::{Local, SecondsFormat};
 use dotenv::dotenv;
@@ -18,6 +16,8 @@ mod db_access;
 mod handlers;
 #[path = "../iter4/middlewares.rs"]
 mod middlewares;
+#[path = "../iter4/misc.rs"]
+mod misc;
 #[path = "../iter4/models.rs"]
 mod models;
 #[path = "../iter4/response.rs"]
@@ -43,10 +43,6 @@ async fn main() -> io::Result<()> {
     let app = move || {
         App::new()
             .app_data(app_data.clone())
-            .wrap(Compress::default())
-            .wrap(NormalizePath::default())
-            .wrap(ErrorHandlers::new().handler(StatusCode::NOT_FOUND, no_route))
-            .wrap(SimpleLogger)
             //            .wrap_fn(|req, srv| {
             //                let a01 = format!("method={}, path={}", req.method(), req.path());
             //                srv.call(req).map(move |res| {
@@ -66,6 +62,22 @@ async fn main() -> io::Result<()> {
             //                    Err(err)
             //                }
             //            })
+            .wrap_fn(|req, srv| {
+                println!("~~> Handler01"); // 2
+                let result = srv.call(req);
+                println!("<~~ Handler01"); // 3
+                result
+            })
+            .wrap_fn(|req, srv| {
+                println!("~~> Handler02"); // 1
+                let result = srv.call(req);
+                println!("<~~ Handler02"); // 4
+                result
+            })
+            .wrap(ErrorHandlers::new().handler(StatusCode::NOT_FOUND, no_route))
+            .wrap(SimpleLogger)
+            .wrap(Compress::default())
+            .wrap(NormalizePath::default())
             .configure(routes::route)
     };
 

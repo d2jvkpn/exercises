@@ -1,9 +1,15 @@
-use actix_web::{error::ResponseError, http::StatusCode, HttpResponse};
+use actix_web::{
+    error::{Error as ActixError, ResponseError},
+    http::StatusCode,
+    HttpResponse,
+};
 use serde::Serialize;
 use serde_json::json;
 use sqlx::error::Error as SQLxError;
 // use std::fmt;
 use thiserror;
+
+// type MyResult<T> = Result<Data<T>, Error>;
 
 #[allow(dead_code)]
 pub enum Result {
@@ -38,7 +44,7 @@ impl<T: Serialize> From<Data<T>> for HttpResponse {
 // response error
 // TODO: log error, using thiserror
 #[allow(dead_code)]
-#[derive(Debug, Serialize, thiserror::Error)]
+#[derive(Debug, thiserror::Error)]
 pub enum Error {
     // -1
     #[error("no route")]
@@ -78,11 +84,11 @@ pub enum Error {
 
     // 13 01
     #[error("database error")]
-    DBError(String),
+    DBError(SQLxError),
 
     // 13 02
     #[error("internal server error")]
-    ActixError(String),
+    ActixError(ActixError),
 
     // 16
     #[error("unauthenticated")]
@@ -163,14 +169,16 @@ impl ResponseError for Error {
     }
 }
 
-impl From<actix_web::error::Error> for Error {
-    fn from(err: actix_web::error::Error) -> Self {
-        Self::ActixError(err.to_string())
+impl From<ActixError> for Error {
+    fn from(err: ActixError) -> Self {
+        // Self::ActixError(err.to_string())
+        Self::ActixError(err)
     }
 }
 
 impl From<SQLxError> for Error {
     fn from(err: SQLxError) -> Self {
-        Self::DBError(err.to_string())
+        // Self::DBError(err.to_string())
+        Self::DBError(err)
     }
 }
