@@ -15,11 +15,6 @@ pub async fn get_courses_for_tutor(pool: &PgPool, tutor_id: i32) -> Result<Vec<C
     .fetch_all(pool)
     .await?;
 
-    //    let courses: Vec<Course> = match result {
-    //        Ok(v) => v,
-    //        Err(e) => return Err(e.into()), // sqlx::error::Error to response::Error
-    //    };
-
     match courses.len() {
         0 => Err(Error::NotFound("courses not found for tutor".into())),
         _ => Ok(courses),
