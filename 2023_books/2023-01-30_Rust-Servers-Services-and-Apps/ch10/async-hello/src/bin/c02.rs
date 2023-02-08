@@ -1,4 +1,4 @@
-// multithreads with tokio, 4s
+// wrong concurrent with tokio, 6s
 
 #[path = "../misc.rs"]
 mod misc;
@@ -14,17 +14,12 @@ use std::{
 async fn main() {
     println!("{} Hello before reading file, thread: {:?}", now(), thread::current().id());
 
-    let h01 = tokio::spawn(async {
-        let contents = read_from_file1().await;
-        println!("{:?}", contents);
-    });
+    let f01 = read_from_file1();
 
-    let h02 = tokio::spawn(async {
-        let contents = read_from_file2().await;
-        println!("{:?}", contents);
-    });
+    let f02 = read_from_file2();
 
-    let _ = tokio::join!(h01, h02); // start executing now
+    let results = tokio::join!(f01, f02); // start executing now
+    println!("{:?}", results);
 
     println!("{} Hello after reading file", now());
 }
