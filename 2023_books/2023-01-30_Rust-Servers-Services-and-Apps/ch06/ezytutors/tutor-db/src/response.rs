@@ -95,6 +95,10 @@ pub enum Error {
     // 16
     #[error("unauthenticated")]
     Unauthenticated,
+
+    // 1001
+    #[error("no changes")]
+    NoChanges,
 }
 
 //impl fmt::Display for Error {
@@ -144,6 +148,7 @@ impl Error {
             Self::DBError(_) => 1301,
             Self::ActixError(_) => 1302,
             Self::Unauthenticated => 16,
+            Self::NoChanges => 1001,
         }
     }
 }
@@ -162,6 +167,7 @@ impl ResponseError for Error {
             Self::Aborted => StatusCode::NOT_ACCEPTABLE,
             Self::DBError(_) | Self::ActixError(_) => StatusCode::INTERNAL_SERVER_ERROR,
             Self::Unauthenticated => StatusCode::UNAUTHORIZED,
+            Self::NoChanges => StatusCode::NOT_ACCEPTABLE,
         }
     }
 
