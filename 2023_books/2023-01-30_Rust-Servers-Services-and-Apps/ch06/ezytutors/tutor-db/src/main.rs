@@ -3,7 +3,6 @@ mod handlers;
 mod middlewares;
 mod models;
 mod response;
-mod routes;
 mod state;
 mod utils;
 
@@ -52,7 +51,7 @@ async fn main() -> io::Result<()> {
             .wrap(SimpleLogger)
             .wrap(Compress::default())
             .wrap(NormalizePath::default())
-            .configure(routes::route)
+            .configure(handlers::route)
     };
 
     HttpServer::new(app).bind(addr)?.run().await

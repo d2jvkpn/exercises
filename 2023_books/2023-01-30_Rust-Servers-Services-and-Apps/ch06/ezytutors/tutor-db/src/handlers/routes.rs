@@ -1,4 +1,4 @@
-use super::handlers::*;
+use super::{course::*, general::*, tutor::*};
 use actix_web::web::{self, delete, get, post, ServiceConfig};
 
 fn general_routes(cfg: &mut ServiceConfig) {
