@@ -11,6 +11,7 @@ use thiserror;
 
 // type MyResult<T> = Result<Data<T>, Error>;
 
+#[allow(dead_code)]
 pub const OK_JSON_STR: &str = r#"{"code":0,"msg":"ok"}"#;
 
 #[allow(dead_code)]

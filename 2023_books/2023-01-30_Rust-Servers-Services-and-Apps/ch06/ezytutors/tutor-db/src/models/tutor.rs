@@ -4,6 +4,7 @@ use crate::{response::Error, utils::update_from_option};
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize, Debug, Clone, sqlx::FromRow)]
+#[serde(rename_all = "camelCase")]
 pub struct Tutor {
     #[serde(default = "Tutor::default_tutor_id")]
     pub tutor_id: i32,

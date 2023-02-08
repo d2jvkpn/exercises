@@ -1,7 +1,7 @@
 use crate::{
     db,
     models::*,
-    response::{Data, Error, OK_JSON_STR},
+    response::{Data, Error},
     state::AppState,
 };
 use actix_web::{web, HttpResponse};
@@ -10,9 +10,7 @@ pub async fn post_new_tutor(
     app_state: web::Data<AppState>,
     tutor: web::Json<Tutor>,
 ) -> Result<HttpResponse, Error> {
-    db::post_new_tutor(&app_state.db, tutor.into_inner())
-        .await
-        .map(|_| Ok(Data(OK_JSON_STR).into()))?
+    db::post_new_tutor(&app_state.db, tutor.into_inner()).await.map(|v| Ok(Data(v).into()))?
 }
 
 pub async fn get_tutor_details(

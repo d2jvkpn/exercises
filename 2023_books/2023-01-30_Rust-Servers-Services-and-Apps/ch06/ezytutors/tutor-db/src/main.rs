@@ -8,10 +8,12 @@ mod state;
 mod utils;
 
 use actix_web::{
-    dev::Service,
+    // dev::Service,
     http::StatusCode,
     middleware::{Compress, ErrorHandlers, NormalizePath},
-    web, App, HttpServer,
+    web,
+    App,
+    HttpServer,
 };
 use dotenv::dotenv;
 // use futures_util::future::FutureExt;
@@ -34,18 +36,18 @@ async fn main() -> io::Result<()> {
     let app = move || {
         App::new()
             .app_data(app_data.clone())
-            .wrap_fn(|req, srv| {
-                println!("~~> Handler01"); // 2
-                let result = srv.call(req);
-                println!("<~~ Handler01"); // 3
-                result
-            })
-            .wrap_fn(|req, srv| {
-                println!("~~> Handler02"); // 1
-                let result = srv.call(req);
-                println!("<~~ Handler02"); // 4
-                result
-            })
+            //            .wrap_fn(|req, srv| {
+            //                println!("~~> Handler01"); // 2
+            //                let result = srv.call(req);
+            //                println!("<~~ Handler01"); // 3
+            //                result
+            //            })
+            //            .wrap_fn(|req, srv| {
+            //                println!("~~> Handler02"); // 1
+            //                let result = srv.call(req);
+            //                println!("<~~ Handler02"); // 4
+            //                result
+            //            })
             .wrap(ErrorHandlers::new().handler(StatusCode::NOT_FOUND, no_route))
             .wrap(SimpleLogger)
             .wrap(Compress::default())
