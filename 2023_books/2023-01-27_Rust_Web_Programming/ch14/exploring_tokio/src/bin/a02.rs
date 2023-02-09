@@ -5,11 +5,11 @@ use std::{
 
 async fn hello(input: i32) -> i32 {
     let id1 = thread::current().id();
-    println!("--> hello: {}, {:?}", input, id1);
+    println!("--> hello: {input}, {id1:?}");
     tokio::time::sleep(Duration::from_secs(5)).await;
 
     let id2 = thread::current().id();
-    println!("~~~ hello: {}, {:?}", input, id2);
+    println!("~~~ hello: {input}, {id2:?}");
     input
     // id1 may not equals to id2
 }
@@ -20,7 +20,8 @@ async fn main() {
     let mut buffer = Vec::new();
 
     for i in 0..16 {
-        let handle = tokio::spawn(async move { hello(i).await });
+        // let handle = tokio::spawn(async move { hello(i).await });
+        let handle = tokio::spawn(hello(i));
 
         buffer.push(handle);
     }
@@ -31,7 +32,6 @@ async fn main() {
     //		let _ = i.await;
     //	}
     let results = futures::future::join_all(buffer).await;
-    println!("results = {:?}", results);
-
+    println!("results = {results:?}");
     println!("Elapsed: {:.2?}", now.elapsed());
 }

@@ -5,11 +5,11 @@ use std::{
 
 async fn hello(input: i32) -> i32 {
     let id1 = thread::current().id();
-    println!("--> hello: {}, {:?}", input, id1);
+    println!("--> hello: {input}, {id1:?}");
     tokio::time::sleep(Duration::from_secs(5)).await;
 
     let id2 = thread::current().id();
-    println!("~~~ hello: {}, {:?}", input, id2);
+    println!("~~~ hello: {input}, {id2:?}");
     input
     // id1 may not equals to id2
 }
@@ -18,7 +18,7 @@ async fn hello(input: i32) -> i32 {
 #[tokio::main]
 async fn main() {
     let threads = thread::available_parallelism().unwrap().get();
-    println!("All threads: {}", threads);
+    println!("All threads: {threads}");
 
     // DEMO 1
     println!(">>> DEMO 1");
@@ -52,6 +52,6 @@ async fn main() {
     println!("==> Joining...");
     // all futures run in the same thread(thread_id)
     let results = tokio::join!(fut1, fut2, fut3, fut4); // start running now
-    println!("~~~ results: {:?}", results);
+    println!("~~~ results: {results:?}");
     println!("~~~ Elapsed: {:.3?}", now.elapsed());
 }
