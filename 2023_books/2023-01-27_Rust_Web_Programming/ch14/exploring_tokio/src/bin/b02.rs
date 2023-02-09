@@ -18,9 +18,9 @@ async fn main() {
     let (tx, mut rx) = mpsc::channel::<Message>(1);
 
     let orders = [
-        Message { order: Order::BUY, amount: 5.5, ticker: "BYND".to_owned() },
-        Message { order: Order::BUY, amount: 5.5, ticker: "NET".to_owned() },
-        Message { order: Order::BUY, amount: 5.5, ticker: "PLTR".to_owned() },
+        Message { order: Order::BUY, amount: 5.5, ticker: "BYND".into() },
+        Message { order: Order::BUY, amount: 5.5, ticker: "NET".into() },
+        Message { order: Order::BUY, amount: 5.5, ticker: "PLTR".into() },
     ];
 
     tokio::spawn(async move {

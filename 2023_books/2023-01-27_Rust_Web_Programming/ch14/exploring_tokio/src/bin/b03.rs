@@ -5,14 +5,14 @@ use tokio::sync::{
 };
 
 #[derive(Debug)]
-pub enum Order {
+pub enum OrderKind {
     BUY,
     SELL,
 }
 
 #[derive(Debug)]
 pub struct Message {
-    pub order: Order,
+    pub kind: OrderKind,
     pub ticker: String,
     pub amount: f32,
     pub respond_to: oneshot::Sender<bool>,
@@ -20,7 +20,7 @@ pub struct Message {
 
 impl fmt::Display for Message {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}, {}, {}", self.order, self.ticker, self.amount)
+        write!(f, "{:?}, {}, {}", self.kind, self.ticker, self.amount)
     }
 }
 
@@ -31,7 +31,7 @@ pub struct OrderBookActor {
 }
 
 impl OrderBookActor {
-    fn new(receiver: Receiver<Message>, investment_cap: f32) -> Self {
+    pub fn new(receiver: Receiver<Message>, investment_cap: f32) -> Self {
         Self { receiver, total_invested: 0.0, investment_cap }
     }
 
@@ -58,23 +58,19 @@ impl OrderBookActor {
 pub struct BuyOrder {
     pub ticker: String,
     pub amount: f32,
-    pub order: Order,
+    pub kind: OrderKind,
     pub sender: Sender<Message>,
 }
 
 impl BuyOrder {
-    fn new(amount: f32, ticker: String, sender: Sender<Message>) -> Self {
-        Self { ticker, amount, sender, order: Order::BUY }
+    pub fn new(amount: f32, ticker: String, sender: Sender<Message>) -> Self {
+        Self { ticker, amount, sender, kind: OrderKind::BUY }
     }
 
-    async fn send(self) {
+    pub async fn send(self) {
         let (send, recv) = oneshot::channel();
-        let message = Message {
-            order: self.order,
-            amount: self.amount,
-            ticker: self.ticker,
-            respond_to: send,
-        };
+        let message =
+            Message { kind: self.kind, amount: self.amount, ticker: self.ticker, respond_to: send };
 
         let _ = self.sender.send(message).await;
 
@@ -89,18 +85,18 @@ impl BuyOrder {
 async fn main() {
     let (tx, rx) = channel::<Message>(1);
 
-    let tx1 = tx.clone();
+    let txc = tx.clone();
     tokio::spawn(async move {
         for _ in 0..5 {
-            let buyer = BuyOrder::new(5.5, "BYND".into(), tx1.clone());
+            let buyer = BuyOrder::new(5.5, "BYND".into(), txc.clone());
             buyer.send().await;
         }
     });
 
-    let tx2 = tx.clone();
+    let txc = tx.clone();
     tokio::spawn(async move {
         for _ in 0..5 {
-            let buyer = BuyOrder::new(5.5, "PLR".into(), tx2.clone());
+            let buyer = BuyOrder::new(5.5, "PLR".into(), txc.clone());
             buyer.send().await;
         }
     });
