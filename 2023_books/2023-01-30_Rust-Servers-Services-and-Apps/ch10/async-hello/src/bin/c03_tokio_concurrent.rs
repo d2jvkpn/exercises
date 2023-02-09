@@ -13,7 +13,6 @@ async fn main() {
     println!("{} Hello before reading file, thread: {:?}", now(), thread::current().id());
 
     let f01 = read_from_file1();
-
     let f02 = read_from_file2();
 
     let results = tokio::join!(f01, f02); // start executing now

@@ -1,4 +1,4 @@
-// multithreads with tokio, 4s
+// multithreading with tokio, 4s
 
 #[path = "../misc.rs"]
 mod misc;
