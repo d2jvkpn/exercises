@@ -10,8 +10,9 @@ async fn main() -> Result<(), std::io::Error> {
     let addr = "127.0.0.1:8080";
 
     let mut stream = TcpStream::connect(addr).await?;
-    println!("==> {} stream starting: {}", now(), addr);
-    stream.write_all(b"Hello, world!").await?;
+    println!("==> {} stream starting: {addr}", now());
+    // stream.write_all(b"Hello, world!").await?;
+    stream.write_all(b"8.0;BYND;\n9.0;PLTR").await?;
     println!("<== {} stream finished", now());
     Ok(())
 }

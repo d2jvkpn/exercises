@@ -1,15 +1,15 @@
+#[path = "../order.rs"]
+mod order;
+
 use chrono::{Local, SecondsFormat};
+use order::*;
 // use std::{thread, time::Duration};
 use std::net::SocketAddr;
 use tokio::{
     io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
     net::{TcpListener, TcpStream},
+    sync::mpsc::{channel, Sender},
 };
-
-fn now() -> String {
-    let now = Local::now();
-    now.to_rfc3339_opts(SecondsFormat::Millis, true)
-}
 
 #[tokio::main]
 async fn main() {
@@ -18,44 +18,71 @@ async fn main() {
     let socket = TcpListener::bind(addr).await.unwrap();
     println!("==> Listening on: {}", addr);
 
-    while let Ok((stream, peer)) = socket.accept().await {
-        println!("--> Incoming connection from: {}", peer.to_string());
-        // tokio::spawn(async move {
-        //     let peer_id = peer.to_string();
-        //     println!("~~~ {} {} thread starting", now(), peer_id);
-        //     tokio::time::sleep(Duration::from_secs(3)).await;
-        //     println!("~~~ {} {} thread finishing", now(), peer_id);
-        // });
+    let (tx, rx) = channel::<Message>(1);
 
-        tokio::spawn(async move { handle(stream, peer).await });
+    tokio::spawn(async move { BookActor::new(rx, 20.0).run().await });
+
+    while let Ok((stream, peer)) = socket.accept().await {
+        println!("==> Incoming connection from: {}", peer.to_string());
+        let txc = tx.clone();
+        tokio::spawn(async move { handle(stream, peer, txc).await });
     }
 }
 
-async fn handle(mut stream: TcpStream, peer: SocketAddr) {
+fn now() -> String {
+    let now = Local::now();
+    now.to_rfc3339_opts(SecondsFormat::Millis, true)
+}
+
+async fn handle(mut stream: TcpStream, peer: SocketAddr, tx: Sender<Message>) {
     let peer_id = peer.to_string();
-    println!("~~~ {} {} thread starting", now(), peer_id);
+    println!("~~~ {} {peer_id} thread starting", now());
     // tokio::time::sleep(Duration::from_secs(3)).await;
     let (reader, mut writer) = stream.split();
     let mut reader = BufReader::new(reader);
     let mut buf = vec![];
 
     loop {
+        let txc = tx.clone();
         let at = now();
-        match reader.read_until(b'\n', &mut buf).await {
+        let msg = match reader.read_until(b'\n', &mut buf).await {
             Ok(0) => {
-                println!("~~~ {at} EOF received");
+                eprintln!("\n~~~ {at} EOF received");
                 break;
             }
             Ok(n) => {
-                println!("~~~ {at} Got message: {:?}", String::from_utf8_lossy(&buf[..n]));
-                let _ = writer.write("Hello, world".as_bytes()).await;
+                let msg = String::from_utf8_lossy(&buf[..n]);
+                println!("\n~~~ {at} Got message: {msg:?}");
+                // let _ = writer.write("Hello, world".as_bytes()).await;
+                msg
             }
             Err(e) => {
-                println!("!!! {at} Error receiving message: {e}");
+                eprintln!("\n!!! {at} Error receiving message: {e}");
                 break;
             }
+        };
+
+        let data: Vec<&str> = msg.split(";").map(|v| v.trim()).collect();
+        if data.len() < 2 {
+            eprintln!("!!! invalid data length");
+            break;
         }
+
+        let amount = match data[0].parse::<f32>() {
+            Ok(v) => v,
+            Err(e) => {
+                eprintln!("!!! invalid amount: {e:?}");
+                break;
+            }
+        };
+
+        let order_actor = BuyOrder::new(amount, data[1].into(), txc);
+        order_actor.send().await;
+        buf.clear();
     }
 
-    println!("~~~ {} {} thread finishing", now(), peer_id);
+    match writer.write(b"BYE").await {
+        Ok(_) => println!("~~~ {} {peer_id} thread finishing", now()),
+        Err(e) => println!("!!! {} {peer_id} thread finishing: {e:?}", now()),
+    }
 }
