@@ -5,14 +5,14 @@ use tokio::sync::{
 };
 
 #[derive(Debug)]
-pub enum OrderKind {
-    BUY,
-    SELL,
+pub enum Kind {
+    Buy,
+    Sell,
 }
 
 #[derive(Debug)]
 pub struct Message {
-    pub kind: OrderKind,
+    pub kind: Kind,
     pub ticker: String,
     pub amount: f32,
     pub respond_to: oneshot::Sender<bool>,
@@ -20,28 +20,36 @@ pub struct Message {
 
 impl fmt::Display for Message {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}, {}, {}", self.kind, self.ticker, self.amount)
+        write!(f, "{:?}/{}/{}", self.kind, self.ticker, self.amount)
     }
 }
 
-pub struct OrderBookActor {
+pub struct BookActor {
     pub receiver: Receiver<Message>,
+    pub total_count: u32,
     pub total_invested: f32,
     pub investment_cap: f32,
 }
 
-impl OrderBookActor {
+impl fmt::Display for BookActor {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}/{:.2}/{:.2}", self.total_count, self.total_invested, self.investment_cap)
+    }
+}
+
+impl BookActor {
     pub fn new(receiver: Receiver<Message>, investment_cap: f32) -> Self {
-        Self { receiver, total_invested: 0.0, investment_cap }
+        Self { receiver, total_count: 0, total_invested: 0.0, investment_cap }
     }
 
     fn handle(&mut self, msg: Message) {
         if msg.amount + self.total_invested <= self.investment_cap {
             self.total_invested += msg.amount;
-            println!("--> processing purchase ({}), total invested: {}", msg, self.total_invested,);
+            self.total_count += 1;
+            println!("--> processing purchase {msg}, invested: {self}");
             let _ = msg.respond_to.send(true);
         } else {
-            println!("!!! rejecting purchase ({}), total invested: {}", msg, self.total_invested,);
+            println!("!!! rejecting purchase {msg}, invested: {self}");
             let _ = msg.respond_to.send(false);
         }
     }
@@ -58,13 +66,13 @@ impl OrderBookActor {
 pub struct BuyOrder {
     pub ticker: String,
     pub amount: f32,
-    pub kind: OrderKind,
+    pub kind: Kind,
     pub sender: Sender<Message>,
 }
 
 impl BuyOrder {
     pub fn new(amount: f32, ticker: String, sender: Sender<Message>) -> Self {
-        Self { ticker, amount, sender, kind: OrderKind::BUY }
+        Self { ticker, amount, sender, kind: Kind::Buy }
     }
 
     pub async fn send(self) {
@@ -93,16 +101,16 @@ async fn main() {
         }
     });
 
-    let txc = tx.clone();
-    tokio::spawn(async move {
-        for _ in 0..5 {
-            let buyer = BuyOrder::new(5.5, "PLR".into(), txc.clone());
+    for _ in 0..5 {
+        let txc = tx.clone();
+        tokio::spawn(async move {
+            let buyer = BuyOrder::new(3.5, "PLR".into(), txc.clone());
             buyer.send().await;
-        }
-    });
+        });
+    }
 
     drop(tx);
 
-    let actor = OrderBookActor::new(rx, 20.0);
+    let actor = BookActor::new(rx, 20.0);
     actor.run().await;
 }
