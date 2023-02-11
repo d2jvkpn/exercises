@@ -20,10 +20,10 @@ async fn main() {
 
     let (tx, rx) = channel::<Message>(1);
 
-    tokio::spawn(async move { BookActor::new(rx, 20.0).run().await });
+    tokio::spawn(async move { OrderBookActor::new(rx, 20.0).run().await });
 
     while let Ok((stream, peer)) = socket.accept().await {
-        println!("==> Incoming connection from: {}", peer.to_string());
+        println!("~~~ Incoming connection from: {}", peer.to_string());
         let txc = tx.clone();
         tokio::spawn(async move { handle(stream, peer, txc).await });
     }
@@ -36,7 +36,7 @@ fn now() -> String {
 
 async fn handle(mut stream: TcpStream, peer: SocketAddr, tx: Sender<Message>) {
     let peer_id = peer.to_string();
-    println!("~~~ {} {peer_id} thread starting", now());
+    println!("--> {} {peer_id} thread starting", now());
     // tokio::time::sleep(Duration::from_secs(3)).await;
     let (reader, mut writer) = stream.split();
     let mut reader = BufReader::new(reader);

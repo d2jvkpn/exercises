@@ -1,5 +1,4 @@
-#![allow(dead_code)]
-
+use crate::order_tracker::{Order, TrackerMessage};
 use std::fmt;
 use tokio::sync::{
     mpsc::{Receiver, Sender}, /*channel*/
@@ -26,8 +25,10 @@ impl fmt::Display for Message {
     }
 }
 
+#[derive(Debug)]
 pub struct OrderBookActor {
     pub receiver: Receiver<Message>,
+    pub sender: Sender<TrackerMessage>,
     pub total_count: u32,
     pub total_invested: f32,
     pub investment_cap: f32,
@@ -40,16 +41,26 @@ impl fmt::Display for OrderBookActor {
 }
 
 impl OrderBookActor {
-    pub fn new(receiver: Receiver<Message>, investment_cap: f32) -> Self {
-        Self { receiver, total_count: 0, total_invested: 0.0, investment_cap }
+    pub fn new(
+        receiver: Receiver<Message>,
+        sender: Sender<TrackerMessage>,
+        investment_cap: f32,
+    ) -> Self {
+        Self { receiver, sender, total_count: 0, total_invested: 0.0, investment_cap }
     }
 
-    fn handle(&mut self, msg: Message) {
+    async fn handle(&mut self, msg: Message) {
         if msg.amount + self.total_invested <= self.investment_cap {
             self.total_invested += msg.amount;
             self.total_count += 1;
             println!("--> processing purchase {msg}, invested: {self}");
             let _ = msg.respond_to.send(true);
+
+            let (send, _) = oneshot::channel();
+            let tracker_msg =
+                TrackerMessage { command: Order::Buy(msg.ticker, msg.amount), respond_to: send };
+
+            self.sender.send(tracker_msg).await.unwrap();
         } else {
             println!("!!! rejecting purchase {msg}, invested: {self}");
             let _ = msg.respond_to.send(false);
@@ -60,11 +71,12 @@ impl OrderBookActor {
         println!("==> Actor is running");
 
         while let Some(msg) = self.receiver.recv().await {
-            self.handle(msg);
+            self.handle(msg).await;
         }
     }
 }
 
+#[derive(Debug)]
 pub struct BuyOrder {
     pub ticker: String,
     pub amount: f32,
@@ -73,7 +85,7 @@ pub struct BuyOrder {
 }
 
 impl BuyOrder {
-    pub fn new(amount: f32, ticker: String, sender: Sender<Message>) -> Self {
+    pub fn new(ticker: String, amount: f32, sender: Sender<Message>) -> Self {
         Self { ticker, amount, sender, kind: Kind::Buy }
     }
 
@@ -82,7 +94,7 @@ impl BuyOrder {
         let msg =
             Message { kind: self.kind, amount: self.amount, ticker: self.ticker, respond_to: send };
 
-        let _ = self.sender.send(msg).await;
+        self.sender.send(msg).await.unwrap();
 
         match recv.await {
             Ok(v) => println!("~~~ order result: {}", if v { "ACCEPETD" } else { "REJECTED" }),
