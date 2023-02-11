@@ -120,7 +120,7 @@ async fn handle(
         }
     }
 
-    // match writer.write(b"BYE").await {
+    // match writer.write(b"END\n").await {
     //     Ok(_) => println!("~~~ {} {peer_id} thread finishing", now()),
     //     Err(e) => println!("!!! {} {peer_id} thread finishing: {e:?}", now()),
     // }
