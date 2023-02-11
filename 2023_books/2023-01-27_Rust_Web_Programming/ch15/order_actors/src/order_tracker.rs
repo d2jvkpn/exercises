@@ -20,7 +20,7 @@ impl fmt::Display for TrackerMessage {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match &self.command {
             Order::Get => write!(f, "GET"),
-            Order::Buy(ticker, amount) => write!(f, "BUY/{ticker}/{amount:.2}"),
+            Order::Buy(ticker, amount) => write!(f, "BUY::{amount:.2}::{ticker}"),
         }
     }
 }
@@ -53,7 +53,7 @@ impl TrackerActor {
     pub fn send_state(&self, respond_to: oneshot::Sender<String>) {
         let mut buffer = Vec::new();
         for (k, v) in &self.db {
-            buffer.push(format!("{k}:{v:.2}"));
+            buffer.push(format!("{k}::{v:.2}"));
         }
         let state = buffer.join(";");
         let _ = respond_to.send(state);

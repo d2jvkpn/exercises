@@ -5,6 +5,7 @@ use tokio::sync::{
     oneshot,
 };
 
+#[allow(dead_code)]
 #[derive(Debug)]
 pub enum Kind {
     Buy,
@@ -21,7 +22,7 @@ pub struct Message {
 
 impl fmt::Display for Message {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}/{}/{:.2}", self.kind, self.ticker, self.amount)
+        write!(f, "{:?}::{:.2}::{}", self.kind, self.amount, self.ticker)
     }
 }
 
@@ -36,7 +37,11 @@ pub struct OrderBookActor {
 
 impl fmt::Display for OrderBookActor {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}/{:.2}/{:.2}", self.total_count, self.total_invested, self.investment_cap)
+        write!(
+            f,
+            "{{total_count: {}, total_invested: {:.2}, investment_cap: {:.2}}}",
+            self.total_count, self.total_invested, self.investment_cap
+        )
     }
 }
 
@@ -53,7 +58,7 @@ impl OrderBookActor {
         if msg.amount + self.total_invested <= self.investment_cap {
             self.total_invested += msg.amount;
             self.total_count += 1;
-            println!("--> processing purchase {msg}, invested: {self}");
+            println!("--> Processing purchase {msg}, invested: {self}");
             let _ = msg.respond_to.send(true);
 
             let (send, _) = oneshot::channel();
@@ -62,7 +67,7 @@ impl OrderBookActor {
 
             self.sender.send(tracker_msg).await.unwrap();
         } else {
-            println!("!!! rejecting purchase {msg}, invested: {self}");
+            println!("!!! Rejecting purchase {msg}, invested: {self}");
             let _ = msg.respond_to.send(false);
         }
     }
@@ -97,8 +102,8 @@ impl BuyOrder {
         self.sender.send(msg).await.unwrap();
 
         match recv.await {
-            Ok(v) => println!("~~~ order result: {}", if v { "ACCEPETD" } else { "REJECTED" }),
-            Err(e) => eprintln!("!!! order recv error: {e:?}"),
+            Ok(v) => println!("~~~ BuyOrder {}", if v { "ACCEPETD" } else { "REJECTED" }),
+            Err(e) => eprintln!("!!! BuyOrder error: {e:?}"),
         }
     }
 }

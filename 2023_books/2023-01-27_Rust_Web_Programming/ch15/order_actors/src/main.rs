@@ -75,18 +75,19 @@ async fn handle(
 
         let data: Vec<&str> = msg.split(";").map(|v| v.trim()).collect();
         // dbg!(&data);
+        let command = data[0];
 
-        match data[0] {
+        match command {
             "Buy" => {
                 if data.len() < 3 {
-                    eprintln!("!!! invalid data length");
+                    eprintln!("!!! Command {command:?}: invalid data length");
                     return;
                 }
 
                 let amount = match data[1].parse::<f32>() {
                     Ok(v) => v,
                     Err(e) => {
-                        eprintln!("!!! invalid amount: {e:?}");
+                        eprintln!("!!! Command {command:?}: invalid amount: {e:?}");
                         return;
                     }
                 };
@@ -105,15 +106,15 @@ async fn handle(
             "Get" => {
                 let get_actor = GetTrackerActor { sender: tracker_tx.clone() };
                 let state = get_actor.send().await;
-                println!("--> sending back: {:?}", state);
+                println!("--> Command {command:?}: sending back state {:?}", state);
                 let _ = writer.write_all(state.as_bytes()).await;
                 continue;
             }
             "END" => {
                 return;
             }
-            v => {
-                eprintln!("!!! invalid command: {v:?}");
+            _ => {
+                eprintln!("!!! Command {command:?}: invalid command");
                 return;
             }
         }
