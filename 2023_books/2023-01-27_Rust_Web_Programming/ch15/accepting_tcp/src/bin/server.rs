@@ -15,14 +15,14 @@ use tokio::{
 async fn main() {
     let addr = "127.0.0.1:8080";
 
-    let socket = TcpListener::bind(addr).await.unwrap();
+    let listener = TcpListener::bind(addr).await.unwrap();
     println!("==> Listening on: {}", addr);
 
     let (tx, rx) = channel::<Message>(1);
 
     tokio::spawn(async move { OrderBookActor::new(rx, 20.0).run().await });
 
-    while let Ok((stream, peer)) = socket.accept().await {
+    while let Ok((stream, peer)) = listener.accept().await {
         println!("~~~ Incoming connection from: {}", peer.to_string());
         let txc = tx.clone();
         tokio::spawn(async move { handle(stream, peer, txc).await });

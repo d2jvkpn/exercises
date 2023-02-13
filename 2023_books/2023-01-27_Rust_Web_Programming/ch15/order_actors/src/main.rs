@@ -1,4 +1,5 @@
 mod actors;
+mod handle;
 mod order_tracker;
 
 use actors::*;
@@ -15,7 +16,7 @@ use tokio::{
 async fn main() {
     let addr = "127.0.0.1:8080";
 
-    let socket = TcpListener::bind(addr).await.unwrap();
+    let listener = TcpListener::bind(addr).await.unwrap();
     println!("==> Listening on: {}", addr);
 
     let (tx, rx) = channel::<Message>(1);
@@ -26,7 +27,7 @@ async fn main() {
     let tracker_txc = tracker_tx.clone();
     tokio::spawn(async move { OrderBookActor::new(rx, tracker_txc, 20.0).run().await });
 
-    while let Ok((stream, peer)) = socket.accept().await {
+    while let Ok((stream, peer)) = listener.accept().await {
         println!("\n~~~ Incoming connection from: {}", peer.to_string());
         let txc = tx.clone();
         let tracker_txc = tracker_tx.clone();
