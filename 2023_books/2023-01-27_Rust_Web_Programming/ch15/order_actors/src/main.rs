@@ -4,7 +4,6 @@ mod order_tracker;
 use actors::*;
 use chrono::{Local, SecondsFormat};
 use order_tracker::*;
-// use std::{thread, time::Duration};
 use std::net::SocketAddr;
 use tokio::{
     io::{AsyncBufReadExt, AsyncWriteExt, BufReader},
@@ -74,7 +73,6 @@ async fn handle(
         };
 
         let data: Vec<&str> = msg.split(";").map(|v| v.trim()).collect();
-        // dbg!(&data);
         let command = data[0];
 
         match command {
@@ -95,19 +93,19 @@ async fn handle(
                 let ticker = data[2].to_string();
 
                 let buy_order = BuyOrder::new(ticker, amount, tx.clone());
-                // dbg!(&buy_order);
                 buy_order.send().await;
-
-                // let (send, _) = oneshot::channel();
-                // let _ = tracker_tx
-                //     .send(TrackerMessage { command: Order::Buy(ticker, amount), respond_to: send })
-                //     .await;
+                continue;
             }
             "Get" => {
                 let get_actor = GetTrackerActor { sender: tracker_tx.clone() };
-                let state = get_actor.send().await;
-                println!("--> Command {command:?}: sending back state {:?}", state);
-                let _ = writer.write_all(state.as_bytes()).await;
+                match get_actor.send().await {
+                    Ok(v) => {
+                        println!("--> Command {command:?}: sending back state {v:?}");
+                        let _ = writer.write_all(v.as_bytes()).await;
+                    }
+                    Err(e) => eprintln!("!!! Command {command:?}: {e:?}"),
+                }
+
                 continue;
             }
             "END" => {

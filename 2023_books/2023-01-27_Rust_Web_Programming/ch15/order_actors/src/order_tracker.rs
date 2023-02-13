@@ -30,13 +30,12 @@ pub struct GetTrackerActor {
 }
 
 impl GetTrackerActor {
-    pub async fn send(self) -> String {
-        // println!("~~~ GET function firing");
+    pub async fn send(self) -> Result<String, oneshot::error::RecvError> {
         let (send, recv) = oneshot::channel();
         let msg = TrackerMessage { command: Order::Get, respond_to: send };
         let _ = self.sender.send(msg).await;
 
-        recv.await.unwrap_or_else(|e| format!("!!!{e:?}"))
+        recv.await
     }
 }
 
