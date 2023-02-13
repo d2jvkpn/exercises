@@ -65,9 +65,11 @@ impl OrderBookActor {
             let tracker_msg =
                 TrackerMessage { command: Order::Buy(msg.ticker, msg.amount), respond_to: send };
 
-            self.sender.send(tracker_msg).await.unwrap();
+            if let Err(e) = self.sender.send(tracker_msg).await {
+                eprintln!("!!! OrderBookActor failed to send TrackerMessage: {e:?}");
+            }
         } else {
-            println!("!!! Rejecting purchase {msg}, invested: {self}");
+            eprintln!("!!! Rejecting purchase {msg}, invested: {self}");
             let _ = msg.respond_to.send(false);
         }
     }
@@ -99,7 +101,10 @@ impl BuyOrder {
         let msg =
             Message { kind: self.kind, amount: self.amount, ticker: self.ticker, respond_to: send };
 
-        self.sender.send(msg).await.unwrap();
+        if let Err(e) = self.sender.send(msg).await {
+            eprintln!("!!! BuyOrder failed to send Message: {e:?}");
+            return;
+        }
 
         match recv.await {
             Ok(v) => println!("~~~ BuyOrder {}", if v { "ACCEPETD" } else { "REJECTED" }),
