@@ -3,7 +3,12 @@ set -eu -o pipefail
 _wd=$(pwd)
 _path=$(dirname $0 | xargs -i readlink -f {})
 
-mkdir -p chatgp-requests
+for m in yq jq curl; do
+   command -v $m > /dev/null || { >&2 echo "command $m not found"; exit 1; }
+done
+
+save_to=~/.chatgpt/chatgp-requests
+mkdir -p $save_to
 # token=${ChatGPT_Token:-Your_Default_ChatGPT_API_Key}
 
 [ -f ~/.chatgpt/env ] && source ~/.chatgpt/env
@@ -16,8 +21,8 @@ question=$*
 tag=$(date +%FT%T-%s | sed 's/:/-/g')
 echo ">>> $tag: $question"
 
-ques_file=chatgp-requests/${tag}_quesiton.json
-ans_file=chatgp-requests/${tag}_answer.json
+ques_file=$save_to/${tag}_quesiton.json
+ans_file=$save_to/${tag}_answer.json
 
 cat > $ques_file <<EOF
 {
@@ -40,6 +45,6 @@ jq -r .choices[0].text $ans_file
   yq -P eval .  $ques_file
   echo -e "---"
   yq -P eval .  $ans_file
-} >> chatgp-requests/chatgpt_QA_$(date +%F).yaml
+} >> $save_to/chatgpt_QA_$(date +%F).yaml
 
 rm $ques_file $ans_file
