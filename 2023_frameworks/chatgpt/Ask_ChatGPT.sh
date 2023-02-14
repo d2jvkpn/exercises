@@ -16,6 +16,8 @@ token=${ChatGPT_Token}
 # curl https://api.openai.com/v1/models -H "Authorization: Bearer $token" > chatgp-requests/ChatGPT_models.json
 
 [[ $# -eq 0 ]] && { >&2 echo "Pass your question as argument(s)!"; exit 1; }
+[ -z "${ChatGPT_Token}" ] && { >&2 echo "ChatGPT_Token is unset"; exit 1; }
+
 question=$*
 
 tag=$(date +%FT%T-%s | sed 's/:/-/g')
