@@ -1,0 +1,9 @@
+#! /usr/bin/env expect
+set prompt "#"
+set timeout 60
+set passwd "mypassword"
+
+spawn psql --host 127.0.0.1 --username truuser --port 5432 -d ezytutors --password
+expect "Password: "
+send "$passwd\n"
+interact

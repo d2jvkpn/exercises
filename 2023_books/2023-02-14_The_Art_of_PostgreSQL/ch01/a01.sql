@@ -58,6 +58,12 @@ order by date;
 ---
 \set start '2020-01-01'
 
+select date, dollars, lag(dollars, 1)
+  over(partition by extract('isodow' from date) order by date) as last_week_dollars
+  from factbook;
+
+select date, dollars, lag(dollars, 1) over(order by date) from factbook;
+
 with computed_data as
 (
   select cast(date as date) as date,
