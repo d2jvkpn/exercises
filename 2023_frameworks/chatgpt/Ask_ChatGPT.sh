@@ -18,7 +18,7 @@ token=${ChatGPT_Token}
 [[ $# -eq 0 ]] && { >&2 echo "Pass your question as argument(s)!"; exit 1; }
 [ -z "${ChatGPT_Token}" ] && { >&2 echo "ChatGPT_Token is unset"; exit 1; }
 
-question=$*
+question="$*"
 
 tag=$(date +%FT%T-%s | sed 's/:/-/g')
 echo ">>> $tag: $question"
@@ -26,14 +26,22 @@ echo ">>> $tag: $question"
 ques_file=$save_to/${tag}_quesiton.json
 ans_file=$save_to/${tag}_answer.json
 
-cat > $ques_file <<EOF
-{
-  "model": "${ChatGPT_Model:-text-davinci-003}",
-  "prompt": "$question",
-  "max_tokens": ${ChatGPT_MaxTokens:-2048},
-  "temperature": ${ChatGPT_Temperature:-1.0}
-}
-EOF
+#cat > $ques_file <<EOF
+#{
+#  "model": "${ChatGPT_Model:-text-davinci-003}",
+#  "prompt": "$question",
+#  "max_tokens": ${ChatGPT_MaxTokens:-2048},
+#  "temperature": ${ChatGPT_Temperature:-1.0}
+#}
+#EOF
+
+jq -n \
+  --arg model "${ChatGPT_Model:-text-davinci-003}" \
+  --arg prompt "$question" \
+  --argjson max_tokens "${ChatGPT_MaxTokens:-2048}" \
+  --argjson temperature "${ChatGPT_Temperature:-1.0}" \
+  '{model: $model, prompt: $prompt, max_tokens: $max_tokens, temperature: $temperature}' > $ques_file
+
 
 curl https://api.openai.com/v1/completions \
   -H 'Content-Type: application/json'      \

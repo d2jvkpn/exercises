@@ -10,3 +10,6 @@ I will, in fact, claim that the difference between a bad programmer and a good o
 considers his code or h data structure more important. Bad programmers worry about the code. Good
 programmers worry about data structur and their relationships.
 — Linus Torvalds
+
+#### chapter 2
+- https://www.hkex.com.hk/Market-Data/Statistics/Consolidated-Reports/Securities-Statistics-Archive/Trading_Value_Volume_And_Number_Of_Deals?sc_lang=en#select1=0
