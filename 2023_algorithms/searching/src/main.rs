@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
-mod sorting_01;
-mod sorting_02;
+mod binary_search;
 
 fn main() {
     println!("Hello, world!");

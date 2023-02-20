@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 fn merge_sort<T: Copy + Ord>(slice: &mut [T]) {
     fn merge<T: Copy + PartialOrd>(s1: &[T], s2: &[T]) -> Vec<T> {
         let (mut i, mut j) = (0, 0);
@@ -37,8 +35,7 @@ fn quick_sort<T: Copy + Ord>(slice: &mut [T]) {
         return;
     }
 
-    let mut s1 = Vec::new();
-    let mut s2 = Vec::new();
+    let (mut s1, mut s2) = (Vec::new(), Vec::new());
     let val = slice[0];
 
     slice[1..].iter().for_each(|&v| {

@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 fn bubble_sort<T: PartialOrd>(slice: &mut [T]) {
     loop {
         let mut next = false;
