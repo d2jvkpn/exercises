@@ -32,6 +32,10 @@ fn merge_sort<T: Copy + Ord>(slice: &mut [T]) {
 
 fn merge_sort_v2<T: Copy + Ord>(slice: &mut [T]) {
     fn merge<T: Copy + PartialOrd>(slice: &mut [T], m: usize) {
+        if slice.len() < 2 {
+            return;
+        }
+
         while slice[m - 1] > slice[m] {
             slice.swap(m - 1, m);
 
