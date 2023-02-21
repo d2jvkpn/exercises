@@ -18,7 +18,7 @@ fn main() {
     );
 
     for (k, v) in map {
-        println!("--> k={}, v={}", k, v);
+        println!("--> k={k}, v={v}");
     }
 
     //

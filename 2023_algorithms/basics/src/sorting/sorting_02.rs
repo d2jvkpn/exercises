@@ -30,6 +30,39 @@ fn merge_sort<T: Copy + Ord>(slice: &mut [T]) {
     slice.copy_from_slice(&result);
 }
 
+fn merge_sort_v2<T: Copy + Ord>(slice: &mut [T]) {
+    fn merge<T: Copy + PartialOrd>(slice: &mut [T], m: usize) {
+        while slice[m - 1] > slice[m] {
+            slice.swap(m - 1, m);
+
+            for i in (1..m).rev() {
+                if slice[i - 1] > slice[i] {
+                    slice.swap(i - 1, i);
+                } else {
+                    break;
+                }
+            }
+
+            for i in m..slice.len() - 1 {
+                if slice[i] > slice[i + 1] {
+                    slice.swap(i, i + 1);
+                } else {
+                    break;
+                }
+            }
+        }
+    }
+
+    if slice.len() < 2 {
+        return;
+    }
+    let m = slice.len() / 2;
+
+    merge_sort(&mut slice[..m]);
+    merge_sort(&mut slice[m..]);
+    merge(slice, m);
+}
+
 fn quick_sort<T: Copy + Ord>(slice: &mut [T]) {
     if slice.len() < 2 {
         return;
@@ -78,6 +111,14 @@ mod tests {
         let mut vec = ARRAY_01.to_vec();
 
         merge_sort(&mut vec);
+        assert_eq!(&vec, &EXPECTED_01);
+    }
+
+    #[test]
+    fn t_merge_sort_v2() {
+        let mut vec = ARRAY_01.to_vec();
+
+        merge_sort_v2(&mut vec);
         assert_eq!(&vec, &EXPECTED_01);
     }
 

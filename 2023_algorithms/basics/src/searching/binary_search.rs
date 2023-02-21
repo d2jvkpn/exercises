@@ -16,11 +16,12 @@ fn binary_search<T: PartialOrd + PartialEq + Copy + std::fmt::Debug>(
         if target == val {
             return Some(m);
         } else if x1 + 1 == x2 {
+            // m == x1
             return if target == slice[x2] { Some(x2) } else { None };
         } else if target < val {
-            x2 = m;
+            x2 = m - 1;
         } else {
-            x1 = m;
+            x1 = m + 1;
         }
     }
 }
@@ -37,6 +38,8 @@ mod tests {
         for (t, v) in SEARCH_ITEMS {
             assert_eq!(binary_search(&ARRARY_01, t), v);
         }
+
+        assert_eq!(binary_search(&[1, 2], 2), Some(1));
 
         // assert_eq!(binary_search(&ARRARY_01, 1), Some(0));
         // assert_eq!(binary_search(&ARRARY_01, 31), Some(9));
