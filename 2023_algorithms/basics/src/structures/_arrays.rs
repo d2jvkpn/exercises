@@ -24,4 +24,13 @@ fn main() {
     b.iter().for_each(|v| println!("~~~ v: {v}"));
     let c: Vec<i32> = b.iter().map(|v| v * v).collect();
     dbg!(&c);
+
+    let mut a = vec![1, 2, 3];
+    a.push(4);
+    _ = a.pop();
+    assert_eq!(a.len(), 3);
+    a.remove(0);
+    assert_eq!(a, vec![2, 3]);
+    a.clear();
+    assert_eq!(a, vec![]);
 }
