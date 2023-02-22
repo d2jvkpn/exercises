@@ -1,4 +1,4 @@
 #![allow(dead_code)]
 
-mod sorting_01;
-mod sorting_02;
+mod brute_force;
+mod divide_and_conquer;
