@@ -1,52 +1,52 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
-#[derive(Debug)]
-struct Node {
-    value: i64,
-    left: Option<Rc<RefCell<Node>>>,
-    right: Option<Rc<RefCell<Node>>>,
+#[derive(Clone, Debug, PartialEq, PartialOrd)]
+pub struct Node<T> {
+    pub value: T,
+    pub left: Option<Rc<RefCell<Node<T>>>>,
+    pub right: Option<Rc<RefCell<Node<T>>>>,
 }
 
 #[derive(Debug)]
-struct BinaryTree {
-    root: Node,
+struct BinaryTree<T> {
+    root: Node<T>,
     size: usize,
 }
 
-impl Node {
-    fn new(value: i64) -> Self {
+impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
+    fn new(value: T) -> Self {
         Self { value, left: None, right: None }
     }
 
-    fn into_rc(self) -> Rc<RefCell<Node>> {
+    fn into_rc(self) -> Rc<RefCell<Self>> {
         Rc::new(RefCell::new(self))
     }
 
-    fn add(&mut self, value: i64) {
+    fn add(&mut self, value: T) {
         if value <= self.value {
             if let Some(node) = self.left.take() {
-                println!("    <== walk left ({}, {})", self.value, node.borrow().value);
+                println!("    <== walk left ({:?}, {:?})", self.value, node.borrow().value);
                 (*node).borrow_mut().add(value); // !!! not *node.borrow_mut().add(value)
                 self.left = Some(node); // must return self.left
             } else {
-                println!("    <++ new left {}.left = {}\n", self.value, value);
+                println!("    <++ new left {:?}.left = {:?}\n", self.value, value);
                 let node = Node::new(value);
                 self.left = Some(Rc::new(RefCell::new(node)));
                 // println!("{} {:?}", self.value, self.left);
             }
         } else {
             if let Some(node) = self.right.take() {
-                println!("    ==> walk right ({}, {})", self.value, node.borrow().value);
+                println!("    ==> walk right ({:?}, {:?})", self.value, node.borrow().value);
                 (*node).borrow_mut().add(value);
                 self.right = Some(node); // must return to self.right
             } else {
-                println!("    ++> add right {}.right = {}\n", self.value, value);
+                println!("    ++> add right {:?}.right = {:?}\n", self.value, value);
                 self.right = Some(Node::new(value).into_rc());
             }
         }
     }
 
-    fn find(&self, value: i64, steps: &mut Vec<bool>) {
+    fn find(&self, value: T, steps: &mut Vec<bool>) {
         if self.value == value {
             return;
         }
@@ -68,9 +68,9 @@ impl Node {
         }
     }
 
-    fn get(&self, steps: &[bool]) -> Option<i64> {
+    fn get(&self, steps: &[bool]) -> Option<T> {
         if steps.len() == 0 {
-            return Some(self.value);
+            return Some(self.value.clone());
         }
 
         if !steps[0] {
@@ -88,18 +88,18 @@ impl Node {
     }
 }
 
-impl BinaryTree {
-    fn new(value: i64) -> BinaryTree {
-        BinaryTree { root: Node::new(value), size: 1 }
+impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
+    fn new(value: T) -> Self {
+        Self { root: Node::new(value), size: 1 }
     }
     // left.borrow_mut().add(value);
-    fn add(&mut self, value: i64) -> &mut Self {
+    fn add(&mut self, value: T) -> &mut Self {
         self.root.add(value);
         self.size += 1;
         self
     }
 
-    fn find(&self, value: i64) -> Option<Vec<bool>> {
+    fn find(&self, value: T) -> Option<Vec<bool>> {
         let mut steps = Vec::with_capacity(10);
         steps.push(false); // root node
 
@@ -112,14 +112,14 @@ impl BinaryTree {
         }
     }
 
-    fn get(&self, steps: &Vec<bool>) -> Option<i64> {
+    fn get(&self, steps: &Vec<bool>) -> Option<T> {
         self.root.get(&steps[0..])
     }
 }
 
 #[cfg(test)]
 mod tests {
-	use super::*;
+    use super::*;
 
     #[test]
     fn t_binary_tree() {
