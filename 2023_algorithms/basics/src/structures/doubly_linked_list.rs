@@ -105,8 +105,9 @@ impl<T: Clone> DoubleEndedIterator for ListIterator<T> {
 mod tests {
     use super::*;
 
+    // cargo test -- --show-output t_dll
     #[test]
-    fn t_linked_list() {
+    fn t_dll() {
         let mut list = LinkedList::new();
         list.append(1).append(2).append(3).append(4).append(5).append(6).append(7);
 

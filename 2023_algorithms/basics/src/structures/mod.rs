@@ -1,6 +1,6 @@
+mod doubly_linked_list;
 mod heap;
-mod linked_list_01;
-mod linked_list_02;
 mod queue;
+mod singly_linked_list;
 mod stack;
 mod tree;

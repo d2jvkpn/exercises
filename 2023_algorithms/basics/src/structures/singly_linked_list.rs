@@ -119,9 +119,9 @@ impl<T: PartialEq> LinkedList<T> {
 
 #[cfg(test)]
 mod tests {
-    // cargo test -- --show-output t_linked_list
+    // cargo test -- --show-output t_sll
     #[test]
-    fn t_linked_list() {
+    fn t_sll() {
         let mut list = super::LinkedList::new();
         list.push_front(3).push_front(2).push_front(1);
         dbg!(&list);
