@@ -25,22 +25,22 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
     fn add(&mut self, value: T) {
         if value <= self.value {
             if let Some(node) = self.left.take() {
-                println!("    <== walk left ({:?}, {:?})", self.value, node.borrow().value);
+                println!("<== walk left ({:?}, {:?})", self.value, node.borrow().value);
                 (*node).borrow_mut().add(value); // !!! not *node.borrow_mut().add(value)
                 self.left = Some(node); // must return self.left
             } else {
-                println!("    <++ new left {:?}.left = {:?}\n", self.value, value);
+                println!("<++ new left {:?}.left = {:?}\n", self.value, value);
                 let node = Node::new(value);
                 self.left = Some(Rc::new(RefCell::new(node)));
                 // println!("{} {:?}", self.value, self.left);
             }
         } else {
             if let Some(node) = self.right.take() {
-                println!("    ==> walk right ({:?}, {:?})", self.value, node.borrow().value);
+                println!("==> walk right ({:?}, {:?})", self.value, node.borrow().value);
                 (*node).borrow_mut().add(value);
                 self.right = Some(node); // must return to self.right
             } else {
-                println!("    ++> add right {:?}.right = {:?}\n", self.value, value);
+                println!("++> add right {:?}.right = {:?}\n", self.value, value);
                 self.right = Some(Node::new(value).into_rc());
             }
         }
@@ -126,13 +126,8 @@ mod tests {
         let mut bt = BinaryTree::new(10);
         println!("{:?}", bt);
 
-        println!("~~~");
         bt.add(5).add(1);
-
-        println!("~~~");
         bt.add(12);
-
-        println!("~~~");
         bt.add(4).add(6).add(8);
 
         println!("{:?}", bt.root);

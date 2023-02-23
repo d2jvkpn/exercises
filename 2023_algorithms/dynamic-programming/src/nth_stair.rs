@@ -1,6 +1,5 @@
 mod nth_stair {
-    // BigO: 2^N
-    // jumps
+    // BigO: 2^N, recurssion
     pub fn v1(n: usize) -> usize {
         match n {
             0..=2 => return n,
@@ -10,7 +9,7 @@ mod nth_stair {
         v1(n - 1) + v1(n - 2)
     }
 
-    // BigO: 2^N
+    // BigO: 2^N, tail recursion
     pub fn v2(n: usize) -> usize {
         fn help(n: usize, sum: &mut usize) {
             match n {
@@ -44,7 +43,7 @@ mod nth_stair {
         fib(n, 1, 1)
     }
 
-    //  BigO: N
+    // BigO: N, dynamic programming
     pub fn v4(n: usize) -> usize {
         if n < 3 {
             return n;
