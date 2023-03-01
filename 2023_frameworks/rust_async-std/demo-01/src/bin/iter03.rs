@@ -1,5 +1,5 @@
-use chrono::{Local, SecondsFormat};
 use futures::{future, select};
+use chrono::{Local, SecondsFormat};
 
 fn now_string() -> String {
     Local::now().to_rfc3339_opts(SecondsFormat::Millis, true)
@@ -14,10 +14,12 @@ fn main() {
 
     loop {
         loop_count += 1;
+
         select! {
             a = a_fut => {
                 println!("~~~~ a: {a}, {}", now_string());
                 total += a;
+                // break; //
             }
             b = b_fut => {
                 println!("~~~~ b: {b}, {}", now_string());
