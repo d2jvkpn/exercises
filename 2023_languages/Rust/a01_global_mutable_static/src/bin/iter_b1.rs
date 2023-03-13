@@ -6,11 +6,10 @@ use std::thread;
 pub struct Config {
     pub key: String,
 }
-
 static CONFIG_INSTANCE: OnceCell<Config> = OnceCell::new();
 
 impl Config {
-    fn set(key: String) -> Result<(), Config> {
+    pub fn set(key: String) -> Result<(), Config> {
         CONFIG_INSTANCE.set(Self { key })
     }
 
@@ -30,21 +29,21 @@ fn now() -> String {
 
 fn main() {
     let result = Config::set("THE_KEY_01".to_string());
-    println!("--> set THE_KEY_01: {:?}", result);
+    println!("--> {} Set THE_KEY_01 result: {:?}", now(), result);
 
     let result = Config::set("THE_KEY_02".to_string());
-    println!("--> set THE_KEY_02: {:?}", result);
+    println!("--> {} Set THE_KEY_02 result: {:?}", now(), result);
 
     let t1 = thread::spawn(|| {
-        println!("<-- {} t1 Config: {:?}", now(), Config::global().unwrap());
+        println!("<-- {} t1 Config: {:?}", now(), Config::global());
     });
 
     let t2 = thread::spawn(|| {
-        println!("<-- {} t2 Config: {:?}", now(), Config::global().unwrap());
+        println!("<-- {} t2 Config: {:?}", now(), Config::global());
     });
 
     let t3 = thread::spawn(|| {
-        println!("<-- {} t3 Config.key: {:?}", now(), Config::global_key().unwrap());
+        println!("<-- {} t3 Config.key: {:?}", now(), Config::global_key());
     });
 
     // t1.join().unwrap();
@@ -53,7 +52,7 @@ fn main() {
     let results = [t1.join(), t2.join(), t3.join()];
     results.into_iter().for_each(|v| v.unwrap());
 
-    // !! types differ in mutability
+    // !! not working as expected: types differ in mutability
     // let config: &mut Config = Config::global();
     // config.key = "THE_KEY_03".to_string();
 }
