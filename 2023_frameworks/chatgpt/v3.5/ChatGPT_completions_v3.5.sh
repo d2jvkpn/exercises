@@ -18,6 +18,9 @@ token=${ChatGPT_Token}
 [ -z "${ChatGPT_Token}" ] && { >&2 echo "ChatGPT_Token is unset"; exit 1; }
 
 question="$*"
+if [[ "$question" == @* ]]; then
+    question=$(cat ${question:1})
+fi
 
 tag=$(date +%FT%T-%s | sed 's/:/-/g')
 echo ">>> $tag: $question"
