@@ -1,7 +1,12 @@
-mod video;
-
-use video::{Video, VideosList};
 use yew::prelude::*;
+
+#[derive(Clone, PartialEq)]
+pub struct Video {
+    pub id: usize,
+    pub title: String,
+    pub speaker: String,
+    pub url: String,
+}
 
 #[function_component]
 fn App() -> Html {
@@ -32,13 +37,19 @@ fn App() -> Html {
         },
     ];
 
+    let videos = videos
+        .iter()
+        .map(|video| {
+            html! { <p key={video.id}>{format!("{}: {}", video.speaker, video.title)}</p>}
+        })
+        .collect::<Html>();
+
     html! {
       <>
         <h1>{ "RustConf Explorer" }</h1>
         <div>
           <h3>{"Videos to watch"}</h3>
-
-          <VideosList videos={videos} />
+          { videos }
         </div>
         <div>
           <h3>{ "John Doe: Building and breaking things" }</h3>

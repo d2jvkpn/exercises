@@ -5,6 +5,8 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 
 rustup target add wasm32-unknown-unknown
 
+cargo install cargo-watch
+
 cargo install --locked trunk
 command trunk
 
@@ -19,6 +21,7 @@ cd demo-01
 
 cargo run
 cargo add yew@0.20 --features=csr
+# features: hydration,ssr
 
 trunk serve
 

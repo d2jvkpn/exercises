@@ -17,9 +17,9 @@ pub struct VideosListProps {
 pub fn videos_list(VideosListProps { videos }: &VideosListProps) -> Html {
     videos
         .iter()
-        .map(|video| {
+        .map(|v| {
             html! {
-                <p key={video.id}>{format!("{}: {}", video.speaker, video.title)}</p>
+                <p key={v.id}>{format!("{}: {}", v.speaker, v.title)}</p>
             }
         })
         .collect()
