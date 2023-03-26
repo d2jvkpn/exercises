@@ -28,9 +28,10 @@ func InstrumentHandler(name string) gin.HandlerFunc {
 		Buckets:   prometheus.DefBuckets,
 	}, []string{"status", "method", "path"})
 
-	prometheus.Register(requestsTotal)
-	prometheus.Register(requestDuration)
+	_ = prometheus.Register(requestsTotal)
+	_ = prometheus.Register(requestDuration)
 
+	// https://robert-scherbarth.medium.com/measure-request-duration-with-prometheus-and-golang-adc6f4ca05fe
 	return func(ctx *gin.Context) {
 		req := ctx.Request
 		start := time.Now()
@@ -52,7 +53,7 @@ func GaugeHandler(name string) gin.HandlerFunc {
 		Help:      fmt.Sprintf("total %s inflight", name),
 	})
 
-	prometheus.Register(inflight)
+	_ = prometheus.Register(inflight)
 
 	return func(ctx *gin.Context) {
 		inflight.Inc()
