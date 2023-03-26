@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -23,9 +22,9 @@ func main() {
 	engine := gin.Default()
 
 	router := &engine.RouterGroup
-	router.Use(InstrumentHandler("all"))
-	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
-	router.POST("/hash", ComputeHashSum, GaugeHandler("HashSum"))
+	router.Use(PromInstrument("all"))
+	router.GET("/metrics", PromHandler())
+	router.POST("/hash", ComputeHashSum, PromGauge("hash"))
 
 	s := &http.Server{
 		Addr:           fmt.Sprintf(":%d", port),

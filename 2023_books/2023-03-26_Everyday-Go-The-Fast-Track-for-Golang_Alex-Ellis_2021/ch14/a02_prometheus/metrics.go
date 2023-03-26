@@ -9,12 +9,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
-	// "github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
+
+func PromHandler() gin.HandlerFunc {
+	return gin.WrapH(promhttp.Handler())
+}
 
 // InstrumentHandler instruments any HTTP handler for the request
 // total and request duration metric
-func InstrumentHandler(name string) gin.HandlerFunc {
+func PromInstrument(name string) gin.HandlerFunc {
 	requestsTotal := promauto.NewCounterVec(prometheus.CounterOpts{
 		Subsystem: "http",
 		Name:      fmt.Sprintf("%s_count_total", name),
@@ -46,7 +50,7 @@ func InstrumentHandler(name string) gin.HandlerFunc {
 	}
 }
 
-func GaugeHandler(name string) gin.HandlerFunc {
+func PromGauge(name string) gin.HandlerFunc {
 	inflight := prometheus.NewGauge(prometheus.GaugeOpts{
 		Subsystem: "http",
 		Name:      fmt.Sprintf("%s_inflight", name),
