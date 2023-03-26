@@ -23,7 +23,7 @@ func main() {
 	engine := gin.Default()
 
 	router := &engine.RouterGroup
-	router.Use(InstrumentHandler("total"))
+	router.Use(InstrumentHandler("all"))
 	router.GET("/metrics", gin.WrapH(promhttp.Handler()))
 	router.POST("/hash", ComputeHashSum, GaugeHandler("HashSum"))
 
