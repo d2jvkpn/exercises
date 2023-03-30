@@ -35,9 +35,13 @@ jq -n \
   --argjson temperature "${ChatGPT_Temperature:-1.0}" \
   '{model: $model, messages: [{"role": "user", "content": $content}], max_tokens: $max_tokens, temperature: $temperature}' > $ques_file
 
+set_proxy=""
+# CURL_Proxy=socks5h://localhost:1080
+CURL_Proxy=$(printenv CURL_Proxy)
+[ ! -z "$CURL_Proxy" ] && set_proxy="-x $CURL_Proxy"
 
 curl https://api.openai.com/v1/chat/completions \
-  -x socks5h://localhost:1080              \
+  $set_proxy                               \
   -H 'Content-Type: application/json'      \
   -H "Authorization: Bearer $token"        \
   -d @$ques_file > $ans_file || { rm $ans_file; exit 1; }
