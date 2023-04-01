@@ -82,7 +82,7 @@ LOOP1:
 	queue = [][]*Node{[]*Node{a}}
 
 LOOP2:
-	for len(queue) > 0 {
+	for {
 		p := queue[0]
 		for _, v := range p[len(p)-1].Next {
 			pc := make([]*Node, len(p)+1)
@@ -96,7 +96,10 @@ LOOP2:
 			}
 		}
 
-		queue = queue[1:]
+		if len(queue) == 1 {
+			break
+		}
+		queue = append([][]*Node{}, queue[1:]...)
 	}
 
 	fmt.Println("~~~", queue)
