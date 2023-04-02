@@ -80,6 +80,7 @@ LOOP1:
 
 	//
 	queue = [][]*Node{[]*Node{a}}
+	target := []*Node{}
 
 LOOP2:
 	for {
@@ -89,6 +90,7 @@ LOOP2:
 			copy(pc, p)
 			pc[len(pc)-1] = v
 			if v.Value == end {
+				target = pc
 				fmt.Printf("--> Found %v\n", pc)
 				break LOOP2
 			} else {
@@ -99,8 +101,10 @@ LOOP2:
 		if len(queue) == 1 {
 			break
 		}
-		queue = append([][]*Node{}, queue[1:]...)
+		// queue = append([][]*Node{}, queue[1:]...)
+		copy(queue, queue[1:])       // drop the first element by shift
+		queue = queue[:len(queue)-1] // soft remove the last element
 	}
 
-	fmt.Println("~~~", queue)
+	fmt.Println("~~~", queue, target)
 }
