@@ -37,16 +37,17 @@ jq -n \
 
 set_proxy=""
 # CURL_Proxy=socks5h://localhost:1080
-CURL_Proxy=$(printenv CURL_Proxy)
+CURL_Proxy=$(printenv CURL_Proxy || true)
 [ ! -z "$CURL_Proxy" ] && set_proxy="-x $CURL_Proxy"
 
 curl https://api.openai.com/v1/chat/completions \
   $set_proxy                               \
+  -x socks5h://localhost:1081              \
   -H 'Content-Type: application/json'      \
   -H "Authorization: Bearer $token"        \
   -d @$ques_file > $ans_file || { rm $ans_file; exit 1; }
 
-jq -r .choices[].message.content $ans_file
+jq -r .choices[].message.content $ans_file || cat $ans_file
 
 {
   echo -e "\n#### QA"
