@@ -55,10 +55,17 @@ func main() {
 	start, end := "A", "G"
 	fmt.Printf("~~~ start=%s, end=%s\n", start, end)
 
-	//
-	queue := [][]*Node{[]*Node{a}}
+	fmt.Printf("--> v1: %v\n", a.v1(end))
+	fmt.Printf("--> v2: %v\n", a.v2(end))
+}
 
-LOOP1:
+func (node *Node) v1(end string) []*Node {
+	if node.Value == end {
+		return []*Node{node}
+	}
+
+	queue := [][]*Node{[]*Node{node}}
+
 	for i := 0; i < len(queue); i++ {
 		p := queue[i]
 		for _, v := range p[len(p)-1].Next {
@@ -66,8 +73,7 @@ LOOP1:
 			copy(pc, p)
 			pc[len(pc)-1] = v
 			if v.Value == end {
-				fmt.Printf("--> Found %v\n", pc)
-				break LOOP1
+				return pc
 			} else {
 				queue = append(queue, pc)
 			}
@@ -76,35 +82,35 @@ LOOP1:
 		// i--
 	}
 
-	fmt.Println("~~~", queue)
+	return nil
+}
 
-	//
-	queue = [][]*Node{[]*Node{a}}
-	target := []*Node{}
+func (node *Node) v2(end string) []*Node {
+	if node.Value == end {
+		return []*Node{node}
+	}
 
-LOOP2:
+	queue := [][]*Node{[]*Node{node}}
+
 	for {
+		if len(queue) == 0 {
+			return nil
+		}
+
 		p := queue[0]
 		for _, v := range p[len(p)-1].Next {
 			pc := make([]*Node, len(p)+1)
 			copy(pc, p)
 			pc[len(pc)-1] = v
 			if v.Value == end {
-				target = pc
-				fmt.Printf("--> Found %v\n", pc)
-				break LOOP2
+				return pc
 			} else {
 				queue = append(queue, pc)
 			}
 		}
 
-		if len(queue) == 1 {
-			break
-		}
 		// queue = append([][]*Node{}, queue[1:]...)
-		copy(queue, queue[1:])       // drop the first element by shift
+		copy(queue, queue[1:])       // drop the first element by left shift 1
 		queue = queue[:len(queue)-1] // soft remove the last element
 	}
-
-	fmt.Println("~~~", queue, target)
 }
