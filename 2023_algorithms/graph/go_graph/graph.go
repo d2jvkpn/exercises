@@ -65,7 +65,6 @@ func (node *Node) v1(end string) []*Node {
 	}
 
 	queue := [][]*Node{[]*Node{node}}
-
 	for i := 0; i < len(queue); i++ {
 		p := queue[i]
 		for _, v := range p[len(p)-1].Next {
@@ -90,9 +89,7 @@ func (node *Node) v2(end string) []*Node {
 		return []*Node{node}
 	}
 
-	queue := [][]*Node{[]*Node{node}}
-
-	for {
+	for queue := [][]*Node{[]*Node{node}}; ; {
 		if len(queue) == 0 {
 			return nil
 		}
