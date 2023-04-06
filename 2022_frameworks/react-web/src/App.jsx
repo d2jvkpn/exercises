@@ -10,7 +10,7 @@ import BrowseImage from "components/browse-image.jsx"
 import ExportJSON from "components/export-json.jsx";
 import LoadJSON from "components/load-json.jsx";
 import { helloWorld, datetime } from "js/utils.js";
-import { setHeader } from "js/base.js";
+import { setHeader, request } from "js/base.js";
 import { loadLang, getSet } from "locales/index.js";
 
 /*
@@ -47,6 +47,15 @@ export const yy = () => {
 function App() {
   setHeader(null);
 
+  let url = new URL(window.location.href);
+  url = `${url.protocol}//${url.host}`;
+
+  let env = process.env.REACT_APP_ENV;
+  let p = (env && env !== "prod") ? `/${env}/data.json` : "/data.json";
+  request(`${url}${p}`, {method: "GET", headers: {}}, function(d) {
+    console.log(`==> ${JSON.stringify(d)}`);
+  })
+
   localStorage.setItem("loadTime", datetime().rfc3339ms);
   console.log(`~~~ loadTime: ${localStorage.getItem("loadTime")}`);
 
@@ -66,9 +75,7 @@ function App() {
         {langCommon["hello"]}, {langCommon["world"]}!
       </h4>
 
-      <Clock
-        duration={1000}
-      />
+      <Clock duration={1000}/>
 
       {/*
       <p style={{cursor:"pointer"}}

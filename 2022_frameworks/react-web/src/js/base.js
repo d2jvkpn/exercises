@@ -16,7 +16,7 @@ function init() {
   Data.loadedAt = new Date();
 
   Data.api = process.env.REACT_APP_API;
-  
+
   Data.publicUrl = process.env.PUBLIC_URL.replace(/^\/+|\/+$/g, '');
   Data.publicUrl = Data.publicUrl ? "/" + Data.publicUrl : "";
 
@@ -36,7 +36,7 @@ export function setToken(value) {
   Data.token = value;
 }
 
-export function POST(path, data=null, callback=null) {
+export function post(path, data=null, callback=null) {
   let options = { method: "POST", headers: {...Data.defaultHeaders} };
   options.headers["Content-Type"] = "application/json";
 
@@ -44,10 +44,10 @@ export function POST(path, data=null, callback=null) {
     options.body = JSON.stringify(data);
   }
 
-  request(path, options, callback);
+  request(`${Data.api}${path}`, options, callback);
 }
 
-export function GET(path, data=null, callback=null) {
+export function get(path, data=null, callback=null) {
   let options = {method: "GET", headers: {...Data.defaultHeaders} };
 
   if (data) {
@@ -58,17 +58,17 @@ export function GET(path, data=null, callback=null) {
     if (arr.length > 0) path += `?${arr.join("&")}`;
   }
 
-  request(path, options, callback);
+  request(`${Data.api}${path}`, options, callback);
 }
 
-function request(path, options, callback=null) {
+export function request(path, options, callback=null) {
   if (Data.token) {
     options.headers["Authorization"] = `Bearer ${Data.token}`;
   }
 
   options.headers["X-TZ-Offset"] = Data.loadedAt.getTimezoneOffset();
 
-  fetch(`${Data.api}${path}`, options)
+  fetch(`${path}`, options)
     .then(response => {
       // if (response.length === 0) {
       //   return null;
