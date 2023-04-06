@@ -25,5 +25,5 @@ impl<T: Display> Deref for User<T> {
 
 fn main() {
     let user = User::new("Rover".to_string());
-    println!("Debug: {:?}, Display: {}", user, user.deref());
+    println!("debug: {:?}, display: {}", user, user.deref());
 }
