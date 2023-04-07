@@ -7,8 +7,11 @@ services:
     container_name: react-web_${APP_ENV}
     restart: always
     # network_mode: bridge
+    # network_mode: host
     networks: ["net"]
     ports: ["${PORT}:80"]
+    # ./configs/data.json:/opt/nginx-web/dev/data.json
+    # ./configs/data.json:/opt/nginx-web/data.json
     environment:
     - TZ="Asia/Shanghai"
     - NGINX_PORT=80

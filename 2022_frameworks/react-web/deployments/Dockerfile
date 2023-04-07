@@ -18,8 +18,7 @@ COPY  configs/  ./configs
 COPY  public/   ./public
 COPY  src/      ./src
 
-# RUN npm install --registry=https://registry.npm.taobao.org &> /dev/null
-RUN npm add yarn --global --registry=https://registry.npm.taobao.org &> /dev/null
+# RUN npm install --global yarn --registry=https://registry.npm.taobao.org
 RUN yarn install --registry=https://registry.npm.taobao.org &> /dev/null
 RUN sh react_build.sh $ENV_File # bash isn't installed in apline in default
 

@@ -10,7 +10,7 @@ import BrowseImage from "components/browse-image.jsx"
 import ExportJSON from "components/export-json.jsx";
 import LoadJSON from "components/load-json.jsx";
 import { helloWorld, datetime } from "js/utils.js";
-import { setHeader, request } from "js/base.js";
+import { setHeader, request, setApi } from "js/base.js";
 import { loadLang, getSet } from "locales/index.js";
 
 /*
@@ -36,28 +36,24 @@ function App() {
 }
 */
 
-function xx() {
-  console.log(":) xx");
-}
-
-export const yy = () => {
-  console.log(":) yy");
-}
-
 function App() {
   setHeader(null);
 
   let url = new URL(window.location.href);
   url = `${url.protocol}//${url.host}`;
 
-  let env = process.env.REACT_APP_ENV;
-  let p = (env && env !== "prod") ? `/${env}/data.json` : "/data.json";
+  let p = process.env.PUBLIC_URL ? `${process.env.PUBLIC_URL}/data.json` : "/data.json";
   request(`${url}${p}`, {method: "GET", headers: {}}, function(d) {
-    console.log(`==> ${JSON.stringify(d)}`);
-  })
+    if (!d) {
+      return;
+    }
+
+    setApi(d.apiServer);
+    console.log(`==> data: ${JSON.stringify(d)}`);
+  });
 
   localStorage.setItem("loadTime", datetime().rfc3339ms);
-  console.log(`~~~ loadTime: ${localStorage.getItem("loadTime")}`);
+  // console.log(`~~~ loadTime: ${localStorage.getItem("loadTime")}`);
 
   window.UILanguage = loadLang(localStorage.getItem("Language") || navigator.language);
   let langCommon = getSet("common"); // let langCommon = window.UILanguage.common;
@@ -110,6 +106,15 @@ function App() {
       />
     </div>
   );
+}
+
+
+function xx() {
+  console.log(":) xx");
+}
+
+export const yy = () => {
+  console.log(":) yy");
 }
 
 export default App;

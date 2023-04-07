@@ -1,6 +1,6 @@
 import { message } from "antd";
 
-//
+/*
 const Data = {
   loadedAt: null,
   defaultHeaders: {},
@@ -22,8 +22,30 @@ function init() {
 
   console.log(`~~~ REACT_APP_ENV="${process.env.REACT_APP_ENV}"`);
 }
+*/
+
+const Data = {
+  loadedAt: null,
+  defaultHeaders: {},
+  token: "",
+  api: "",
+};
+
+function init() {
+  if (Data.loadedAt !== null) {
+    return;
+  }
+  Data.loadedAt = new Date();
+}
 
 init();
+
+//
+export function setApi(addr) {
+  if (addr) {
+    Data.api = addr;
+  }
+}
 
 //
 export function setHeader(key, value) {

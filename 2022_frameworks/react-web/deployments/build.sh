@@ -7,9 +7,11 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 # ENV_File="$2"
 # TAG=$3
 
-APP_ENV="$1"
+# "./configs/$APP_ENV.env"
+ENV_File="$1"
+APP_ENV=$(basename $ENV_File | sed 's/.env$//')
 TAG=$APP_ENV
-ENV_File="./configs/$APP_ENV.env"
+
 . $ENV_File
 build_vendor=$(printenv BUILD_Vendor || true)
 
@@ -22,25 +24,24 @@ trap on_exit EXIT
 
 ####
 git checkout $BRANCH
-[[ "$build_vendor" != "true" ]] && git pull --no-edit
+git pull --no-edit
 
 ####
-df=${_path}/build.df
-[[ "$build_vendor" == "true" ]] && df=${_path}/build.vendor.df
+df=${_path}/Dockerfile
 
 name="registry.cn-shanghai.aliyuncs.com/d2jvkpn/react-web"
 image="$name:$TAG"
 echo ">>> building image: $image..."
 
-if [[ "$build_vendor" != "true" ]]; then
-    echo ">>> Pull base images..."
-    for base in $(awk '/^FROM/{print $2}' $df); do
-        docker pull --quiet $base
-        bn=$(echo $base | awk -F ":" '{print $1}')
-        if [[ -z "$bn" ]]; then continue; fi
-        docker images --filter "dangling=true" --quiet "$bn" | xargs -i docker rmi {}
-    done &> /dev/null
-fi
+echo ">>> Pull base images..."
+for base in $(awk '/^FROM/{print $2}' $df); do
+    docker pull --quiet $base
+    bn=$(echo $base | awk -F ":" '{print $1}')
+    if [[ -z "$bn" ]]; then continue; fi
+
+    docker images --filter "dangling=true" --quiet "$bn" |
+      xargs -i docker rmi {}
+done &> /dev/null
 
 docker build --no-cache -f $df -t $image  \
   --build-arg=APP_ENV=$APP_ENV            \
