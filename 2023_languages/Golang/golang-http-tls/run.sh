@@ -10,11 +10,14 @@ mkdir -p configs
 
 openssl genrsa -out configs/server.key 2048
 
-openssl req -new -subj "/CN=example.com/O=My Organization/C=US" \
-  -key configs/server.key -out configs/server.csr
+openssl req -new \
+  -subj "/CN=example.com/O=My Organization/C=US" \
+  -key configs/server.key \
+  -out configs/server.csr
 
 openssl x509 -req -days 365 \
-  -in configs/server.csr -signkey configs/server.key \
+  -in configs/server.csr \
+  -signkey configs/server.key \
   -out configs/server.crt
 
 # using server.key and server.crt for TLS encryption
