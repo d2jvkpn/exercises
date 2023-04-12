@@ -26,7 +26,7 @@ func serve01() {
 
 	// Define a handler function that returns "Hello, world!"
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, world!")
+		fmt.Fprintf(w, "Hello, world!\n")
 	})
 
 	// Start the HTTPS server
@@ -68,7 +68,7 @@ func serve02() {
 
 	mux = http.NewServeMux()
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "Hello, world!")
+		fmt.Fprintf(w, "Hello, world!\n")
 	})
 
 	// Create a new HTTPS server using the self-signed certificate
