@@ -90,5 +90,10 @@ func (opts *Options) MaxHeaderBytes(bytes int) *Options {
 }
 
 func (opts *Options) Err() (err error) {
-	return opts.err
+	if opts.err != nil {
+		return opts.err
+	}
+
+	// more check...
+	return nil
 }
