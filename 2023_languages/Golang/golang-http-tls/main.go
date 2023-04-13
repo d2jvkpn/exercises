@@ -11,7 +11,8 @@ import (
 )
 
 func main() {
-	serve02()
+	_, err := serve02("0.0.0.0:8443")
+	log.Fatalln(err)
 }
 
 func serve01() {
@@ -37,26 +38,22 @@ func serve01() {
 	}
 }
 
-func serve02() {
+func serve02(addr string) (shutdown func(), err error) {
 	var (
-		addr     string
-		err      error
 		cert     tls.Certificate
 		listener net.Listener
 		mux      *http.ServeMux
 		server   *http.Server
 	)
 
-	addr = "0.0.0.0:8443"
-
 	// Load the self-signed SSL certificate and key created by OpenSSL
 	cert, err = tls.LoadX509KeyPair("configs/server.crt", "configs/server.key")
 	if err != nil {
-		log.Fatalf("Failed to load certificate: %v\n", err)
+		return nil, fmt.Errorf("Failed to load certificate: %w", err)
 	}
 
 	if listener, err = net.Listen("tcp", addr); err != nil {
-		log.Fatalf("Failed to listen %q: %v\n", addr, err)
+		return nil, fmt.Errorf("Failed to listen %q: %w", addr, err)
 	}
 
 	/*
@@ -88,15 +85,16 @@ func serve02() {
 	log.Printf("Listening on https://%s\n", addr)
 	// server.ListenAndServeTLS("", "")
 	if err = server.ServeTLS(listener, "", ""); err != nil {
-		log.Fatalf("Failed to start server: %v", err)
-	}
-}
-
-func shutdown(server *http.Server) {
-	ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
-	if err := server.Shutdown(ctx); err != nil {
-		log.Printf("server shutdown: %v\n", err)
+		return nil, fmt.Errorf("Failed to start server: %w", err)
 	}
 
-	cancel()
+	shutdown = func() {
+		ctx, cancel := context.WithTimeout(context.TODO(), 5*time.Second)
+		if err := server.Shutdown(ctx); err != nil {
+			log.Printf("server shutdown: %v\n", err)
+		}
+		cancel()
+	}
+
+	return shutdown, nil
 }
