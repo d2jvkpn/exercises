@@ -55,7 +55,9 @@ func (opts *Options) ReadTimeout(d time.Duration) *Options {
 		return opts
 	}
 
-	opts.readTimeout = d
+	if d > 0 {
+		opts.readTimeout = d
+	}
 	return opts
 }
 
@@ -64,7 +66,9 @@ func (opts *Options) WriteTimeout(d time.Duration) *Options {
 		return opts
 	}
 
-	opts.writeTimeout = d
+	if d > 0 {
+		opts.writeTimeout = d
+	}
 	return opts
 }
 
@@ -73,7 +77,9 @@ func (opts *Options) ReadHeaderTimeout(d time.Duration) *Options {
 		return opts
 	}
 
-	opts.readHeaderTimeout = d
+	if d > 0 {
+		opts.readHeaderTimeout = d
+	}
 	return opts
 }
 
@@ -94,6 +100,6 @@ func (opts *Options) Err() (err error) {
 		return opts.err
 	}
 
-	// more check...
+	// more validations...
 	return nil
 }
