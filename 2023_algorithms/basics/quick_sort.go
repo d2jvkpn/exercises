@@ -5,20 +5,25 @@ import (
 )
 
 func partition(arr []int, low, high int) int {
-	index := low - 1
-	pivotElement := arr[high]
+	if low >= high {
+		return low
+	}
+
+	index := low
+	pivot := arr[high]
 
 	for i := low; i < high; i++ {
-		if arr[i] <= pivotElement {
-			index += 1
+		if arr[i] <= pivot {
+			// fmt.Printf("~~~ i=%d, index=%d, arr[i]=%d\n", i, index, arr[i])
 			if index != i {
 				arr[index], arr[i] = arr[i], arr[index]
 			}
+			index += 1
 		}
 	}
+	arr[index], arr[high] = arr[high], arr[index]
 
-	arr[index+1], arr[high] = arr[high], arr[index+1]
-	return index + 1
+	return index
 }
 
 func quickSortRange(arr []int, low, high int) {
@@ -27,10 +32,10 @@ func quickSortRange(arr []int, low, high int) {
 	}
 
 	if low < high {
-		pivot := partition(arr, low, high)
-		// fmt.Println("==>", pivot, arr)
-		quickSortRange(arr, low, pivot-1)
-		quickSortRange(arr, pivot+1, high)
+		pivotIndex := partition(arr, low, high)
+		fmt.Println("~~>", arr, low, high, pivotIndex)
+		quickSortRange(arr, low, pivotIndex-1)
+		quickSortRange(arr, pivotIndex+1, high)
 	}
 }
 
@@ -39,8 +44,13 @@ func QuckSort(arr []int) {
 }
 
 func main() {
-	arr := []int{3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5}
-	QuckSort(arr)
+	arr1 := []int{3, 1, 4, 7, 5, 9, 2, 6, 8, 5}	
+	fmt.Println("==>", arr1)
+	QuckSort(arr1)
+	fmt.Println(arr1)
 
-	fmt.Println(arr)
+	arr2 := []int{7, 2, 1, 9, 3, 6, 8}
+	fmt.Println("==>", arr2)
+	QuckSort(arr2)
+	fmt.Println(arr2)
 }
