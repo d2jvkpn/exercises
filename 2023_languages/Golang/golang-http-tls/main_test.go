@@ -13,7 +13,10 @@ func TestClient(t *testing.T) {
 
 	client := new(http.Client)
 	client.Transport = &http.Transport{
-		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		TLSClientConfig: &tls.Config{
+			MinVersion:         tls.VersionTLS12,
+			InsecureSkipVerify: true,
+		},
 	}
 
 	req, _ := http.NewRequest("GET", addr, nil)

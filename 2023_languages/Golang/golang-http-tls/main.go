@@ -77,8 +77,10 @@ func serve02(addr string) (shutdown func(), err error) {
 		MaxHeaderBytes:    2 << 11, // 4K
 		// IdleTimeout: ??,
 		// MaxMultipartMemory: 8<<20,
-		TLSConfig: &tls.Config{Certificates: []tls.Certificate{cert}},
-		Handler:   mux,
+		TLSConfig: &tls.Config{
+			Certificates: []tls.Certificate{cert},
+		},
+		Handler: mux,
 	}
 
 	// Start the HTTPS server
