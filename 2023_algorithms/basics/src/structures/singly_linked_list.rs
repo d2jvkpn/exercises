@@ -52,25 +52,55 @@ impl<T: PartialEq> LinkedList<T> {
         self.header = prev.take();
     }
 
-    fn find(&self, item: Node<T>) -> Option<usize> {
+    fn find(&self, item: T) -> Option<usize> {
+        let mut ans: usize = 0;
+
         let mut curr: &Node<T> = match &(self.header) {
             None => return None,
-            Some(v) => v,
+            Some(v) => {
+                if v.value == item {
+                    return Some(ans);
+                }
+                v
+            }
         };
-
-        if curr == &item {
-            return Some(0);
-        }
-
-        let item = Box::new(item);
-        let mut ans: usize = 0;
 
         while let Some(v) = &(curr.next) {
             ans += 1;
-            if *v == item {
+            if v.value == item {
                 return Some(ans);
             }
             curr = v;
+        }
+
+        None
+    }
+
+    fn delete(&mut self, item: T) -> Option<usize> {
+        let mut ans = 0;
+
+        //
+        let mut node: Box<Node<T>> = match self.header.take() {
+            None => return None,
+            Some(v) => v,
+        };
+        if node.value == item {
+            self.header = node.next.take();
+            return Some(ans);
+        }
+        self.header = Some(node); // return back
+
+        //
+        let mut curr: &mut Node<T> = self.header.as_mut().unwrap();
+
+        while let Some(mut v) = curr.next.take() {
+            ans += 1;
+            if v.value == item {
+                curr.next = v.next.take();
+                return Some(ans);
+            }
+            curr.next = Some(v); // return back
+            curr = curr.next.as_mut().unwrap();
         }
 
         None
@@ -131,7 +161,11 @@ mod tests {
         assert_eq!(list.pop_front(), Some(super::Node::new(1)));
         assert_eq!(list.len(), 2);
 
-        assert_eq!(list.find(super::Node::new(1)), None);
-        assert_eq!(list.find(super::Node::new(3)), Some(1));
+        assert_eq!(list.find(1), None);
+        assert_eq!(list.find(3), Some(1));
+
+        assert_eq!(list.delete(1), None);
+        assert_eq!(list.delete(3), Some(1));
+        dbg!(&list);
     }
 }
