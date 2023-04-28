@@ -131,5 +131,4 @@ func (node *Node) Count() int {
 	node.count(count)
 
 	return *count
-
 }
