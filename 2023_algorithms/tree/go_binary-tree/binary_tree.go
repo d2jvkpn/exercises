@@ -9,31 +9,29 @@ type BinaryTree struct {
 }
 
 func NewBinaryTree() BinaryTree {
-	return BinaryTree{
-		Header: nil,
-	}
+	return BinaryTree{Header: nil}
 }
 
-func (tree *BinaryTree) Push(val int) *Node {
+func (tree *BinaryTree) Push(value int) *Node {
 	if tree.Header == nil {
-		tree.Header = NewNode(val)
+		tree.Header = NewNode(value)
 		return tree.Header
 	}
 
-	return tree.Header.Push(val)
+	return tree.Header.Push(value)
 }
 
-func (tree *BinaryTree) Find(val int) *Node {
-	return tree.Header.Find(val)
+func (tree *BinaryTree) Find(value int) *Node {
+	return tree.Header.Find(value)
 }
 
-func (tree *BinaryTree) Delete(val int) bool {
-	parent, target := tree.Header.FindWithParent(val)
+func (tree *BinaryTree) Delete(value int) bool {
+	parent, target := tree.Header.FindWithParent(value)
 	if target == nil {
 		return false
 	}
 
-	val, ok := target.succeed()
+	_, ok := target.succeed()
 	if !ok {
 		if parent == nil {
 			tree.Header = nil
@@ -45,4 +43,8 @@ func (tree *BinaryTree) Delete(val int) bool {
 	}
 
 	return true
+}
+
+func (tree *BinaryTree) Levels() int {
+	return tree.Header.Levels()
 }
