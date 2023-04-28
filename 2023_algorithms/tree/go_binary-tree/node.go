@@ -1,7 +1,7 @@
 package binary_tree
 
 import (
-// "fmt"
+	"fmt"
 )
 
 type Node struct {
@@ -174,4 +174,29 @@ func (node *Node) Levels() (levels int) {
 		}
 		return levels + 1
 	}
+}
+
+// left, parent, right
+func (node *Node) InorderTraversal() {
+	if node == nil {
+		return
+	}
+
+	node.Left.InorderTraversal()
+	fmt.Println("==>", node.Value)
+	node.Right.InorderTraversal()
+}
+
+// parent, left, right
+func (node *Node) PreorderTraversal() {
+	fmt.Println("==>", node.Value)
+	node.Left.InorderTraversal()
+	node.Right.InorderTraversal()
+}
+
+// left, right, root
+func (node *Node) PostorderTraversal() {
+	node.Left.InorderTraversal()
+	node.Right.InorderTraversal()
+	fmt.Println("==>", node.Value)
 }
