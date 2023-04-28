@@ -30,8 +30,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
                 self.left = Some(node); // must return self.left
             } else {
                 println!("<++ new left {:?}.left = {:?}\n", self.value, value);
-                let node = Node::new(value);
-                self.left = Some(Rc::new(RefCell::new(node)));
+                self.left = Some(Node::new(value).into_rc());
                 // println!("{} {:?}", self.value, self.left);
             }
         } else {
