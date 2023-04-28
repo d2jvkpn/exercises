@@ -22,30 +22,30 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         Rc::new(RefCell::new(self))
     }
 
-    fn add(&mut self, value: T) {
+    fn push(&mut self, value: T) {
         if value <= self.value {
             if let Some(node) = self.left.take() {
-                println!("<== walk left ({:?}, {:?})", self.value, node.borrow().value);
-                (*node).borrow_mut().add(value); // !!! not *node.borrow_mut().add(value)
+                // println!("<== walk left ({:?}, {:?})", self.value, node.borrow().value);
+                (*node).borrow_mut().push(value); // !!! not *node.borrow_mut().push(value)
                 self.left = Some(node); // must return self.left
             } else {
-                println!("<++ new left {:?}.left = {:?}\n", self.value, value);
+                // println!("<++ new left {:?}.left = {:?}\n", self.value, value);
                 self.left = Some(Node::new(value).into_rc());
                 // println!("{} {:?}", self.value, self.left);
             }
         } else {
             if let Some(node) = self.right.take() {
-                println!("==> walk right ({:?}, {:?})", self.value, node.borrow().value);
-                (*node).borrow_mut().add(value);
+                // println!("==> walk right ({:?}, {:?})", self.value, node.borrow().value);
+                (*node).borrow_mut().push(value);
                 self.right = Some(node); // must return to self.right
             } else {
-                println!("++> add right {:?}.right = {:?}\n", self.value, value);
+                // println!("++> push right {:?}.right = {:?}\n", self.value, value);
                 self.right = Some(Node::new(value).into_rc());
             }
         }
     }
 
-    fn find(&self, value: T, steps: &mut Vec<bool>) {
+    fn path(&self, value: T, steps: &mut Vec<bool>) {
         if self.value == value {
             return;
         }
@@ -53,56 +53,58 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         if value < self.value {
             if let Some(node) = &self.left {
                 steps.push(false);
-                node.borrow().find(value, steps);
+                node.borrow().path(value, steps);
             } else {
                 *steps = vec![];
             }
         } else {
             if let Some(node) = &self.right {
                 steps.push(true);
-                node.borrow().find(value, steps);
+                node.borrow().path(value, steps);
             } else {
                 *steps = vec![];
             }
         }
     }
 
-    fn get(&self, steps: &[bool]) -> Option<T> {
+    fn walk(&self, steps: &[bool]) -> Option<T> {
         if steps.len() == 0 {
             return Some(self.value.clone());
         }
 
         if !steps[0] {
             match &self.left {
-                Some(n) => n.borrow().get(&steps[1..]),
+                Some(n) => n.borrow().walk(&steps[1..]),
                 None => return None,
             }
         } else {
             match &self.right {
-                Some(n) => n.borrow().get(&steps[1..]),
+                Some(n) => n.borrow().walk(&steps[1..]),
                 None => return None,
             }
         }
         // use a for loop instead??
     }
+
+    // TODO: push, find, delete
 }
 
 impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
     fn new(value: T) -> Self {
         Self { root: Node::new(value), size: 1 }
     }
-    // left.borrow_mut().add(value);
-    fn add(&mut self, value: T) -> &mut Self {
-        self.root.add(value);
+    // left.borrow_mut().push(value);
+    fn push(&mut self, value: T) -> &mut Self {
+        self.root.push(value);
         self.size += 1;
         self
     }
 
-    fn find(&self, value: T) -> Option<Vec<bool>> {
+    fn path(&self, value: T) -> Option<Vec<bool>> {
         let mut steps = Vec::with_capacity(10);
         steps.push(false); // root node
 
-        self.root.find(value, &mut steps);
+        self.root.path(value, &mut steps);
 
         if steps.len() == 0 {
             None
@@ -111,8 +113,8 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
         }
     }
 
-    fn get(&self, steps: &Vec<bool>) -> Option<T> {
-        self.root.get(&steps[0..])
+    fn walk(&self, steps: &Vec<bool>) -> Option<T> {
+        self.root.walk(&steps[0..])
     }
 }
 
@@ -125,18 +127,18 @@ mod tests {
         let mut bt = BinaryTree::new(10);
         println!("{:?}", bt);
 
-        bt.add(5).add(1);
-        bt.add(12);
-        bt.add(4).add(6).add(8);
+        bt.push(5).push(1);
+        bt.push(12);
+        bt.push(4).push(6).push(8);
 
         println!("{:?}", bt.root);
 
-        println!("find\t{}\t{:?}", 10, bt.find(10)); // Some([])
-        println!("find\t{}\t{:?}", 1, bt.find(1)); // Some([false, false])
-        println!("find\t{}\t{:?}", 100, bt.find(100)); // None
+        println!("path\t{}\t{:?}", 10, bt.path(10)); // Some([])
+        println!("path\t{}\t{:?}", 1, bt.path(1)); // Some([false, false])
+        println!("path\t{}\t{:?}", 100, bt.path(100)); // None
 
-        let v1 = bt.find(8).unwrap();
-        println!("find\t{}\t{:?}", 8, v1); // Some([false, true, true])
-        println!("get\t{:?}\t{:?}", v1, bt.get(&v1)); // Some(8)
+        let v1 = bt.path(8).unwrap();
+        println!("path\t{}\t{:?}", 8, v1); // Some([false, true, true])
+        println!("walk\t{:?}\t{:?}", v1, bt.walk(&v1)); // Some(8)
     }
 }

@@ -15,15 +15,13 @@ func NewNode(value int) *Node {
 }
 
 func (node *Node) Push(value int) *Node {
-	nd := NewNode(value)
-
 	switch {
 	case value < node.Value && node.Left == nil:
-		node.Left = nd
+		node.Left = NewNode(value)
 	case value < node.Value && node.Left != nil:
 		node.Left.Push(value)
 	case value > node.Value && node.Right == nil:
-		node.Right = nd
+		node.Right = NewNode(value)
 	case value > node.Value && node.Right != nil:
 		node.Right.Push(value)
 	default:
@@ -118,19 +116,19 @@ func (node *Node) succeed() (int, bool) {
 	return node.Value, true
 }
 
-func (node *Node) sum(count *int) {
+func (node *Node) count(count *int) {
 	if node == nil {
 		return
 	}
 	*count += 1
 
-	node.Left.sum(count)
-	node.Right.sum(count)
+	node.Left.count(count)
+	node.Right.count(count)
 }
 
 func (node *Node) Count() int {
 	count := new(int)
-	node.sum(count)
+	node.count(count)
 
 	return *count
 
