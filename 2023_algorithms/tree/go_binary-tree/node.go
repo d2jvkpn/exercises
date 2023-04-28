@@ -75,40 +75,47 @@ func (node *Node) FindWithParent(value int) (*Node, *Node) {
 	}
 }
 
-func (node *Node) successor() (int, bool) {
-	var (
-		val int
-		nd  *Node
-	)
+func (node *Node) succeed() (int, bool) {
+	var parent, current *Node
 
 	switch {
 	case node.Left == nil && node.Right == nil:
 		return 0, false
 	case node.Left != nil && node.Right == nil:
-		nd = node.Left
-		val = nd.Value
-		node.Left, node.Right = nd.Left, nd.Right
-		// gc nd
-		return val, true
+		current = node.Left
+		node.Value = current.Value
+		node.Left, node.Right = current.Left, current.Right
+		return node.Value, true
 	case node.Left == nil && node.Right != nil:
-		nd = node.Right
-		val = nd.Value
-		node.Left, node.Right = nd.Left, nd.Right
-		// gc nd
-		return val, true
+		current = node.Right
+		node.Value = current.Value
+		node.Left, node.Right = current.Left, current.Right
+		return node.Value, true
 	}
 
-	nd = node.Left
-	for nd.Right != nil {
-		nd = nd.Right
-	}
-	val = node.Value
+	current = node.Right
+	switch {
+	case current.Left == nil && current.Right == nil:
+		node.Value = current.Value
+		node.Right = nil
+	case current.Left == nil && current.Right != nil:
+		node.Value = current.Value
+		node.Right = current.Right
+	default: // node.Left != nil
+		parent = current
+		current = parent.Left
+		for current.Left != nil {
+			parent = current
+			current = current.Left
+		}
 
-	if nd.Left != nil {
-		nd.Left, nd.Right = nd.Left.Left, nd.Left.Right
+		node.Value = current.Value
+		if current.Right != nil {
+			parent.Left = current.Right
+		}
 	}
 
-	return val, true
+	return node.Value, true
 }
 
 func (node *Node) sum(count *int) {
@@ -121,7 +128,7 @@ func (node *Node) sum(count *int) {
 	node.Right.sum(count)
 }
 
-func (node *Node) Sum() int {
+func (node *Node) Count() int {
 	count := new(int)
 	node.sum(count)
 
