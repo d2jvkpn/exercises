@@ -99,6 +99,7 @@ func (node *Node) succeed() (value int, ok bool) {
 		node.Value = current.Value
 		node.Left, node.Right = current.Left, current.Right
 		return node.Value, true
+	default: // node.Left != nil && node.Right != nil
 	}
 
 	current = node.Right
@@ -107,26 +108,29 @@ func (node *Node) succeed() (value int, ok bool) {
 		// t = 4
 		node.Value = current.Value
 		node.Right = nil
+		return node.Value, true
 	case current.Left == nil && current.Right != nil:
 		// t = 5
 		node.Value = current.Value
 		node.Right = current.Right
-	default: // node.Left != nil
-		parent = current
-		current = parent.Left // not nil
-		for current.Left != nil {
-			parent = current
-			current = current.Left
-		}
+		return node.Value, true
+	default: // current.Left != nil
+	}
 
-		node.Value = current.Value
-		if current.Right != nil {
-			// t = 6
-			parent.Left = current.Right
-		} else {
-			// t = 7
-			parent.Left = nil
-		}
+	parent = current      // node.Right
+	current = parent.Left // not nil
+	for current.Left != nil {
+		parent = current
+		current = current.Left
+	}
+
+	node.Value = current.Value
+	if current.Right != nil {
+		// t = 6
+		parent.Left = current.Right
+	} else {
+		// t = 7
+		parent.Left = nil
 	}
 
 	return node.Value, true
