@@ -1,26 +1,57 @@
-package main
+package binary_tree
 
 import (
 	"fmt"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 func TestNode(t *testing.T) {
-	node := NewNode(6).Push(3).Push(9).Push(2).Push(4).Push(1).Push(5).Push(7).Push(10).Push(8)
-	fmt.Println("node:", node)
-	fmt.Println("count:", node.Count())
-	fmt.Println("find(3):", node.Find(3))
-	fmt.Println("find(3):", node.Find(11))
+	arr := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	length := len(arr)
+	rand.Seed(time.Now().UnixNano())
+	rand.Shuffle(len(arr), func(i, j int) { arr[i], arr[j] = arr[j], arr[i] })
+	fmt.Println("~~~ arr:", arr)
 
-	tree := &BinaryTree{Header: node}
-	fmt.Println("tree.Header:", tree.Header)
-	tree.Delete(2)
-	fmt.Println("count:", tree.Header.Count())
-	tree.Delete(6)
-	fmt.Println("tree.Header:", tree.Header)
-	fmt.Println("count:", tree.Header.Count())
+	// node := NewNode(6).Push(3).Push(9).Push(2).Push(4).Push(1).Push(5).Push(7).Push(10).Push(8)
+	node := NewNode(arr[0])
+	for _, v := range arr[1:] {
+		node.Push(v)
+	}
 
-	tree2 := &BinaryTree{Header: NewNode(6)}
-	tree2.Delete(6)
-	fmt.Println("tree2.Header:", tree2.Header)
+	tree1 := &BinaryTree{Header: node}
+	fmt.Println(">>> tree1.Header:", tree1.Header)
+	fmt.Println("    levels:", tree1.Levels())
+
+	if v := tree1.Count(); v != length {
+		t.Fatalf("!!! count=%d, expected=%d\n", v, length)
+	}
+
+	if v := tree1.Find(3); v == nil {
+		t.Fatalf("!!! can't find 3")
+	}
+
+	if v := tree1.Find(11); v != nil {
+		t.Fatalf("!!! unexpected find 11")
+	}
+
+	yes := tree1.Delete(12)
+	if yes {
+		t.Fatalf("!!! can't delete 12 as it's not exists")
+	}
+
+	fmt.Println(">>> delete 2", tree1.Delete(2))
+	if v := tree1.Count(); v != length-1 {
+		t.Fatalf("!!! count=%d, expected=%d\n", v, length-1)
+	}
+
+	value := tree1.Header.Value
+	fmt.Println(">>> delete header", value, tree1.Delete(value))
+	if tree1.Header.Value == value {
+		t.Fatalf("!!! header unchanged after delete")
+	}
+	if v := tree1.Count(); v != length-2 {
+		t.Fatalf("!!! count=%d, expected=%d\n", v, length-2)
+	}
 }

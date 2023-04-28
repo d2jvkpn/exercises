@@ -1,4 +1,4 @@
-package main
+package binary_tree
 
 import (
 // "fmt"
@@ -43,6 +43,10 @@ func (tree *BinaryTree) Delete(value int) bool {
 	}
 
 	return true
+}
+
+func (tree *BinaryTree) Count() int {
+	return tree.Header.Count()
 }
 
 func (tree *BinaryTree) Levels() int {

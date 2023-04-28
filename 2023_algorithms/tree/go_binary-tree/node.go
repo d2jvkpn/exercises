@@ -1,4 +1,4 @@
-package main
+package binary_tree
 
 import (
 // "fmt"
@@ -60,7 +60,7 @@ func (node *Node) FindWithParent(value int) (*Node, *Node) {
 		} else {
 			return node.Left.FindWithParent(value)
 		}
-	case value < node.Value:
+	case value > node.Value:
 		if node.Right == nil {
 			return nil, nil
 		} else if value == node.Right.Value {
@@ -73,18 +73,28 @@ func (node *Node) FindWithParent(value int) (*Node, *Node) {
 	}
 }
 
-func (node *Node) succeed() (int, bool) {
+func (node *Node) succeed() (value int, ok bool) {
 	var parent, current *Node
+
+	/*
+		t := 0
+		defer func() {
+			println("!!! t:", t)
+		}()
+	*/
 
 	switch {
 	case node.Left == nil && node.Right == nil:
+		// t = 1
 		return 0, false
 	case node.Left != nil && node.Right == nil:
+		// t = 2
 		current = node.Left
 		node.Value = current.Value
 		node.Left, node.Right = current.Left, current.Right
 		return node.Value, true
 	case node.Left == nil && node.Right != nil:
+		// t = 3
 		current = node.Right
 		node.Value = current.Value
 		node.Left, node.Right = current.Left, current.Right
@@ -94,14 +104,16 @@ func (node *Node) succeed() (int, bool) {
 	current = node.Right
 	switch {
 	case current.Left == nil && current.Right == nil:
+		// t = 4
 		node.Value = current.Value
 		node.Right = nil
 	case current.Left == nil && current.Right != nil:
+		// t = 5
 		node.Value = current.Value
 		node.Right = current.Right
 	default: // node.Left != nil
 		parent = current
-		current = parent.Left
+		current = parent.Left // not nil
 		for current.Left != nil {
 			parent = current
 			current = current.Left
@@ -109,7 +121,11 @@ func (node *Node) succeed() (int, bool) {
 
 		node.Value = current.Value
 		if current.Right != nil {
+			// t = 6
 			parent.Left = current.Right
+		} else {
+			// t = 7
+			parent.Left = nil
 		}
 	}
 
