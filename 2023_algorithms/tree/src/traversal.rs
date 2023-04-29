@@ -1,9 +1,9 @@
-use crate::node::Node;
-use std::{cell::RefCell, cmp::PartialEq, fmt::Debug, rc::Rc};
+use crate::node::Child;
+use std::{cmp::PartialEq, fmt::Debug};
 
 // https://www.jianshu.com/p/7a62dcc96304
 // left..., parent, right...
-pub fn inorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
+pub fn inorder_v1<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
     let mut result = Vec::new();
 
     let node = if let Some(v) = item { v } else { return result };
@@ -16,11 +16,8 @@ pub fn inorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>
 }
 
 // left..., parent, right...
-pub fn inorder_v2<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
-    fn traversal<T: Debug + PartialEq + Clone>(
-        item: &Option<Rc<RefCell<Node<T>>>>,
-        ans: &mut Vec<T>,
-    ) {
+pub fn inorder_v2<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+    fn traversal<T: Debug + PartialEq + Clone>(item: &Child<T>, ans: &mut Vec<T>) {
         let node = if let Some(v) = item { v } else { return };
         traversal(&node.borrow().left, ans);
         ans.push(node.borrow().value.clone());
@@ -33,10 +30,10 @@ pub fn inorder_v2<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>
 }
 
 // the tree will be destoryed
-pub fn inorder_v3<T: Debug + PartialEq + Clone>(item: Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
+pub fn inorder_v3<T: Debug + PartialEq + Clone>(item: Child<T>) -> Vec<T> {
     let mut ans = Vec::new();
-    let mut stack: Vec<Option<Rc<RefCell<Node<T>>>>> = Vec::new();
-    let mut curr: Option<Rc<RefCell<Node<T>>>> = item;
+    let mut stack: Vec<Child<T>> = Vec::new();
+    let mut curr: Child<T> = item;
 
     loop {
         if curr.is_some() {
@@ -56,7 +53,7 @@ pub fn inorder_v3<T: Debug + PartialEq + Clone>(item: Option<Rc<RefCell<Node<T>>
 }
 
 // parent, left..., right...
-pub fn preorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
+pub fn preorder_v1<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
     let mut result = Vec::new();
     let node = if let Some(v) = item { v } else { return result };
 
@@ -68,7 +65,7 @@ pub fn preorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T
 }
 
 // left..., right..., parent
-pub fn postorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
+pub fn postorder_v1<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
     let mut result = Vec::new();
     let node = if let Some(v) = item { v } else { return result };
 

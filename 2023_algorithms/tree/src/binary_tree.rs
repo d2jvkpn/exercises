@@ -1,9 +1,12 @@
-use crate::{node::Node, traversal};
-use std::{cell::RefCell, fmt::Debug, rc::Rc};
+use crate::{
+    node::{Child, Node},
+    traversal,
+};
+use std::fmt::Debug;
 
 #[derive(Debug)]
 struct BinaryTree<T> {
-    root: Option<Rc<RefCell<Node<T>>>>,
+    root: Child<T>,
     size: usize,
 }
 
@@ -40,5 +43,53 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
         return traversal::postorder_v1(&self.root);
     }
 
-    // TODO: find, delete
+    pub fn find(&self, value: T) -> Child<T> {
+        fn find<T: Debug + PartialEq + Clone>(item: &Child<T>, value: T) -> Child<T> {
+            let node = if let Some(v) = item { v } else { return None };
+
+            if node.borrow().value == value.clone() {
+                return Some(node.clone());
+            }
+
+            if let Some(v) = find(&node.borrow().left, value.clone()) {
+                return Some(v);
+            }
+
+            find(&node.borrow().right, value.clone())
+        }
+
+        find(&self.root, value)
+    }
+
+    fn match_left(item: &Child<T>, value: T) -> Child<T> {
+        let node = if let Some(v) = item { v } else { return None };
+
+        let child = node.borrow();
+        let child = match &child.left {
+            Some(v) => v,
+            None => return None,
+        };
+
+        if child.borrow().value == value {
+            return Some(child.clone());
+        }
+        return None;
+    }
+
+    fn match_right(item: &Child<T>, value: T) -> Child<T> {
+        let node = if let Some(v) = item { v } else { return None };
+
+        let child = node.borrow();
+        let child = match &child.right {
+            Some(v) => v,
+            None => return None,
+        };
+
+        if child.borrow().value == value {
+            return Some(child.clone());
+        }
+        return None;
+    }
+
+    // TODO: delete
 }

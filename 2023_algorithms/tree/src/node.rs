@@ -1,10 +1,12 @@
 use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
+pub type Child<T> = Option<Rc<RefCell<Node<T>>>>;
+
 #[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Node<T> {
     pub value: T,
-    pub left: Option<Rc<RefCell<Node<T>>>>,
-    pub right: Option<Rc<RefCell<Node<T>>>>,
+    pub left: Child<T>,
+    pub right: Child<T>,
 }
 
 impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
@@ -16,7 +18,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         Rc::new(RefCell::new(self))
     }
 
-    pub fn into_child(self) -> Option<Rc<RefCell<Self>>> {
+    pub fn into_child(self) -> Child<T> {
         Some(Rc::new(RefCell::new(self)))
     }
 
