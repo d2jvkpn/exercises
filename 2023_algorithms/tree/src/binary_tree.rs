@@ -144,13 +144,13 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
         }
     }
 
-    pub fn delete(&mut self, value: T) {
+    pub fn delete(&mut self, value: T) -> bool {
         let (parent, target) = self.local(value);
 
         // case 1
         let target = match target {
             Some(v) => v,
-            None => return,
+            None => return false,
         };
 
         // case 2
@@ -158,7 +158,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
             Some(v) => v,
             None => {
                 self.root = None;
-                return;
+                return true;
             }
         };
 
@@ -174,7 +174,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
             } else {
                 parent.borrow_mut().right = successor;
             }
-            return;
+            return true;
         }
 
         // case 4, both targte.left and target.right are some
@@ -188,6 +188,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
 
         replace.clone().unwrap().borrow_mut().left = left;
         parent.borrow_mut().right = replace;
+        true
     }
 
     // TODO: rebalance
