@@ -15,6 +15,7 @@ pub fn inorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>
     result
 }
 
+// left..., parent, right...
 pub fn inorder_v2<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
     fn traversal<T: Debug + PartialEq + Clone>(
         item: &Option<Rc<RefCell<Node<T>>>>,
@@ -54,6 +55,7 @@ pub fn inorder_v3<T: Debug + PartialEq + Clone>(item: Option<Rc<RefCell<Node<T>>
     ans
 }
 
+// parent, left..., right...
 pub fn preorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
     let mut result = Vec::new();
     let node = if let Some(v) = item { v } else { return result };
@@ -65,6 +67,7 @@ pub fn preorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T
     result
 }
 
+// left..., right..., parent
 pub fn postorder_v1<T: Debug + PartialEq + Clone>(item: &Option<Rc<RefCell<Node<T>>>>) -> Vec<T> {
     let mut result = Vec::new();
     let node = if let Some(v) = item { v } else { return result };
