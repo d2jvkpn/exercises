@@ -220,7 +220,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
         Self::levels_iter(&self.root)
     }
 
-    // TODO: rebalance
+    // TODO: bfs, dfs, rebalance
 }
 
 #[cfg(test)]
