@@ -177,7 +177,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
             return;
         }
 
-        // both targte.left and target.right are some
+        // case 4, both targte.left and target.right are some
         parent.borrow_mut().right = match Self::take_min(&right) {
             None => right, // the right has no left
             Some(v) => {
