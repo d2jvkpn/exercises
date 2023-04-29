@@ -162,29 +162,32 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
             }
         };
 
-        // target is on left child of parent
-        let is_left = parent.borrow().left == Some(target.clone());
+        // case 3, neither target.left of target.right is none
         let left = target.borrow_mut().left.take();
         let right = target.borrow_mut().right.take();
 
-        // case 3, neither target.left of target.right is none
         if left.is_none() || right.is_none() {
-            if is_left {
-                parent.borrow_mut().left = if left.is_none() { right } else { left };
+            let successor = if left.is_none() { right } else { left };
+
+            if parent.borrow().left == Some(target.clone()) {
+                parent.borrow_mut().left = successor;
             } else {
-                parent.borrow_mut().right = if left.is_none() { right } else { left };
+                parent.borrow_mut().right = successor;
             }
             return;
         }
 
         // case 4, both targte.left and target.right are some
-        parent.borrow_mut().right = match Self::take_min(&right) {
+        let replace = match Self::take_min(&right) {
             None => right, // the right has no left
             Some(v) => {
                 v.borrow_mut().right = right;
                 Some(v)
             }
         };
+
+        replace.clone().unwrap().borrow_mut().left = left;
+        parent.borrow_mut().right = replace;
     }
 
     // TODO: rebalance
