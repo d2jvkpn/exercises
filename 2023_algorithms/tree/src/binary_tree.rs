@@ -91,5 +91,35 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
         return None;
     }
 
+    // find a match node and return parent and target node
+    pub fn local_child(item: &Child<T>, value: T) -> (Child<T>, Child<T>) {
+        let node = if let Some(v) = item { v } else { return (None, None) };
+
+        if node.borrow().value == value {
+            return (None, Some(node.clone()));
+        }
+
+        let target = Self::match_left(&Some(node.clone()), value.clone());
+        if target.is_some() {
+            return (Some(node.clone()), target);
+        }
+
+        let target = Self::match_right(&Some(node.clone()), value.clone());
+        if target.is_some() {
+            return (Some(node.clone()), target);
+        }
+
+        let (parent, target) = Self::local_child(&node.borrow().left, value.clone());
+        if target.is_some() {
+            return (parent, target);
+        }
+
+        Self::local_child(&node.borrow().right, value.clone())
+    }
+
+    pub fn local(&self, value: T) -> (Child<T>, Child<T>) {
+        Self::local_child(&self.root, value)
+    }
+
     // TODO: delete
 }
