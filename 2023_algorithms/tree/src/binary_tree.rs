@@ -11,15 +11,15 @@ struct BinaryTree<T> {
 }
 
 impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Self { root: None, size: 0 }
     }
 
-    fn new_with(value: T) -> Self {
+    pub fn new_with(value: T) -> Self {
         Self { root: Node::new(value).into_child(), size: 1 }
     }
 
-    fn push(&mut self, value: T) -> &mut Self {
+    pub fn push(&mut self, value: T) -> &mut Self {
         match &self.root {
             None => self.root = Node::new(value).into_child(),
             Some(v) => {
@@ -191,5 +191,55 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
         true
     }
 
+    fn count_iter(item: &Child<T>, value: &mut usize) {
+        let node = if let Some(v) = item { v } else { return };
+        Self::count_iter(&node.borrow().left, value);
+        *value += 1;
+        Self::count_iter(&node.borrow().right, value);
+    }
+
+    pub fn count(&self) -> usize {
+        let mut value = 0;
+        Self::count_iter(&self.root, &mut value);
+        value
+    }
+
+    fn levels_iter(item: &Child<T>) -> usize {
+        let node = if let Some(v) = item { v } else { return 0 };
+        let left = Self::levels_iter(&node.borrow().left);
+        let right = Self::levels_iter(&node.borrow().right);
+
+        if left > right {
+            left + 1
+        } else {
+            right + 1
+        }
+    }
+
+    pub fn levels(&self) -> usize {
+        Self::levels_iter(&self.root)
+    }
+
     // TODO: rebalance
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn t_binary_tree() {
+        let mut tree = BinaryTree::new_with(10);
+        println!("{:?}", tree);
+
+        tree.push(5).push(1);
+        tree.push(12);
+        tree.push(4).push(6).push(8);
+
+        assert_eq!(tree.count(), 7);
+        assert!(tree.delete(1));
+        assert!(!tree.delete(13));
+        assert_eq!(tree.count(), 6);
+        println!("{:?}", tree);
+    }
 }
