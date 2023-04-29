@@ -153,27 +153,26 @@ func (node *Node) Count() int {
 	return *count
 }
 
-func (node *Node) Levels() (levels int) {
+func (node *Node) Height() (levels int) {
 	switch {
 	case node == nil:
 		return 0
 	case node.Left == nil && node.Right == nil:
 		return 1
 	case node.Left != nil && node.Right == nil:
-		levels = node.Left.Levels()
-		return levels + 1
+		levels = node.Left.Height()
 	case node.Left == nil && node.Right != nil:
-		levels = node.Right.Levels()
-		return levels + 1
+		levels = node.Right.Height()
 	default:
-		left, right := node.Left.Levels(), node.Right.Levels()
+		left, right := node.Left.Height(), node.Right.Height()
 		if left > right {
 			levels = left
 		} else {
 			levels = right
 		}
-		return levels + 1
 	}
+
+	return levels + 1
 }
 
 // left, parent, right

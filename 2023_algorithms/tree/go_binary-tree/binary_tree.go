@@ -49,6 +49,6 @@ func (tree *BinaryTree) Count() int {
 	return tree.Header.Count()
 }
 
-func (tree *BinaryTree) Levels() int {
-	return tree.Header.Levels()
+func (tree *BinaryTree) Height() int {
+	return tree.Header.Height()
 }

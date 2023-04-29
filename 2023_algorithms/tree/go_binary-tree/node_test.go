@@ -22,7 +22,7 @@ func TestNode(t *testing.T) {
 
 	tree1 := &BinaryTree{Header: node}
 	fmt.Println(">>> tree1.Header:", tree1.Header)
-	fmt.Println("    levels:", tree1.Levels())
+	fmt.Println("    height:", tree1.Height())
 
 	if v := tree1.Count(); v != length {
 		t.Fatalf("!!! count=%d, expected=%d\n", v, length)
