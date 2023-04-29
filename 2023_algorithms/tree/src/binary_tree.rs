@@ -127,5 +127,65 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
         Self::local_child(&self.root, value)
     }
 
-    // TODO: delete
+    fn take_min(item: &Child<T>) -> Child<T> {
+        let node = if let Some(v) = item { v } else { return None };
+
+        let binding = node.borrow();
+        let left = match &binding.left {
+            None => return None,
+            Some(v) => v,
+        };
+
+        if left.borrow().left.is_none() {
+            node.borrow_mut().left = left.borrow_mut().right.take();
+            return Some(left.clone());
+        } else {
+            Self::take_min(&Some(left.clone()))
+        }
+    }
+
+    pub fn delete(&mut self, value: T) {
+        let (parent, target) = self.local(value);
+
+        // case 1
+        let target = match target {
+            Some(v) => v,
+            None => return,
+        };
+
+        // case 2
+        let parent = match parent {
+            Some(v) => v,
+            None => {
+                self.root = None;
+                return;
+            }
+        };
+
+        // target is on left child of parent
+        let is_left = parent.borrow().left == Some(target.clone());
+        let left = target.borrow_mut().left.take();
+        let right = target.borrow_mut().right.take();
+
+        // case 3, neither target.left of target.right is none
+        if left.is_none() || right.is_none() {
+            if is_left {
+                parent.borrow_mut().left = if left.is_none() { right } else { left };
+            } else {
+                parent.borrow_mut().right = if left.is_none() { right } else { left };
+            }
+            return;
+        }
+
+        // both targte.left and target.right are some
+        parent.borrow_mut().right = match Self::take_min(&right) {
+            None => right, // the right has no left
+            Some(v) => {
+                v.borrow_mut().right = right;
+                Some(v)
+            }
+        };
+    }
+
+    // TODO: rebalance
 }
