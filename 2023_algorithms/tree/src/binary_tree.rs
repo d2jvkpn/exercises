@@ -1,5 +1,6 @@
 use crate::{
     node::{Child, Node},
+    queue::Queue,
     traversal,
 };
 use std::fmt::Debug;
@@ -220,6 +221,29 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
         Self::levels_iter(&self.root)
     }
 
+    pub fn bfs(&self) -> Vec<T> {
+        let mut vec = Vec::new();
+
+        let mut queue = match &self.root {
+            None => return vec,
+            Some(v) => Queue::new_with(v.clone()),
+        };
+
+        while let Some(qn) = queue.pop() {
+            if let Some(v) = &qn.borrow().value.borrow().left {
+                _ = queue.push(v.clone());
+            }
+
+            if let Some(v) = &qn.borrow().value.borrow().right {
+                _ = queue.push(v.clone());
+            }
+
+            vec.push(qn.borrow().value.borrow().value.clone());
+        }
+
+        vec
+    }
+
     // TODO: bfs, dfs, rebalance
 }
 
@@ -230,7 +254,7 @@ mod tests {
     #[test]
     fn t_binary_tree() {
         let mut tree = BinaryTree::new_with(10);
-        println!("{:?}", tree);
+        println!("tree: {:?}", tree);
 
         tree.push(5).push(1);
         tree.push(12);
@@ -240,6 +264,9 @@ mod tests {
         assert!(tree.delete(1));
         assert!(!tree.delete(13));
         assert_eq!(tree.count(), 6);
-        println!("{:?}", tree);
+        println!("tree: {:?}", tree);
+
+        println!("tree.bfs: {:?}", tree.bfs());
+        assert_eq!(tree.bfs(), vec![10, 5, 12, 4, 6, 8]);
     }
 }
