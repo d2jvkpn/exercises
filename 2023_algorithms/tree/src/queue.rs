@@ -1,9 +1,9 @@
 use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
-pub type Child<T> = Option<Rc<RefCell<QueueNode<T>>>>;
+pub type Child<T> = Option<Rc<RefCell<QNode<T>>>>;
 
 #[derive(PartialEq, Debug, Clone)]
-pub struct QueueNode<T> {
+pub struct QNode<T> {
     pub value: T,
     pub next: Child<T>,
 }
@@ -15,7 +15,7 @@ pub struct Queue<T> {
     size: usize,
 }
 
-impl<T: Debug + Clone + PartialEq> QueueNode<T> {
+impl<T: Debug + Clone + PartialEq> QNode<T> {
     pub fn new(value: T) -> Self {
         Self { value, next: None }
     }
@@ -39,7 +39,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
     }
 
     pub fn new_with(value: T) -> Self {
-        let header = QueueNode::new_child(value);
+        let header = QNode::new_child(value);
         Queue { header: header, tail: None, size: 1 }
     }
 
@@ -48,7 +48,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
     }
 
     pub fn push(&mut self, value: T) -> &mut Self {
-        let node = QueueNode::new_child(value);
+        let node = QNode::new_child(value);
         self.size += 1;
 
         let header = match &self.header {
@@ -102,13 +102,13 @@ mod tests {
         queue.push(2).push(3).push(4);
 
         assert_eq!(queue.size(), 4);
-        assert_eq!(queue.pop(), QueueNode::new_child(1));
+        assert_eq!(queue.pop(), QNode::new_child(1));
         assert_eq!(queue.size(), 3);
         assert_eq!(queue.as_vec(), vec![2, 3, 4]);
 
         let mut queue = Queue::new_with(1);
         assert!(queue.tail.is_none());
-        assert_eq!(queue.pop(), QueueNode::new_child(1));
+        assert_eq!(queue.pop(), QNode::new_child(1));
         assert!(queue.header.is_none());
     }
 }
