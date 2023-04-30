@@ -16,12 +16,12 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
     }
 
     pub fn new_with(value: T) -> Self {
-        Self { root: Node::new(value).into_child(), size: 1 }
+        Self { root: Node::new_child(value), size: 1 }
     }
 
     pub fn push(&mut self, value: T) -> &mut Self {
         match &self.root {
-            None => self.root = Node::new(value).into_child(),
+            None => self.root = Node::new_child(value),
             Some(v) => {
                 v.borrow_mut().push(value);
             }

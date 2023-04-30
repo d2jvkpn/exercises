@@ -27,6 +27,10 @@ impl<T: Debug + Clone + PartialEq> QueueNode<T> {
     pub fn into_child(self) -> Child<T> {
         Some(Rc::new(RefCell::new(self)))
     }
+
+    pub fn new_child(value: T) -> Child<T> {
+        Some(Rc::new(RefCell::new(Self::new(value))))
+    }
 }
 
 impl<T: Debug + Clone + PartialEq> Queue<T> {
@@ -35,7 +39,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
     }
 
     pub fn new_with(value: T) -> Self {
-        let header = QueueNode::new(value).into_child();
+        let header = QueueNode::new_child(value);
         Queue { header: header, tail: None, size: 1 }
     }
 
@@ -44,7 +48,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
     }
 
     pub fn push(&mut self, value: T) -> &mut Self {
-        let node = QueueNode::new(value).into_child();
+        let node = QueueNode::new_child(value);
         self.size += 1;
 
         let header = match &self.header {
@@ -98,13 +102,13 @@ mod tests {
         queue.push(2).push(3).push(4);
 
         assert_eq!(queue.size(), 4);
-        assert_eq!(queue.pop(), QueueNode::new(1).into_child());
+        assert_eq!(queue.pop(), QueueNode::new_child(1));
         assert_eq!(queue.size(), 3);
         assert_eq!(queue.as_vec(), vec![2, 3, 4]);
 
         let mut queue = Queue::new_with(1);
         assert!(queue.tail.is_none());
-        _ = queue.pop();
+        assert_eq!(queue.pop(), QueueNode::new_child(1));
         assert!(queue.header.is_none());
     }
 }

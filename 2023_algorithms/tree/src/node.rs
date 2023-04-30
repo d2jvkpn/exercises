@@ -22,6 +22,10 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         Some(Rc::new(RefCell::new(self)))
     }
 
+    pub fn new_child(value: T) -> Child<T> {
+        Some(Rc::new(RefCell::new(Self::new(value))))
+    }
+
     pub fn push(&mut self, value: T) -> &mut Self {
         if value <= self.value {
             if let Some(node) = self.left.take() {
