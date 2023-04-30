@@ -100,5 +100,11 @@ mod tests {
         assert_eq!(queue.size(), 4);
         assert_eq!(queue.pop(), QueueNode::new(1).into_child());
         assert_eq!(queue.size(), 3);
+        assert_eq!(queue.as_vec(), vec![2, 3, 4]);
+
+        let mut queue = Queue::new_with(1);
+        assert!(queue.tail.is_none());
+        _ = queue.pop();
+        assert!(queue.header.is_none());
     }
 }
