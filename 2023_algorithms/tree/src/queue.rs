@@ -20,14 +20,6 @@ impl<T: Debug + Clone + PartialEq> QNode<T> {
         Self { value, next: None }
     }
 
-    pub fn into_rc(self) -> Rc<RefCell<Self>> {
-        Rc::new(RefCell::new(self))
-    }
-
-    pub fn into_child(self) -> Child<T> {
-        Some(Rc::new(RefCell::new(self)))
-    }
-
     pub fn new_child(value: T) -> Child<T> {
         Some(Rc::new(RefCell::new(Self::new(value))))
     }

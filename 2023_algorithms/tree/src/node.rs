@@ -14,6 +14,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         Self { value, left: None, right: None }
     }
 
+    /*
     pub fn into_rc(self) -> Rc<RefCell<Self>> {
         Rc::new(RefCell::new(self))
     }
@@ -21,6 +22,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
     pub fn into_child(self) -> Child<T> {
         Some(Rc::new(RefCell::new(self)))
     }
+    */
 
     pub fn new_child(value: T) -> Child<T> {
         Some(Rc::new(RefCell::new(Self::new(value))))
@@ -34,7 +36,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
                 self.left = Some(node); // must return self.left
             } else {
                 // println!("<++ new left {:?}.left = {:?}\n", self.value, value);
-                self.left = Some(Node::new(value).into_rc());
+                self.left = Self::new_child(value);
                 // println!("{} {:?}", self.value, self.left);
             }
         } else {
@@ -44,7 +46,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
                 self.right = Some(node); // must return to self.right
             } else {
                 // println!("++> push right {:?}.right = {:?}\n", self.value, value);
-                self.right = Some(Node::new(value).into_rc());
+                self.right = Self::new_child(value);
             }
         }
 
