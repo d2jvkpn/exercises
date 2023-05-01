@@ -152,6 +152,8 @@ impl<T: Default + Debug + Clone + PartialEq + PartialOrd> Heap<T> {
         while let Some(min_idx) = self.smallest_child_idx(idx) {
             if self.compare(min_idx, idx) == Some(true) {
                 self.items.swap(idx, min_idx);
+            } else {
+                break;
             }
 
             idx = min_idx;
