@@ -47,7 +47,7 @@ impl<T: Default + Debug + Clone + PartialEq + PartialOrd> Heap<T> {
         heap
     }
 
-    fn compare(&self, i1: usize, i2: usize) -> Option<bool> {
+    fn compare_by_idx(&self, i1: usize, i2: usize) -> Option<bool> {
         if i1 < 1 || i2 < 1 {
             return None;
         }
@@ -95,7 +95,7 @@ impl<T: Default + Debug + Clone + PartialEq + PartialOrd> Heap<T> {
         loop {
             let pdx = idx / 2;
 
-            match self.compare(idx, pdx) {
+            match self.compare_by_idx(idx, pdx) {
                 None => break,
                 Some(true) => self.items.swap(idx, pdx),
                 _ => {}
@@ -150,7 +150,7 @@ impl<T: Default + Debug + Clone + PartialEq + PartialOrd> Heap<T> {
 
         let mut idx = 1;
         while let Some(min_idx) = self.smallest_child_idx(idx) {
-            if self.compare(min_idx, idx) == Some(true) {
+            if self.compare_by_idx(min_idx, idx) == Some(true) {
                 self.items.swap(idx, min_idx);
             } else {
                 break;
