@@ -1,24 +1,82 @@
-pub struct Heap {
+use std::fmt::Debug;
+
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
+pub struct Heap<T: Default> {
     count: usize,
-    items: Vec<i64>,
+    items: Vec<T>,
+    comparator: fn(&T, &T) -> bool,
 }
 
 // min heap
-impl Heap {
-    pub fn new() -> Self {
-        Self { count: 0, items: vec![0] }
+impl<T: Default + Debug + Clone + PartialEq + PartialOrd> Heap<T> {
+    pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
+        Self { count: 0, items: vec![T::default()], comparator }
     }
 
-    pub fn new_with_cap(cap: usize) -> Self {
-        let mut items = Vec::with_capacity(cap + 1);
-        items.push(0);
-        Self { count: 0, items }
+    pub fn new_with_cap(comparator: fn(&T, &T) -> bool, cap: usize) -> Self {
+        let mut items: Vec<T> = Vec::with_capacity(cap + 1);
+        items.push(T::default());
+        Self { count: 0, items, comparator }
     }
 
-    pub fn from_slice(slice: &[i64]) -> Self {
-        let mut heap = Self::new_with_cap(slice.len());
-        slice.iter().for_each(|v| heap.push(*v));
+    pub fn new_min(size: Option<usize>) -> Self {
+        let mut items: Vec<T> = Vec::with_capacity(size.unwrap_or(0) + 1);
+        items.push(T::default());
+        Self { count: 0, items, comparator: |a, b| a < b }
+    }
+
+    pub fn min_from_slice(slice: &[T]) -> Self {
+        let mut items: Vec<T> = Vec::with_capacity(slice.len() + 1);
+        items.push(T::default());
+        let mut heap = Self { count: 0, items, comparator: |a, b| a < b };
+        slice.iter().for_each(|v| heap.push(v.clone()));
         heap
+    }
+
+    pub fn new_max(size: Option<usize>) -> Self {
+        let mut items: Vec<T> = Vec::with_capacity(size.unwrap_or(0) + 1);
+        items.push(T::default());
+        Self { count: 0, items, comparator: |a, b| a > b }
+    }
+
+    pub fn max_from_slice(slice: &[T]) -> Self {
+        let mut items: Vec<T> = Vec::with_capacity(slice.len() + 1);
+        items.push(T::default());
+        let mut heap = Self { count: 0, items, comparator: |a, b| a > b };
+        slice.iter().for_each(|v| heap.push(v.clone()));
+        heap
+    }
+
+    fn compare(&self, i1: usize, i2: usize) -> Option<bool> {
+        if i1 < 1 || i2 < 1 {
+            return None;
+        }
+        if i1 > self.count || i2 > self.count {
+            return None;
+        }
+
+        let value = (self.comparator)(&self.items[i1], &self.items[i2]);
+        Some(value)
+    }
+
+    fn smallest_child_idx(&self, idx: usize) -> Option<usize> {
+        if idx > self.count {
+            return None;
+        }
+
+        let lidx = idx * 2;
+        if lidx > self.count {
+            return None;
+        }
+
+        if lidx + 1 > self.count {
+            return Some(lidx);
+        }
+
+        match (self.comparator)(&self.items[lidx], &self.items[lidx + 1]) {
+            true => Some(lidx),
+            _ => Some(lidx + 1),
+        }
     }
 
     pub fn size(&self) -> usize {
@@ -29,26 +87,25 @@ impl Heap {
         println!("items: {:?}\n", &self.items[1..]);
     }
 
-    pub fn push(&mut self, value: i64) {
+    pub fn push(&mut self, value: T) {
         self.count += 1;
         self.items.push(value);
         let mut idx = self.count;
 
         loop {
             let pdx = idx / 2;
-            if pdx == 0 {
-                break;
-            }
 
-            if &self.items[idx] < &self.items[pdx] {
-                self.items.swap(idx, pdx);
+            match self.compare(idx, pdx) {
+                None => break,
+                Some(true) => self.items.swap(idx, pdx),
+                _ => {}
             }
 
             idx = pdx;
         }
     }
 
-    pub fn pop(&mut self) -> Option<i64> {
+    pub fn pop_v0(&mut self) -> Option<T> {
         if self.count == 0 {
             return None;
         }
@@ -67,17 +124,37 @@ impl Heap {
             }
 
             if lidx + 1 > self.count {
-                if self.items[idx] > self.items[lidx] {
+                if self.items[lidx] < self.items[idx] {
                     self.items.swap(idx, lidx);
                 }
                 break;
             }
 
-            let left = self.items[lidx];
-            let right = self.items[lidx + 1];
+            let left = &self.items[lidx];
+            let right = &self.items[lidx + 1];
             let min = if left < right { lidx } else { lidx + 1 };
             self.items.swap(idx, min);
             idx = min;
+        }
+
+        option
+    }
+
+    pub fn pop(&mut self) -> Option<T> {
+        if self.count == 0 {
+            return None;
+        }
+
+        self.count -= 1;
+        let option = Some(self.items.swap_remove(1));
+
+        let mut idx = 1;
+        while let Some(min_idx) = self.smallest_child_idx(idx) {
+            if self.compare(min_idx, idx) == Some(true) {
+                self.items.swap(idx, min_idx);
+            }
+
+            idx = min_idx;
         }
 
         option
@@ -102,7 +179,7 @@ mod tests {
 
     #[test]
     fn t_heap() {
-        let mut heap = Heap::from_slice(&vec![2, 8, 5, 3, 9, 1, 11]);
+        let mut heap = Heap::min_from_slice(&vec![2, 8, 5, 3, 9, 1, 11]);
         heap.print();
         assert_eq!(heap.pop(), Some(1));
         assert_eq!(heap.pop(), Some(2));
