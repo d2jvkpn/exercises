@@ -1,6 +1,12 @@
 use super::tree::{Node, Tree};
 use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
+#[derive(Debug)]
+struct Tree<T> {
+    root: Child<T>,
+    size: usize,
+}
+
 pub fn heap_from_slice<T: Debug + PartialEq + Clone>(node: Rc<RefCell<Node<T>>>, mut slice: &[T]) {
     if slice.is_empty() {
         return;

@@ -6,18 +6,41 @@ use crate::{
 use std::fmt::Debug;
 
 #[derive(Debug)]
-struct BinaryTree<T> {
+struct Tree<T> {
     root: Child<T>,
     size: usize,
 }
 
-impl<T: Clone + Debug + PartialEq + PartialOrd> BinaryTree<T> {
+impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
     pub fn new() -> Self {
         Self { root: None, size: 0 }
     }
 
     pub fn new_with(value: T) -> Self {
         Self { root: Node::new_child(value), size: 1 }
+    }
+
+    pub fn push_iter(item: &Child<T>, value: T) {
+        let node = match item {
+            None => {
+                return;
+            }
+            Some(v) => v,
+        };
+
+        let v = node.borrow().value.clone();
+
+        if value == v {
+            return;
+        } else if value < v {
+            if node.borrow().left.is_none() {
+                node.borrow_mut().left = Node::new_child(v);
+            } else {
+                Self::push_iter(&node.borrow().left, value);
+            }
+        } else {
+            Self::push_iter(&node.borrow().right, value);
+        }
     }
 
     pub fn push(&mut self, value: T) -> &mut Self {
@@ -253,7 +276,7 @@ mod tests {
 
     #[test]
     fn t_binary_tree() {
-        let mut tree = BinaryTree::new_with(10);
+        let mut tree = Tree::new_with(10);
         println!("tree: {:?}", tree);
 
         tree.push(5).push(1);
