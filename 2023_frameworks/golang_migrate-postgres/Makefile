@@ -1,5 +1,11 @@
+#!make
+include .env
+
+git_branch = $(shell git rev-parse --abbrev-ref HEAD)
+git_time = $(shell date +'%FT%T%:z')
+
 postgres_up:
-	docker run --name postgres_test -p 127.0.0.1:5433:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
+	docker run --name postgres_test -p 127.0.0.1:5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
 	# docker-compose -f deployments/db.yaml up -d
 
 postgres_down:
@@ -21,4 +27,10 @@ connectdb:
 dropdb:
 	docker exec -it postgres_test dropdb simple_bank
 
-.PHONY: postgres_up createdb dropdb
+migrateup:
+	migrate -path migrations -database "$(DATABASE_URL)" -verbose up
+
+migratedown:
+	migrate -path migrations -database "$(DATABASE_URL)" -verbose down
+
+.PHONY: postgres_up createdb dropdb postgres_down
