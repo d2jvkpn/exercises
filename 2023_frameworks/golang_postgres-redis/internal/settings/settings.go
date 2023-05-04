@@ -16,12 +16,14 @@ func SetRedisClient(vp *viper.Viper) (err error) {
 	})
 
 	if err = RedisCli.Ping(context.TODO()).Err(); err != nil {
+		RedisCli.Shutdown(context.TODO())
 		RedisCli = nil
 		return err
 	}
 
 	/*
-		if err = client.Close(); err != nil {
+		// if err = client.Close(context.TODO()); err != nil {
+		if err = client.ShutdownSave(); err != nil {
 			log.Fatalln(err)
 		}
 	*/

@@ -39,10 +39,14 @@ func migratePostgres(source, migrations string) (err error) {
 	// or m.Step(2) if you want to explicitly set the number of migrations to run
 	if err = migr.Up(); err != nil {
 		if err.Error() != "no change" {
-			return fmt.Errorf("migrate.Up: %w", err)
+			return fmt.Errorf("Migrate.Up: %w", err)
 		}
 	}
 
 	e1, e2 := migr.Close()
-	return errors.Join(e1, e2)
+	if err = errors.Join(e1, e2); err != nil {
+		return fmt.Errorf("Migrate.Close: %w", err)
+	}
+
+	return nil
 }
