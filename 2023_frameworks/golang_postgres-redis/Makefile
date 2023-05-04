@@ -1,9 +1,10 @@
 #!make
-include .env
+# include .env
 
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 git_time = $(shell git log -1 --format="%at" | xargs -I{} date -d @{} +%FT%T%:z)
 build_time = $(shell date +'%FT%T%:z')
+database_url = $(shell yq .database.dsn configs/local.yaml)
 
 ####
 postgres_up:
@@ -33,10 +34,12 @@ dropdb:
 	docker exec -it postgres_test dropdb simple_bank
 
 migrate_up:
-	migrate -path migrations -database "$(DATABASE_URL)" -verbose up
+	# migrate -path migrations -database "$(DATABASE_URL)" -verbose up
+	migrate -path migrations -database "$(database_url)" -verbose up
 
 migrate_down:
-	migrate -path migrations -database "$(DATABASE_URL)" -verbose down
+	# migrate -path migrations -database "$(DATABASE_URL)" -verbose down
+	migrate -path migrations -database "$(database_url)" -verbose down
 
 .PHONY: postgres_up createdb migrateup migratedown dropdb
 

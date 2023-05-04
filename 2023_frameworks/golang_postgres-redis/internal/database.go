@@ -1,9 +1,9 @@
-package main
+package internal
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
-	"log"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database"
@@ -12,20 +12,7 @@ import (
 	// _ "github.com/lib/pq"
 )
 
-func main() {
-	err := MigratePostgres(
-		"postgresql://hello:world@localhost:5433/simple_bank?sslmode=disable",
-		"./migrations",
-	)
-
-	if err != nil {
-		log.Fatalln("!!! ", err)
-	} else {
-		log.Println("==> Migration is ok")
-	}
-}
-
-func MigratePostgres(source, migrations string) (err error) {
+func migratePostgres(source, migrations string) (err error) {
 	var (
 		db     *sql.DB
 		driver database.Driver
@@ -56,6 +43,6 @@ func MigratePostgres(source, migrations string) (err error) {
 		}
 	}
 
-	// _, _ = migr.Close()
-	return nil
+	e1, e2 := migr.Close()
+	return errors.Join(e1, e2)
 }
