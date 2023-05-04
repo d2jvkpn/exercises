@@ -21,7 +21,7 @@ createdb:
 
 connectdb:
 	# docker exec -it postgres_test psql --username=root simple_bank
-	# psql --host=127.0.0.1 --port 5433 --username=hello simple_bank
+	# psql --host=127.0.0.1 --port 5432 --username=hello simple_bank
 	docker exec -it postgres_test psql --username=hello simple_bank
 
 dropdb:
