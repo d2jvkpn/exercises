@@ -56,6 +56,6 @@ func MigratePostgres(source, migrations string) (err error) {
 		}
 	}
 
-	_, _ = migr.Close()
+	// _, _ = migr.Close()
 	return nil
 }
