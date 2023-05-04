@@ -2,8 +2,10 @@
 include .env
 
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
-git_time = $(shell date +'%FT%T%:z')
+git_time = $(shell git log -1 --format="%at" | xargs -I{} date -d @{} +%FT%T%:z)
+build_time = $(shell date +'%FT%T%:z')
 
+####
 postgres_up:
 	docker run --name postgres_test -d \
 	-e TZ=Asia/Shanghai -e PGTZ=Asia/Shanghai \
@@ -22,7 +24,7 @@ createdb:
 	# docker exec -it postgres_test createdb --username=root --owner=hello simple_bank
 	docker exec -it postgres_test createdb --username=hello --owner=hello simple_bank
 
-connectdb:
+connect_db:
 	# docker exec -it postgres_test psql --username=root simple_bank
 	# psql --host=127.0.0.1 --port 5432 --username=hello simple_bank
 	docker exec -it postgres_test psql --username=hello simple_bank
@@ -30,10 +32,21 @@ connectdb:
 dropdb:
 	docker exec -it postgres_test dropdb simple_bank
 
-migrateup:
+migrate_up:
 	migrate -path migrations -database "$(DATABASE_URL)" -verbose up
 
-migratedown:
+migrate_down:
 	migrate -path migrations -database "$(DATABASE_URL)" -verbose down
 
-.PHONY: postgres_up createdb dropdb postgres_down
+.PHONY: postgres_up createdb migrateup migratedown dropdb
+
+####
+build:
+	echo ">>> git branch: $(git_branch), git time: $(git_time), build time: $(build_time)"
+	mkdir -p target
+	go build -o target/main main.go
+
+run:
+	mkdir -p target
+	go build -o target/main main.go
+	./target/main

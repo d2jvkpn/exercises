@@ -5,7 +5,7 @@
 
 #### Installation
 ```bash
-go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+go install -tags 'postgres mysql' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
 
 go install github.com/mikefarah/yq/v4@latest
 ```
