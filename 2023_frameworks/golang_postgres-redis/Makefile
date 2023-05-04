@@ -41,7 +41,7 @@ migrate_down:
 	# migrate -path migrations -database "$(DATABASE_URL)" -verbose down
 	migrate -path migrations -database "$(database_url)" -verbose down
 
-.PHONY: postgres_up createdb migrateup migratedown dropdb
+.PHONY: postgres_up createdb migrateup migratedown dropdb postgres_down
 
 ####
 build:
