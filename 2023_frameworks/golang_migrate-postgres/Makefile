@@ -5,7 +5,10 @@ git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 git_time = $(shell date +'%FT%T%:z')
 
 postgres_up:
-	docker run --name postgres_test -p 127.0.0.1:5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret -d postgres:15-alpine
+	docker run --name postgres_test -d \
+	-e TZ=Asia/Shanghai -e PGTZ=Asia/Shanghai \
+	-e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret \
+	-p 127.0.0.1:5432:5432 postgres:15-alpine
 	# docker-compose -f deployments/db.yaml up -d
 
 postgres_down:
