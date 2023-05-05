@@ -1,5 +1,5 @@
 #!make
-# include .env
+include .env
 
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 git_time = $(shell git log -1 --format="%at" | xargs -I{} date -d @{} +%FT%T%:z)
