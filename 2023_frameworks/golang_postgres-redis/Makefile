@@ -1,4 +1,4 @@
-#!make
+#! make
 include .env
 
 git_branch = $(shell git rev-parse --abbrev-ref HEAD)
@@ -10,7 +10,7 @@ database_url = $(shell yq .database.dsn configs/local.yaml)
 postgres_up:
 	docker run --name postgres_test -d \
 	-e TZ=Asia/Shanghai -e PGTZ=Asia/Shanghai \
-	-e POSTGRES_USER=root -e POSTGRES_PASSWORD=secret \
+	-e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret \
 	-p 127.0.0.1:5432:5432 postgres:15-alpine
 	# docker-compose -f deployments/db.yaml up -d
 
@@ -22,16 +22,16 @@ postgres_down:
 createdb:
 	docker exec -it postgres_test createuser hello --createdb --login
 	docker exec -it postgres_test psql -c "ALTER ROLE hello PASSWORD 'world'"
-	# docker exec -it postgres_test createdb --username=root --owner=hello simple_bank
+	# docker exec -it postgres_test createdb --username=postgres --owner=hello simple_bank
 	docker exec -it postgres_test createdb --username=hello --owner=hello simple_bank
 
 connect_db:
-	# docker exec -it postgres_test psql --username=root simple_bank
+	# docker exec -it postgres_test psql --username=postgres simple_bank
 	# psql --host=127.0.0.1 --port 5432 --username=hello simple_bank
 	docker exec -it postgres_test psql --username=hello simple_bank
 
 dropdb:
-	docker exec -it postgres_test dropdb simple_bank
+	docker exec -it postgres_test dropdb --username=hello simple_bank
 
 migrate_up:
 	# migrate -path migrations -database "$(DATABASE_URL)" -verbose up
