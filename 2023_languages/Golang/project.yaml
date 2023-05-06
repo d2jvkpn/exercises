@@ -2,8 +2,14 @@ project: exercises
 repository: https://github.com/d2jvkpn/exercises
 version: 0.1.0
 
+# file: configs/{{.APP_ENV}}.yaml
 config: |
-  # path: configs/{{.APP_ENV}}.yaml
+  http:
+    tls:
+      enable: false
+      cert: configs/server.crt
+      key: configs/server.key
+  #
   database:
     dsn: postgresql://hello:world@localhost:5432/simple_bank?sslmode=disable
   #
@@ -12,6 +18,6 @@ config: |
     password: world
     db: 0
 
+# file: .env
 .env:
-  # content of .env
   export DATABASE_URL=postgresql://hello:world@localhost:5432/simple_bank?sslmode=disable
