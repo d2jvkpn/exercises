@@ -12,12 +12,14 @@ postgres_up:
 	-e TZ=Asia/Shanghai -e PGTZ=Asia/Shanghai \
 	-e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=secret \
 	-p 127.0.0.1:5432:5432 postgres:15-alpine
-	# docker-compose -f deployments/db.yaml up -d
+	# docker-compose -f deployments/postgres.yaml up -d
 
-postgres_down:
-	docker stop postgres_test
-	# docker-compose -f deployments/db.yaml down
-	# docker rm postgres_test
+redis_up:
+	docker run --name redis_test -d \
+	-e ALLOW_EMPTY_PASSWORD=yes -e REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL \
+	-p 127.0.0.1:6379:6379 redis:7-alpine \
+	redis-server --save 30 10 --loglevel warning --requirepass world
+	# docker-compose -f deployments/redis.yaml up -d
 
 createdb:
 	docker exec -it postgres_test createuser hello --createdb --login
@@ -30,6 +32,9 @@ connect_db:
 	# psql --host=127.0.0.1 --port 5432 --username=hello simple_bank
 	docker exec -it postgres_test psql --username=hello simple_bank
 
+connect_cache:
+	docker exec -it redis_test redis-cli -a world
+
 dropdb:
 	docker exec -it postgres_test dropdb --username=hello simple_bank
 
@@ -41,7 +46,7 @@ migrate_down:
 	# migrate -path migrations -database "$(DATABASE_URL)" -verbose down
 	migrate -path migrations -database "$(database_url)" -verbose down
 
-.PHONY: postgres_up createdb migrateup migratedown dropdb postgres_down
+.PHONY: postgres_up createdb migrateup
 
 ####
 build:

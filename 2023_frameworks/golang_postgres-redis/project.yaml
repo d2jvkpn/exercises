@@ -1,4 +1,4 @@
-project: golang_postgres-redis
+project: app
 repository: https://github.com/d2jvkpn/exercises
 version: 0.1.0
 

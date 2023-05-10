@@ -1,0 +1,65 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: app_db
+    restart: always
+
+    # network_mode: bridge
+    networks: ["net"]
+    ports: ["127.0.0.1:5432:5432"]
+
+    volumes:
+    - ./data/postgres:/var/lib/postgresql/data
+    # - postgres:/var/lib/postgresql/data
+    # - ./data/postgresql.conf:/var/lib/postgresql/data/pgdata/postgresql.conf
+    # - ./data/postgres_log:/var/log/postgresql/
+
+    environment:
+    - TZ=Asia/Shanghai
+    - PGTZ=Asia/Shanghai
+    - PGDATA=/var/lib/postgresql/data/pgdata
+    - POSTGRES_USER=postgres
+    - POSTGRES_PASSWORD=postgres
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    container_name: app_cache
+    networks: ["net"]
+    ports:
+    - '127.0.0.1:6379:6379'
+    environment:
+    - TZ=Asia/Shanghai
+    # ALLOW_EMPTY_PASSWORD is recommended only for development.
+    - ALLOW_EMPTY_PASSWORD=yes
+    - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    volumes:
+    # - redis:/data
+    - ./data/redis:/data
+    - ./data/redis.conf:/etc/redis.conf
+    # command: redis-server /etc/redis.conf --save 30 10 --loglevel warning --requirepass d2jvkpn
+    command: redis-server /etc/redis.conf --save 30 10 --loglevel warning
+
+#### data/redis.conf
+#requirepass world
+#logfile /data/redis-server.log
+#dir /data
+#dbfilename redis-dump.rdb
+#aof-use-rdb-preamble yes
+#proto-max-bulk-len 32mb
+#io-threads 4
+#io-threads-do-reads yes
+
+#volumes:
+#  redis:
+#    name: redis_data
+#    driver: local
+#  postgres:
+#    name: redis_data
+#    driver: local
+
+
+networks:
+  net: { name: "app", driver: "local", external: false }
