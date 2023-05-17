@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  prometheus:
+    image: prom/prometheus:main
+    restart: always
+    container_name: prometheus
+    networks: ["net", "app-api_dev"]
+    ports:
+    - 9090:9090
+    volumes:
+    - ./configs:/prometheus/configs
+    - ./data/prometheus:/prometheus/data
+    # - prometheus_data:/prometheus/data
+    user: 1000:1000
+    command:
+    # - '--config.file=/etc/prometheus/prometheus.yaml'
+    - '--config.file=/prometheus/configs/prometheus.yaml'
+    - '--web.config.file=/prometheus/configs/prometheus-web.yaml'
+    - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+    - '--web.console.templates=/usr/share/prometheus/consoles'
+    - '--storage.tsdb.path=/prometheus/data'
+    - '--storage.tsdb.retention.time=15d'
+
+#volumes:
+#  prometheus_data:
+
+networks:
+  net:
+    name: cloud-native
+    driver: bridge
+    external: false
+  app-api_dev:
+    name: app-api_dev
+    driver: bridge
+    external: true

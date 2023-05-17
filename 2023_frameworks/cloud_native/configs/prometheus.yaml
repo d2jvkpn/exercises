@@ -1,0 +1,16 @@
+# https://prometheus.io/docs/prometheus/latest/configuration/configuration/
+
+global:
+  scrape_interval:     30s
+  scrape_timeout:      10s
+  evaluation_interval: 30s
+
+scrape_configs:
+#- job_name: prometheus
+#  static_configs:
+#  - targets: ['prometheus:9090']
+
+- job_name: app-api_dev
+  metrics_path: /metrics
+  static_configs:
+  - targets: ['app-api_dev:4002']

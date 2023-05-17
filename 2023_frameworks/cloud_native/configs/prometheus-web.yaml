@@ -1,0 +1,10 @@
+# https://prometheus.io/docs/prometheus/latest/configuration/https/
+
+tls_server_config:
+  # Certificate and key files for server to use to authenticate to client.
+  cert_file: /prometheus/configs/server.pem
+  key_file: /prometheus/configs/server.key
+
+# bcrypt password
+basic_auth_users:
+  prom-xxxx: bcrypt-yyyy
