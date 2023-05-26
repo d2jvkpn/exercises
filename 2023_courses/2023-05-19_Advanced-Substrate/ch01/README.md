@@ -5,6 +5,8 @@
 ```bash
 wget https://github.com/substrate-developer-hub/substrate-node-template/archive/refs/tags/polkadot-v0.9.40.tar.gz
 
+tar -xf polkadot-v0.9.40.tar.gz
+
 # coding...
 
 cargo fmt
