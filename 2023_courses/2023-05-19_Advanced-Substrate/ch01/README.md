@@ -15,5 +15,9 @@ cargo test -p pallet-poe
 
 #### 2. Results
 - git repository: https://github.com/d2jvkpn/substrate-node-template-polkadot-v0.9.40
+- command
+```bash
+cargo test -p pallet-poe
+```
 - screenshots
 ![cargo test -p pallet-poe](assets/a01.png "cargo test -p pallet-poe")
