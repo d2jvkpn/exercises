@@ -58,21 +58,13 @@ fn max_subarray_kadane(arr: &[i32]) -> i32 {
 mod tests {
     use super::*;
 
-    #[test]
-    fn t_max_subarray_brute() {
-        let arr = vec![4, -1, 2, -7, 3, 4];
-        assert_eq!(max_subarray_brute(&arr), 7);
-    }
+    static ARR1: [i32; 6] = [4, -1, 2, -7, 3, 4];
+    static EXP1: i32 = 7;
 
     #[test]
-    fn t_max_subarray_dp() {
-        let arr = vec![4, -1, 2, -7, 3, 4];
-        assert_eq!(max_subarray_dp(&arr), 7);
-    }
-
-    #[test]
-    fn t_max_subarray_kadane() {
-        let arr = vec![4, -1, 2, -7, 3, 4];
-        assert_eq!(max_subarray_kadane(&arr), 7);
+    fn t_max_subarray() {
+        assert_eq!(max_subarray_brute(&ARR1), EXP1);
+        assert_eq!(max_subarray_dp(&ARR1), EXP1);
+        assert_eq!(max_subarray_kadane(&ARR1), EXP1);
     }
 }
