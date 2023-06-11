@@ -44,14 +44,14 @@ fn max_subarray_kadane(arr: &[i32]) -> i32 {
         return 0;
     }
 
-    let (mut max_sum, mut max_sub) = (arr[0], arr[0]);
+    let (mut max_sum, mut current) = (arr[0], arr[0]);
 
     for i in 1..arr.len() {
-        max_sum = max(max_sum + arr[i], arr[i]);
-        max_sub = max(max_sum, max_sub);
+        current = max(current + arr[i], arr[i]);
+        max_sum = max(max_sum, current);
     }
 
-    max_sub
+    max_sum
 }
 
 #[cfg(test)]
