@@ -10,7 +10,7 @@ wget https://github.com/protocolbuffers/protobuf/releases/download/v21.2/protoc-
 unzip protoc-21.2-linux-x86_64.zip -d /opt/protoc
 
 
-go get google.golang.org/protobuf/...@v1.25.0
+go get google.golang.org/protobuf/...@v1.30.0
 go get google.golang.org/grpc
 go get google.golang.org/grpc/cmd/protoc-gen-go-grpc
 
