@@ -1,18 +1,18 @@
 use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
 #[derive(PartialEq, Clone)]
-struct LinkedList<T> {
+pub struct LinkedList<T> {
     header: Next<T>,
     size: usize,
 }
 
 #[derive(PartialEq, Clone)]
-struct Node<T> {
+pub struct Node<T> {
     pub value: T,
     pub next: Next<T>,
 }
 
-type Next<T> = Option<Rc<RefCell<Node<T>>>>;
+pub type Next<T> = Option<Rc<RefCell<Node<T>>>>;
 
 impl<T: PartialEq + Clone> Node<T> {
     pub fn new(value: T) -> Self {
@@ -74,6 +74,32 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
 
         vec
     }
+
+    pub fn get(&self, idx: usize) -> Next<T> {
+        let mut next = self.header.clone();
+        let mut count = 0;
+
+        loop {
+            if count == idx {
+                return next;
+            }
+
+            match next.clone() {
+                None => return None,
+                Some(v) => next = v.borrow().next.clone(),
+            }
+            count += 1;
+        }
+    }
+
+    pub fn last(&self) -> Next<T> {
+        match self.size {
+            0 => None,
+            v => self.get(v - 1),
+        }
+    }
+
+    // TODO: fast_and_slow_pointers
 }
 
 #[cfg(test)]
@@ -86,5 +112,7 @@ mod tests {
         list.push(1).push(2).push(3).push(2).push(4);
 
         assert_eq!(list.size(), 4);
+        assert_eq!(list.get(0).unwrap().borrow().value, 1);
+        assert_eq!(list.get(2).unwrap().borrow().value, 3);
     }
 }
