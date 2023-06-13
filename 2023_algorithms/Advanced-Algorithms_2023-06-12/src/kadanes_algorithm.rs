@@ -1,5 +1,6 @@
 use std::cmp::max;
 
+// brute force, O(n**2), O(n)
 fn max_subarray_brute(arr: &[i32]) -> i32 {
     // assert!(arr.len() > 0);
     if arr.is_empty() {
@@ -9,17 +10,18 @@ fn max_subarray_brute(arr: &[i32]) -> i32 {
     let mut max_sum = arr[0];
 
     for i in 0..arr.len() {
-        let mut sum_sub = 0;
+        let mut curent = 0;
 
         for j in i + 1..arr.len() {
-            sum_sub += arr[j];
-            max_sum = max(max_sum, sum_sub);
+            curent += arr[j];
+            max_sum = max(max_sum, curent);
         }
     }
 
     max_sum
 }
 
+// dynamic programming, O(n), O(n)
 fn max_subarray_dp(arr: &[i32]) -> i32 {
     // assert!(arr.len() > 0);
     if arr.is_empty() {
@@ -38,6 +40,7 @@ fn max_subarray_dp(arr: &[i32]) -> i32 {
     dp.iter().max().unwrap().clone()
 }
 
+// kafane's algorithm, O(n), 1
 fn max_subarray_kadane(arr: &[i32]) -> i32 {
     // assert!(arr.len() > 0);
     if arr.is_empty() {
