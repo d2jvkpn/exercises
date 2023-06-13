@@ -99,7 +99,68 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
         }
     }
 
-    // TODO: fast_and_slow_pointers
+    pub fn walk(next: Next<T>, steps: usize) -> Next<T> {
+        let mut current = next.clone();
+        let mut count = 0;
+
+        loop {
+            if count == steps {
+                return current;
+            }
+
+            match current.clone() {
+                None => return None,
+                Some(v) => current = v.borrow().next.clone(),
+            }
+            count += 1;
+        }
+    }
+
+    pub fn has_cycle(&self) -> (Next<T>, bool) {
+        let mut slow = self.header.clone();
+        let mut fast = self.header.clone();
+
+        loop {
+            match fast {
+                None => return (None, false),
+                Some(_) => fast = Self::walk(fast, 2),
+            }
+
+            slow = Self::walk(slow, 1);
+
+            match fast.clone() {
+                None => return (None, false),
+                Some(v) => {
+                    if v.borrow().value == slow.clone().unwrap().borrow().value {
+                        return (fast, true);
+                    }
+                }
+            }
+        }
+    }
+
+    pub fn cycle_start(&self) -> Next<T> {
+        let (mut fast, has_cycle) = self.has_cycle();
+        if !has_cycle {
+            return None;
+        }
+
+        let mut slow = self.header.clone();
+
+        loop {
+            let (v1, v2) = match (slow.clone(), fast.clone()) {
+                (Some(v1), Some(v2)) => (v1, v2),
+                _ => return None,
+            };
+
+            if v1.borrow().value == v2.borrow().value {
+                return slow;
+            }
+
+            slow = Self::walk(slow, 1);
+            fast = Self::walk(fast, 1);
+        }
+    }
 }
 
 #[cfg(test)]
@@ -109,10 +170,22 @@ mod tests {
     #[test]
     fn t_linked_list() {
         let mut list = LinkedList::new();
-        list.push(1).push(2).push(3).push(2).push(4);
+        list.push(1).push(2).push(3).push(2).push(4).push(5);
 
-        assert_eq!(list.size(), 4);
+        assert_eq!(list.size(), 5);
         assert_eq!(list.get(0).unwrap().borrow().value, 1);
         assert_eq!(list.get(2).unwrap().borrow().value, 3);
+        assert_eq!(list.last().unwrap().borrow().value, 5);
+
+        let n2 = list.get(1);
+        let last = list.last();
+        assert_eq!(LinkedList::walk(n2.clone(), 2).unwrap().borrow().value, 4);
+
+        last.unwrap().borrow_mut().next = n2;
+        let (next, ok) = list.has_cycle();
+        assert!(ok);
+        assert_eq!(next.unwrap().borrow().value, 5);
+
+        assert_eq!(list.cycle_start().unwrap().borrow().value, 2);
     }
 }
