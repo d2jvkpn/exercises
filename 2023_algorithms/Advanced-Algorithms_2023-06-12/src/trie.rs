@@ -1,23 +1,23 @@
 use std::{cell::RefCell, rc::Rc};
 
 struct Trie {
-    children: Children,
+    children: Vec<Child>,
 }
 
 struct Node {
     pub value: char,
     pub word: bool,
-    pub children: Children,
+    pub children: Vec<Child>,
 }
 
-type Children = Vec<Rc<RefCell<Node>>>;
+type Child = Rc<RefCell<Node>>;
 
 impl Node {
     pub fn new(c: char) -> Self {
         Self { value: c, word: false, children: Vec::with_capacity(1) }
     }
 
-    pub fn into_child(self) -> Rc<RefCell<Self>> {
+    pub fn into_child(self) -> Child {
         Rc::new(RefCell::new(self))
     }
 
