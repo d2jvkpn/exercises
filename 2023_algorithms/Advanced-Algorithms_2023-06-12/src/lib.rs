@@ -7,6 +7,5 @@ mod sliding_window;
 mod trie;
 mod two_pointers;
 
-mod linked_list_general;
-mod linked_list_unique;
+mod linked_list;
 mod queue;
