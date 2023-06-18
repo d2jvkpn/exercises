@@ -4,6 +4,7 @@ use std::{cell::RefCell, fmt::Debug, rc::Rc};
 pub struct LinkedList<T> {
     pub header: Next<T>,
     size: usize,
+    pub tail: Next<T>,
 }
 
 #[derive(PartialEq, Clone)]
@@ -18,45 +19,59 @@ impl<T: PartialEq + Clone> Node<T> {
     pub fn new(value: T) -> Self {
         Self { value, next: None }
     }
+}
 
-    pub fn into_next(self) -> Next<T> {
-        Some(Rc::new(RefCell::new(self)))
+impl<T> From<Node<T>> for Next<T> {
+    fn from(node: Node<T>) -> Self {
+        Some(Rc::new(RefCell::new(node)))
     }
 }
 
 impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
     pub fn new() -> Self {
-        Self { header: None, size: 0 }
+        Self { header: None, size: 0, tail: None }
     }
 
+    // time complexity: O(1)
     pub fn push(&mut self, value: T) -> &mut Self {
-        let mut next = self.header.clone();
-        // println!("~~> push value: {:?}", value);
+        self.size += 1;
 
-        if next.is_none() {
-            self.size += 1;
-            self.header = Node::new(value).into_next();
-            return self;
-        }
+        let node = Rc::new(RefCell::new(Node::new(value)));
 
-        while let Some(node) = next.clone() {
-            let mut node = node.borrow_mut();
-            if node.value == value {
-                // avoid duplicate values
+        let header = match &self.header {
+            None => {
+                self.header = Some(node);
                 return self;
             }
+            Some(v) => v,
+        };
 
-            match &node.next {
-                Some(v) => next = Some(v.clone()),
-                None => {
-                    node.next = Node::new(value).into_next();
-                    break;
-                }
-            }
+        match &self.tail {
+            None => header.borrow_mut().next = Some(node.clone()),
+            Some(v) => v.borrow_mut().next = Some(node.clone()),
         }
 
-        self.size += 1;
+        self.tail = Some(node);
+
         self
+    }
+
+    // time complexity: O(1)
+    pub fn count(&mut self, value: T) -> usize {
+        let mut count = 0;
+
+        let mut next = self.header.clone();
+
+        while let Some(node) = next.clone() {
+            let node = node.borrow();
+            if node.value == value {
+                count += 1;
+            }
+
+            next = node.next.clone();
+        }
+
+        count
     }
 
     pub fn size(&self) -> usize {
@@ -75,7 +90,7 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
         vec
     }
 
-    pub fn get(&self, idx: usize) -> Next<T> {
+    pub fn first(&self, idx: usize) -> Next<T> {
         let mut next = self.header.clone();
         let mut count = 0;
 
@@ -89,13 +104,6 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
                 Some(v) => next = v.borrow().next.clone(),
             }
             count += 1;
-        }
-    }
-
-    pub fn last(&self) -> Next<T> {
-        match self.size {
-            0 => None,
-            v => self.get(v - 1),
         }
     }
 
@@ -126,9 +134,9 @@ mod tests {
         let mut list = LinkedList::new();
         list.push(1).push(2).push(3).push(2).push(4).push(5);
 
-        assert_eq!(list.size(), 5);
-        assert_eq!(list.get(0).unwrap().borrow().value, 1);
-        assert_eq!(list.get(2).unwrap().borrow().value, 3);
-        assert_eq!(list.last().unwrap().borrow().value, 5);
+        assert_eq!(list.count(2), 2);
+        assert_eq!(list.size(), 6);
+        assert_eq!(list.first(0).unwrap().borrow().value, 1);
+        assert_eq!(list.first(2).unwrap().borrow().value, 3);
     }
 }

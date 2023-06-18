@@ -116,7 +116,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
     }
 
     // find a match node and return parent and target node
-    pub fn local_child(item: &Child<T>, value: T) -> (Child<T>, Child<T>) {
+    pub fn locate_child(item: &Child<T>, value: T) -> (Child<T>, Child<T>) {
         // case 1
         let node = if let Some(v) = item { v } else { return (None, None) };
 
@@ -138,17 +138,17 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         }
 
         // iter left
-        let (parent, target) = Self::local_child(&node.borrow().left, value.clone());
+        let (parent, target) = Self::locate_child(&node.borrow().left, value.clone());
         if target.is_some() {
             return (parent, target);
         }
 
         // iter right
-        Self::local_child(&node.borrow().right, value.clone())
+        Self::locate_child(&node.borrow().right, value.clone())
     }
 
-    pub fn local(&self, value: T) -> (Child<T>, Child<T>) {
-        Self::local_child(&self.root, value)
+    pub fn locate(&self, value: T) -> (Child<T>, Child<T>) {
+        Self::locate_child(&self.root, value)
     }
 
     fn take_min(item: &Child<T>) -> Child<T> {
@@ -169,7 +169,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
     }
 
     pub fn delete(&mut self, value: T) -> bool {
-        let (parent, target) = self.local(value);
+        let (parent, target) = self.locate(value);
 
         // case 1
         let target = match target {
