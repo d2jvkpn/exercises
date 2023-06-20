@@ -266,8 +266,6 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
 
         vec
     }
-
-    // TODO: bfs, dfs, rebalance
 }
 
 #[cfg(test)]

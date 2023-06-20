@@ -78,20 +78,20 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         }
     }
 
-    pub fn count(&self) -> (usize, usize) {
-        let mut result = (0, 0);
+    pub fn count(&self) -> usize {
+        let mut result = 0;
 
         if let Some(left) = &self.left {
-            left.borrow().count_help(&mut result.0);
-            result.0 += 1;
+            left.borrow().count_help(&mut result);
+            result += 1;
         }
 
         if let Some(right) = &self.right {
-            right.borrow().count_help(&mut result.1);
-            result.1 += 1;
+            right.borrow().count_help(&mut result);
+            result += 1;
         }
 
-        result
+        result + 1
     }
 
     pub fn levels(&self) -> usize {
@@ -120,6 +120,13 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
         self.size
     }
 
+    pub fn levels(&self) -> usize {
+        match &self.root {
+            Some(root) => root.borrow().levels(),
+            None => 0,
+        }
+    }
+
     pub fn push_left(&mut self, node: Node<T>) {
         let count = node.count();
 
@@ -128,7 +135,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
             None => self.root = node.into(),
         }
 
-        self.size += count.0 + count.1 + 1;
+        self.size += count;
     }
 
     pub fn push_right(&mut self, node: Node<T>) {
@@ -139,15 +146,115 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
             None => self.root = node.into(),
         }
 
-        self.size += count.0 + count.1 + 1;
+        self.size += count;
     }
 
-    pub fn levels(&self) -> usize {
-        match &self.root {
-            Some(root) => root.borrow().levels(),
-            None => 0,
-        }
+    pub fn inorder(&self) {}
+}
+
+// https://www.jianshu.com/p/7a62dcc96304
+// left..., parent, right...
+pub fn inorder_recur_a<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+    let mut result = Vec::new();
+
+    let node = if let Some(v) = item { v } else { return result };
+
+    result.extend(inorder_recur_a(&node.borrow().left));
+    result.push(node.borrow().value.clone());
+    result.extend(inorder_recur_a(&node.borrow().right));
+
+    result
+}
+
+pub fn inorder_recur_b<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+    fn traversal<T: Debug + PartialEq + Clone>(item: &Child<T>, ans: &mut Vec<T>) {
+        let node = if let Some(v) = item { v } else { return };
+        traversal(&node.borrow().left, ans);
+        ans.push(node.borrow().value.clone());
+        traversal(&node.borrow().right, ans);
     }
+
+    let mut ans = vec![];
+    traversal(&item, &mut ans);
+    ans
+}
+
+pub fn inorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+    let mut stack: Vec<Rc<RefCell<Node<T>>>> = vec![];
+    let mut ans: Vec<T> = vec![];
+    let mut node = item.clone();
+
+    loop {
+        if let Some(v) = node {
+            stack.push(v.clone());
+            node = v.borrow().left.clone();
+            continue;
+        }
+
+        if let Some(v) = stack.pop() {
+            ans.push(v.borrow().value.clone());
+            node = v.borrow().right.clone(); // !!
+            continue;
+        }
+
+        break;
+    }
+
+    ans
+}
+
+// parent, left..., right...
+pub fn preorder_recur<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+    let mut result = Vec::new();
+    let node = if let Some(v) = item { v } else { return result };
+
+    result.push(node.borrow().value.clone());
+    result.extend(preorder_recur(&node.borrow().left));
+    result.extend(preorder_recur(&node.borrow().right));
+
+    result
+}
+
+pub fn preorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+    let mut stack: Vec<Rc<RefCell<Node<T>>>> = vec![];
+    let mut ans: Vec<T> = vec![];
+    let mut node = item.clone();
+
+    loop {
+        if let Some(v) = node {
+            ans.push(v.borrow().value.clone());
+            if let Some(right) = v.borrow().right.clone() {
+                stack.push(right);
+            }
+            node = v.borrow().left.clone();
+            continue;
+        }
+
+        if let Some(v) = stack.pop() {
+            node = Some(v.clone()); // !!
+            continue;
+        }
+
+        break;
+    }
+
+    ans
+}
+
+// left..., right..., parent
+pub fn postorder_recur<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+    let mut result = Vec::new();
+    let node = if let Some(v) = item { v } else { return result };
+
+    result.extend(postorder_recur(&node.borrow().left));
+    result.extend(postorder_recur(&node.borrow().right));
+    result.push(node.borrow().value.clone());
+
+    result
+}
+
+pub fn postorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+	todo!()
 }
 
 #[cfg(test)]
@@ -165,11 +272,20 @@ mod tests {
         // n3.push(Node::new(6), Node::new(7));
 
         n1.push(Node::triangle(2, 4, 5), Node::triangle(3, 6, 7));
-        assert_eq!(n1.count(), (3, 3));
+        assert_eq!(n1.count(), 7);
         tree.push_left(n1);
         dbg!(&tree);
 
         assert_eq!(tree.size(), 7);
         assert_eq!(tree.levels(), 3);
+
+        assert_eq!(inorder_recur_a(&tree.root), vec![4, 2, 5, 1, 6, 3, 7]);
+        assert_eq!(inorder_recur_b(&tree.root), vec![4, 2, 5, 1, 6, 3, 7]);
+        assert_eq!(inorder_stack(&tree.root), vec![4, 2, 5, 1, 6, 3, 7]);
+
+        assert_eq!(preorder_recur(&tree.root), vec![1, 2, 4, 5, 3, 6, 7]);
+        assert_eq!(preorder_stack(&tree.root), vec![1, 2, 4, 5, 3, 6, 7]);
+
+        assert_eq!(postorder_recur(&tree.root), vec![4, 5, 2, 6, 7, 3, 1]);
     }
 }
