@@ -1,5 +1,6 @@
 pub mod linked_list_general;
 pub mod linked_list_unique;
+pub mod tree;
 
 // mod alias
 pub mod unique {
