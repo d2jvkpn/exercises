@@ -26,16 +26,22 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         Self { value, left: None, right: None }
     }
 
-    pub fn push_left(&mut self, node: Node<T>) {
+    pub fn triangle(value: T, left: T, right: T) -> Self {
+        Self { value, left: Self::new(left).into(), right: Self::new(right).into() }
+    }
+
+    pub fn push_left(&mut self, node: Node<T>) -> &mut Self {
         if let Some(left) = self.left.take() {
             (*left).borrow_mut().push_left(node);
             self.left = Some(left);
         } else {
             self.left = node.into();
         }
+
+        self
     }
 
-    pub fn push_right(&mut self, node: Node<T>) {
+    pub fn push_right(&mut self, node: Node<T>) -> &mut Self {
         /* ?? not workinf
         if let Some(right) = &self.right {
             return right.borrow_mut().push_right(node);
@@ -50,11 +56,14 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         } else {
             self.right = node.into();
         }
+
+        self
     }
 
-    pub fn push(&mut self, left: Node<T>, right: Node<T>) {
+    pub fn push(&mut self, left: Node<T>, right: Node<T>) -> &mut Self {
         self.push_left(left);
         self.push_right(right);
+        self
     }
 
     fn count_help(&self, size: &mut usize) {
@@ -115,7 +124,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
         let count = node.count();
 
         match &self.root {
-            Some(root) => return root.borrow_mut().push_left(node),
+            Some(root) => _ = root.borrow_mut().push_left(node),
             None => self.root = node.into(),
         }
 
@@ -126,7 +135,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
         let count = node.count();
 
         match &self.root {
-            Some(root) => return root.borrow_mut().push_right(node),
+            Some(root) => _ = root.borrow_mut().push_right(node),
             None => self.root = node.into(),
         }
 
@@ -150,13 +159,12 @@ mod tests {
         let mut tree = Tree::new();
 
         let mut n1 = Node::new(1);
-        let mut n2 = Node::new(2);
-        let mut n3 = Node::new(3);
+        // let mut n2 = Node::new(2);
+        // let mut n3 = Node::new(3);
+        // n2.push(Node::new(4), Node::new(5));
+        // n3.push(Node::new(6), Node::new(7));
 
-        n2.push(Node::new(4), Node::new(5));
-        n3.push(Node::new(6), Node::new(7));
-
-        n1.push(n2, n3);
+        n1.push(Node::triangle(2, 4, 5), Node::triangle(3, 6, 7));
         assert_eq!(n1.count(), (3, 3));
         tree.push_left(n1);
         dbg!(&tree);
