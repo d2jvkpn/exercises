@@ -60,10 +60,8 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         self
     }
 
-    pub fn push(&mut self, left: Node<T>, right: Node<T>) -> &mut Self {
-        self.push_left(left);
-        self.push_right(right);
-        self
+    pub fn push(child: &mut Child<T>, node: Node<T>) -> &mut Child<T> {
+        todo!()
     }
 
     fn count_help(&self, size: &mut usize) {
@@ -254,7 +252,7 @@ pub fn postorder_recur<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> 
 }
 
 pub fn postorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
-	todo!()
+    todo!()
 }
 
 #[cfg(test)]
@@ -275,6 +273,11 @@ mod tests {
         assert_eq!(n1.count(), 7);
         tree.push_left(n1);
         dbg!(&tree);
+        /*
+             1
+          2     3
+        4  5  6   7
+        */
 
         assert_eq!(tree.size(), 7);
         assert_eq!(tree.levels(), 3);
