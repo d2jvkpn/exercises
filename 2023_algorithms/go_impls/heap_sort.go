@@ -1,5 +1,5 @@
 // author: ChatGPT
-package main
+package go_impls
 
 import "fmt"
 

@@ -5,3 +5,5 @@ mod heap;
 mod node;
 mod queue;
 mod traversal;
+
+use queue;

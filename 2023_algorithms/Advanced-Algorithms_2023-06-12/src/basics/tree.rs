@@ -1,3 +1,4 @@
+use super::queue::Queue;
 use std::{cell::RefCell, cmp::max, fmt::Debug, rc::Rc};
 
 #[derive(Debug)]
@@ -60,8 +61,10 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         self
     }
 
-    pub fn push(child: &mut Child<T>, node: Node<T>) -> &mut Child<T> {
-        todo!()
+    pub fn push(&mut self, left: Node<T>, right: Node<T>) -> &mut Self {
+        self.push_left(left);
+        self.push_right(right);
+        self
     }
 
     fn count_help(&self, size: &mut usize) {
@@ -147,7 +150,9 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
         self.size += count;
     }
 
-    pub fn inorder(&self) {}
+    pub fn push(_child: &mut Child<T>, _node: Node<T>) -> &mut Child<T> {
+        todo!()
+    }
 }
 
 // https://www.jianshu.com/p/7a62dcc96304
@@ -221,9 +226,11 @@ pub fn preorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
     loop {
         if let Some(v) = node {
             ans.push(v.borrow().value.clone());
+
             if let Some(right) = v.borrow().right.clone() {
                 stack.push(right);
             }
+
             node = v.borrow().left.clone();
             continue;
         }
@@ -252,7 +259,61 @@ pub fn postorder_recur<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> 
 }
 
 pub fn postorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
-    todo!()
+    let mut stack: Vec<Rc<RefCell<Node<T>>>> = vec![];
+    let mut visited: Vec<bool> = vec![];
+    let mut ans: Vec<T> = vec![];
+    let node = item.clone();
+
+    if let Some(v) = node {
+        stack.push(v.clone());
+        visited.push(false);
+    } else {
+        return ans;
+    }
+
+    while let (Some(node), Some(viz)) = (stack.pop(), visited.pop()) {
+        if viz {
+            ans.push(node.borrow().value.clone());
+        } else {
+            stack.push(node.clone());
+            visited.push(true);
+
+            if let Some(v) = node.borrow().right.clone() {
+                stack.push(v);
+                visited.push(false);
+            }
+
+            if let Some(v) = node.borrow().left.clone() {
+                stack.push(v);
+                visited.push(false);
+            }
+        }
+    }
+
+    ans
+}
+
+pub fn breath_first_search<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
+    let mut vec = Vec::new();
+
+    let mut queue = match item {
+        None => return vec,
+        Some(v) => Queue::new_with(v.clone()),
+    };
+
+    while let Some(qn) = queue.pop() {
+        if let Some(v) = &qn.borrow().value.borrow().left {
+            _ = queue.push(v.clone());
+        }
+
+        if let Some(v) = &qn.borrow().value.borrow().right {
+            _ = queue.push(v.clone());
+        }
+
+        vec.push(qn.borrow().value.borrow().value.clone());
+    }
+
+    vec
 }
 
 #[cfg(test)]
@@ -271,6 +332,7 @@ mod tests {
 
         n1.push(Node::triangle(2, 4, 5), Node::triangle(3, 6, 7));
         assert_eq!(n1.count(), 7);
+
         tree.push_left(n1);
         dbg!(&tree);
         /*
@@ -282,13 +344,22 @@ mod tests {
         assert_eq!(tree.size(), 7);
         assert_eq!(tree.levels(), 3);
 
-        assert_eq!(inorder_recur_a(&tree.root), vec![4, 2, 5, 1, 6, 3, 7]);
-        assert_eq!(inorder_recur_b(&tree.root), vec![4, 2, 5, 1, 6, 3, 7]);
-        assert_eq!(inorder_stack(&tree.root), vec![4, 2, 5, 1, 6, 3, 7]);
+        // depth first search
+        let expected = vec![4, 2, 5, 1, 6, 3, 7];
+        assert_eq!(inorder_recur_a(&tree.root), expected);
+        assert_eq!(inorder_recur_b(&tree.root), expected);
+        assert_eq!(inorder_stack(&tree.root), expected);
 
-        assert_eq!(preorder_recur(&tree.root), vec![1, 2, 4, 5, 3, 6, 7]);
-        assert_eq!(preorder_stack(&tree.root), vec![1, 2, 4, 5, 3, 6, 7]);
+        let expected = vec![1, 2, 4, 5, 3, 6, 7];
+        assert_eq!(preorder_recur(&tree.root), expected);
+        assert_eq!(preorder_stack(&tree.root), expected);
 
-        assert_eq!(postorder_recur(&tree.root), vec![4, 5, 2, 6, 7, 3, 1]);
+        let expected = vec![4, 5, 2, 6, 7, 3, 1];
+        assert_eq!(postorder_recur(&tree.root), expected);
+        assert_eq!(postorder_stack(&tree.root), expected);
+
+        // breath first search
+        let expected = vec![1, 2, 3, 4, 5, 6, 7];
+        assert_eq!(breath_first_search(&tree.root), expected);
     }
 }

@@ -1,10 +1,10 @@
-package main
+package go_impls
 
 import (
-	"fmt"
+// "fmt"
 )
 
-func partition(arr []int, low, high int) int {
+func quickSelectPartition(arr []int, low, high int) int {
 	if low >= high {
 		return low
 	}
@@ -37,7 +37,7 @@ func quickSelectRange(arr []int, k, low, high int) int {
 		return high
 	}
 
-	pivot := partition(arr, low, high)
+	pivot := quickSelectPartition(arr, low, high)
 	switch {
 	case k < pivot:
 		return quickSelectRange(arr, k, low, pivot-1)
@@ -50,11 +50,4 @@ func quickSelectRange(arr []int, k, low, high int) int {
 
 func QuickSelect(arr []int, k int) int {
 	return quickSelectRange(arr, k, 0, len(arr)-1)
-}
-
-func main() {
-	arr := []int{3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5}
-	k := QuickSelect(arr, 5)
-
-	fmt.Println(arr[:k])
 }
