@@ -1,7 +1,6 @@
 use crate::{
-    node::{Child, Node},
     queue::Queue,
-    traversal,
+    tree_node::{Child, Node},
 };
 use std::fmt::Debug;
 
@@ -16,15 +15,9 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         Self { root: None, size: 0 }
     }
 
-    pub fn new_with(value: T) -> Self {
-        Self { root: Node::new_child(value), size: 1 }
-    }
-
     pub fn push_iter(item: &Child<T>, value: T) {
         let node = match item {
-            None => {
-                return;
-            }
+            None => return,
             Some(v) => v,
         };
 
@@ -34,7 +27,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
             return;
         } else if value < v {
             if node.borrow().left.is_none() {
-                node.borrow_mut().left = Node::new_child(v);
+                node.borrow_mut().left = Node::new(v).into();
             } else {
                 Self::push_iter(&node.borrow().left, value);
             }
@@ -43,28 +36,14 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         }
     }
 
-    pub fn push(&mut self, value: T) -> &mut Self {
+    pub fn push(&mut self, node: Node<T>) -> &mut Self {
         match &self.root {
-            None => self.root = Node::new_child(value),
-            Some(v) => {
-                v.borrow_mut().push(value);
-            }
+            None => self.root = node.into(),
+            Some(v) => _ = v.borrow_mut().push_binary(node),
         }
 
         self.size += 1;
         self
-    }
-
-    pub fn inorder(&self) -> Vec<T> {
-        return traversal::inorder_v2(&self.root);
-    }
-
-    pub fn preorder(&self) -> Vec<T> {
-        return traversal::preorder_v1(&self.root);
-    }
-
-    pub fn postorder(&self) -> Vec<T> {
-        return traversal::postorder_v1(&self.root);
     }
 
     pub fn find(&self, value: T) -> Child<T> {
