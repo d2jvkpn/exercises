@@ -1,10 +1,11 @@
-package main
+package go_impls
 
 import (
 	"fmt"
+	"testing"
 )
 
-func main() {
+func TestSlice(t *testing.T) {
 	s1 := make([]int, 3, 5)
 	fmt.Printf("~~~ s1: %v, len=%d, cap=%d\n", s1, len(s1), cap(s1))
 
