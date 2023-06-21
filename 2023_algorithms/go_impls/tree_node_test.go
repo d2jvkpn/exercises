@@ -1,4 +1,4 @@
-package binary_tree
+package go_impls
 
 import (
 	"fmt"
@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func TestNode(t *testing.T) {
+func TestTreeNode(t *testing.T) {
 	arr := []int{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
 	length := len(arr)
 	rand.Seed(time.Now().UnixNano())
@@ -15,7 +15,7 @@ func TestNode(t *testing.T) {
 	fmt.Println("~~~ arr:", arr)
 
 	// node := NewNode(6).Push(3).Push(9).Push(2).Push(4).Push(1).Push(5).Push(7).Push(10).Push(8)
-	node := NewNode(arr[0])
+	node := NewTreeNode(arr[0])
 	for _, v := range arr[1:] {
 		node.Push(v)
 	}

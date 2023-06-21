@@ -1,27 +1,27 @@
-package binary_tree
+package go_impls
 
 import (
 	"fmt"
 )
 
-type Node struct {
+type TreeNode struct {
 	Value int
-	Left  *Node
-	Right *Node
+	Left  *TreeNode
+	Right *TreeNode
 }
 
-func NewNode(value int) *Node {
-	return &Node{Value: value}
+func NewTreeNode(value int) *TreeNode {
+	return &TreeNode{Value: value}
 }
 
-func (node *Node) Push(value int) *Node {
+func (node *TreeNode) Push(value int) *TreeNode {
 	switch {
 	case value < node.Value && node.Left == nil:
-		node.Left = NewNode(value)
+		node.Left = NewTreeNode(value)
 	case value < node.Value && node.Left != nil:
 		node.Left.Push(value)
 	case value > node.Value && node.Right == nil:
-		node.Right = NewNode(value)
+		node.Right = NewTreeNode(value)
 	case value > node.Value && node.Right != nil:
 		node.Right.Push(value)
 	default:
@@ -31,7 +31,7 @@ func (node *Node) Push(value int) *Node {
 	return node
 }
 
-func (node *Node) Find(value int) *Node {
+func (node *TreeNode) Find(value int) *TreeNode {
 	switch {
 	case node == nil:
 		return nil
@@ -46,7 +46,7 @@ func (node *Node) Find(value int) *Node {
 	}
 }
 
-func (node *Node) FindWithParent(value int) (*Node, *Node) {
+func (node *TreeNode) FindWithParent(value int) (*TreeNode, *TreeNode) {
 	switch {
 	case node == nil:
 		return nil, nil
@@ -73,8 +73,8 @@ func (node *Node) FindWithParent(value int) (*Node, *Node) {
 	}
 }
 
-func (node *Node) succeed() (value int, ok bool) {
-	var parent, current *Node
+func (node *TreeNode) succeed() (value int, ok bool) {
+	var parent, current *TreeNode
 
 	/*
 		t := 0
@@ -136,7 +136,7 @@ func (node *Node) succeed() (value int, ok bool) {
 	return node.Value, true
 }
 
-func (node *Node) count(count *int) {
+func (node *TreeNode) count(count *int) {
 	if node == nil {
 		return
 	}
@@ -146,14 +146,14 @@ func (node *Node) count(count *int) {
 	node.Right.count(count)
 }
 
-func (node *Node) Count() int {
+func (node *TreeNode) Count() int {
 	count := new(int)
 	node.count(count)
 
 	return *count
 }
 
-func (node *Node) Height() (levels int) {
+func (node *TreeNode) Height() (levels int) {
 	switch {
 	case node == nil:
 		return 0
@@ -176,7 +176,7 @@ func (node *Node) Height() (levels int) {
 }
 
 // left, parent, right
-func (node *Node) InorderTraversal() {
+func (node *TreeNode) InorderTraversal() {
 	if node == nil {
 		return
 	}
@@ -187,14 +187,14 @@ func (node *Node) InorderTraversal() {
 }
 
 // parent, left, right
-func (node *Node) PreorderTraversal() {
+func (node *TreeNode) PreorderTraversal() {
 	fmt.Println("==>", node.Value)
 	node.Left.InorderTraversal()
 	node.Right.InorderTraversal()
 }
 
 // left, right, root
-func (node *Node) PostorderTraversal() {
+func (node *TreeNode) PostorderTraversal() {
 	node.Left.InorderTraversal()
 	node.Right.InorderTraversal()
 	fmt.Println("==>", node.Value)

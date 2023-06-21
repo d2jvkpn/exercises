@@ -1,27 +1,27 @@
-package binary_tree
+package go_impls
 
 import (
 // "fmt"
 )
 
 type BinaryTree struct {
-	Header *Node
+	Header *TreeNode
 }
 
 func NewBinaryTree() BinaryTree {
 	return BinaryTree{Header: nil}
 }
 
-func (tree *BinaryTree) Push(value int) *Node {
+func (tree *BinaryTree) Push(value int) *TreeNode {
 	if tree.Header == nil {
-		tree.Header = NewNode(value)
+		tree.Header = NewTreeNode(value)
 		return tree.Header
 	}
 
 	return tree.Header.Push(value)
 }
 
-func (tree *BinaryTree) Find(value int) *Node {
+func (tree *BinaryTree) Find(value int) *TreeNode {
 	return tree.Header.Find(value)
 }
 

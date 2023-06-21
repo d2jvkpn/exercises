@@ -6,17 +6,8 @@ import (
 )
 
 type LinkedList[T Ordered] struct {
-	Header *Node[T]
+	Header *LinkedNode[T]
 	Size   uint
-}
-
-type Node[T Ordered] struct {
-	Value T
-	Next  *Node[T]
-}
-
-func NewNode[T Ordered](value T) *Node[T] {
-	return &Node[T]{Value: value, Next: nil}
 }
 
 func NewLinkedList[T Ordered]() *LinkedList[T] {
@@ -28,7 +19,7 @@ func (list *LinkedList[T]) Push(value T) *LinkedList[T] {
 
 	if node == nil {
 		list.Size += 1
-		list.Header = NewNode[T](value)
+		list.Header = NewLinkedNode[T](value)
 		return list
 	}
 
@@ -38,7 +29,7 @@ func (list *LinkedList[T]) Push(value T) *LinkedList[T] {
 		}
 
 		if node.Next == nil {
-			node.Next = NewNode[T](value)
+			node.Next = NewLinkedNode[T](value)
 			break
 		}
 
@@ -49,7 +40,7 @@ func (list *LinkedList[T]) Push(value T) *LinkedList[T] {
 	return list
 }
 
-func (list *LinkedList[T]) Get(idx int) *Node[T] {
+func (list *LinkedList[T]) Get(idx int) *LinkedNode[T] {
 	node := list.Header
 
 	for i := 0; ; i++ {
@@ -60,7 +51,7 @@ func (list *LinkedList[T]) Get(idx int) *Node[T] {
 	}
 }
 
-func (list *LinkedList[T]) HasCycle() (*Node[T], bool) {
+func (list *LinkedList[T]) HasCycle() (*LinkedNode[T], bool) {
 	slow, fast := list.Header, list.Header
 
 	for {
@@ -80,7 +71,7 @@ func (list *LinkedList[T]) HasCycle() (*Node[T], bool) {
 	}
 }
 
-func (list *LinkedList[T]) CycleStart() *Node[T] {
+func (list *LinkedList[T]) CycleStart() *LinkedNode[T] {
 	fast, hasCycle := list.HasCycle()
 	if !hasCycle {
 		return nil
