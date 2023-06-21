@@ -9,7 +9,7 @@ struct Node<T> {
 
 impl<T> Node<T> {
     fn new(value: T) -> Self {
-        Node { value: value, next: None, prev: None }
+        Node { value, next: None, prev: None }
     }
 
     fn into_rc(self) -> Rc<RefCell<Self>> {
@@ -60,7 +60,7 @@ pub struct ListIterator<T> {
 
 impl<T> From<LinkedList<T>> for ListIterator<T> {
     fn from(item: LinkedList<T>) -> Self {
-        Self { head: item.head.clone(), tail: item.tail.clone() }
+        Self { head: item.head.clone(), tail: item.tail }
     }
 }
 

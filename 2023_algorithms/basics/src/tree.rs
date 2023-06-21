@@ -7,6 +7,12 @@ pub struct Tree<T> {
     size: usize,
 }
 
+impl<T: PartialEq + PartialOrd + Debug + Clone> Default for Tree<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
     pub fn new() -> Self {
         Self { root: None, size: 0 }

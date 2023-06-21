@@ -15,6 +15,12 @@ pub struct Node<T> {
     pub next: Next<T>,
 }
 
+impl<T: Debug + Clone + PartialEq> Default for Queue<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: Debug + Clone + PartialEq> Node<T> {
     pub fn new(value: T) -> Self {
         Self { value, next: None }
@@ -32,7 +38,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
 
     pub fn new_with(value: T) -> Self {
         let header = Node::new(value).into_next();
-        Queue { header: header, tail: None, size: 1 }
+        Queue { header, tail: None, size: 1 }
     }
 
     pub fn size(&self) -> usize {
@@ -57,7 +63,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
         }
 
         self.tail = next;
-        return self;
+        self
     }
 
     pub fn pop(&mut self) -> Next<T> {
@@ -68,7 +74,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
 
         self.size -= 1;
         self.header = header.borrow_mut().next.take();
-        return Some(header);
+        Some(header)
     }
 
     pub fn as_vec(&self) -> Vec<T> {

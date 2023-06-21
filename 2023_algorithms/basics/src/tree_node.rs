@@ -60,10 +60,11 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         self
     }
 
+    /*
     pub fn push_binary(&mut self, node: Node<T>) -> &mut Self {
         if node.value <= self.value {
             if let Some(v) = self.left.take() {
-                (*v).borrow_mut().push_binary(node); // !!! not *node.borrow_mut().push(value)
+                (*v).borrow_mut().push_binary(node); // !!! not *v.borrow_mut().push(value)
                 self.left = Some(v); // must return self.left
             } else {
                 self.left = node.into();
@@ -71,7 +72,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         } else {
             if let Some(v) = self.right.take() {
                 (*v).borrow_mut().push_binary(node);
-                self.right = Some(v); // must return to self.right
+                self.right = Some(v);
             } else {
                 self.right = node.into();
             }
@@ -79,6 +80,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
 
         self
     }
+    */
 
     fn count_help(&self, size: &mut usize) {
         if let Some(left) = &self.left {

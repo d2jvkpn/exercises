@@ -7,7 +7,7 @@ mod factorial {
 
         let ans = n * v1(n - 1);
         println!("<-- {}, got {}", n, ans);
-        return ans;
+        ans
     }
 
     pub fn v2(n: usize, ans: &mut usize) {

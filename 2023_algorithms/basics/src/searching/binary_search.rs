@@ -3,7 +3,7 @@ fn binary_search<T: PartialOrd + PartialEq + Copy + std::fmt::Debug>(
     target: T,
 ) -> Option<usize> {
     // slice was sorted
-    if slice.len() == 0 {
+    if slice.is_empty() {
         return None;
     }
 

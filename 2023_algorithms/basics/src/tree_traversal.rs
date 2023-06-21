@@ -24,7 +24,7 @@ pub fn inorder_recur_b<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> 
     }
 
     let mut ans = vec![];
-    traversal(&item, &mut ans);
+    traversal(item, &mut ans);
     ans
 }
 
@@ -111,7 +111,7 @@ pub fn postorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> 
     let node = item.clone();
 
     if let Some(v) = node {
-        stack.push(v.clone());
+        stack.push(v);
         visited.push(false);
     } else {
         return ans;

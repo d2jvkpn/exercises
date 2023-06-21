@@ -27,6 +27,12 @@ impl<T> From<Node<T>> for Next<T> {
     }
 }
 
+impl<T: Debug + Clone + Copy + PartialEq> Default for LinkedList<T> {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
     pub fn new() -> Self {
         Self { header: None, size: 0, tail: None }
@@ -107,7 +113,7 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
         }
     }
 
-    pub fn walk(next: Next<T>, steps: usize) -> Next<T> {
+    pub fn walk(next: &Next<T>, steps: usize) -> Next<T> {
         let mut current = next.clone();
         let mut count = 0;
 

@@ -143,7 +143,8 @@ impl<T: PartialEq> LinkedList<T> {
                 return false;
             }
         }
-        return true;
+
+        true
     }
 }
 

@@ -10,17 +10,15 @@ fn quick_select_range<T: Copy + Ord>(arr: &mut [T], k: usize, low: usize, high: 
     }
 
     let pivot = partition(arr, low, high);
-    if pivot > k {
-        return quick_select_range(arr, k, low, pivot - 1);
-    } else if pivot < k {
-        return quick_select_range(arr, k, pivot + 1, high);
-    } else {
-        return pivot;
+    match pivot {
+        pivot if pivot > k => quick_select_range(arr, k, low, pivot - 1),
+        pivot if pivot < k => quick_select_range(arr, k, pivot + 1, high),
+        _ => pivot,
     }
 }
 
 fn quick_select<T: Copy + Ord>(arr: &mut [T], k: usize) -> Option<usize> {
-    if arr.len() == 0 || k == 0 {
+    if arr.is_empty() || k == 0 {
         return None;
     } else if arr.len() < k {
         return Some(arr.len() - 1);

@@ -1,9 +1,9 @@
 mod fibonacci {
     pub fn v1(n: usize) -> usize {
         match n {
-            0 => return 0,
-            1 => return 1,
-            _ => return v1(n - 1) + v1(n - 2),
+            0 => 0,
+            1 => 1,
+            _ => v1(n - 1) + v1(n - 2),
         }
     }
 
