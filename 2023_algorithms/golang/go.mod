@@ -1,4 +1,4 @@
-module go_impls
+module goimpls
 
 go 1.20
 

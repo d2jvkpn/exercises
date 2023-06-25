@@ -1,4 +1,4 @@
-package go_impls
+package goimpls
 
 // TODO: dijkstra
 // TODO: queue
