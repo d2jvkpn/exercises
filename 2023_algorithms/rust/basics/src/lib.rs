@@ -3,6 +3,7 @@
 mod math;
 mod searching;
 mod sorting;
+pub mod utils;
 
 pub mod binary_tree;
 pub mod doubly_linked_list;

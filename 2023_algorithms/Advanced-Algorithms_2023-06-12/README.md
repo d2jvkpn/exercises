@@ -10,11 +10,11 @@
 - 00006 Fast and Slow Pointers
 - 00007 Trie, Prefix Tree
 - 00008 Union-Find, Disjoin sets
+- 00010 Interative DFS
 
 - 00009 Segment Tree
-
-- 00010 Interative DFS
 - 00011 Two Heaps
+
 - 00012 Subsets
 - 00013 Combinations
 - 00014 Permutations

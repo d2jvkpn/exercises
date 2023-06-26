@@ -1,35 +1,49 @@
-// author: ChatGPT
-pub fn heap_sort<T: Ord>(arr: &mut [T]) {
-    let len = arr.len();
+pub fn min_heap_sort<T: Ord>(arr: &mut [T]) {
+    min_heap(arr);
 
-    // Build max-heap
-    for i in (0..len / 2).rev() {
-        heapify(arr, len, i);
-    }
-
-    // Extract elements from the max-heap and sort the array
-    for i in (1..len).rev() {
+    for i in (1..arr.len()).rev() {
         arr.swap(0, i);
-        heapify(arr, i, 0);
+        heapify(&mut arr[..i], 0, |a, b| a < b);
     }
 }
 
-fn heapify<T: Ord>(arr: &mut [T], len: usize, i: usize) {
-    let mut largest = i;
-    let left = 2 * i + 1;
-    let right = 2 * i + 2;
+pub fn max_heap_sort<T: Ord>(arr: &mut [T]) {
+    max_heap(arr);
 
-    if left < len && arr[left] > arr[largest] {
-        largest = left;
+    for i in (1..arr.len()).rev() {
+        arr.swap(0, i);
+        heapify(&mut arr[..i], 0, |a, b| a > b);
+    }
+}
+
+pub fn min_heap<T: Ord>(arr: &mut [T]) {
+    for i in (0..arr.len() / 2).rev() {
+        heapify(arr, i, |a, b| a < b);
+    }
+}
+
+pub fn max_heap<T: Ord>(arr: &mut [T]) {
+    for i in (0..arr.len() / 2).rev() {
+        heapify(arr, i, |a, b| a > b);
+    }
+}
+
+fn heapify<T: Ord>(arr: &mut [T], idx: usize, comparator: fn(&T, &T) -> bool) {
+    let len = arr.len();
+    let mut target = idx;
+    let (left, right) = (2 * idx + 1, 2 * idx + 2);
+
+    if left < len && !comparator(&arr[left], &arr[target]) {
+        target = left;
     }
 
-    if right < len && arr[right] > arr[largest] {
-        largest = right;
+    if right < len && !comparator(&arr[right], &arr[target]) {
+        target = right;
     }
 
-    if largest != i {
-        arr.swap(i, largest);
-        heapify(arr, len, largest);
+    if target != idx {
+        arr.swap(idx, target);
+        heapify(arr, target, comparator);
     }
 }
 
@@ -41,8 +55,13 @@ mod tests {
     fn t_heap_sort() {
         let mut nums = vec![9, 7, 5, 11, 12, 2, 14, 3, 10, 6];
         println!("Before: {:?}", nums);
-        heap_sort(&mut nums);
+
+        min_heap_sort(&mut nums);
         println!("After: {:?}", nums);
         assert_eq!(nums, vec![2, 3, 5, 6, 7, 9, 10, 11, 12, 14]);
+
+        max_heap_sort(&mut nums);
+        println!("After: {:?}", nums);
+        assert_eq!(nums, vec![14, 12, 11, 10, 9, 7, 6, 5, 3, 2]);
     }
 }

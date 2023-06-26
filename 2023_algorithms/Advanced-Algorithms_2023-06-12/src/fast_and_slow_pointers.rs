@@ -6,8 +6,8 @@ pub fn has_cycle<T: Debug + Copy + PartialEq>(list: &LinkedList<T>) -> (Next<T>,
     let mut fast = list.header.clone();
 
     while fast.is_some() {
-        fast = LinkedList::walk(fast, 2);
-        slow = LinkedList::walk(slow, 1);
+        fast = LinkedList::walk(&fast, 2);
+        slow = LinkedList::walk(&slow, 1);
 
         /*
         let v = match fast {
@@ -51,8 +51,8 @@ pub fn cycle_start<T: Debug + Copy + PartialEq>(list: &LinkedList<T>) -> Next<T>
             return slow;
         }
 
-        slow = LinkedList::walk(slow, 1);
-        fast = LinkedList::walk(fast, 1);
+        slow = LinkedList::walk(&slow, 1);
+        fast = LinkedList::walk(&fast, 1);
     }
 }
 
@@ -67,7 +67,7 @@ mod tests {
 
         let n2 = list.get(1);
         let last = list.last();
-        assert_eq!(LinkedList::walk(n2.clone(), 2).unwrap().borrow().value, 4);
+        assert_eq!(LinkedList::walk(&n2, 2).unwrap().borrow().value, 4);
 
         last.unwrap().borrow_mut().next = n2;
         let (next, ok) = has_cycle(&list);

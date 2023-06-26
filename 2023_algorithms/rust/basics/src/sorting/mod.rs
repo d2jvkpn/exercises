@@ -2,7 +2,7 @@
 
 mod brute_force;
 mod divide_and_conquer;
-mod heap_sort;
+pub mod heap_sort;
 mod merge_sort;
 mod quick_select;
 mod quick_sort;
