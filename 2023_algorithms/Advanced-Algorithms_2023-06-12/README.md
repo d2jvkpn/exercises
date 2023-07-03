@@ -11,12 +11,14 @@
 - 00007 Trie, Prefix Tree
 - 00008 Union-Find, Disjoin sets
 - 00010 Interative DFS
-
-- 00009 Segment Tree
-- 00011 Two Heaps
-
 - 00012 Subsets
 - 00013 Combinations
+
+- skipped:
+  - 00009 Segment Tree
+  - 00011 Two Heaps
+  - 00014 Permutations
+
 - 00014 Permutations
 - 00015 Dijkstra's, shortest path
 - 00016 Kruskal's, Minimum Spanning Tree

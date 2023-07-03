@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 
+mod combinations;
 mod disjoint_set;
 mod fast_and_slow_pointers;
 mod kadanes_algorithm;

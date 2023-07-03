@@ -29,11 +29,9 @@ fn contains_duplicates_set(nums: &[i32], k: usize) -> bool {
     let mut low = 0;
     let mut set = HashSet::new();
 
-    for high in 0..length {
-        let v = nums[high];
-
+    for (high, v) in nums.iter().enumerate() {
         if high - low + 1 > k {
-            set.remove(&v);
+            set.remove(v);
             low += 1;
         }
 

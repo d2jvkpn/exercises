@@ -12,8 +12,12 @@ fn max_subarray_brute(arr: &[i32]) -> i32 {
     for i in 0..arr.len() {
         let mut curent = 0;
 
-        for j in i + 1..arr.len() {
-            curent += arr[j];
+        // for j in i + 1..arr.len() {
+        //     curent += arr[j];
+        //     max_sum = max(max_sum, curent);
+        // }
+        for v in arr.iter().skip(i + 1) {
+            curent += v;
             max_sum = max(max_sum, curent);
         }
     }
@@ -37,7 +41,8 @@ fn max_subarray_dp(arr: &[i32]) -> i32 {
         dp[i] = max(dp[i - 1] + arr[i], arr[i]);
     }
 
-    dp.iter().max().unwrap().clone()
+    // dp.iter().max().unwrap().clone()
+    *dp.iter().max().unwrap()
 }
 
 // kafane's algorithm, O(n), 1
@@ -49,8 +54,12 @@ fn max_subarray_kadane(arr: &[i32]) -> i32 {
 
     let (mut max_sum, mut current) = (arr[0], arr[0]);
 
-    for i in 1..arr.len() {
-        current = max(current + arr[i], arr[i]);
+    // for i in 1..arr.len() {
+    //     current = max(current + arr[i], arr[i]);
+    //     max_sum = max(max_sum, current);
+    // }
+    for v in arr.iter().skip(1) {
+        current = max(current + *v, *v);
         max_sum = max(max_sum, current);
     }
 

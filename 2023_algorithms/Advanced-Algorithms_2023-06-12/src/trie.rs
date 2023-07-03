@@ -28,14 +28,14 @@ impl Node {
         };
 
         match chars.split_at(1).1 {
-            v if v.len() == 0 => node.word = true,
+            v if v.is_empty() => node.word = true,
             v => {
                 let child = Self::from_chars(v).unwrap().into_child();
                 node.children.push(child);
             }
         }
 
-        return Some(node);
+        Some(node)
     }
 
     fn insert_v0(&mut self, chars: &[char]) {
