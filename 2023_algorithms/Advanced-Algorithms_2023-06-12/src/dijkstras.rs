@@ -36,20 +36,15 @@ fn dijkstra_graph(graph: &mut HashMap<char, Vec<Edge>>, start: char) -> HashMap<
     let mut heap = BinaryHeap::new();
     heap.push(Edge { from: start, distance: 0 });
 
-    while let Some(Edge { from, distance: value }) = heap.pop() {
+    while let Some(Edge { from, distance }) = heap.pop() {
         let current = distances.entry(from).or_insert_with(|| u32::max_value());
 
-        if &value > current {
+        if &distance > current {
             continue;
         }
 
-        let edges = match graph.get(&from) {
-            Some(v) => v,
-            None => continue,
-        };
-
-        for edge in edges {
-            let next_dist = value + edge.distance;
+        for edge in graph.get(&from).unwrap_or(&vec![]) {
+            let next_dist = distance + edge.distance;
             let next_from = edge.from;
 
             let current = distances.entry(next_from).or_insert_with(|| u32::max_value());
@@ -92,6 +87,18 @@ pub fn nodes2graph(nodes: &[(char, Vec<Edge>)]) -> HashMap<char, Vec<Edge>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::collections::HashMap;
+
+    #[test]
+    #[should_panic]
+    fn t_hashmap() {
+        let mut map = HashMap::new();
+        map.insert('a', 1);
+        map.insert('b', 2);
+
+        assert_eq!(map[&'a'], 1);
+        assert_eq!(map[&'c'], 1); // panicked at 'no entry found for key'
+    }
 
     #[test]
     fn t_dijkstra_graph() {
