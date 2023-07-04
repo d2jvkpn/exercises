@@ -29,7 +29,7 @@ impl PartialOrd for Edge {
 
 // result.0: taget_id=index, distance=value
 // result.1: steps
-fn dijkstra(graph: &mut HashMap<char, Vec<Edge>>, start: char) -> HashMap<char, u32> {
+pub fn dijkstra(graph: &mut HashMap<char, Vec<Edge>>, start: char) -> HashMap<char, u32> {
     let mut distances = HashMap::with_capacity(graph.len());
     _ = distances.insert(start, 0);
 
@@ -83,7 +83,7 @@ pub fn nodes2graph(nodes: &[(char, Vec<Edge>)]) -> HashMap<char, Vec<Edge>> {
     grap
 }
 
-// $ cargo test --lib -- dijkstras::tests::t_dijkstra --nocapture
+// $ cargo test --lib -- dijkstras1::tests::t_dijkstra --nocapture
 #[cfg(test)]
 mod tests {
     use super::*;

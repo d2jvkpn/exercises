@@ -1,7 +1,8 @@
 #![allow(dead_code)]
 
 mod combinations;
-mod dijkstras;
+mod dijkstras1;
+mod dijkstras2;
 mod dijkstras_chatgpt;
 mod disjoint_set;
 mod fast_and_slow_pointers;
