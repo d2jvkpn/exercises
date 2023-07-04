@@ -2,6 +2,7 @@
 
 mod combinations;
 mod dijkstras;
+mod dijkstras_chatgpt;
 mod disjoint_set;
 mod fast_and_slow_pointers;
 mod kadanes_algorithm;

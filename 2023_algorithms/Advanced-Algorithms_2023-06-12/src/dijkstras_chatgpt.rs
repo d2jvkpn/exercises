@@ -49,8 +49,8 @@ fn dijkstra(graph: &Vec<Vec<(usize, i32)>>, start: usize) -> (Vec<i32>, usize) {
     (distances, steps)
 }
 
-// $ cargo test --lib -- t_dijkstra --nocapture
-mod test {
+// $ cargo test --lib -- dijkstras_chatgpt::tests::t_dijkstra --nocapture
+mod tests {
     use super::*;
 
     #[test]

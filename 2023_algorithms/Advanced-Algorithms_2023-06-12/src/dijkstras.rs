@@ -3,16 +3,15 @@ use std::{
     collections::{BinaryHeap, HashMap},
 };
 
-#[derive(Copy, Clone, Eq, PartialEq)]
-struct Edge {
-    // target Edge id
-    to: usize,
+#[derive(Copy, Clone, Eq, PartialEq, Debug)]
+pub struct Edge {
+    from: char,
     distance: u32,
 }
 
 impl Edge {
-    pub fn new(to: usize, distance: u32) -> Self {
-        Self { to, distance }
+    pub fn new(from: char, distance: u32) -> Self {
+        Self { from, distance }
     }
 }
 
@@ -30,31 +29,34 @@ impl PartialOrd for Edge {
 
 // result.0: taget_id=index, distance=value
 // result.1: steps
-fn dijkstra(graph: &Vec<Vec<Edge>>, start: usize) -> HashMap<usize, u32> {
+fn dijkstra_graph(graph: &mut HashMap<char, Vec<Edge>>, start: char) -> HashMap<char, u32> {
     let mut distances = HashMap::with_capacity(graph.len());
-
-    for val in graph {
-        for (i, v) in val.iter().enumerate() {
-            _ = distances.entry(i).or_insert_with(|| u32::max_value());
-            _ = distances.entry(v.to).or_insert_with(|| u32::max_value());
-        }
-    }
     _ = distances.insert(start, 0);
 
     let mut heap = BinaryHeap::new();
-    heap.push(Edge { to: start, distance: 0 });
+    heap.push(Edge { from: start, distance: 0 });
 
-    while let Some(Edge { to, distance: dist }) = heap.pop() {
-        if dist > distances[&to] {
+    while let Some(Edge { from, distance: value }) = heap.pop() {
+        let current = distances.entry(from).or_insert_with(|| u32::max_value());
+
+        if &value > current {
             continue;
         }
 
-        for edge in &graph[to] {
-            let next_dist = dist + edge.distance;
+        let edges = match graph.get(&from) {
+            Some(v) => v,
+            None => continue,
+        };
 
-            if next_dist < distances[&edge.to] {
-                distances.insert(edge.to, next_dist);
-                heap.push(Edge { to: edge.to, distance: next_dist });
+        for edge in edges {
+            let next_dist = value + edge.distance;
+            let next_from = edge.from;
+
+            let current = distances.entry(next_from).or_insert_with(|| u32::max_value());
+
+            if next_dist < *current {
+                distances.insert(next_from, next_dist);
+                heap.push(Edge { from: next_from, distance: next_dist });
             }
         }
     }
@@ -62,41 +64,95 @@ fn dijkstra(graph: &Vec<Vec<Edge>>, start: usize) -> HashMap<usize, u32> {
     distances
 }
 
+pub fn nodes2graph(nodes: &[(char, Vec<Edge>)]) -> HashMap<char, Vec<Edge>> {
+    let mut grap = HashMap::new();
+
+    for (node, edges) in nodes {
+        edges.iter().for_each(|v| {
+            let values = grap.entry(v.from).or_insert_with(|| vec![]);
+
+            if values.iter().find(|v: &&Edge| v.from == *node).is_none() {
+                values.push(Edge { from: *node, distance: v.distance });
+            }
+        });
+
+        let values = grap.entry(*node).or_insert_with(|| vec![]);
+        edges.iter().for_each(|v| {
+            if values.iter().find(|v: &&Edge| v.from == *node).is_none() {
+                values.push(Edge { from: v.from, distance: v.distance });
+            }
+        });
+    }
+
+    grap
+}
+
 // $ cargo test --lib -- dijkstras::tests::t_dijkstra --nocapture
 #[cfg(test)]
-mod test {
+mod tests {
     use super::*;
 
     #[test]
-    fn t_dijkstra() {
-        let graph = vec![
-            vec![Edge::new(1, 7), Edge::new(2, 9), Edge::new(5, 14)],
-            vec![Edge::new(0, 7), Edge::new(2, 10), Edge::new(3, 15)],
-            vec![Edge::new(0, 9), Edge::new(1, 10), Edge::new(3, 11), Edge::new(5, 2)],
-            vec![Edge::new(1, 15), Edge::new(2, 11), Edge::new(4, 6)],
-            vec![Edge::new(3, 6), Edge::new(5, 9)],
-            vec![Edge::new(0, 14), Edge::new(2, 2), Edge::new(4, 9)],
+    fn t_dijkstra_graph() {
+        let mut graph = HashMap::from([
+            ('A', vec![Edge::new('B', 7), Edge::new('C', 9), Edge::new('F', 14)]),
+            ('B', vec![Edge::new('C', 10), Edge::new('D', 15)]),
+            ('C', vec![Edge::new('D', 11), Edge::new('F', 2)]),
+            ('D', vec![Edge::new('B', 15), Edge::new('C', 11), Edge::new('E', 6)]),
+            ('E', vec![Edge::new('D', 6), Edge::new('F', 9)]),
+            ('F', vec![Edge::new('A', 14), Edge::new('C', 2), Edge::new('E', 9)]),
+        ]);
+
+        let start_node = 'A';
+        let distances = dijkstra_graph(&mut graph, start_node);
+
+        for (from, value) in &distances {
+            if from != &start_node {
+                // println!("Distance from node {} to start node {}: {:?}", i, start_node, distance);
+                println!("Distance {} -> {}: {:?}", start_node, from, value);
+            }
+        }
+
+        assert_eq!(distances.get(&'D'), Some(&20));
+        assert_eq!(distances.get(&'E'), Some(&20));
+        assert_eq!(distances.get(&'F'), Some(&11));
+
+        let start_node = 'C';
+        let distances = dijkstra_graph(&mut graph, start_node);
+
+        for (from, value) in &distances {
+            if from != &start_node {
+                println!("Distance {} -> {}: {:?}", start_node, from, value);
+            }
+        }
+
+        assert_eq!(distances.get(&'E'), Some(&11));
+    }
+
+    #[test]
+    fn t_dijkstra_nodes() {
+        let nodes = vec![
+            ('A', vec![Edge::new('B', 7), Edge::new('C', 9), Edge::new('F', 14)]),
+            ('B', vec![Edge::new('C', 10), Edge::new('D', 15)]),
+            ('C', vec![Edge::new('D', 11), Edge::new('F', 2)]),
+            ('D', vec![Edge::new('E', 6)]),
+            ('E', vec![Edge::new('F', 9)]),
         ];
 
-        //
-        let start_node = 0;
-        let distances = dijkstra(&graph, start_node);
+        let mut graph = nodes2graph(&nodes);
 
-        for (i, distance) in distances {
-            if i != start_node {
+        let start_node = 'A';
+        let distances = dijkstra_graph(&mut graph, start_node);
+
+        for (from, value) in &distances {
+            if from != &start_node {
                 // println!("Distance from node {} to start node {}: {:?}", i, start_node, distance);
-                println!("Distance {} -> {}: {:?}", start_node, i, distance);
+                println!("Distance {} -> {}: {:?}", start_node, from, value);
             }
         }
 
-        //
-        let start_node = 2;
-        let distances = dijkstra(&graph, start_node);
-
-        for (i, distance) in distances {
-            if i != start_node {
-                println!("Distance {} -> {}: {:?}", start_node, i, distance);
-            }
-        }
+        assert_eq!(distances.get(&'D'), Some(&20));
+        assert_eq!(distances.get(&'E'), Some(&20));
+        assert_eq!(distances.get(&'F'), Some(&11));
     }
 }
