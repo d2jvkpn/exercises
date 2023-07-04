@@ -129,9 +129,7 @@ mod tests {
         let distances = dijkstra_graph(&mut graph, start_node);
 
         for (from, value) in &distances {
-            if from != &start_node {
-                println!("Distance {} -> {}: {:?}", start_node, from, value);
-            }
+            println!("Distance {} -> {}: {:?}", start_node, from, value);
         }
 
         assert_eq!(distances.get(&'E'), Some(&11));
@@ -153,10 +151,7 @@ mod tests {
         let distances = dijkstra_graph(&mut graph, start_node);
 
         for (from, value) in &distances {
-            if from != &start_node {
-                // println!("Distance from node {} to start node {}: {:?}", i, start_node, distance);
-                println!("Distance {} -> {}: {:?}", start_node, from, value);
-            }
+            println!("Distance {} -> {}: {:?}", start_node, from, value);
         }
 
         assert_eq!(distances.get(&'D'), Some(&20));
