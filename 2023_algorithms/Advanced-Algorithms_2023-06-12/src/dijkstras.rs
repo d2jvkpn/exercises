@@ -5,13 +5,13 @@ use std::{
 
 #[derive(Copy, Clone, Eq, PartialEq, Debug)]
 pub struct Edge {
-    from: char,
+    to: char,
     distance: u32,
 }
 
 impl Edge {
-    pub fn new(from: char, distance: u32) -> Self {
-        Self { from, distance }
+    pub fn new(to: char, distance: u32) -> Self {
+        Self { to, distance }
     }
 }
 
@@ -34,24 +34,24 @@ fn dijkstra(graph: &mut HashMap<char, Vec<Edge>>, start: char) -> HashMap<char, 
     _ = distances.insert(start, 0);
 
     let mut heap = BinaryHeap::new();
-    heap.push(Edge { from: start, distance: 0 });
+    heap.push(Edge { to: start, distance: 0 });
 
-    while let Some(Edge { from, distance }) = heap.pop() {
-        let current = distances.entry(from).or_insert_with(|| u32::max_value());
+    while let Some(Edge { to, distance }) = heap.pop() {
+        let current = distances.entry(to).or_insert_with(|| u32::max_value());
 
         if &distance > current {
             continue;
         }
 
-        for edge in graph.get(&from).unwrap_or(&vec![]) {
+        for edge in graph.get(&to).unwrap_or(&vec![]) {
             let next_dist = distance + edge.distance;
-            let next_from = edge.from;
+            let next_to = edge.to;
 
-            let current = distances.entry(next_from).or_insert_with(|| u32::max_value());
+            let current = distances.entry(next_to).or_insert_with(|| u32::max_value());
 
             if next_dist < *current {
-                distances.insert(next_from, next_dist);
-                heap.push(Edge { from: next_from, distance: next_dist });
+                distances.insert(next_to, next_dist);
+                heap.push(Edge { to: next_to, distance: next_dist });
             }
         }
     }
@@ -64,18 +64,18 @@ pub fn nodes2graph(nodes: &[(char, Vec<Edge>)]) -> HashMap<char, Vec<Edge>> {
 
     for (node, edges) in nodes {
         edges.iter().for_each(|v| {
-            let values = grap.entry(v.from).or_insert_with(|| vec![]);
+            let values = grap.entry(v.to).or_insert_with(|| vec![]);
 
-            if values.iter().find(|v: &&Edge| v.from == *node).is_none() {
-                values.push(Edge { from: *node, distance: v.distance });
+            if values.iter().find(|v: &&Edge| &v.to == node).is_none() {
+                values.push(Edge { to: *node, distance: v.distance });
             }
         });
 
-        let values = grap.entry(*node).or_insert_with(|| vec![]);
+        let node_values = grap.entry(*node).or_insert_with(|| vec![]);
 
         edges.iter().for_each(|v| {
-            if values.iter().find(|v: &&Edge| v.from == *node).is_none() {
-                values.push(Edge { from: v.from, distance: v.distance });
+            if node_values.iter().find(|v: &&Edge| v.to == *node).is_none() {
+                node_values.push(Edge { to: v.to, distance: v.distance });
             }
         });
     }
@@ -116,10 +116,9 @@ mod tests {
         let distances = dijkstra(&mut graph, start_node);
 
         println!(">>>");
-        for (from, value) in &distances {
-            if from != &start_node {
-                // println!("Distance from node {} to start node {}: {:?}", i, start_node, distance);
-                println!("Distance {} -> {}: {:?}", start_node, from, value);
+        for (to, value) in &distances {
+            if to != &start_node {
+                println!("Distance {} -> {}: {:?}", start_node, to, value);
             }
         }
 
@@ -132,8 +131,8 @@ mod tests {
         let distances = dijkstra(&mut graph, start_node);
 
         println!(">>>");
-        for (from, value) in &distances {
-            println!("Distance {} -> {}: {:?}", start_node, from, value);
+        for (to, value) in &distances {
+            println!("Distance {} -> {}: {:?}", start_node, to, value);
         }
 
         assert_eq!(distances.get(&'E'), Some(&11));
@@ -154,8 +153,8 @@ mod tests {
 
         println!(">>>");
         // dbg!(&nodes);
-        for (from, value) in &distances {
-            println!("Distance {} -> {}: {:?}", start_node, from, value);
+        for (to, value) in &distances {
+            println!("Distance {} -> {}: {:?}", start_node, to, value);
         }
 
         assert_eq!(distances.get(&'D'), Some(&20));
