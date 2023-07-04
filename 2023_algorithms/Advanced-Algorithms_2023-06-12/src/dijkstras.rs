@@ -153,6 +153,7 @@ mod tests {
         let distances = dijkstra(&mut graph, start_node);
 
         println!(">>>");
+        // dbg!(&nodes);
         for (from, value) in &distances {
             println!("Distance {} -> {}: {:?}", start_node, from, value);
         }
