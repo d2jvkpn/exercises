@@ -29,7 +29,7 @@ impl PartialOrd for Edge {
 
 // result.0: taget_id=index, distance=value
 // result.1: steps
-fn dijkstra_graph(graph: &mut HashMap<char, Vec<Edge>>, start: char) -> HashMap<char, u32> {
+fn dijkstra(graph: &mut HashMap<char, Vec<Edge>>, start: char) -> HashMap<char, u32> {
     let mut distances = HashMap::with_capacity(graph.len());
     _ = distances.insert(start, 0);
 
@@ -101,7 +101,8 @@ mod tests {
     }
 
     #[test]
-    fn t_dijkstra_graph() {
+    fn t_dijkstra() {
+        //
         let mut graph = HashMap::from([
             ('A', vec![Edge::new('B', 7), Edge::new('C', 9), Edge::new('F', 14)]),
             ('B', vec![Edge::new('C', 10), Edge::new('D', 15)]),
@@ -112,8 +113,9 @@ mod tests {
         ]);
 
         let start_node = 'A';
-        let distances = dijkstra_graph(&mut graph, start_node);
+        let distances = dijkstra(&mut graph, start_node);
 
+        println!(">>>");
         for (from, value) in &distances {
             if from != &start_node {
                 // println!("Distance from node {} to start node {}: {:?}", i, start_node, distance);
@@ -125,18 +127,18 @@ mod tests {
         assert_eq!(distances.get(&'E'), Some(&20));
         assert_eq!(distances.get(&'F'), Some(&11));
 
+        //
         let start_node = 'C';
-        let distances = dijkstra_graph(&mut graph, start_node);
+        let distances = dijkstra(&mut graph, start_node);
 
+        println!(">>>");
         for (from, value) in &distances {
             println!("Distance {} -> {}: {:?}", start_node, from, value);
         }
 
         assert_eq!(distances.get(&'E'), Some(&11));
-    }
 
-    #[test]
-    fn t_dijkstra_nodes() {
+        //
         let nodes = vec![
             ('A', vec![Edge::new('B', 7), Edge::new('C', 9), Edge::new('F', 14)]),
             ('B', vec![Edge::new('C', 10), Edge::new('D', 15)]),
@@ -148,8 +150,9 @@ mod tests {
         let mut graph = nodes2graph(&nodes);
 
         let start_node = 'A';
-        let distances = dijkstra_graph(&mut graph, start_node);
+        let distances = dijkstra(&mut graph, start_node);
 
+        println!(">>>");
         for (from, value) in &distances {
             println!("Distance {} -> {}: {:?}", start_node, from, value);
         }
