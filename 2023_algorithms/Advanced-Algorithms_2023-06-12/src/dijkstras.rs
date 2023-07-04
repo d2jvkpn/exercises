@@ -77,6 +77,7 @@ pub fn nodes2graph(nodes: &[(char, Vec<Edge>)]) -> HashMap<char, Vec<Edge>> {
         });
 
         let values = grap.entry(*node).or_insert_with(|| vec![]);
+
         edges.iter().for_each(|v| {
             if values.iter().find(|v: &&Edge| v.from == *node).is_none() {
                 values.push(Edge { from: v.from, distance: v.distance });

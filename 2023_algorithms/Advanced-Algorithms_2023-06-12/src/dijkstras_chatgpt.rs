@@ -50,6 +50,7 @@ fn dijkstra(graph: &Vec<Vec<(usize, i32)>>, start: usize) -> (Vec<i32>, usize) {
 }
 
 // $ cargo test --lib -- dijkstras_chatgpt::tests::t_dijkstra --nocapture
+#[cfg(test)]
 mod tests {
     use super::*;
 
