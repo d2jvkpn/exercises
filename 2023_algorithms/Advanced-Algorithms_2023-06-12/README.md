@@ -13,17 +13,15 @@
 - 00010 Interative DFS
 - 00012 Subsets
 - 00013 Combinations
+- 00015 Dijkstra's, shortest path
+- 00020 Longest Common Subsequence
+- 00021 Palindrones
 
 - skipped:
   - 00009 Segment Tree
   - 00011 Two Heaps
   - 00014 Permutations
-
-- 00014 Permutations
-- 00015 Dijkstra's, shortest path
-- 00016 Kruskal's, Minimum Spanning Tree
-- 00017 Topological Sort
-- 00018 0/1 Knapsack
-- 00019 Unbounded Knapsack
-- 00020 Longest Common Subsequence
-- 00021 Palindrones
+  - 00016 Kruskal's, Minimum Spanning Tree
+  - 00017 Topological Sort
+  - 00018 0/1 Knapsack
+  - 00019 Unbounded Knapsack

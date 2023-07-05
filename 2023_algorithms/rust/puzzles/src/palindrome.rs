@@ -1,4 +1,4 @@
-fn palindrom(arr: &Vec<i32>) -> bool {
+fn is_palindrom(arr: &Vec<i32>) -> bool {
     fn recursion(arr: &Vec<i32>, start: usize, end: usize) -> bool {
         if arr[start] != arr[end] {
             return false;
@@ -20,7 +20,7 @@ mod tests {
 
     #[test]
     fn t_palindrom() {
-        assert!(!palindrom(&vec![1, 2, 3]));
-        assert!(palindrom(&vec![1, 2, 1]));
+        assert!(!is_palindrom(&vec![1, 2, 3]));
+        assert!(is_palindrom(&vec![1, 2, 1]));
     }
 }
