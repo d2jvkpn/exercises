@@ -22,35 +22,37 @@ pub fn lc_sub_v1(s1: &str, s2: &str) -> String {
 }
 
 // Time: O(n*m), Space: O(min(n, m))
-pub fn lc_sub_v2(s1: &str, s2: &str) -> String {
+pub fn lc_sub_v2(s1: &str, s2: &str) -> Option<String> {
     if s1.len() < s2.len() {
         return lc_sub_v2(s2, s1);
     }
 
     let (rows, cols) = (s1.len(), s2.len());
-    let mut dp = vec![0; cols + 1];
-    let mut current = vec![0; cols + 1];
     let (mut max_length, mut index) = (0, 0);
+    let (mut current, mut dp) = (vec![0; cols + 1], vec![0; cols + 1]);
 
     for i in 1..=rows {
         for j in 1..=cols {
-            if s1.chars().nth(i - 1) == s2.chars().nth(j - 1) {
-                current[j] = dp[j - 1] + 1;
+            if s1.chars().nth(i - 1) != s2.chars().nth(j - 1) {
+                continue;
+            }
 
-                if current[j] > max_length {
-                    max_length = current[j];
-                    index = i - max_length;
-                }
+            current[j] = dp[j - 1] + 1;
+
+            if current[j] > max_length {
+                max_length = current[j];
+                index = i - max_length;
             }
         }
+
         dp.copy_from_slice(&current);
         current.fill_with(|| 0);
     }
 
     if max_length > 0 {
-        s1[index..index + max_length].into()
+        Some(s1[index..index + max_length].into())
     } else {
-        String::new()
+        None
     }
 }
 
@@ -65,13 +67,13 @@ mod tests {
         let s2 = "xyzabcdki";
 
         assert_eq!(lc_sub_v1(s1, s2), "abcd".to_string());
-        assert_eq!(lc_sub_v2(s1, s2), "abcd".to_string());
+        assert_eq!(lc_sub_v2(s1, s2), Some("abcd".to_string()));
 
         //
         let s1 = "abc";
         let s2 = "defc";
 
         assert_eq!(lc_sub_v1(s1, s2), "c".to_string());
-        assert_eq!(lc_sub_v2(s1, s2), "c".to_string());
+        assert_eq!(lc_sub_v2(s1, s2), Some("c".to_string()));
     }
 }
