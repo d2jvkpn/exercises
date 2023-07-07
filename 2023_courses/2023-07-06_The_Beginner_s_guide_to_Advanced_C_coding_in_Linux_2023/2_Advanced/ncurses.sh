@@ -5,6 +5,8 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 
 mkdir -p target
 
-gcc ncurses.c -o target/ncurses -l ncurses
+C_FILE=$1
+bin=$(basename $C_FILE | sed 's/\.c$//')
 
-./target/ncurses
+gcc ${C_FILE} -o target/$bin -l ncurses
+./target/$bin
