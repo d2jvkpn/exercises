@@ -6,7 +6,7 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 mkdir -p target
 
 C_FILE=$1
-bin=$(basename $C_FILE | sed 's/\c$//')
+bin=$(basename $C_FILE | sed 's/\.c$//')
 
 gcc ${C_FILE} -o target/$bin
 ./target/$bin
