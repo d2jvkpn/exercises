@@ -19,3 +19,10 @@ gcc hello.c -o target/hello
 
 gcc user_input.c -o target/user_input
 ./target/user_input
+
+
+#### library
+man 3 random
+
+#### system call
+man 2 getpid
