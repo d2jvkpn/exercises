@@ -5,6 +5,8 @@
 #include <unistd.h>
 #include <string.h>
 
+// https://man7.org/linux/man-pages/man2/select.2.html
+
 char *tr1(int timeout) {
 	static char buf[512];
 	fd_set rfds;
