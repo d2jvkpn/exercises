@@ -13,29 +13,23 @@ struct s_book {
 
 typedef struct s_book Book;
 
-Book *first;
+Book *First;
 
 void add_book(char *title, int pages) {
 	Book *p, *new;
-
-	if (!first) {
-		new = malloc(sizeof(Book));
-		memset(new, 0, sizeof(Book));
-		strncpy(new->title, title, 63);
-		new->pages = pages;
-		new->next = 0;
-		first = new;
-		return;
-	}
-
-	for (p = first; p->next; p = p-> next) {}
 
 	new = malloc(sizeof(Book));
 	memset(new, 0, sizeof(Book));
 	strncpy(new->title, title, 63);
 	new->pages = pages;
 	new->next = 0;
-	p->next = new;
+
+	if (!First) {
+		First = new;
+	} else {
+		for (p = First; p->next; p = p-> next) {}
+		p->next = new;
+	}
 
 	return;
 }
@@ -43,7 +37,7 @@ void add_book(char *title, int pages) {
 void list_books(char *search) {
 	Book *p;
 
-	for (p=first; p; p=p->next) {
+	for (p=First; p; p=p->next) {
 		if (!search || !strcmp(search, p -> title)) {
 			printf("Pages: %d\tTitle: '%s'\n", p -> pages, p -> title);
 		}
@@ -55,7 +49,7 @@ void list_books(char *search) {
 int main() {
 	add_book("The Bible", 3500);
 	add_book("Dice man", 340);
-	// printf("first: %s, %s\n", first->title, first->next->title);
+	// printf("First: %s, %s\n", First->title, First->next->title);
 	add_book("Pippi Longstocking", 119);
 	add_book("Tintin", 350);
 	add_book("Around the world in 88 days", 290);
