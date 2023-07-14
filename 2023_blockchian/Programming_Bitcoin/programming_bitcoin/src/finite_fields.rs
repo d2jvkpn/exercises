@@ -94,10 +94,19 @@ impl Div for FiniteField {
             return None;
         }
 
-        // Fermat's little theorem, p is a prime and n%p != 0: n^(p-1) %p=1
+        // Fermat's little theorem, p is a prime and n%p != 0: n^(p-1)%p=1
+        /*
         let x = (self.prime - 2) as u32;
         let num = (self.num * other.num.pow(x)) % self.prime;
         Some(Self { num, prime: self.prime })
+        */
+
+        let mut ans = 1;
+        for _ in 1..=(self.prime - 2) {
+            ans = (ans % self.prime) * (other.num % self.prime);
+        }
+
+        Some(Self { num: (self.num * ans) % self.prime, prime: self.prime })
     }
 }
 
@@ -148,14 +157,14 @@ mod tests {
         assert_eq!(num1, num2);
 
         let num2 = FiniteField::new(5, 11).unwrap();
-        assert_eq!((num1 + num2).unwrap().num, 2);
-        assert_eq!((num1 - num2).unwrap().num, 3);
+        assert_eq!((num1 + num2), FiniteField::new(2, 11).ok());
+        assert_eq!((num1 - num2), FiniteField::new(3, 11).ok());
         assert_eq!(num1.pow(3).num, 6);
 
         let ans = (num1 * num2).unwrap();
         assert_eq!(ans.num, 7);
-        assert_eq!((ans / num1).unwrap().num, num2.num);
-        assert_eq!((ans / num2).unwrap().num, num1.num);
+        assert_eq!((ans / num1), Some(num2));
+        assert_eq!((ans / num2), Some(num1));
     }
 
     #[test]
