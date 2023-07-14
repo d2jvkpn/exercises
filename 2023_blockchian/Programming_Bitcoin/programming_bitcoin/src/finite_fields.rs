@@ -33,8 +33,16 @@ impl FiniteField {
         assert!(-self.num % self.prime < self.prime);
     }
 
-    pub fn pow(&self, n: u32) -> Self {
-        Self { num: self.num.pow(n) % self.prime, prime: self.prime }
+    pub fn pow(&self, mut n: u32) -> Self {
+        // Self { num: self.num.pow(n) % self.prime, prime: self.prime }
+        let mut num = 1;
+
+        n = n % (self.prime as u32 - 1);
+        for _ in 1..=n {
+            num = (num * self.num) % self.prime;
+        }
+
+        Self { num, prime: self.prime }
     }
 }
 
