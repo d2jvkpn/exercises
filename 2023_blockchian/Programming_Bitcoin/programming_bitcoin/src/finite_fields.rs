@@ -94,7 +94,7 @@ impl Div for FiniteField {
             return None;
         }
 
-        // Fermat's little theorem
+        // Fermat's little theorem, p is a prime and n%p != 0: n^(p-1) %p=1
         let x = (self.prime - 2) as u32;
         let num = (self.num * other.num.pow(x)) % self.prime;
         Some(Self { num, prime: self.prime })
