@@ -7,22 +7,37 @@ use std::{
 };
 
 #[derive(Debug, Clone, Copy)]
-struct FiniteField {
+pub struct FiniteField {
     num: i32,
     prime: i32,
 }
 
 impl FiniteField {
-    pub fn new(num: i32, prime: i32) -> Result<Self, &'static str> {
+    pub fn new(prime: i32, num: i32) -> Option<Self> {
         if !is_prime(prime) {
-            return Err("not a prime");
+            // return Err("not a prime");
+            return None;
         }
 
         if num.abs() >= prime {
-            return Err("num is too large");
+            // return Err("num is too large");
+            return None;
         }
 
-        return Ok(Self { num, prime });
+        // return Ok(Self { num, prime });
+        Some(Self { prime, num })
+    }
+
+    pub fn tuple(prime: i32, num1: i32, num2: i32) -> Option<(Self, Self)> {
+        if !is_prime(prime) {
+            return None;
+        }
+
+        if num1.abs() >= prime || num2.abs() >= prime {
+            return None;
+        }
+
+        Some((Self { prime, num: num1 }, Self { prime, num: num2 }))
     }
 
     pub fn define(&self) {
@@ -118,7 +133,7 @@ impl Div for FiniteField {
     }
 }
 
-struct FiniteFieldSet {
+pub struct FiniteFieldSet {
     vec: Vec<i32>,
     prime: i32,
 }
@@ -140,7 +155,7 @@ impl FiniteFieldSet {
     }
 }
 
-fn is_prime(n: i32) -> bool {
+pub fn is_prime(n: i32) -> bool {
     if n <= 1 {
         return false;
     }
@@ -160,13 +175,13 @@ mod tests {
 
     #[test]
     fn t_finite_field() {
-        let num1 = FiniteField::new(8, 11).unwrap();
-        let num2 = FiniteField::new(8, 11).unwrap();
+        let num1 = FiniteField::new(11, 8).unwrap();
+        let num2 = FiniteField::new(11, 8).unwrap();
         assert_eq!(num1, num2);
 
-        let num2 = FiniteField::new(5, 11).unwrap();
-        assert_eq!((num1 + num2), FiniteField::new(2, 11).ok());
-        assert_eq!((num1 - num2), FiniteField::new(3, 11).ok());
+        let num2 = FiniteField::new(11, 5).unwrap();
+        assert_eq!((num1 + num2), FiniteField::new(11, 2));
+        assert_eq!((num1 - num2), FiniteField::new(11, 3));
         assert_eq!(num1.pow(3).num, 6);
 
         let ans = (num1 * num2).unwrap();
