@@ -133,8 +133,8 @@ impl Div for FiniteField {
     }
 }
 
+#[derive(Debug, Clone, Copy)]
 pub struct FiniteFieldSet {
-    vec: Vec<i32>,
     prime: i32,
 }
 
@@ -144,14 +144,54 @@ impl FiniteFieldSet {
             return Err("not a prime");
         }
 
-        Ok(Self { vec: (0..prime).collect::<Vec<_>>().into(), prime })
+        Ok(Self { prime })
     }
 
-    pub fn multipy(&self, m: i32) -> Self {
-        let mut vec: Vec<i32> = self.vec.iter().map(|v| (v * m) % self.prime).collect();
+    pub fn vec(&self) -> Vec<i32> {
+        (0..self.prime).collect::<Vec<_>>().into()
+    }
+
+    pub fn multipy(&self, m: i32) -> Vec<i32> {
+        let mut vec: Vec<i32> = self.vec().iter().map(|v| (v * m) % self.prime).collect();
         vec.sort();
 
-        Self { vec, prime: self.prime }
+        vec
+    }
+
+    fn num(&self, num: i32) -> i32 {
+        num % self.prime
+    }
+
+    pub fn add(&self, num1: i32, num2: i32) -> i32 {
+        (self.num(num1) + self.num(num2)) % self.prime
+    }
+
+    pub fn sub(&self, num1: i32, num2: i32) -> i32 {
+        (self.num(num1) - self.num(num2)) % self.prime
+    }
+
+    pub fn mul(&self, num1: i32, num2: i32) -> i32 {
+        (self.num(num1) * self.num(num2)) % self.prime
+    }
+
+    pub fn div(&self, num1: i32, num2: i32) -> i32 {
+        let mut ans = 1;
+        for _ in 1..=(self.prime - 2) {
+            ans = (ans % self.prime) * (num2 % self.prime);
+        }
+
+        (num1 * ans) % self.prime
+    }
+
+    pub fn pow(&self, num1: i32, mut n: u32) -> i32 {
+        let mut ans = 1;
+
+        n = n % (self.prime as u32 - 1);
+        for _ in 1..=n {
+            ans = (ans * num1) % self.prime;
+        }
+
+        ans
     }
 }
 
@@ -191,9 +231,8 @@ mod tests {
     }
 
     #[test]
-    fn t_finite_fields_set() {
+    fn t_ffs() {
         let set1 = FiniteFieldSet::new(13).unwrap();
-        let set2 = set1.multipy(6);
-        assert_eq!(set1.vec, set2.vec);
+        assert_eq!(set1.vec(), set1.multipy(6));
     }
 }

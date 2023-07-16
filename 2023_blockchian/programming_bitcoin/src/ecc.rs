@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::finite_field::FiniteField;
+use crate::finite_field::{FiniteField, FiniteFieldSet};
 use std::{convert::From, fmt};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -45,7 +45,7 @@ impl EC {
         Some(Point { x, y: s * (p1.x - x) - p1.y })
     }
 
-    pub fn finite_field(&self, prime: i32, point: &Point) -> Option<bool> {
+    pub fn finite_field_v1(&self, prime: i32, point: &Point) -> Option<bool> {
         let (x, y) = FiniteField::tuple(prime, point.x, point.y)?;
         let (a, b) = FiniteField::tuple(prime, self.a, self.b)?;
 
@@ -53,6 +53,13 @@ impl EC {
         let ans = (x.pow(3) + ans)?;
         let ans = (ans + b)?;
         Some(y.pow(2) == ans)
+    }
+
+    pub fn finite_field(&self, prime: i32, point: &Point) -> Option<bool> {
+        let ffs = FiniteFieldSet::new(prime).ok()?;
+
+        let ans = ffs.add(ffs.pow(point.x, 3), ffs.mul(self.a, point.x));
+        Some(ffs.pow(point.y, 2) == ffs.add(ans, self.b))
     }
 }
 
