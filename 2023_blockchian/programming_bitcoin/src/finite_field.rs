@@ -134,11 +134,11 @@ impl Div for FiniteField {
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct FiniteFieldSet {
+pub struct FFS {
     prime: i32,
 }
 
-impl FiniteFieldSet {
+impl FFS {
     pub fn new(prime: i32) -> Result<Self, &'static str> {
         if !is_prime(prime) {
             return Err("not a prime");
@@ -232,7 +232,7 @@ mod tests {
 
     #[test]
     fn t_ffs() {
-        let set1 = FiniteFieldSet::new(13).unwrap();
+        let set1 = FFS::new(13).unwrap();
         assert_eq!(set1.vec(), set1.multipy(6));
     }
 }

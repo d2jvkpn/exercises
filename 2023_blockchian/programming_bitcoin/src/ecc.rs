@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use crate::finite_field::{FiniteField, FiniteFieldSet};
+use crate::finite_field::{FiniteField, FFS};
 use std::{convert::From, fmt};
 
 #[derive(Debug, Clone, PartialEq)]
@@ -56,7 +56,7 @@ impl EC {
     }
 
     pub fn finite_field(&self, prime: i32, point: &Point) -> Option<bool> {
-        let ffs = FiniteFieldSet::new(prime).ok()?;
+        let ffs = FFS::new(prime).ok()?;
 
         let ans = ffs.add(ffs.pow(point.x, 3), ffs.mul(self.a, point.x));
         Some(ffs.pow(point.y, 2) == ffs.add(ans, self.b))
@@ -110,18 +110,20 @@ mod tests {
         let spec265k1 = EC::new(0, 7);
         let prime = 223;
 
+        println!("{:?}", spec265k1);
+
         for p in [(192, 105), (17, 56), (1, 193)] {
             let point = Point::new(p.0, p.1);
             let ans = spec265k1.finite_field(prime, &point).unwrap();
             assert!(ans);
-            println!("prime = {}, point={:?}, {}", prime, point, ans);
+            println!("prime = {}, {:?}, {}", prime, point, ans);
         }
 
         for p in [(200, 119), (42, 99)] {
             let point = Point::new(p.0, p.1);
             let ans = spec265k1.finite_field(prime, &point).unwrap();
             assert!(!ans);
-            println!("prime = {}, point={:?}, {}", prime, point, ans);
+            println!("prime = {}, {:?}, {}", prime, point, ans);
         }
     }
 }
