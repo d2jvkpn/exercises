@@ -1,3 +1,4 @@
+mod bitcoin;
 mod ecc;
 mod finite_field;
 
