@@ -241,7 +241,18 @@ mod tests {
     use super::*;
 
     #[test]
-    fn t_finite_field() {
+    fn t_ff() {
+        let value = FiniteField::new(47, 223).unwrap();
+        let ans = value.sibling(71);
+        let v7 = value.sibling(7);
+
+        let p3 = value.pow(3);
+        let right = p3 + v7;
+        let left = ans.pow(2);
+
+        assert_eq!(right, left);
+        println!("x**3 = {}, 7 = {}, right = {}, left = {}", p3, v7, right, left);
+
         let num1 = FiniteField::new(8, 11).unwrap();
         let num2 = FiniteField::new(8, 11).unwrap();
         assert_eq!(num1, num2);

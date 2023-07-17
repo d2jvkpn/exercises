@@ -156,7 +156,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn t_ec() {
+    fn t_point() {
         let ec = EC::new(5, 7, 2).unwrap();
 
         for p in [Point::new(2, 4), Point::new(-1, -1), Point::new(18, 77), Point::new(5, 7)] {
@@ -196,21 +196,7 @@ mod tests {
     }
 
     #[test]
-    fn t_ecc01() {
-        let value = FiniteField::new(47, 223).unwrap();
-        let ans = value.sibling(71);
-        let v7 = value.sibling(7);
-
-        let p3 = value.pow(3);
-        let right = p3 + v7;
-        let left = ans.pow(2);
-
-        assert_eq!(right, left);
-        println!("x**3 = {}, 7 = {}, right = {}, left = {}", p3, v7, right, left);
-    }
-
-    #[test]
-    fn t_ecc02() {
+    fn t_ecc() {
         let spec265k1 = EC::new(0, 7, 223).unwrap();
         println!("{:?}", spec265k1);
 
