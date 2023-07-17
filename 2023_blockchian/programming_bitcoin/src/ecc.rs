@@ -107,6 +107,7 @@ impl EC {
 
     pub fn rmul(&self, p1: Point, coefficient: u32) -> Option<Point> {
         /*
+        // time complexity: O(n)
         let mut ans = p1;
         for _ in 2..=coefficient {
             ans = self.add(ans, p1).unwrap();
@@ -115,7 +116,7 @@ impl EC {
         ans
         */
 
-        // TODO: model
+        // Square-and-Multiply Chain, time complexity: O(log2n)
         let mut coef = coefficient;
         let mut current = p1;
         let mut ans = Point::new(i32::MAX, i32::MAX);

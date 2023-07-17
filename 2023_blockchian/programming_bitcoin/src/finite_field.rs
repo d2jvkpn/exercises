@@ -80,21 +80,21 @@ impl FiniteField {
         ans
         */
 
-        // TODO: model
+        // Square-and-Multiply Chain, time complexity: O(log2n)
         let mut coef = coefficient;
         let mut current = *self;
-        let mut result = self.sibling(0);
+        let mut ans = self.sibling(0);
 
         while coef > 0 {
             if coef & 1 == 1 {
-                result += current;
+                ans += current;
             }
 
             current += current;
             coef >>= 1;
         }
 
-        result
+        ans
     }
 }
 
