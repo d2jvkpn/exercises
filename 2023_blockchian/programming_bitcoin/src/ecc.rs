@@ -68,9 +68,11 @@ impl EC {
             return Some(p1);
         }
 
+        /*
         if self.ff_on_curve(&p1) != Some(true) || self.ff_on_curve(&p2) != Some(true) {
             return None;
         }
+        */
 
         if p1.x == p2.x && p1.y != p2.y {
             return None;

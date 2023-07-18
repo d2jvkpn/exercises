@@ -20,5 +20,5 @@ def find_primes(max_num: int, limit: int) -> list[int]:
     return primes
 
 
-primes = find_primes(2**31, 100)
+primes = find_primes(int((2**32)**0.5), 1000)
 print(primes)

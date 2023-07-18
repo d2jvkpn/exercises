@@ -11,6 +11,18 @@ pub fn modulus(a: i32, b: i32) -> i32 {
     ((a % b) + b) % b
 }
 
+pub fn pow_mod(num: i32, mut n: u32, prime: i32) -> i32 {
+    let mut ans = 1;
+
+    n = n % (prime as u32 - 1);
+    for _ in 1..=n {
+        dbg!(&ans);
+        ans = modulus(ans * num, prime);
+    }
+
+    ans
+}
+
 #[derive(Debug, Clone, Copy)]
 pub struct FiniteField {
     pub num: i32,
@@ -61,14 +73,15 @@ impl FiniteField {
 
     pub fn pow(&self, mut n: u32) -> Self {
         // Self { num: modulus(self.num.pow(n), self.prime), prime: self.prime }
-        let mut num = 1;
+        let mut ans = 1;
 
         n = n % (self.prime as u32 - 1);
         for _ in 1..=n {
-            num = modulus(num * self.num, self.prime);
+            dbg!(&(self.num, ans));
+            ans = modulus(ans * self.num, self.prime);
         }
 
-        Self { num, prime: self.prime }
+        Self { num: ans, prime: self.prime }
     }
 
     pub fn rmul(&self, coefficient: u32) -> Self {
