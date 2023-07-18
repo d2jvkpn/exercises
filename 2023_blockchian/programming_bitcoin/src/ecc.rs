@@ -4,16 +4,16 @@ use crate::finite_field::{is_prime, FiniteField};
 use std::{convert::From, fmt};
 
 #[derive(Debug, Clone)]
-struct EC {
+pub struct EC {
     a: i32,
     b: i32,
     prime: i32,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-struct Point {
-    x: i32,
-    y: i32,
+pub struct Point {
+    pub x: i32,
+    pub y: i32,
 }
 
 impl EC {
