@@ -1,4 +1,4 @@
-use super::tree_node::{Child, Node};
+use super::node::{Child, Node};
 use std::fmt::Debug;
 
 #[derive(Debug)]

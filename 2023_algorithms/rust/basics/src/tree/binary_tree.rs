@@ -1,7 +1,5 @@
-use crate::{
-    queue::Queue,
-    tree_node::{Child, Node},
-};
+use super::node::{Child, Node};
+use crate::structs::queue::Queue;
 use std::fmt::Debug;
 
 #[derive(Debug)]

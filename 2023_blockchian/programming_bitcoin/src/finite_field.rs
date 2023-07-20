@@ -16,7 +16,7 @@ pub fn pow_mod(num: i32, mut n: u32, prime: i32) -> i32 {
 
     n = n % (prime as u32 - 1);
     for _ in 1..=n {
-        dbg!(&ans);
+        // dbg!(&ans);
         ans = modulus(ans * num, prime);
     }
 

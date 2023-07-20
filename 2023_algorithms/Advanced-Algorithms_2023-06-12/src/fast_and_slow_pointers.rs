@@ -1,4 +1,4 @@
-use basics::linked_list_unique::{LinkedList, Next};
+use basics::unique::{LinkedList, Next};
 use std::fmt::Debug;
 
 pub fn has_cycle<T: Debug + Copy + PartialEq>(list: &LinkedList<T>) -> (Next<T>, bool) {

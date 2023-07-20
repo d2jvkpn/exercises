@@ -36,7 +36,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
     }
 
     pub fn push_right(&mut self, node: Node<T>) -> &mut Self {
-        /* ?? not workinf
+        /* ?? not working
         if let Some(right) = &self.right {
             return right.borrow_mut().push_right(node);
         } else {

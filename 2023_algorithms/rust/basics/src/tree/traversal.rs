@@ -1,4 +1,5 @@
-use super::{queue::Queue, tree_node::Child};
+use super::node::Child;
+use crate::structs::queue::Queue;
 use std::fmt::Debug;
 
 // https://www.jianshu.com/p/7a62dcc96304

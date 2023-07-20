@@ -33,7 +33,7 @@ fn demo(e: u32, k: i32 /* a random numer */) -> (u32, u32, Point) {
     // v*e*G = (k - u)*G
     // v*e = k - u
     // u = k - v*e;
-    let v = 24; // a random number
+    let v = 23; // a random number
     let k_ff = FiniteField::new(k as i32, P).unwrap();
     let u = k_ff - k_ff.sibling(v) * k_ff.sibling(e as i32);
 
@@ -52,11 +52,12 @@ mod tests {
 
     #[test]
     fn t_demo() {
+        let ec = EC::new(A, B, P).unwrap();
+
         let k = 42;
         let (u, v, pk) = demo(58391, 42);
         println!("{:?}", (u, v, pk));
 
-        let ec = EC::new(A, B, P).unwrap();
         // uG+vP=kG
         let p1 = ec.rmul(G, u).unwrap();
         let p2 = ec.rmul(pk, v).unwrap();

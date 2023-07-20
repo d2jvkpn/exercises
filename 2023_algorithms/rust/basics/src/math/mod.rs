@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
-mod factorial;
-mod fibonacci;
-mod greatest_common_divisor;
-mod is_prime;
+pub mod factorial;
+pub mod fibonacci;
+pub mod greatest_common_divisor;
+pub mod is_prime;
+pub mod modulus;
