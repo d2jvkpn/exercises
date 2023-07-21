@@ -1,14 +1,6 @@
-#![allow(dead_code)]
-
-use std::borrow::Cow;
-
 fn main() {
-    call_1("x1");
-}
-
-fn call_1<S: AsRef<str>>(s: S) {
-    let val = s.as_ref();
-    println!("val: {val}");
+    // println!("Hello, wrold!");
+    // TODO
 }
 
 fn abs_all(input: &mut Cow<[i32]>) {

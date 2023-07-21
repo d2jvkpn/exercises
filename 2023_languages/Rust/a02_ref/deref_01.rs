@@ -25,10 +25,7 @@ struct User {
 
 impl User {
     pub fn new(name: &str) -> Self {
-        Self {
-            id: 0,
-            admin: Admin::new(name),
-        }
+        Self { id: 0, admin: Admin::new(name) }
     }
 }
 
@@ -44,5 +41,6 @@ fn main() {
     let user = User::new("Rover");
 
     println!("{:?}", user);
+    user.say();
     user.say();
 }

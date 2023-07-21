@@ -54,7 +54,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
 
 #[cfg(test)]
 mod tests {
-    use super::super::tree_traversal::*;
+    use super::super::traversal::*;
     use super::*;
 
     #[test]
