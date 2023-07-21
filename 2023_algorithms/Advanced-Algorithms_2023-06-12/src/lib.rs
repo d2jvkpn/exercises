@@ -14,4 +14,5 @@ mod prefix_sum;
 mod sliding_window;
 mod subsets;
 mod trie;
+mod two_heap;
 mod two_pointers;

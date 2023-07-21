@@ -16,6 +16,14 @@ impl<T: Ord + Debug> Heap<T> {
         Self { vec, comparator }
     }
 
+    pub fn min_heap(size: usize) -> Self {
+        Self { vec: Vec::with_capacity(size), comparator: |a, b| a < b }
+    }
+
+    pub fn max_heap(size: usize) -> Self {
+        Self { vec: Vec::with_capacity(size), comparator: |a, b| a > b }
+    }
+
     pub fn size(&self) -> usize {
         self.vec.len()
     }
@@ -29,6 +37,11 @@ impl<T: Ord + Debug> Heap<T> {
 
     pub fn peak(&self) -> Option<&T> {
         self.vec.last()
+    }
+
+    pub fn cmp(&self, value: &T) -> Option<bool> {
+        let top = self.vec.last()?;
+        Some((self.comparator)(top, value))
     }
 
     pub fn push(&mut self, value: T) {
@@ -58,7 +71,7 @@ impl<T: Ord + Debug> Heap<T> {
     }
 }
 
-fn heapify<T: Ord>(slice: &mut [T], idx: usize, comparator: fn(&T, &T) -> bool) {
+pub fn heapify<T: Ord>(slice: &mut [T], idx: usize, comparator: fn(&T, &T) -> bool) {
     let m = slice.len() - 1;
     // dbg!(&idx);
 

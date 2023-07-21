@@ -38,7 +38,7 @@ pub fn max_heap_sort<T: Ord + Debug>(slice: &mut [T]) {
     }
 }
 
-fn heapify<T: Ord>(slice: &mut [T], idx: usize, comparator: fn(&T, &T) -> bool) {
+pub fn heapify<T: Ord>(slice: &mut [T], idx: usize, comparator: fn(&T, &T) -> bool) {
     let len = slice.len();
     let (left, right) = (2 * idx + 1, 2 * idx + 2);
 
