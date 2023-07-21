@@ -2,8 +2,8 @@
 
 mod brute_force;
 mod divide_and_conquer;
-pub mod heap1;
-pub mod heap2;
+pub mod heap_array;
+pub mod heap_sort;
 mod merge_sort;
 mod quick_select;
 mod quick_sort;
