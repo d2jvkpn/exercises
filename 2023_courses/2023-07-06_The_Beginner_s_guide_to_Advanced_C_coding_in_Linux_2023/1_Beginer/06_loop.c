@@ -13,6 +13,17 @@ void multi(int t, int v) {
 }
 
 int main() {
+	// while loop
+	int num;
+	num = 0;
+
+	// while (1) infinity loop
+	while (num < 10) {
+		printf("num: %d\n", num);
+		num+=1;
+	}
+	
+	// for loop
 	int x, table;
 
 	printf("Select multiplication table: ");

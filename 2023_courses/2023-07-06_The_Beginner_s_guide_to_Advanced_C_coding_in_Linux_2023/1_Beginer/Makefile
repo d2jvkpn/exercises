@@ -11,4 +11,4 @@ hello:
 
 # C_FILE=hello.c make run
 run:
-	bash ../run_c.sh $(C_FILE)
+	bash Run_C.sh $(C_FILE)

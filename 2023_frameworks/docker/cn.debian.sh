@@ -11,6 +11,7 @@ if [ -f $deb_src ]; then
     sed -i 's#http://deb.debian.org#https://mirrors.aliyun.com#' $deb_src
     exit
 fi
+
 cp $ubuntu_src $ubuntu_src.bk
 # cp ${_path}/cn.aliyun.sources.list
 
@@ -34,5 +35,6 @@ deb-src $addr/ubuntu/ jammy-backports main restricted universe multiverse
 EOF
 
 exit
+
 # lsb_release -a
 . /etc/os-release
