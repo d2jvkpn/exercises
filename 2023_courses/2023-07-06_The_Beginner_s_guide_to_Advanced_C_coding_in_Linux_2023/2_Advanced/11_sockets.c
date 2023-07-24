@@ -12,7 +12,7 @@
 int main() {
 	int s;
 	struct sockaddr_in sock;
-	char buf[1024];
+	char buf[512];
 	char *data;
 
 	data = "GET / HTTP/1.0\r\n\r\n";
