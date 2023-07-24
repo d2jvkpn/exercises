@@ -1,4 +1,4 @@
-use basics::sorting::heap_array::Heap;
+use basics::sorting::heap_dynamic::Heap;
 use std::fmt::Debug;
 
 // TODO

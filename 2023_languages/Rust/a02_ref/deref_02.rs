@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 
-use std::fmt::Display;
-use std::ops::Deref;
+use std::{fmt::Display, ops::Deref};
 
 #[derive(Debug)]
 struct User<T: Display> {
