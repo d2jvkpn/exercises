@@ -21,8 +21,9 @@ fn main() {
 
     let big_endian: [u8; 2] = n.to_be_bytes();
     let little_endian: [u8; 2] = n.to_le_bytes();
+
     println!(
         "n in big endia: {:02x}{:02X}\nn in little endian: {:02X}{:02X}",
-        big_endian[0], big_endian[1], little_endian[0], little_endian[1]
+        big_endian[0], big_endian[1], little_endian[0], little_endian[1],
     );
 }
