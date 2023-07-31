@@ -15,6 +15,8 @@ git_branch = $(shell git rev-parse --abbrev-ref HEAD)
 # unpushed=$(git diff origin/$git_branch..HEAD --name-status)
 # -- [[ ! -z "$uncommitted$unpushed" ]] && git_tree_state="dirty"
 
+app=$(shell yq .app project.yaml)
+
 git-init:
 	git remote set-url --add origin git@githubc.com:d2jvkpn/collector.git
 	git push --set-upstream origin master
@@ -30,7 +32,9 @@ run-local:
 
 docker-build:
 	# GIT_Pull, DOCKER_Pull
-	REGION=cn bash deployments/docker_build.sh dev
+	# REGION=cn bash deployments/docker_build.sh dev
+	ssh -F configs/ssh.conf build_host \
+	  "cd docker_build/$(app) && git pull && bash deployments/docker_build.sh dev"
 
 run-dev:
 	ssh remote_dev_server "cd docker_dev/app_dev && docker-compose pull && docker-compose up -d"
