@@ -8,7 +8,8 @@ mkdir -p target
 C_FILE=$1
 bin=$(basename $C_FILE | sed 's/\.c$//')
 
-gcc ${C_FILE} -o target/$bin
+shift
+gcc ${C_FILE} -std=c17 -o target/$bin $*
 ./target/$bin
 
 ####

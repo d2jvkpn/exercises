@@ -1,0 +1,26 @@
+syntax = "proto3";
+package proto;
+
+// option go_package = "github.com/d2jvkpn/collector/proto";
+
+// import "google/protobuf/timestamp.proto";
+
+message LogData {
+	string name = 1;
+	string version = 2;
+	string eventId = 3;
+	int64  eventAt = 4;
+	// google.protobuf.Timestamp eventAt = 4;
+	string bizName = 5;
+	string bizVersion = 6;
+	map<string, string> keys = 7;
+	bytes data = 8;
+}
+
+message LogId {
+	string id = 1;
+}
+
+service LogService {
+	rpc Create(LogData) returns(LogId) {};
+}
