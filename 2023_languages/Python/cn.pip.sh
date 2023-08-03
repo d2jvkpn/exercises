@@ -11,6 +11,7 @@ exit
 cat > ~/.config/pip/pip.conf <<EOF
 [global]
 index-url = https://pypi.douban.com/simple/
+target = ~/.local/lib/python3.10/site-packages/
 
 [install]
 trusted-host = pypi.douban/simple
