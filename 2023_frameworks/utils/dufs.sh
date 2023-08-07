@@ -13,6 +13,6 @@ echo "Hello, I'm Bob!" > bob/hello.txt
 
 dufs --bind 127.0.0.1 --port 3000 \
   --allow-upload --allow-search --allow-archive \
-  --auth /@admin:admin \
-  --auth /alice@alice:alice \
-  --auth /bob@bob:bob
+  --auth admin:admin@/:r \
+  --auth alice:alice@/alice:r \
+  --auth bob:bob@/bob:r

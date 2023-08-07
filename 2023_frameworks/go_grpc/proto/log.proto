@@ -6,8 +6,8 @@ package proto;
 // import "google/protobuf/timestamp.proto";
 
 message LogData {
-	string name = 1;
-	string version = 2;
+	string serviceName = 1;
+	string serviceVersion = 2;
 	string eventId = 3;
 	int64  eventAt = 4;
 	// google.protobuf.Timestamp eventAt = 4;
