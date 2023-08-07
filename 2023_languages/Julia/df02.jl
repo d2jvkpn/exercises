@@ -42,11 +42,11 @@ push!(df, Dict(:B => "F", :A => 3))
 ####
 df = DataFrame(a=[1, 2, 3], b=[:a, :b, :c])
 
-mkpath("tmp_data")
-CSV.write("tmp_data/dataframe.csv", df)
+mkpath("tmp")
+CSV.write("tmp/df02_a01.csv", df)
 
-CSV.write("tmp_data/dataframe.tsv", df; delim="\t")
-readdir("tmp_data")
+CSV.write("tmp/df02_a01.tsv", df; delim="\t")
+readdir("tmp")
 # cd("tmp_data"); pwd();  mkdir("tmp_data")
 
 
