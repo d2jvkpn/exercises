@@ -17,7 +17,8 @@ gr();
 
 plot(
   numIndustries, globalTemperatures,
-  label="line", xlabel="Number of Industries", ylabel="Temperatures", title="Title",
+  label="line", title="Title",
+  xlabel="Number of Industries", ylabel="Temperatures",
 )
 
 scatter!(numIndustries, globalTemperatures, label="points")

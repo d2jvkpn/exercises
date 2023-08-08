@@ -2,6 +2,8 @@
 
 import XLSX, DataFrames as DF
 
+# $ ./xlsx_to_sql.jl data/browsenode.xlsx data/browsenode.sql browse_node
+
 # xlsx = XLSX.readdata("2021-07-14.xlsx", "Sheet1", "A1:H23")
 # sheet = XLSX.readxlsx("2021-07-14.xlsx")[1]
 

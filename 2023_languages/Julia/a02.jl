@@ -5,8 +5,6 @@ typeof(age)
 
 first(methodswith(Int64), 5)
 
-
-
 struct Language
     name::String
     title::String
