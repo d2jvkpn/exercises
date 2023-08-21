@@ -7,6 +7,8 @@ class Person {
 	private:
 		double height;
 
+	protected:
+
 	public:
 		string name;
 		int age;
