@@ -13,6 +13,7 @@ int main() {
 	int size = miles.size();	
 	cout << "Number of cars: " << size << endl;
 	cout << "Car miles index 0: " << miles[0] << endl;
+	cout << "Car miles index 1: " << miles[1] << endl;
 
 	int total = 0;
 	for (int i=0; i < size; i++) {

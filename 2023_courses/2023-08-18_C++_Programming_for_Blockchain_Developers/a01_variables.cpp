@@ -8,10 +8,10 @@ int main() {
 
 	int a = 4;
 	int b= 2;
-	int c = a*b - a;
+	int c = a * b - a;
 
 	bool d = true;
-	bool e =false;
+	bool e = false;
 	bool k = d || e;
 
 	double h = 4.2;
