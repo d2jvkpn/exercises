@@ -1,9 +1,8 @@
 #![allow(dead_code)]
 
-mod brute_force;
-mod divide_and_conquer;
+pub mod brute_force;
 pub mod heap_dynamic;
 pub mod heap_sort;
-mod merge_sort;
-mod quick_select;
-mod quick_sort;
+pub mod merge_sort;
+pub mod quick_select;
+pub mod quick_sort;

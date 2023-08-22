@@ -1,8 +1,11 @@
 fn bubble_sort<T: PartialOrd>(slice: &mut [T]) {
-    loop {
-        let mut next = false;
+    let mut index = slice.len() - 1;
+    let mut next;
 
-        for i in 0..slice.len() - 1 {
+    loop {
+        next = false;
+
+        for i in 0..index {
             if slice[i] > slice[i + 1] {
                 slice.swap(i, i + 1);
                 next = true;
@@ -12,6 +15,7 @@ fn bubble_sort<T: PartialOrd>(slice: &mut [T]) {
         if !next {
             break;
         }
+        index -= 1;
     }
 }
 

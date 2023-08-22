@@ -21,5 +21,8 @@ int main() {
 
 	cout << "Hello, world!\n";
 
+	bool checked;
+	cout << "==> checked: " << checked << endl; // !!! random output
+
 	return 0;
 }
