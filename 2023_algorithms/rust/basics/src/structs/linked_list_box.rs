@@ -22,8 +22,7 @@ impl<T: PartialEq> LinkedList<T> {
 
     fn push_front(&mut self, value: T) -> &mut Self {
         let mut value = Node::new(value);
-        let header = self.header.take();
-        value.next = header;
+        value.next = self.header.take();
         self.header = Some(Box::new(value));
         self
     }

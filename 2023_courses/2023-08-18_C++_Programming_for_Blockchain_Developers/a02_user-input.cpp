@@ -6,7 +6,7 @@ using namespace std;
 int main() {
 	string name = "";
 	cout << "==> What's your name?\n";
-	getline(cin, name);
+	getline(cin, name); // <string>
 	cout << "Good morning, " << name << endl;
 
 	int age = 0;
