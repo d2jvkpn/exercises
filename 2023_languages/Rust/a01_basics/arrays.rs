@@ -33,4 +33,7 @@ fn main() {
     assert_eq!(a, vec![2, 3]);
     a.clear();
     assert_eq!(a, vec![]);
+
+    let vec: Vec<i32> = (0..42).collect();
+    vec.windows(4).for_each(|v| println!("--> {:?}\n", v));
 }

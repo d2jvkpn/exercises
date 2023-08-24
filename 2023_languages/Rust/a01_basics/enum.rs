@@ -37,4 +37,9 @@ fn main() {
 
     let b3 = b2.or(b1);
     println!("b3: {}, {:?}", type_name(&b3), b3); // Ok(42)
+
+    let x: Option<i32> = Some(32);
+    if let Some(y) = x {
+        println!("{:?}", y);
+    };
 }
