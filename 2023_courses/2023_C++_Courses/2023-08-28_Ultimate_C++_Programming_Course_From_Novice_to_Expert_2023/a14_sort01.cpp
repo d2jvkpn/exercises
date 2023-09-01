@@ -1,5 +1,6 @@
 # include <iostream>
-# include "printArray.h"
+
+# include "helper.h"
 
 using namespace std;
 
@@ -81,5 +82,6 @@ int main() {
 	int a3[] = {3, 8, 6, 0, 1, 4};
 	insertionSort(a3, size);
 	printArray(a3, size);
+
 	return 0;
 }
