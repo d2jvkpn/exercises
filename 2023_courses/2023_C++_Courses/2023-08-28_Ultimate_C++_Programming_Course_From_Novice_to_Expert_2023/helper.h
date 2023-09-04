@@ -18,7 +18,7 @@ void printArray(int array[], int size) {
 }
 
 template<typename T>
-void printVector(vector<T> vec) {
+void printVector(vector<T>& vec) {
 	cout << "Vector{ ";
 
 	for (int i=0; i < vec.size(); i++) {
