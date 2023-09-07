@@ -1,6 +1,7 @@
-project: exercises
-repository: https://github.com/d2jvkpn/exercises
+app: exercises
 version: 0.1.0
+repository: https://github.com/d2jvkpn/exercises
+image: registry.cn-shanghai.aliyuncs.com/d2jvkpn/golang
 
 # file: configs/{{.APP_ENV}}.yaml
 config: |
