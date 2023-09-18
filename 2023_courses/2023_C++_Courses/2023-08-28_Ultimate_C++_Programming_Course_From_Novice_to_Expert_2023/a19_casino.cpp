@@ -18,14 +18,13 @@ void casino(string player, int *balance) {
 	char choice;
 
 	do{
-		rules();
 		cout << "Your current balance is " << *balance << endl;
-		cout << "Hey, " << player << " enter the bet amount: ";
+		cout << "==> Hey, " << player << " enter the bet amount: ";
 		cin >> bettingAmount;
 
 		if (bettingAmount > *balance) {
 			cout << "Betting amout can't be more than current balance, re-enter balance!" << endl;
-			cout << "Do you want to continue (y/n)? ";
+			cout << "==> Do you want to continue (y/n)? ";
 			cin >> choice;
 			if (choice != 'Y' and choice != 'y') {
 				return;
@@ -34,7 +33,7 @@ void casino(string player, int *balance) {
 	} while (bettingAmount > *balance);
 
 	do {
-		cout << "Guess any number between 1 & 10: ";
+		cout << "==> Guess any number between 1 & 10: ";
 		cin >> guess;
 
 		if (guess <= 0 || guess > 10) {
@@ -45,10 +44,12 @@ void casino(string player, int *balance) {
 	dice = rand()%10 +1;
 
 	if (dice == guess) {
-		cout << "Congrats, you have won " << bettingAmount * 10 << endl;
+		cout << "==> Congrats, you have won " << bettingAmount * 10 << endl;
 		*balance += bettingAmount * 10;
 	} else {
-		cout << "Oops! You lost " << bettingAmount << ", the winning number was: " << dice << endl;
+		cout << "==> Oops! You lost " << bettingAmount <<
+		  ", the winning number was: " << dice << endl;
+
 		*balance -= bettingAmount;
 	}
 
@@ -63,17 +64,18 @@ int main() {
 
 	srand(time(0)); // seed the random generator
 	cout << "========Welcome to Casino========" << endl;
-	cout << "What's your name: ";
+	cout << "==> What's your name: ";
 
 	getline(cin, player);
-	cout << "Enter the starting balance to play the game: ";
+	rules();
+	cout << "==> Enter the starting balance to play the game: ";
 	cin >> balance;
 
 	do {
 		casino(player, &balance);
 
 		cout << player << ", you have balance of " << balance << "." << endl;
-		cout << "Do you want to play again (y/n)? ";
+		cout << "==> Do you want to play again (y/n)? ";
 		cin >> choice;
     } while(choice == 'Y' || choice == 'y');
 
