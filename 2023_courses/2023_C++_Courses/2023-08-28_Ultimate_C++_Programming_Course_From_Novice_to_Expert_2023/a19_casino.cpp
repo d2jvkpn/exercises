@@ -18,7 +18,7 @@ void casino(string player, int *balance) {
 	char choice;
 
 	do{
-		cout << "Your current balance is " << *balance << endl;
+		cout << "Your current balance is " << *balance << "." << endl;
 		cout << "==> Hey, " << player << " enter the bet amount: ";
 		cin >> bettingAmount;
 
@@ -58,8 +58,7 @@ void casino(string player, int *balance) {
 
 int main() {
 	string player;
-	int balance;
-	
+	int balance = 0;
 	char choice;
 
 	srand(time(0)); // seed the random generator
@@ -68,16 +67,20 @@ int main() {
 
 	getline(cin, player);
 	rules();
+
 	cout << "==> Enter the starting balance to play the game: ";
 	cin >> balance;
 
 	do {
 		casino(player, &balance);
+		if (balance <= 0) {
+			break;
+		}
 
 		cout << player << ", you have balance of " << balance << "." << endl;
 		cout << "==> Do you want to play again (y/n)? ";
 		cin >> choice;
-    } while(choice == 'Y' || choice == 'y');
+    } while((choice == 'Y' || choice == 'y') && balance > 0);
 
 	cout << "Thanks for playing the game. Your balance is " << balance << "." << endl;
 
