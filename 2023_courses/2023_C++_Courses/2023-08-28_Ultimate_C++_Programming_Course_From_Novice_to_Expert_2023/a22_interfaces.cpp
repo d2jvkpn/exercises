@@ -6,7 +6,11 @@ using namespace std;
 
 class Shape {
 	public:
-		virtual float getArea() = 0;
+		virtual float getArea() = 0; // must be implement by derived class
+
+		virtual void msg() { // a derived class can implement it's msg method
+			cout << "Msg from Shape class." << endl;
+		}
 
 		void setWidth(float _width) {
 			width = _width;
@@ -40,6 +44,10 @@ class Triangle: public Shape {
 			height = _height;
 		}
 
+		void msg() {
+			cout << "Msg from Triangle class." << endl;
+		}
+
 		float getArea() {
 			return width * height / 2.0;
 		}
@@ -53,10 +61,13 @@ int main() {
 	cout << r.getArea() << endl;
 	r.setWidth(4.0);
 	cout << r.getArea() << endl;
+	r.msg();
 
 	cout << "==> Trinagle: " << t.getArea() << endl;
 	cout << t.getArea() << endl;
 	t.setWidth(3.0);
 	cout << t.getArea() << endl;
+	t.msg();
+
 	return 0;
 }
