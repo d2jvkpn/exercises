@@ -61,16 +61,19 @@ int main() {
 	TwoStacks ts(5);
 
 	ts.push1(25);
-
 	ts.push2(44);
 	ts.push2(35);
-
 	ts.push1(95);
-
 	ts.push2(30);
 
 	cout << "Popped element from stack 1 is " << ts.pop1() << endl;
 	cout << "Popped element from stack 2 is " << ts.pop2() << endl;
+
+	int *array = new int[5];
+	cout << array[0] << endl;
+	delete array;
+	cout << array[0] << endl;
+	cout << array[1] << endl;
 
 	return 0;
 }
