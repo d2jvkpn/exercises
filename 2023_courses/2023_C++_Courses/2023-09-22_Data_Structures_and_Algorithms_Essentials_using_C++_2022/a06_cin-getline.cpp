@@ -16,6 +16,7 @@ int main() {
 
 	//
 	char paragraph[140];
+
 	cout << "Enter paragraph:" << endl;
 	cin.getline(paragraph, 140, '.');
 	cout << "==> Paragraph: " << strlen(paragraph) << ", '''" << paragraph << "'''" << endl;
