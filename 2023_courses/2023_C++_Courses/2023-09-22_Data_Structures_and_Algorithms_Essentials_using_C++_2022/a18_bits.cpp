@@ -11,7 +11,7 @@ void clearBitsRange(int &n, int i, int j) {
 }
 
 bool isPowerOf2(int n) {
-	return (n & (n-1)) == 0;
+	return (n & (n-1)) == 0; // 0, 10, 100, 1000, 10000...
 }
 
 int coutBits(int n) {
@@ -25,6 +25,7 @@ int coutBits(int n) {
 	return count;
 }
 
+// ???
 int coutBitsHack(int n) {
 	int ans = 0;
 
@@ -36,6 +37,8 @@ int coutBitsHack(int n) {
 	return ans;
 }
 
+// 5^13 = 5^(b1101) = 5^(2^0 + 2^2 + 2^3) = 5^(2^0) * 5^(2^2) * 5^(2^3)
+// ans = 1220703125
 int fastExpo(int a, int n) {
 	int ans = 1;
 
