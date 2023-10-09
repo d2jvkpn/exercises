@@ -1,0 +1,22 @@
+image: registry.cn-shanghai.aliyuncs.com/d2jvkpn/hello
+registry: github.com/d2jvkpn/hello
+
+configs:
+  # 3011(http_port) is for local environment
+  dev:
+    work_path: /root/docker_dev/hello_dev
+    branch: dev
+    http_port: 3012
+    api_url: "http://192.168.122.172:3012"
+
+  test:
+    work_path: /root/docker_test/hello_test
+    branch: test
+    http_port: 3013
+    api_url: ""
+
+  prod:
+    work_path: /root/docker_prod/hello_prod
+    branch: master
+    http_port: 3010
+    api_url: ""

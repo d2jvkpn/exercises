@@ -1,0 +1,16 @@
+/main
+/*.ini
+/*.yaml
+/*.yml
+/*.toml
+
+wk*/
+*.log
+/vendor
+/target
+/.tmp
+/static
+/configs
+
+/build.lock
+/logs/

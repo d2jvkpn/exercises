@@ -1,0 +1,9 @@
+consul:
+  address: http://127.0.0.1:8500
+  secret_id: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxx
+  name: "my-service"
+  tags: ["A", "B", "C"]
+  registry: true
+  timeout: 5s
+  interval: 5s
+  dcsa: 30s

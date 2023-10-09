@@ -1,0 +1,154 @@
+---
+spec: &spec
+  volumes:
+  - name: hello-data
+    hostPath: { path: "/app/hello02_logs", type: "DirectoryOrCreate" }
+  # - name: logFile
+    # hostPath: { path: "/var/local/aaa/log.txt", type: "FileOrCreate" }
+  - name: hello-vol
+    persistentVolumeClaim: {claimName: "pvc-nfs"}
+
+  containers:
+  - name: hello02
+    image: registry.cn-shanghai.aliyuncs.com/d2jvkpn/hello:dev
+    # IfNotPresent, Always, Never
+    imagePullPolicy: "Always"
+
+    resources:
+      # 500MHz, 128Mi(power-of-two)
+      requests: { cpu: "200m", memory: "128Mi" }
+      limits: { cpu: "500m", memory: "256Mi" }
+
+    env:
+    - name: POD_NAME
+      valueFrom:
+        fieldRef: { apiVersion: "v1", fieldPath: "metadata.name" }
+
+    volumeMounts:
+    # readOnly: true
+    - { name: "hello-data", subPathExpr: "$(POD_NAME)", mountPath: "/opt/hello/logs"}
+    - { name: "hello-vol", mountPath: "/opt/hello/static"}
+
+    livenessProbe:
+      # HTTP Status >= 200 and < 400
+      httpGet: { path: "/debug/healthy", port: 1030 }
+      initialDelaySeconds: 5
+      timeoutSeconds: 1
+      periodSeconds: 10
+      failureThreshold: 3
+
+    ports:
+    - { name: "http", containerPort: 8080, protocol: "TCP" }
+    - { name: "pprof", containerPort: 1030, protocol: "TCP" }
+
+    # command: ["./main", "-addr", ":8080"]
+    # args: ["$(MESSAGE)"]
+
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: hello02
+  namespace: default
+  labels: {run: "hello02"}
+
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels: { app: "hello02" }
+
+  template:
+    metadata:
+      labels: { app: "hello02" }
+
+    spec:
+      <<: *spec
+
+---
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: hello02-clusterip
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: hello02
+
+  ports:
+  - { protocol: TCP, port: 1010, targetPort: 8080 }
+  # cluster port: 1010, pod port: 8080
+
+#### inspect commands
+# kubectl get ep hello02-clusterip
+# kubectl describe ep hello02-clusterip
+# kubectl get service hello02-clusterip -o wide
+# kubectl describe service hello02-clusterip
+
+# addr=$(kubectl get service hello02-clusterip | awk 'NR==2{split($5, a, "/"); print $3":"a[1]}')
+# docker exec cluster02-worker curl $addr/api/open/ping
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: hello02-ingress
+
+spec:
+  rules:
+  #host: your.domain.path
+  - http:
+      paths:
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: hello02-clusterip
+            port: { number: 1010 }
+            # 80(Ingress: hello02-ingress) ->
+            # 1010(Service: hello02-clusterip) ->
+            # 8080(Deployment: hello02, Pod: hello02-*-*)
+
+      - path: /ws
+        pathType: Prefix
+        backend:
+          service:
+            name: hello02-clusterip
+            port: { number: 1010 }
+
+      - path: /web
+        pathType: Prefix
+        backend:
+          service:
+            name: hello02-clusterip
+            port: { number: 1010 }
+
+  - host: your.domain.path
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: hello02-clusterip
+            port: { number: 1010 }
+
+# kubectl get ingress hello-ingress
+# kubectl describe ingress hello-ingress
+
+# https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-ingress-guide-nginx-example.html
+# https://kind.sigs.k8s.io/docs/user/ingress/
+
+# curl -kL localhost            # defaultBackend: 404 html
+# curl localhost/xxxx           # defaultBackend: 404 html
+# curl localhost/api/open/ping  # rules[0] service: response json
+# curl localhost/api/xxxx       # rules[0] service: 404 page not found
+
+# curl -H "Host: --" localhost                             # defaultBackend: 404 html
+# curl -H "Host: your.domain.path" localhost               # rules[1] service: 404 page not found
+# curl -H "Host: your.domain.path" localhost/api/open/ping # rules[1] service: response json
+# curl -H "Host: your.domain.path" localhost/xxxx          # rules[1] service: 404 page not found

@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  hello:
+    image: registry.cn-shanghai.aliyuncs.com/d2jvkpn/hello:${BuildBranch}
+    container_name: hello_${APP_ENV}
+    restart: always
+    # network_mode: bridge
+    networks: ["hello"]
+    ports: ["${PORT}:${PORT}"]
+    environment: ["TZ=Asia/Shanghai"]
+    command: ./main -addr ":${PORT}" -pprof ":1030"
+
+networks:
+  hello:
+    name: hello_${APP_ENV}
+    driver: bridge
+    external: false

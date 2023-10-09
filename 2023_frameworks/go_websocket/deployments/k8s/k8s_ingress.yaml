@@ -1,0 +1,53 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+
+metadata:
+  name: hello02-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api/
+        pathType: Prefix
+        backend:
+          service: { name: hello02-clusterip, port: { number: 1010 } }
+          # 80(Ingress: hello02-ingress) ->
+          # 1010(Service: hello02-clusterip) ->
+          # 8080(Deployment: hello02, Pod: hello02-*-*)
+
+      - path: /ws/
+        pathType: Prefix
+        backend:
+          service: { name: hello02-clusterip, port: { number: 1010 } }
+
+      - path: /web/
+        pathType: Prefix
+        backend:
+          service: { name: hello02-clusterip, port: { number: 1010 } }
+
+  - host: your.domain.path
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service: { name: hello02-clusterip, port: { number: 1010 } }
+
+# kubectl get ingress hello02-ingress
+# kubectl describe ingress hello02-ingress
+
+# https://matthewpalmer.net/kubernetes-app-developer/articles/kubernetes-ingress-guide-nginx-example.html
+# https://kind.sigs.k8s.io/docs/user/ingress/
+
+# curl -kL localhost            # defaultBackend: 404 html
+# curl localhost/xxxx           # defaultBackend: 404 html
+# curl localhost/api/open/ping  # rules[0] service: response json
+# curl localhost/api/xxxx       # rules[0] service: 404 page not found
+
+# curl -H "Host: --" localhost                             # defaultBackend: 404 html
+# curl -H "Host: your.domain.path" localhost               # rules[1] service: 404 page not found
+# curl -H "Host: your.domain.path" localhost/api/open/ping # rules[1] service: response json
+# curl -H "Host: your.domain.path" localhost/xxxx          # rules[1] service: 404 page not found

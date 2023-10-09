@@ -1,0 +1,5 @@
+package rabbitmq
+
+import (
+// "fmt"
+)
