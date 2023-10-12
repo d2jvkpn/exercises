@@ -1,5 +1,6 @@
 # include <iostream>
 # include <vector>
+
 using namespace std;
 
 void merge(vector<int> &vec, int low, int high) {
