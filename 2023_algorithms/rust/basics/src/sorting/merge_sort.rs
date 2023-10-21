@@ -11,9 +11,8 @@ fn merge_sort<T: Copy + Ord>(arr: &mut [T]) {
     merge(arr, mid);
 }
 
-/*
-// author: ChatGPT
-fn merge(arr: &mut [i32], mid: usize) {
+
+fn merge_classic(arr: &mut [i32], mid: usize) {
     let mut left = arr[..mid].to_vec();
     let mut right = arr[mid..].to_vec();
 
@@ -44,7 +43,6 @@ fn merge(arr: &mut [i32], mid: usize) {
         arr_idx += 1;
     }
 }
-*/
 
 fn merge<T: Copy + Ord>(arr: &mut [T], mid: usize) {
     if mid == 0 {
