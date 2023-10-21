@@ -1,5 +1,5 @@
-#include<iostream>
-#include <vector>
+# include <iostream>
+# include <vector>
 
 using namespace std;
 
@@ -29,9 +29,8 @@ void quickSort(vector<int>& vec, int front, int end){
 	quickSort(vec, pivot+1, end);
 }
 
-
 int main(){
-	vector<int> vec{10,5,2,0,7,6,4};
+	vector<int> vec{10, 5, 2, 0, 7, 6, 4};
 
 	quickSort(vec, 0, vec.size()-1);
 

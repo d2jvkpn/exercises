@@ -1,9 +1,9 @@
-#include<iostream>
-#include <vector>
+# include <iostream>
+# include <vector>
 
 using namespace std;
 
-//helper method
+// helper method
 void merge(vector<int> &vec, int front, int end){
 	int mid = (front + end)/2;
 	int i = front, j = mid + 1;
@@ -31,7 +31,7 @@ void merge(vector<int> &vec, int front, int end){
 	return;
 }
 
-//sorting method
+// sorting method
 void mergeSort(vector<int> &vec, int front, int end){
 	// base case
 	if(front >= end){
@@ -46,7 +46,7 @@ void mergeSort(vector<int> &vec, int front, int end){
 }
 
 int main(){
-	vector<int> vec{10,5,2,0,7,6,4};
+	vector<int> vec{10, 5 , 2, 0, 7, 6, 4 };
 
 	mergeSort(vec, 0, vec.size() - 1);
 
