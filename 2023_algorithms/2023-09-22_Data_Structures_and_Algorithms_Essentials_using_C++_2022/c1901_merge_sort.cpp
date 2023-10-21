@@ -1,5 +1,6 @@
 #include<iostream>
 #include <vector>
+
 using namespace std;
 
 //helper method
@@ -26,29 +27,30 @@ void merge(vector<int> &vec, int front, int end){
 		vec[idx] = temp[k];
 		k += 1;
 	}
+
 	return;
 }
 
 //sorting method
-void mergeSort(vector<int> &arr, int s, int e){
-	//base case
-	if(s>=e){
+void mergeSort(vector<int> &vec, int front, int end){
+	// base case
+	if(front >= end){
 		return;
 	}
 
-	//rec case
-	int mid = (s+e)/2;
-	mergeSort(arr,s,mid);
-	mergeSort(arr,mid+1,e);
-	return merge(arr,s,e);
+	// rec case
+	int mid = (front + end)/2;
+	mergeSort(vec, front, mid);
+	mergeSort(vec, mid+1, end);
+	return merge(vec, front, end);
 }
 
 int main(){
-  	vector<int> arr{10,5,2,0,7,6,4};
+	vector<int> vec{10,5,2,0,7,6,4};
 
-  	mergeSort(arr, 0, arr.size() - 1);
+	mergeSort(vec, 0, vec.size() - 1);
 
-	for (int x : arr){
+	for (int x : vec){
 		cout << x << ", ";
 	}
 	cout << endl;
