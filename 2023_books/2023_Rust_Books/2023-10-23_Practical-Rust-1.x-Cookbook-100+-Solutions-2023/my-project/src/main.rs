@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::fmt::Debug;
 
 fn main() {
@@ -9,10 +11,13 @@ fn main() {
     let val2 = MyStruct2 { value: 42 };
     do_somthing2(val2);
 
-    let my_enum = MyEnum::Value(42);
+    let my_enum = MyEnum1::Value(42);
     println!("{:?}", my_enum);
 
-    match_my_enum(my_enum);
+    match_my_enum(&my_enum);
+    
+	let val1 = MyEnum2::Value1;
+	assert_eq!(val1 as i32, 1);
 }
 
 // fn do_somthing2(item: impl MyTrait2<i32>) {
@@ -20,12 +25,13 @@ fn do_somthing2<T: MyTrait2<i32>>(item: T) {
     println!("ans: {:?}", item.do_something("Hello".to_string()));
 }
 
-fn match_my_enum(value: MyEnum) {
+fn match_my_enum(value: &MyEnum1) {
     match value {
-        MyEnum::XX => println!("~~~ XX"),
-        MyEnum::Value(v) => println!("~~~ ans value: {}", v),
-        MyEnum::Name(ref v) => println!("~~~ ans name: {}", v),
-        MyEnum::Point { x, y: _, .. } => println!("ans point x: {}", x),
+        MyEnum1::X1 => println!("~~~ X1"),
+        MyEnum1::Value(v) => println!("~~~ ans value: {}", v),
+        MyEnum1::Name(ref v) => println!("~~~ ans name: {}", v),
+        MyEnum1::Point { x, y: _, .. } => println!("ans point x: {}", x),
+        _ => {},
     }
 }
 
@@ -62,10 +68,18 @@ impl<T: Copy + Debug> MyTrait2<T> for MyStruct2<T> {
 }
 
 //
-#[derive(Debug)]
-enum MyEnum {
-    XX,
+#[derive(Debug, PartialEq, Eq)]
+#[repr(usize)]
+enum MyEnum1 {
+    X1 = 0,
+    X2 = 1,
     Value(i32),
     Name(String),
     Point { x: i32, y: i32, z: i32 },
+}
+
+enum MyEnum2 {
+	Value1 = 1,
+	Value2 = 2,
+	Value3 = 3,
 }
