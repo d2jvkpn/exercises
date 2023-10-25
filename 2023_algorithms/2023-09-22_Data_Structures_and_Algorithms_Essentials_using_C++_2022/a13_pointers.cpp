@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void applyTax(float &income) {
+void applyTax1(float &income) {
 	float tax = 0.10;
 	income = income - income*tax;
 }
@@ -20,6 +20,10 @@ void applyTax3(float* income) {
 	*income = money;
 }
 
+void applyTax4(float& income) {
+	float tax = 0.10;
+	income = income - income*tax;
+}
 
 void viewVideo(int * cout) {
 	*cout += 1;
@@ -46,7 +50,7 @@ int main() {
 	float income = 100;
 
 	cout << "==> income: " << income;
-	applyTax(income);
+	applyTax1(income);
 	cout << ", " << income << endl;
 
 	applyTax2(&income);
