@@ -1,4 +1,6 @@
-#include<iostream>
+# include<iostream>
+# include<vector>
+
 using namespace std;
 
 int binary_search(int arr[],int n,int key){
@@ -19,6 +21,24 @@ int binary_search(int arr[],int n,int key){
 	return -1;
 }
 
+template <typename T>
+int binarySearch(vector<T> &vec, int key){
+	int front = 0, end = vec.size() - 1, mid;
+
+	while(front <= end){
+		mid = (front + end)/2;
+
+		if(vec[mid] == key){
+			return mid;
+		} else if(vec[mid] > key){
+			end = mid - 1;
+		} else{
+			front = mid + 1;
+		}
+	}
+
+	return -1;
+}
 
 int main(){
 	int arr[] = {10,20,30,40,45,60,70,89};
