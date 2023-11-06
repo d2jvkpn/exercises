@@ -1,71 +1,8 @@
 # include <iostream>
+// # incliude <"stack.h">
+# include "./c1501_linked_list.h"
 
 using namespace std;
-
-template <typename T>
-class Node {
-public:
-	T        data;
-	Node<T>* next;
-
-	Node(T data) {
-		this->data = data;
-	}
-
-	~Node() {
-		/*
-		if (this->next == NULL) {
-			cout << "!!! delete Node(" << this->data << "->NULL)" << endl;
-		} else {
-			cout << "!!! delete Node(" << this->data << "->" << this->next->data << ")" << endl;
-		}
-		*/
-
-		this->clear();
-		cout << "!!! delete Node(" << this->data << "->NULL)" << endl;
-	}
-
-	void show() {
-		cout << "Node(" << this->data << "->";
-
-		if (this->next == NULL) {
-			cout << "NULL)\n";
-			return;
-		}
-
-		Node<T>* next = this->next;
-
-		while(next != NULL) {
-			cout << next->data << "->";
-
-			if (next->next == NULL) {
-				break;
-			}
-
-			next = next->next;
-		}
-
-		cout << "NULL)\n";
-	}
-
-	void push(T data) {
-		if (this->next == NULL) {
-			this->next = new Node<T>(data);
-		} else {
-			this->next->push(data);
-		}
-	}
-
-private:
-	void clear() {
-		if (this->next != NULL) {
-			this->next->clear();
-			delete this->next;
-			this->next = NULL;
-		}
-		// delete this; // can't delete self
-	}
-};
 
 template <typename T>
 class Stack {
@@ -80,7 +17,10 @@ public:
 
 	~Stack() {
 		cout << "!!! delete Stack: " << this->size << endl;
-		delete this->head;
+
+		if (this->head != NULL) {
+			delete this->head;
+		}
 	}
 
 	bool isEmpty() {
@@ -94,9 +34,10 @@ public:
 		this->head = NULL;
 	}
 
-	Stack<T>* push(T data) {
+	Stack<T>* push(T val) {
 		this->size += 1;
-		Node<T>* node = new Node<T>(data);
+
+		Node<T>* node = new Node<T>(val);
 		node->next = this->head;
 		this->head = node;
 
@@ -158,13 +99,13 @@ int main() {
 	delete node;
 
 	///
-	Stack<int>* stack = new Stack<int>();
-	stack->push(0)->push(1)->push(2)->push(3)->push(4);
+	Stack<char>* stack = new Stack<char>();
+	stack->push('a')->push('b')->push('c')->push('d')->push('e');
 	stack->show();
 
 	stack->clear();
 	stack->show();
-	stack->push(5)->push(6)->push(7)->push(9)->push(9);
+	stack->push('f')->push('g')->push('h')->push('i')->push('j');
 
 	delete stack;
 
