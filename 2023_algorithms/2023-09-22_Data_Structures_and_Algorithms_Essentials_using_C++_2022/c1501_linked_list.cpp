@@ -14,7 +14,11 @@ public:
 	}
 
 	~Node() {
-		cout << "!!! delete node: " << value << endl;
+		if (this->next == NULL) {
+			cout << "!!! delete node: " << value << "->NULL" << endl;
+		} else {
+			cout << "!!! delete node: " << value << "->" << this->next->value << endl;
+		}
 	}
 
 	void show() {
@@ -29,6 +33,8 @@ public:
 	Node<T>* tail;
 	int      size;
 
+	// List(): head(NULL), tail(NULL) {}
+
 	List() {
 		this->head = NULL;
 		this->tail = NULL;
@@ -37,7 +43,7 @@ public:
 
 	~List() {
 		// TODO:
-		cout << "!!! DELETE List: " << this->size << endl;
+		cout << "!!! DELETE List: " << this->size << " nodes" << endl;
 
 		this->size = 0;
 		this->tail = NULL;
@@ -53,16 +59,16 @@ public:
 	}
 
 	void show() {
-		if (head == NULL) {
-			 printf("List(size=%d, NULL, NUULL)\n", size);
+		if (this->head == NULL) {
+			 printf("List(size=%d, NULL)\n", size);
 			 return;
 		}
 	
-		cout << "List(size=" << size;
-		Node<T>* next = head;
+		cout << "List(size=" << size << ", ";
+		Node<T>* next = this->head;
 
-		while(true) {
-			cout << ", " << next->value;
+		while(next != NULL) {
+			cout << next->value << "->";
 
 			if (next->next == NULL) {
 				break;
@@ -71,7 +77,7 @@ public:
 			next = next->next;
 		}
 
-		cout << ")\n";
+		cout << "NULL)\n";
 	}
 
 	void push_front(T value) {
@@ -197,10 +203,9 @@ public:
 				next = next->next;
 			}
 
+			next->next = NULL; // ! must do this
 			this->tail = next;
 		}
-
-		ans->next = NULL;
 
 		return ans;
 	}
@@ -219,7 +224,7 @@ public:
 			this->head = NULL;
 			this->tail = NULL;
 		} else {
-			this->head = this->head->next;
+			this->head = ans->next;
 		}
 
 		ans->next = NULL;
@@ -272,6 +277,16 @@ int main() {
 
 	list.show();
 	list.reverse();
+	list.show();
+
+	Node<int>* ans1 = list.pop_back();
+	cout << "==> Pop Back: " << ans1->value << endl;
+	delete ans1;
+	list.show();
+
+	Node<int>* ans2 = list.pop_front();
+	cout << "==> Pop Front: " << ans2->value << endl;
+	delete ans2;
 	list.show();
 
 	return 0;
