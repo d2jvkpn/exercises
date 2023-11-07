@@ -4,12 +4,8 @@ using namespace std;
 
 class Queue{
 	int *arr;
-
-	int max_size;
-	int size;
-
-	int front;
-	int rear;
+	int max_size, size;
+	int front,  rear;
 
 public:
 	Queue(int size=5) {

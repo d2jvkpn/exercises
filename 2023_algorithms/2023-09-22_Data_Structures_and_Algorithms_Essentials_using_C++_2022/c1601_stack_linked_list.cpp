@@ -23,7 +23,7 @@ public:
 		}
 	}
 
-	bool isEmpty() {
+	bool empty() {
 		return this->head == NULL;
 	}
 

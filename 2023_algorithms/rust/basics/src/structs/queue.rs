@@ -1,6 +1,6 @@
 use std::{cell::RefCell, fmt::Debug, rc::Rc};
 
-#[derive(PartialEq, Debug, Clone)]
+#[derive(Debug, Clone)]
 pub struct Queue<T> {
     pub header: Next<T>,
     pub tail: Next<T>,

@@ -11,10 +11,9 @@ fn merge_sort<T: Copy + Ord>(arr: &mut [T]) {
     merge(arr, mid);
 }
 
-
 fn merge_classic(arr: &mut [i32], mid: usize) {
-    let mut left = arr[..mid].to_vec();
-    let mut right = arr[mid..].to_vec();
+    let left = arr[..mid].to_vec();
+    let right = arr[mid..].to_vec();
 
     let mut left_idx = 0;
     let mut right_idx = 0;

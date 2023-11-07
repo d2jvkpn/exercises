@@ -24,7 +24,7 @@ public:
 	}
 
 	void pushAtBottom(T val) {
-		if (this->isEmpty()) {
+		if (this->empty()) {
 			this->push(val);
 			return;
 		}
@@ -68,7 +68,7 @@ public:
 		return &this->vec[size - 1];
 	}
 
-	bool isEmpty() {
+	bool empty() {
 		return this->vec.size() == 0;
 	}
 };
