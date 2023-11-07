@@ -10,7 +10,7 @@ pub struct Queue<T> {
     pub rear: usize,
 }
 
-impl<T: Debug + Clone + PartialEq + Default> Queue<T> {
+impl<T: Debug + Clone + PartialEq> Queue<T> {
     pub fn new(max_size: usize) -> Self {
         Queue {
             data: vec![None; max_size],
