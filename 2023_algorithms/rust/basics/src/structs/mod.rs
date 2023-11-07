@@ -7,4 +7,5 @@ pub mod linked_list_general;
 pub mod linked_list_unique;
 pub mod queue;
 pub mod queue2;
+pub mod queue3;
 pub mod stack;
