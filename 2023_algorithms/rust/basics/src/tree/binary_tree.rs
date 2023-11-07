@@ -1,5 +1,5 @@
 use super::node::{Child, Node};
-use crate::structs::queue::Queue;
+use crate::structs::queue1::Queue;
 use std::fmt::Debug;
 
 #[derive(Debug)]

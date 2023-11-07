@@ -1,9 +1,9 @@
-# include<iostream>
-# include<vector>
+# include <iostream>
+# include <vector>
 
 using namespace std;
 
-int binary_search(int arr[],int n,int key){
+int binary_search(int arr[], int n, int key){
 	int front = 0, end = n - 1, mid;
 
 	while(front <= end){

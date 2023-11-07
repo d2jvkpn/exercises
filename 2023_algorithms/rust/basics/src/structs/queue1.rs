@@ -95,7 +95,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn t_queue() {
+    fn t_queue1() {
         let mut queue = Queue::new_with(1);
         queue.push(2).push(3).push(4);
 
