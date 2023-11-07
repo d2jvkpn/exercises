@@ -46,7 +46,7 @@ impl<T: Debug + Clone + PartialEq + Default> Queue<T> {
         Ok(())
     }
 
-    pub fn pop(&mut self) -> Result<&T, &'static str> {
+    pub fn pop(&mut self) -> Result<T, &'static str> {
         if self.is_empty() {
             return Err("queue is empty");
         }
@@ -55,7 +55,7 @@ impl<T: Debug + Clone + PartialEq + Default> Queue<T> {
         self.size -= 1;
         self.front = (self.front + 1) % self.max_size;
 
-        Ok(ans)
+        Ok(ans.clone())
     }
 
     pub fn front(&self) -> Result<&T, &'static str> {
@@ -82,9 +82,9 @@ mod tests {
         queue.push(1).unwrap();
         queue.show();
 
-        assert_eq!(queue.pop(), Ok(&42));
+        assert_eq!(queue.pop(), Ok(42));
         assert_eq!(queue.front(), Ok(&27));
-        assert_eq!(queue.pop(), Ok(&27));
+        assert_eq!(queue.pop(), Ok(27));
 
         queue.show();
     }
