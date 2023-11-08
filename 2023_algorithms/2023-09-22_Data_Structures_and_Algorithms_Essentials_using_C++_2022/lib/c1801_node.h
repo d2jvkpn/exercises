@@ -6,9 +6,9 @@ using namespace std;
 
 class Node {
 public:
-	string  data;
-	Node* left;
-	Node* right;
+	string data;
+	Node*  left;
+	Node*  right;
 
 	Node(string data) {
 		this->data = data;
@@ -19,87 +19,99 @@ public:
 	~Node() {
 		this->clear();
 
-		cout << "!!! delete Node: " << data << endl;
+		cout << "!!! delete Node: " << this->data << endl;
 	}
 
 	void show() {
 		string s1, s2;
 
-		s1 = (left == NULL) ? "NULL" : s1 + left->data;
-		s2 = (right == NULL) ? "NULL" : s2 + right->data;
+		s1 = (this->left == NULL) ? "NULL" : s1 + this->left->data;
+		s2 = (this->right == NULL) ? "NULL" : s2 + this->right->data;
 
 		cout << "Node { data: " << data << ", left: " << s1 << ", right: " << s2 << " }" << endl;
 	}
 
 	bool isLeaf() {
-		return left == NULL && right == NULL;
+		return this->left == NULL && this->right == NULL;
 	}
 
 	int count() {
 		int ans = 1;
 
-		if (left != NULL) {
-			ans += left->count();
+		if (this->left != NULL) {
+			ans += this->left->count();
 		}
 
-		if (right != NULL) {
-			ans += right->count();
+		if (this->right != NULL) {
+			ans += this->right->count();
 		}
 
 		return ans;
 	}
 
-	int levels() {
-		int left_levels = 0, right_levels = 0;
+	int height() {
+		int h1 = 0;
+		int h2 = 0;
 
-		if (left != NULL) {
-			left_levels = left->levels();
+		if (this->left != NULL) {
+			h1 = this->left->height();
 		}
 
-		if (right != NULL) {
-			right_levels += right->levels();
+		if (this->right != NULL) {
+			h2 += this->right->height();
 		}
 
-		return left_levels > right_levels ? left_levels + 1: right_levels + 1;
+		return h1 > h2 ? h1 + 1: h2 + 1;
+	}
+
+	int diameter() {
+		int h1 = this->left == NULL ? 0 : this->left->height();
+		int h2 = this->right == NULL ? 0 : this->right->height();
+
+		int h = h1 + h2;
+		int d1 = this->left == NULL ? 0 : this->left->diameter();
+		int d2 = this->right == NULL ? 0 : this->right->diameter();
+
+		return max(h, max(d1, d2));
 	}
 
 	// preorder traversal
 	void preorder() {
 		cout << data << "->";
 
-		if (left != NULL) {
-			left->preorder();
+		if (this->left != NULL) {
+			this->left->preorder();
 		}
 
-		if (right != NULL) {
-			right->preorder();
+		if (this->right != NULL) {
+			this->right->preorder();
 		}
 	}
 
 	// inorder traversal
 	void inorder() {
-		if (left != NULL) {
-			left->inorder();
+		if (this->left != NULL) {
+			this->left->inorder();
 		}
 
-		cout << data << "->";
+		cout << this->data << "->";
 
-		if (right != NULL) {
-			right->inorder();
+		if (this->right != NULL) {
+			this->right->inorder();
 		}
 	}
 
 	// post traversal
 	void postorder() {
-		if (left != NULL) {
-			left->postorder();
+		if (this->left != NULL) {
+			this->left->postorder();
 		}
 
-		if (right != NULL) {
-			right->postorder();
+		if (this->right != NULL) {
+			this->right->postorder();
 		}
 
-		cout << data << "->";
+		cout << this->data << "->";
 	}
 
 	void levelsOrder() {
@@ -132,20 +144,20 @@ public:
 
 private:
 	void clear() {
-		if (left != NULL) {
-			if (left->isLeaf()) {
-				left->clear();
+		if (this->left != NULL) {
+			if (this->left->isLeaf()) {
+				this->left->clear();
 			}
-			delete left;
-			left = NULL;
+			delete this->left;
+			this->left = NULL;
 		}
 
-		if (right != NULL) {
-			if (right->isLeaf()) {
-				right->clear();
+		if (this->right != NULL) {
+			if (this->right->isLeaf()) {
+				this->right->clear();
 			}
-			delete right;
-			right = NULL;
+			delete this->right;
+			this->right = NULL;
 		}
 
 		// can't delete self/this

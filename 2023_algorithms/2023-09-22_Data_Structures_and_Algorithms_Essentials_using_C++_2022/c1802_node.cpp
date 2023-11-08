@@ -38,8 +38,6 @@ int main() {
 	c->left = f;
 	c->right = g;
 
-	cout << "Node count: " << node->count() << ", levels: " << node->levels() << endl;
-
 	cout << "==> Preorder:" << endl;
 	node->preorder();
 	cout << endl;

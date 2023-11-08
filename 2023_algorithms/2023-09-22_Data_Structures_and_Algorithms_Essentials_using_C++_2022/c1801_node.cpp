@@ -26,6 +26,10 @@ int main() {
 	cout << "==> Levels order:" << endl;
 	node->levelsOrder();
 
+	cout << "Node count: " << node->count() << ", height: " << node->height() << endl;
+
+	cout << "Node diameter: " << node->diameter() << endl;
+
 	cout << "==> Delete Node:" << endl;
 	delete node;
 
