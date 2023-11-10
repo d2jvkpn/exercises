@@ -19,9 +19,12 @@ void test01() {
 int main() {
 	// cout << "Hello, world!\n";
 
-	test01();
+	// test01();
 
 	Node* node = levelsBuild();
+	if (node == NULL) {
+		return 0;
+	}
 
 	cout << "==> Levels order:" << endl;
 	node->levelsOrder();
