@@ -194,7 +194,7 @@ Node* levelsBuild() {
 	Node*        node;
 	Node*        temp;
 
-	cout << "Enter node: ";
+	cout << "Enter node (empty->NULL, !=>QUIT): ";
 	// cin >> data;
 	getline(cin, data);
 
@@ -216,6 +216,11 @@ Node* levelsBuild() {
 
 		cout << "Enter " << temp->data << ".left: ";
 		getline(cin, data);
+
+		cout << "==> " << data << endl;
+		if (data == "!") {
+			break;
+		}
 
 		if (!data.empty()) {
 			Node* left = new Node(data);
