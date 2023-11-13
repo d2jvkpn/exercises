@@ -194,7 +194,7 @@ Node* levelsBuild() {
 	Node*        node;
 	Node*        temp;
 
-	cout << "Enter node (empty->NULL, !=>QUIT): ";
+	cout << "Enter node (\"\" -> NULL, \".\" -> QUIT): ";
 	// cin >> data;
 	getline(cin, data);
 
@@ -218,7 +218,7 @@ Node* levelsBuild() {
 		getline(cin, data);
 
 		cout << "==> " << data << endl;
-		if (data == "!") {
+		if (data == ".") {
 			break;
 		}
 
