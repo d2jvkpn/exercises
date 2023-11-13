@@ -36,15 +36,15 @@ private:
 		printOrderRecu(node->right);
 	}
 
-	bool searchRecu(Node<T>* node, int val) {
+	Node<T>* searchRecu(Node<T>* node, int val) {
 		if (node == NULL) {
-			return false;
+			return NULL;
 		}
 
-		cout << "~~~ searchRecu: " << node->data << endl;
+		// cout << "~~~ searchRecu: " << node->data << endl;
 
 		if (node->data == val) {
-			return true;
+			return node;
 		} else if (val < node->data) {
 			return searchRecu(node->left, val);
 		} else {
@@ -154,11 +154,11 @@ public:
 		return this;
 	}
 
-	bool search(int val) {
+	Node<T>* search(int val) {
 		return searchRecu(root, val);
 	}
 
-	bool remove(int val) {
+	Node<T>* remove(int val) {
 		array<Node<T>*, 2> arr = searchLeaf(root, val);
 
 		Node<T>* parent = arr[0];
@@ -167,7 +167,7 @@ public:
 		array<Node<T>*, 2> pair;
 
 		if (target == NULL) {
-			return false; // not found
+			return NULL; // not found
 		}
 
 		if (parent == NULL) { // root node doesn't have parent node
@@ -196,8 +196,8 @@ public:
 
 		target->left = NULL;
 		target->right = NULL;
-		delete target;
+		// delete target;
 
-		return true;
+		return target;
 	}
 };
