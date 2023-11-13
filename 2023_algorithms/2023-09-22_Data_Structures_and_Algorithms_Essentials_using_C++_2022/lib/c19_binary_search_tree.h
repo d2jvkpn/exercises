@@ -89,7 +89,7 @@ private:
 		if (left->left == NULL) {
 			node->left = left->right;
 			left->right = NULL;
-			return { node, left }; // {parent, left}
+			return { node, left };
 		}
 
 		return dropMin(node->left);
@@ -109,10 +109,10 @@ private:
 		if (right->right == NULL) {
 			node->right = right->left;
 			right->left = NULL;
-			return { node, right }; // {parent, right}
+			return { node, right };
 		}
 
-		return dropMax(node->right); // 
+		return dropMax(node->right);
 	}
 
 public:
@@ -162,37 +162,35 @@ public:
 
 		Node<int>* parent = arr[0];
 		Node<int>* target = arr[1];
-		Node<int>* replace;
+		Node<int>* successor;
+		array<Node<int>*, 2> pair;
 
 		if (target == NULL) {
 			return false; // not found
 		}
 
 		if (parent == NULL) { // match root node, as root node doesn't have parent node
-			delete root; // TODO: fix
-			this->root = NULL;
-			return true;
-		}
-
-		// parent != NULL && target != NULL
-		bool onLeft = parent->left == target;
-
-		if (target->isLeaf()) {
-			replace = NULL;
+			pair = dropMin(target->right);
+			successor = pair[1];
+			successor->left = target->left;
+		} else if (target->isLeaf()) {
+			successor = NULL;
 		} else if (target->left == NULL || target->right == NULL) { // target only has one child
-			replace = target->right == NULL ? target->left : target->right;
+			successor = target->right == NULL ? target->left : target->right;
 		} else { // target has two children
-			array<Node<int>*, 2> pair = dropMin(target->right);
-			replace = pair[1];
+			pair = dropMin(target->right);
+			successor = pair[1];
 
-			replace->left = target->left;
-			replace->right = target->right;
+			successor->left = target->left;
+			successor->right = target->right;
 		}
 
-		if (onLeft) {
-			parent->left = replace;
+		if (parent == NULL) {
+			this->root = successor;
+		} else if (parent->left == target) {
+			parent->left = successor;
 		} else {
-			parent->right = replace;
+			parent->right = successor;
 		}
 
 		target->left = NULL;

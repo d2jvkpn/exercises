@@ -23,7 +23,7 @@ int main() {
 	tree->remove(val);
 	tree->printOrder();
 
-	cout << "==> delete Tree" << endl;
+	cout << "==> DELETE Tree" << endl;
 	delete tree;
 
 	return 0;

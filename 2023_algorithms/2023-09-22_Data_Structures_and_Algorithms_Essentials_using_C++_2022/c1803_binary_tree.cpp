@@ -15,7 +15,7 @@ public:
 	~Tree() {
 		if (root != NULL) {
 			delete root;
-			root = NULL;
+			this->root = NULL;
 		}
 
 		cout << "!!! delete Tree" << endl;
