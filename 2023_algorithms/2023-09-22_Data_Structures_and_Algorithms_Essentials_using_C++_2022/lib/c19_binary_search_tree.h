@@ -4,11 +4,12 @@
 
 using namespace std;
 
+template <typename T>
 class Tree {
-	Node<int>* root;
+	Node<T>* root;
 
 private:
-	void insert_into_node(Node<int>* node, Node<int>* target) {
+	void insert_into_node(Node<T>* node, Node<T>* target) {
 		if (node->data <= target->data) {
 			if (target->left == NULL) {
 				target->left = node;
@@ -25,7 +26,7 @@ private:
 		}
 	}
 
-	void printOrderRecu(Node<int>* node) {
+	void printOrderRecu(Node<T>* node) {
 		if (node == NULL) {
 			return;
 		}
@@ -35,7 +36,7 @@ private:
 		printOrderRecu(node->right);
 	}
 
-	bool searchRecu(Node<int>* node, int val) {
+	bool searchRecu(Node<T>* node, int val) {
 		if (node == NULL) {
 			return false;
 		}
@@ -51,7 +52,7 @@ private:
 		}
 	}
 
-	array<Node<int>*, 2> searchLeaf(Node<int>* node, int val) {
+	array<Node<T>*, 2> searchLeaf(Node<T>* node, int val) {
 		if (node == NULL) {
 			return { NULL, NULL };
 		}
@@ -75,12 +76,12 @@ private:
 		}
 	}
 
-	array<Node<int>*, 2> dropMin(Node<int>* node) {
+	array<Node<T>*, 2> dropMin(Node<T>* node) {
 		if (node == NULL) {
 			return { NULL, NULL }; // no min
 		}
 
-		Node<int>* left = node->left;
+		Node<T>* left = node->left;
 
 		if (left == NULL) {
 			return { NULL, node }; // self
@@ -95,12 +96,12 @@ private:
 		return dropMin(node->left);
 	}
 
-	array<Node<int>*, 2> dropMax(Node<int>* node) {
+	array<Node<T>*, 2> dropMax(Node<T>* node) {
 		if (node == NULL) {
 			return { NULL, NULL }; // no max
 		}
 
-		Node<int>* right = node->right;
+		Node<T>* right = node->right;
 
 		if (right == NULL) {
 			return { NULL, node }; // self
@@ -142,7 +143,7 @@ public:
 	}
 
 	Tree* insert(int value) {
-		Node<int>* node = new Node<int>(value);
+		Node<T>* node = new Node<T>(value);
 
 		if (root == NULL) {
 			root = node;
@@ -158,22 +159,22 @@ public:
 	}
 
 	bool remove(int val) {
-		array<Node<int>*, 2> arr = searchLeaf(root, val);
+		array<Node<T>*, 2> arr = searchLeaf(root, val);
 
-		Node<int>* parent = arr[0];
-		Node<int>* target = arr[1];
-		Node<int>* successor;
-		array<Node<int>*, 2> pair;
+		Node<T>* parent = arr[0];
+		Node<T>* target = arr[1];
+		Node<T>* successor;
+		array<Node<T>*, 2> pair;
 
 		if (target == NULL) {
 			return false; // not found
 		}
 
-		if (parent == NULL) { // match root node, as root node doesn't have parent node
+		if (parent == NULL) { // root node doesn't have parent node
 			pair = dropMin(target->right);
 			successor = pair[1];
 			successor->left = target->left;
-		} else if (target->isLeaf()) {
+		} else if (target->isLeaf()) { // is a leaf node
 			successor = NULL;
 		} else if (target->left == NULL || target->right == NULL) { // target only has one child
 			successor = target->right == NULL ? target->left : target->right;

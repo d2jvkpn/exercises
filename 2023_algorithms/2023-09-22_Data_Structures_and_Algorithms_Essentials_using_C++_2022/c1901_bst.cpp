@@ -5,7 +5,7 @@ using namespace std;
 
 int main() {
 	// cout << "Hello, world!" << endl;
-	Tree* tree = new Tree();
+	Tree<int>* tree = new Tree<int>();
 
 	tree->insert(8)->insert(3)->insert(10)->insert(1)->insert(6)
 	  ->insert(14)->insert(4)->insert(7)->insert(13);
