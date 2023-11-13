@@ -1,6 +1,6 @@
 # include <iostream>
 # include <string>
-# include "lib/c1801_node.h"
+# include "lib/c18_node.h"
 
 using namespace std;
 
@@ -22,7 +22,8 @@ public:
 	}
 
 	void build() {
-		Node* root = preorderBuild("root");
+		// Node* root = preorderBuild("root");
+		Node* root = levelsBuild();
 		this->root = root;
 	}
 

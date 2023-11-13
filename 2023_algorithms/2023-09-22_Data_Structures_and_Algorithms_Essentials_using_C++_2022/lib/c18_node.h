@@ -4,13 +4,14 @@
 
 using namespace std;
 
+template <typename T>
 class Node {
 public:
-	string data;
+	T      data;
 	Node*  left;
 	Node*  right;
 
-	Node(string data) {
+	Node(T data) {
 		this->data = data;
 		left = NULL;
 		right = NULL;
@@ -165,7 +166,7 @@ private:
 };
 
 // string = to_string(int)
-Node* preorderBuild(string msg) {
+Node<string>* preorderBuild(string msg) {
 	string data;
 
 	cout << "Enter " << msg << ": ";
@@ -176,7 +177,7 @@ Node* preorderBuild(string msg) {
 		return NULL;
 	}
 
-	Node* node = new Node(data);
+	Node<string>* node = new Node(data);
 
 	string s = "";
 	s += data;
@@ -188,11 +189,11 @@ Node* preorderBuild(string msg) {
 }
 
 // string = to_string(int)
-Node* levelsBuild() {
-	string       data;
-	queue<Node*> q;
-	Node*        node;
-	Node*        temp;
+Node<string>* levelsBuild() {
+	string               data;
+	queue<Node<string>*> q;
+	Node<string>*        node;
+	Node<string>*        temp;
 
 	cout << "Enter node (\"\" -> NULL, \".\" -> QUIT): ";
 	// cin >> data;
@@ -223,7 +224,7 @@ Node* levelsBuild() {
 		}
 
 		if (!data.empty()) {
-			Node* left = new Node(data);
+			Node<string>* left = new Node(data);
 			temp->left = left;
 			q.push(left);
 		}
@@ -232,7 +233,7 @@ Node* levelsBuild() {
 		getline(cin, data);
 
 		if (!data.empty()) {
-			Node* right = new Node(data);
+			Node<string>* right = new Node(data);
 			temp->right = right;
 			q.push(right);
 		}

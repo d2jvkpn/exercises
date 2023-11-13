@@ -1,16 +1,16 @@
 # include <iostream>
 # include <string>
-# include "lib/c1801_node.h"
+# include "lib/c18_node.h"
 
 using namespace std;
 
 void test01() {
-	Node n1 = Node("a");
+	Node<string> n1 = Node<string>("a");
 
-	Node* n2 = new Node("b");
+	Node<string>* n2 = new Node<string>("b");
 	delete n2; // you must manual delete/free n2
 
-	Node* n3 = &n1;
+	Node<string>* n3 = &n1;
 	// delete n3; // !!! double free or corruption (out)
 
 	// auto delete/free n1 here
@@ -21,7 +21,7 @@ int main() {
 
 	// test01();
 
-	Node* node = levelsBuild();
+	Node<string>* node = levelsBuild();
 	if (node == NULL) {
 		return 0;
 	}

@@ -1,16 +1,16 @@
 # include <iostream>
 # include <string>
-# include "lib/c1801_node.h"
+# include "lib/c18_node.h"
 
 using namespace std;
 
 void test01() {
-	Node n1 = Node("a");
+	Node<string> n1 = Node<string>("a");
 
-	Node* n2 = new Node("b");
+	Node<string>* n2 = new Node<string>("b");
 	delete n2; // you must manual delete/free n2
 
-	Node* n3 = &n1;
+	Node<string>* n3 = &n1;
 	// delete n3; // !!! double free or corruption (out)
 
 	// auto delete/free n1 here
@@ -21,20 +21,20 @@ int main() {
 
 	test01();
 
-	Node* node = new Node("A");
-	Node* b = new Node("B");
-	Node* c = new Node("C");
+	Node<string>* node = new Node<string>("A");
+	Node<string>* b = new Node<string>("B");
+	Node<string>* c = new Node<string>("C");
 	node->left = b;
 	node->right = c;
 	node->show();
 
-	Node* d = new Node("D");
-	Node* e = new Node("E");
+	Node<string>* d = new Node<string>("D");
+	Node<string>* e = new Node<string>("E");
 	b->left = d;
 	b->right = e;
 
-	Node* f = new Node("F");
-	Node* g = new Node("G");
+	Node<string>* f = new Node<string>("F");
+	Node<string>* g = new Node<string>("G");
 	c->left = f;
 	c->right = g;
 
