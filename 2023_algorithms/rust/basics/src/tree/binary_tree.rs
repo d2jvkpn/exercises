@@ -256,6 +256,27 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
 
         vec
     }
+
+    fn get_range_recur(item: &Child<T>, low: &T, high: &T, vec: &mut Vec<T>) {
+        let node = if let Some(v) = item { v.borrow() } else { return };
+
+        Self::get_range_recur(&node.left, low, high, vec);
+
+        let data = &node.data;
+        if data >= low && data <= high {
+            vec.push(data.clone());
+        }
+
+        Self::get_range_recur(&node.right, low, high, vec);
+    }
+
+    pub fn get_range(&self, low: T, high: T) -> Vec<T> {
+        let mut ans = Vec::new();
+
+        Self::get_range_recur(&self.root, &low, &high, &mut ans);
+
+        ans
+    }
 }
 
 pub fn push_recur<T: std::cmp::PartialOrd>(parent: &mut Node<T>, node: Node<T>) {
@@ -309,7 +330,10 @@ mod tests {
         tree.clear();
         slice = &[8, 3, 10, 1, 6, 14, 4, 7, 13, 19];
         tree.push_slice(slice);
-        println!("==> bfs: {:?}", tree.bfs());
+        // println!("==> bfs: {:?}", tree.bfs());
+        assert_eq!(tree.bfs(), vec![8, 3, 10, 1, 6, 14, 4, 7, 13, 19]);
+        assert_eq!(tree.get_range(10, 30), vec![10, 13, 14, 19]);
+
         assert_eq!(tree.count(), slice.len());
         assert_eq!(tree.root.clone().unwrap().borrow().data, 8);
 
