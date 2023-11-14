@@ -67,7 +67,7 @@ mod tests {
         // n2.push(Node::new(4), Node::new(5));
         // n3.push(Node::new(6), Node::new(7));
 
-        n1.push(Node::triangle(2, 4, 5), Node::triangle(3, 6, 7));
+        n1.set_children(Node::triangle(2, 4, 5), Node::triangle(3, 6, 7));
         assert_eq!(n1.count(), 7);
 
         tree.push_left(n1);
@@ -79,7 +79,7 @@ mod tests {
         */
 
         assert_eq!(tree.size(), 7);
-        assert_eq!(tree.levels(), 3);
+        assert_eq!(tree.height(), 3);
 
         // depth first search
         let expected = vec![4, 2, 5, 1, 6, 3, 7];

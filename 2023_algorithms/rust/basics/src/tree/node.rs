@@ -24,6 +24,11 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         Self { data, left: Self::new(left).into(), right: Self::new(right).into() }
     }
 
+    pub fn set_children(&mut self, left: Node<T>, right: Node<T>) {
+        self.left = left.into();
+        self.right = right.into();
+    }
+
     pub fn push_left(&mut self, node: Node<T>) -> &mut Self {
         if let Some(left) = self.left.take() {
             (*left).borrow_mut().push_left(node);

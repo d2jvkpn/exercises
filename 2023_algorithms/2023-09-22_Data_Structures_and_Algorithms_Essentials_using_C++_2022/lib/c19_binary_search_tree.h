@@ -75,7 +75,7 @@ private:
 		}
 	}
 
-	array<Node<T>*, 2> dropMin(Node<T>* node) {
+	array<Node<T>*, 2> takeMin(Node<T>* node) {
 		if (node == NULL) {
 			return { NULL, NULL }; // not found
 		}
@@ -92,10 +92,10 @@ private:
 			return { node, left };
 		}
 
-		return dropMin(node->left);
+		return takeMin(node->left);
 	}
 
-	array<Node<T>*, 2> dropMax(Node<T>* node) {
+	array<Node<T>*, 2> takeMax(Node<T>* node) {
 		if (node == NULL) {
 			return { NULL, NULL }; // not found
 		}
@@ -112,7 +112,7 @@ private:
 			return { node, right };
 		}
 
-		return dropMax(node->right);
+		return takeMax(node->right);
 	}
 
 	bool inRange(Node<T>* node, T low, T high) {
@@ -188,15 +188,15 @@ public:
 
 		Node<T>* parent = arr[0];
 		Node<T>* target = arr[1];
-		Node<T>* successor;
 		array<Node<T>*, 2> pair;
+		Node<T>* successor;
 
 		if (target == NULL) {
 			return NULL; // not found
 		}
 
 		if (parent == NULL) { // root node
-			pair = dropMin(target->right);
+			pair = takeMin(target->right);
 			successor = pair[1];
 
 			if (successor == NULL) { // target->right == NULL
@@ -209,7 +209,7 @@ public:
 		} else if (target->left == NULL || target->right == NULL) { // target only has one child
 			successor = target->right == NULL ? target->left : target->right;
 		} else { // target has two children
-			pair = dropMin(target->right);
+			pair = takeMin(target->right);
 			successor = pair[1];
 
 			successor->left = target->left;

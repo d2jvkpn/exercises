@@ -13,6 +13,10 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         Self { root: None, size: 0 }
     }
 
+    pub fn clear(&mut self) {
+        _ = self.root.take();
+    }
+
     pub fn push_iter(item: &Child<T>, node: Node<T>) {
         let child = match item {
             None => return,
@@ -49,9 +53,9 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         self.push_node(Node::new(data))
     }
 
-    pub fn push_vec(&mut self, vec: Vec<T>) {
-        vec.into_iter().for_each(|v| {
-            self.push(v);
+    pub fn push_slice(&mut self, slice: &[T]) {
+        slice.iter().for_each(|v| {
+            self.push(v.clone());
         });
     }
 
@@ -74,162 +78,160 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
     }
 
     fn match_left(item: &Child<T>, data: T) -> Child<T> {
-        let node = if let Some(v) = item { v } else { return None };
+        let node = if let Some(v) = item { v.borrow() } else { return None };
 
-        let child = node.borrow();
-        let child = match &child.left {
+        let node = match &node.left {
             Some(v) => v,
             None => return None,
         };
 
-        if child.borrow().data == data {
-            return Some(child.clone());
+        if node.borrow().data == data {
+            return Some(node.clone());
         }
         None
     }
 
     fn match_right(item: &Child<T>, data: T) -> Child<T> {
-        let node = if let Some(v) = item { v } else { return None };
+        let node = if let Some(v) = item { v.borrow() } else { return None };
 
-        let child = node.borrow();
-        let child = match &child.right {
+        let node = match &node.right {
             Some(v) => v,
             None => return None,
         };
 
-        if child.borrow().data == data {
-            return Some(child.clone());
+        if node.borrow().data == data {
+            return Some(node.clone());
         }
         None
     }
 
     // find a match node and return parent and target node
-    pub fn locate_child(item: &Child<T>, data: T) -> (Child<T>, Child<T>) {
-        // case 1
+    fn locate_recur(item: &Child<T>, data: T) -> (Child<T>, Child<T>) {
+        // case 1: root node is None
         let node = if let Some(v) = item { v } else { return (None, None) };
 
         if node.borrow().data == data {
-            // case 2
+            // case 2: target is root node
             return (None, Some(node.clone()));
         }
 
-        // case 3
+        // case 3: match left
         let target = Self::match_left(&Some(node.clone()), data.clone());
         if target.is_some() {
             return (Some(node.clone()), target);
         }
 
-        // case 4
+        // case 4: match right
         let target = Self::match_right(&Some(node.clone()), data.clone());
         if target.is_some() {
             return (Some(node.clone()), target);
         }
 
-        // iter left
-        let (parent, target) = Self::locate_child(&node.borrow().left, data.clone());
+        // iter left node
+        let (parent, target) = Self::locate_recur(&node.borrow().left, data.clone());
         if target.is_some() {
             return (parent, target);
         }
 
-        // iter right
-        Self::locate_child(&node.borrow().right, data)
+        // iter right node
+        Self::locate_recur(&node.borrow().right, data)
     }
 
     pub fn locate(&self, data: T) -> (Child<T>, Child<T>) {
-        Self::locate_child(&self.root, data)
+        Self::locate_recur(&self.root, data)
     }
 
-    fn take_min(item: &Child<T>) -> Child<T> {
-        let node = if let Some(v) = item { v } else { return None };
+    fn take_min(item: &Child<T>) -> (Child<T>, Child<T>) {
+        // parent, target
+        let node = if let Some(v) = item {
+            v
+        } else {
+            return (None, None); // not found
+        };
 
         let binding = node.borrow();
         let left = match &binding.left {
-            None => return None,
+            None => return (None, Some(node.clone())), // has no parent
             Some(v) => v,
         };
 
         if left.borrow().left.is_none() {
             node.borrow_mut().left = left.borrow_mut().right.take();
-            Some(left.clone())
-        } else {
-            Self::take_min(&Some(left.clone()))
+            return (Some(node.clone()), Some(left.clone()));
         }
+
+        Self::take_min(&Some(left.clone()))
     }
 
-    pub fn delete(&mut self, data: T) -> bool {
+    pub fn remove(&mut self, data: T) -> bool {
         let (parent, target) = self.locate(data);
+        let pair: (Child<T>, Child<T>);
+        let mut successor: Child<T>;
 
-        // case 1
-        let target = match target {
-            Some(v) => v,
-            None => return false,
-        };
+        // case 1: root is None
+        dbg!("--> case 1");
+        let target = if let Some(v) = target { v } else { return false };
 
-        // case 2
-        let parent = match parent {
-            Some(v) => v,
-            None => {
-                self.root = None;
-                return true;
-            }
-        };
-
-        // case 3, neither target.left of target.right is none
         let left = target.borrow_mut().left.take();
         let right = target.borrow_mut().right.take();
 
-        if left.is_none() || right.is_none() {
-            let successor = if left.is_none() { right } else { left };
+        if parent.is_none() {
+            // case 2: root is target
+            dbg!("--> case 2");
+            pair = Self::take_min(&right);
+            successor = pair.1;
 
-            if parent.borrow().left == Some(target) {
-                parent.borrow_mut().left = successor;
-            } else {
-                parent.borrow_mut().right = successor;
+            match &successor {
+                None => successor = left,
+                Some(v) => v.borrow_mut().left = left,
             }
-            return true;
+        } else if left.is_none() && right.is_none() {
+            // case 3: target is a leaf node
+            dbg!("--> case 3");
+            successor = None;
+        } else if left.is_none() || right.is_none() {
+            // case 4: target only has one child
+            dbg!("--> case 4");
+            successor = if right.is_none() { left } else { right };
+        } else {
+            // case 5, both targte.left and target.right are some
+            dbg!("--> case 5");
+            pair = Self::take_min(&right);
+            successor = pair.1;
+            let node = successor.clone().unwrap();
+            node.borrow_mut().left = left;
+            node.borrow_mut().right = right;
         }
 
-        // case 4, both targte.left and target.right are some
-        let replace = match Self::take_min(&right) {
-            None => right, // the right has no left
-            Some(v) => {
-                v.borrow_mut().right = right;
-                Some(v)
+        match parent {
+            None => {
+                _ = self.root.take();
+                self.root = successor;
             }
-        };
+            Some(v) => {
+                if v.borrow().left == Some(target) {
+                    v.borrow_mut().left = successor;
+                } else {
+                    v.borrow_mut().right = successor;
+                }
+            }
+        }
 
-        replace.clone().unwrap().borrow_mut().left = left;
-        parent.borrow_mut().right = replace;
         true
     }
 
-    fn count_iter(item: &Child<T>, ans: &mut usize) {
-        let node = if let Some(v) = item { v } else { return };
-        Self::count_iter(&node.borrow().left, ans);
-        *ans += 1;
-        Self::count_iter(&node.borrow().right, ans);
-    }
-
     pub fn count(&self) -> usize {
-        let mut ans = 0;
-        Self::count_iter(&self.root, &mut ans);
-        ans
-    }
-
-    fn levels_iter(item: &Child<T>) -> usize {
-        let node = if let Some(v) = item { v } else { return 0 };
-        let left = Self::levels_iter(&node.borrow().left);
-        let right = Self::levels_iter(&node.borrow().right);
-
-        if left > right {
-            left + 1
-        } else {
-            right + 1
+        match &self.root {
+            None => 0,
+            Some(v) => v.borrow().count(),
         }
     }
 
-    pub fn levels(&self) -> usize {
-        Self::levels_iter(&self.root)
+    pub fn height(&self) -> usize {
+        match &self.root {
+            None => 0,
+            Some(v) => v.borrow().height(),
+        }
     }
 
     pub fn bfs(&self) -> Vec<T> {
@@ -275,6 +277,7 @@ pub fn push_recur<T: std::cmp::PartialOrd>(parent: &mut Node<T>, node: Node<T>) 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::tree::traversal::*;
 
     #[test]
     fn t1_binary_tree() {
@@ -287,8 +290,8 @@ mod tests {
         tree.push(4).push(6).push(8);
 
         assert_eq!(tree.count(), 7);
-        assert!(tree.delete(1));
-        assert!(!tree.delete(13));
+        assert!(tree.remove(1));
+        assert!(!tree.remove(13));
         assert_eq!(tree.count(), 6);
         println!("tree: {:?}", tree);
 
@@ -299,16 +302,40 @@ mod tests {
     #[test]
     fn t2_binary_tree() {
         let mut tree: Tree<usize>;
+        let mut slice: &[usize];
         tree = Tree::new();
 
-        tree.push(8).push(3).push(10).push(1).push(6).push(14).push(4).push(7).push(13).push(19);
-        println!("==> bfs: {:?}", tree.bfs());
-        tree.delete(8);
-        println!("==> bfs: {:?}", tree.bfs());
-
-        tree = Tree::new();
-        tree.push_vec(vec![8]);
         // tree.push(8).push(3).push(10).push(1).push(6).push(14).push(4).push(7).push(13).push(19);
+        tree.clear();
+        slice = &[8, 3, 10, 1, 6, 14, 4, 7, 13, 19];
+        tree.push_slice(slice);
         println!("==> bfs: {:?}", tree.bfs());
+
+        tree.remove(8);
+        println!("==> 1. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
+
+        tree.clear();
+        slice = &[8, 10, 14];
+        tree.push_slice(slice);
+        tree.remove(8);
+        println!("==> 2. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
+
+        tree.clear();
+        slice = &[8, 10, 14];
+        tree.push_slice(slice);
+        tree.remove(10);
+        println!("==> 3. {:?}, remove {}, inorder: {:?}", slice, 10, inorder_recur_a(&tree.root));
+
+        tree.clear();
+        slice = &[8];
+        tree.push_slice(slice);
+        tree.remove(8);
+        println!("==> 4. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
+
+        tree.clear();
+        slice = &[8, 3];
+        tree.push_slice(slice);
+        tree.remove(8);
+        println!("==> 5. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
     }
 }
