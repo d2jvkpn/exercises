@@ -1,13 +1,13 @@
 use std::{cell::RefCell, cmp::max, fmt::Debug, rc::Rc};
 
+pub type Child<T> = Option<Rc<RefCell<Node<T>>>>;
+
 #[derive(Clone, Debug, PartialEq, PartialOrd)]
 pub struct Node<T> {
-    pub value: T,
+    pub data: T,
     pub left: Child<T>,
     pub right: Child<T>,
 }
-
-pub type Child<T> = Option<Rc<RefCell<Node<T>>>>;
 
 impl<T> From<Node<T>> for Child<T> {
     fn from(node: Node<T>) -> Self {
@@ -16,12 +16,12 @@ impl<T> From<Node<T>> for Child<T> {
 }
 
 impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
-    pub fn new(value: T) -> Self {
-        Self { value, left: None, right: None }
+    pub fn new(data: T) -> Self {
+        Self { data, left: None, right: None }
     }
 
-    pub fn triangle(value: T, left: T, right: T) -> Self {
-        Self { value, left: Self::new(left).into(), right: Self::new(right).into() }
+    pub fn triangle(data: T, left: T, right: T) -> Self {
+        Self { data, left: Self::new(left).into(), right: Self::new(right).into() }
     }
 
     pub fn push_left(&mut self, node: Node<T>) -> &mut Self {
@@ -40,7 +40,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         if let Some(right) = &self.right {
             return right.borrow_mut().push_right(node);
         } else {
-            self.left = node.into();
+            self.right = node.into();
         }
         */
 
@@ -54,17 +54,11 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         self
     }
 
-    pub fn push(&mut self, left: Node<T>, right: Node<T>) -> &mut Self {
-        self.push_left(left);
-        self.push_right(right);
-        self
-    }
-
     /*
     pub fn push_binary(&mut self, node: Node<T>) -> &mut Self {
-        if node.value <= self.value {
+        if node.data <= self.data {
             if let Some(v) = self.left.take() {
-                (*v).borrow_mut().push_binary(node); // !!! not *v.borrow_mut().push(value)
+                (*v).borrow_mut().push_binary(node); // !!! not *v.borrow_mut().push(data)
                 self.left = Some(v); // must return self.left
             } else {
                 self.left = node.into();
@@ -82,47 +76,51 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
     }
     */
 
-    fn count_help(&self, size: &mut usize) {
+    fn count_recur(&self, ans: &mut usize) {
         if let Some(left) = &self.left {
-            left.borrow().count_help(size);
-            *size += 1;
+            left.borrow().count_recur(ans);
+            *ans += 1;
         }
 
         if let Some(right) = &self.right {
-            right.borrow().count_help(size);
-            *size += 1;
+            right.borrow().count_recur(ans);
+            *ans += 1;
         }
     }
 
     pub fn count(&self) -> usize {
-        let mut result = 0;
+        let mut ans = 0;
 
         if let Some(left) = &self.left {
-            left.borrow().count_help(&mut result);
-            result += 1;
+            left.borrow().count_recur(&mut ans);
+            ans += 1;
         }
 
         if let Some(right) = &self.right {
-            right.borrow().count_help(&mut result);
-            result += 1;
+            right.borrow().count_recur(&mut ans);
+            ans += 1;
         }
 
-        result + 1
+        ans + 1
     }
 
-    pub fn levels(&self) -> usize {
-        // println!("~~~ {:?}, {}, {}", self.value, self.left.is_some(), self.right.is_some());
+    pub fn height(&self) -> usize {
+        // println!("~~~ {:?}, {}, {}", self.data, self.left.is_some(), self.right.is_some());
 
-        let left_levels = match &self.left {
-            Some(v) => v.borrow().levels(),
+        let h1 = match &self.left {
+            Some(v) => v.borrow().height(),
             None => 0,
         };
 
-        let right_levels = match &self.right {
-            Some(v) => v.borrow().levels(),
+        let h2 = match &self.right {
+            Some(v) => v.borrow().height(),
             None => 0,
         };
 
-        max(left_levels, right_levels) + 1
+        max(h1, h2) + 1
+    }
+
+    pub fn is_leaf(&self) -> bool {
+        self.left.is_none() && self.right.is_none()
     }
 }

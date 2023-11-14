@@ -5,22 +5,22 @@ use std::fmt::Debug;
 // https://www.jianshu.com/p/7a62dcc96304
 // left..., parent, right...
 pub fn inorder_recur_a<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
-    let mut result = Vec::new();
+    let mut ans = Vec::new();
 
-    let node = if let Some(v) = item { v } else { return result };
+    let node = if let Some(v) = item { v } else { return ans };
 
-    result.extend(inorder_recur_a(&node.borrow().left));
-    result.push(node.borrow().value.clone());
-    result.extend(inorder_recur_a(&node.borrow().right));
+    ans.extend(inorder_recur_a(&node.borrow().left));
+    ans.push(node.borrow().data.clone());
+    ans.extend(inorder_recur_a(&node.borrow().right));
 
-    result
+    ans
 }
 
 pub fn inorder_recur_b<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
     fn traversal<T: Debug + PartialEq + Clone>(item: &Child<T>, ans: &mut Vec<T>) {
         let node = if let Some(v) = item { v } else { return };
         traversal(&node.borrow().left, ans);
-        ans.push(node.borrow().value.clone());
+        ans.push(node.borrow().data.clone());
         traversal(&node.borrow().right, ans);
     }
 
@@ -42,7 +42,7 @@ pub fn inorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
         }
 
         if let Some(v) = stack.pop() {
-            ans.push(v.borrow().value.clone());
+            ans.push(v.borrow().data.clone());
             node = v.borrow().right.clone(); // !!
             continue;
         }
@@ -55,14 +55,14 @@ pub fn inorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
 
 // parent, left..., right...
 pub fn preorder_recur<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
-    let mut result = Vec::new();
-    let node = if let Some(v) = item { v } else { return result };
+    let mut ans = Vec::new();
+    let node = if let Some(v) = item { v } else { return ans };
 
-    result.push(node.borrow().value.clone());
-    result.extend(preorder_recur(&node.borrow().left));
-    result.extend(preorder_recur(&node.borrow().right));
+    ans.push(node.borrow().data.clone());
+    ans.extend(preorder_recur(&node.borrow().left));
+    ans.extend(preorder_recur(&node.borrow().right));
 
-    result
+    ans
 }
 
 pub fn preorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
@@ -72,7 +72,7 @@ pub fn preorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
 
     loop {
         if let Some(v) = node {
-            ans.push(v.borrow().value.clone());
+            ans.push(v.borrow().data.clone());
 
             if let Some(right) = v.borrow().right.clone() {
                 stack.push(right);
@@ -95,14 +95,14 @@ pub fn preorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
 
 // left..., right..., parent
 pub fn postorder_recur<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
-    let mut result = Vec::new();
-    let node = if let Some(v) = item { v } else { return result };
+    let mut ans = Vec::new();
+    let node = if let Some(v) = item { v } else { return ans };
 
-    result.extend(postorder_recur(&node.borrow().left));
-    result.extend(postorder_recur(&node.borrow().right));
-    result.push(node.borrow().value.clone());
+    ans.extend(postorder_recur(&node.borrow().left));
+    ans.extend(postorder_recur(&node.borrow().right));
+    ans.push(node.borrow().data.clone());
 
-    result
+    ans
 }
 
 pub fn postorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
@@ -120,7 +120,7 @@ pub fn postorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> 
 
     while let (Some(node), Some(viz)) = (stack.pop(), visited.pop()) {
         if viz {
-            ans.push(node.borrow().value.clone());
+            ans.push(node.borrow().data.clone());
         } else {
             stack.push(node.clone());
             visited.push(true);
@@ -141,24 +141,24 @@ pub fn postorder_stack<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> 
 }
 
 pub fn breath_first_search<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec<T> {
-    let mut vec = Vec::new();
+    let mut ans = Vec::new();
 
     let mut queue = match item {
-        None => return vec,
+        None => return ans,
         Some(v) => Queue::new_with(v.clone()),
     };
 
     while let Some(qn) = queue.pop() {
-        if let Some(v) = &qn.borrow().value.borrow().left {
+        if let Some(v) = &qn.borrow().data.borrow().left {
             _ = queue.push(v.clone());
         }
 
-        if let Some(v) = &qn.borrow().value.borrow().right {
+        if let Some(v) = &qn.borrow().data.borrow().right {
             _ = queue.push(v.clone());
         }
 
-        vec.push(qn.borrow().value.borrow().value.clone());
+        ans.push(qn.borrow().data.borrow().data.clone());
     }
 
-    vec
+    ans
 }

@@ -1,13 +1,12 @@
 # include <iostream>
-#include <array>
+# include <array>
+# include <vector>
 # include "c18_node.h"
 
 using namespace std;
 
 template <typename T>
 class Tree {
-	Node<T>* root;
-
 private:
 	void insert_into(Node<T>* node, Node<T>* target) {
 		if (node->data <= target->data) {
@@ -26,33 +25,33 @@ private:
 		}
 	}
 
-	void printOrderRecu(Node<T>* node) {
+	void printOrderRecur(Node<T>* node) {
 		if (node == NULL) {
 			return;
 		}
 
-		printOrderRecu(node->left);
+		printOrderRecur(node->left);
 		cout << node->data << ", ";
-		printOrderRecu(node->right);
+		printOrderRecur(node->right);
 	}
 
-	Node<T>* searchRecu(Node<T>* node, int val) {
+	Node<T>* searchRecur(Node<T>* node, T val) {
 		if (node == NULL) {
 			return NULL;
 		}
 
-		// cout << "~~~ searchRecu: " << node->data << endl;
+		// cout << "~~~ searchRecur: " << node->data << endl;
 
 		if (node->data == val) {
 			return node;
 		} else if (val < node->data) {
-			return searchRecu(node->left, val);
+			return searchRecur(node->left, val);
 		} else {
-			return searchRecu(node->right, val);
+			return searchRecur(node->right, val);
 		}
 	}
 
-	array<Node<T>*, 2> searchLeaf(Node<T>* node, int val) {
+	array<Node<T>*, 2> searchLeaf(Node<T>* node, T val) {
 		if (node == NULL) {
 			return { NULL, NULL };
 		}
@@ -116,7 +115,27 @@ private:
 		return dropMax(node->right);
 	}
 
+	bool inRange(Node<T>* node, T low, T high) {
+		return node != NULL && node->data >= low && node->data <= high;
+	}
+
+	void printRangeRecur(Node<T>* node, T low, T high) {
+		if (node == NULL) {
+			return;
+		}
+
+		printRangeRecur(node->left, low, high);
+
+		if (node->data >= low && node->data <= high) {
+			cout << node->data << ", ";
+		}
+
+		printRangeRecur(node->right, low, high);
+	}
+
 public:
+	Node<T>* root;
+
 	Tree() {
 		root = NULL;
 	}
@@ -138,11 +157,11 @@ public:
 	}
 
 	void printOrder() {
-		printOrderRecu(root);
+		printOrderRecur(root);
 		cout << "\n";
 	}
 
-	Tree* insert(int value) {
+	Tree* insert(T value) {
 		Node<T>* node = new Node<T>(value);
 
 		if (root == NULL) {
@@ -154,11 +173,17 @@ public:
 		return this;
 	}
 
-	Node<T>* search(int val) {
-		return searchRecu(root, val);
+	void insert_vec(vector<T> vec) {
+		for (int i=0; i<vec.size(); i++) {
+			this->insert(vec[i]);
+		}
 	}
 
-	Node<T>* remove(int val) {
+	Node<T>* search(T val) {
+		return searchRecur(root, val);
+	}
+
+	Node<T>* remove(T val) {
 		array<Node<T>*, 2> arr = searchLeaf(root, val);
 
 		Node<T>* parent = arr[0];
@@ -204,5 +229,10 @@ public:
 		// delete target;
 
 		return target;
+	}
+
+	void printRange(T low, T high) {
+		printRangeRecur(root, low, high);
+		cout << endl;
 	}
 };

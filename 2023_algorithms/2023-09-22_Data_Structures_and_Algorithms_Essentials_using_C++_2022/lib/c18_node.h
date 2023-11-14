@@ -51,8 +51,7 @@ public:
 	}
 
 	int height() {
-		int h1 = 0;
-		int h2 = 0;
+		int h1 = 0, h2 = 0;
 
 		if (this->left != NULL) {
 			h1 = this->left->height();

@@ -22,9 +22,9 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
         self.size
     }
 
-    pub fn levels(&self) -> usize {
+    pub fn height(&self) -> usize {
         match &self.root {
-            Some(root) => root.borrow().levels(),
+            Some(root) => root.borrow().height(),
             None => 0,
         }
     }
