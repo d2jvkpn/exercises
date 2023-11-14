@@ -59,7 +59,6 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         self
     }
 
-    /*
     pub fn push_binary(&mut self, node: Node<T>) -> &mut Self {
         if node.data <= self.data {
             if let Some(v) = self.left.take() {
@@ -79,7 +78,6 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
 
         self
     }
-    */
 
     fn count_recur(&self, ans: &mut usize) {
         if let Some(left) = &self.left {
