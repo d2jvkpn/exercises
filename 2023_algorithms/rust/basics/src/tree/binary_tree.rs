@@ -1,9 +1,9 @@
 use super::node::{Child, Node};
 use crate::structs::queue_linked_list::Queue;
-use std::fmt::Debug;
+use std::{cmp::PartialOrd, fmt::Debug};
 
 #[derive(Debug)]
-struct Tree<T> {
+pub struct Tree<T> {
     root: Child<T>,
     size: usize,
 }
@@ -15,6 +15,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
 
     pub fn clear(&mut self) {
         _ = self.root.take();
+        self.size = 0;
     }
 
     pub fn push_iter(item: &Child<T>, node: Node<T>) {
@@ -163,21 +164,46 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         Self::take_min(&Some(left.clone()))
     }
 
+    fn take_max(item: &Child<T>) -> (Child<T>, Child<T>) {
+        // parent, target
+        let node = if let Some(v) = item {
+            v
+        } else {
+            return (None, None); // not found
+        };
+
+        let binding = node.borrow();
+        let right = match &binding.right {
+            None => return (None, Some(node.clone())), // has no parent
+            Some(v) => v,
+        };
+
+        if right.borrow().right.is_none() {
+            node.borrow_mut().right = right.borrow_mut().left.take();
+            return (Some(node.clone()), Some(right.clone()));
+        }
+
+        Self::take_min(&Some(right.clone()))
+    }
+
     pub fn remove(&mut self, data: T) -> bool {
         let (parent, target) = self.locate(data);
         let pair: (Child<T>, Child<T>);
         let mut successor: Child<T>;
 
-        // case 1: root is None
-        dbg!("--> case 1");
-        let target = if let Some(v) = target { v } else { return false };
+        let target = if let Some(v) = target {
+            self.size -= 1;
+            v
+        } else {
+            dbg!("--> case 1: root is None");
+            return false;
+        };
 
         let left = target.borrow_mut().left.take();
         let right = target.borrow_mut().right.take();
 
         if parent.is_none() {
-            // case 2: root is target
-            dbg!("--> case 2");
+            dbg!("--> case 2: root is target");
             pair = Self::take_min(&right);
             successor = pair.1;
 
@@ -186,16 +212,13 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
                 Some(v) => v.borrow_mut().left = left,
             }
         } else if left.is_none() && right.is_none() {
-            // case 3: target is a leaf node
-            dbg!("--> case 3");
+            dbg!("--> case 3: target is a leaf node");
             successor = None;
         } else if left.is_none() || right.is_none() {
-            // case 4: target only has one child
-            dbg!("--> case 4");
+            dbg!("--> case 4: target only has one child");
             successor = if right.is_none() { left } else { right };
         } else {
-            // case 5, both targte.left and target.right are some
-            dbg!("--> case 5");
+            dbg!("--> case 5: both targte.left and target.right are some");
             pair = Self::take_min(&right);
             successor = pair.1;
             let node = successor.clone().unwrap();
@@ -257,6 +280,37 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         vec
     }
 
+    pub fn bfs_do(&self, call: fn(&T)) {
+        let mut queue = match &self.root {
+            None => return,
+            Some(v) => Queue::new_with(v.clone()),
+        };
+
+        while let Some(qn) = queue.pop() {
+            if let Some(v) = &qn.borrow().data.borrow().left {
+                _ = queue.push(v.clone());
+            }
+
+            if let Some(v) = &qn.borrow().data.borrow().right {
+                _ = queue.push(v.clone());
+            }
+
+            call(&qn.borrow().data.clone().borrow().data);
+        }
+    }
+
+    fn inorder_do_recur(node: &Child<T>, call: fn(&T)) {
+        let node = if let Some(v) = node { v } else { return };
+
+        Self::inorder_do_recur(&node.borrow().left, call);
+        call(&node.borrow().data);
+        Self::inorder_do_recur(&node.borrow().right, call);
+    }
+
+    pub fn inorder_do(&self, call: fn(&T)) {
+        Self::inorder_do_recur(&self.root, call)
+    }
+
     fn get_range_recur(item: &Child<T>, low: &T, high: &T, vec: &mut Vec<T>) {
         let node = if let Some(v) = item { v.borrow() } else { return };
 
@@ -279,7 +333,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
     }
 }
 
-pub fn push_recur<T: std::cmp::PartialOrd>(parent: &mut Node<T>, node: Node<T>) {
+pub fn push_recur<T: PartialOrd>(parent: &mut Node<T>, node: Node<T>) {
     if node.data <= parent.data {
         if let Some(v) = parent.left.take() {
             push_recur(&mut v.borrow_mut(), node); // !!! not *v.borrow_mut().push(data)
@@ -333,6 +387,10 @@ mod tests {
         // println!("==> bfs: {:?}", tree.bfs());
         assert_eq!(tree.bfs(), vec![8, 3, 10, 1, 6, 14, 4, 7, 13, 19]);
         assert_eq!(tree.get_range(10, 30), vec![10, 13, 14, 19]);
+
+        print!("==> inorder_do print: ");
+        tree.inorder_do(|v: &usize| print!("{}, ", v));
+        println!("");
 
         assert_eq!(tree.count(), slice.len());
         assert_eq!(tree.root.clone().unwrap().borrow().data, 8);
