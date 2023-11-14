@@ -1,7 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use super::super::binary_tree::Tree;
-    use super::super::traversal::*;
+    use super::super::{binary_tree::Tree, traversal::*};
 
     #[test]
     fn t1_binary_tree() {
