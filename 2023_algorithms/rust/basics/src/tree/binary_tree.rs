@@ -310,32 +310,49 @@ mod tests {
         slice = &[8, 3, 10, 1, 6, 14, 4, 7, 13, 19];
         tree.push_slice(slice);
         println!("==> bfs: {:?}", tree.bfs());
+        assert_eq!(tree.count(), slice.len());
+        assert_eq!(tree.root.clone().unwrap().borrow().data, 8);
 
         tree.remove(8);
-        println!("==> 1. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
+        assert_eq!(tree.count(), slice.len() - 1);
+        assert_eq!(tree.root.clone().unwrap().borrow().data, 10);
+        assert_eq!(inorder_recur_a(&tree.root), vec![1, 3, 4, 6, 7, 10, 13, 14, 19]);
+        // println!("==> 1. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
         tree.clear();
         slice = &[8, 10, 14];
         tree.push_slice(slice);
         tree.remove(8);
-        println!("==> 2. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
+        assert_eq!(tree.count(), slice.len() - 1);
+        assert_eq!(tree.root.clone().unwrap().borrow().data, 10);
+        assert_eq!(inorder_recur_a(&tree.root), vec![10, 14]);
+        // println!("==> 2. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
         tree.clear();
         slice = &[8, 10, 14];
         tree.push_slice(slice);
         tree.remove(10);
-        println!("==> 3. {:?}, remove {}, inorder: {:?}", slice, 10, inorder_recur_a(&tree.root));
+        assert_eq!(tree.count(), slice.len() - 1);
+        assert_eq!(tree.root.clone().unwrap().borrow().data, 8);
+        assert_eq!(inorder_recur_a(&tree.root), vec![8, 14]);
+        // println!("==> 3. {:?}, remove {}, inorder: {:?}", slice, 10, inorder_recur_a(&tree.root));
 
         tree.clear();
         slice = &[8];
         tree.push_slice(slice);
         tree.remove(8);
-        println!("==> 4. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
+        assert_eq!(tree.count(), slice.len() - 1);
+        assert!(tree.root.is_none());
+        assert_eq!(inorder_recur_a(&tree.root), vec![]);
+        // println!("==> 4. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
         tree.clear();
         slice = &[8, 3];
         tree.push_slice(slice);
         tree.remove(8);
-        println!("==> 5. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
+        assert_eq!(tree.count(), slice.len() - 1);
+        assert_eq!(tree.root.clone().unwrap().borrow().data, 3);
+        assert_eq!(inorder_recur_a(&tree.root), vec![3]);
+        // println!("==> 5. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
     }
 }
