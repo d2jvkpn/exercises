@@ -170,11 +170,11 @@ public:
 			return NULL; // not found
 		}
 
-		if (parent == NULL) {
+		if (parent == NULL) { // root node
 			pair = dropMin(target->right);
 			successor = pair[1];
 
-			if (successor == NULL) {
+			if (successor == NULL) { // target->right == NULL
 				successor = target->left;
 			} else {
 				successor->left = target->left;
