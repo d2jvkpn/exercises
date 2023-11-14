@@ -9,12 +9,12 @@ class Tree {
 	Node<T>* root;
 
 private:
-	void insert_into_node(Node<T>* node, Node<T>* target) {
+	void insert_into(Node<T>* node, Node<T>* target) {
 		if (node->data <= target->data) {
 			if (target->left == NULL) {
 				target->left = node;
 			} else {
-				insert_into_node(node, target->left);
+				insert_into(node, target->left);
 			}
 			return;
 		}
@@ -22,7 +22,7 @@ private:
 		if (target->right == NULL) {
 			target->right = node;
 		} else {
-			insert_into_node(node, target->right);
+			insert_into(node, target->right);
 		}
 	}
 
@@ -78,7 +78,7 @@ private:
 
 	array<Node<T>*, 2> dropMin(Node<T>* node) {
 		if (node == NULL) {
-			return { NULL, NULL }; // no min
+			return { NULL, NULL }; // not found
 		}
 
 		Node<T>* left = node->left;
@@ -98,7 +98,7 @@ private:
 
 	array<Node<T>*, 2> dropMax(Node<T>* node) {
 		if (node == NULL) {
-			return { NULL, NULL }; // no max
+			return { NULL, NULL }; // not found
 		}
 
 		Node<T>* right = node->right;
@@ -148,7 +148,7 @@ public:
 		if (root == NULL) {
 			root = node;
 		} else {
-			insert_into_node(node, root);
+			insert_into(node, root);
 		}
 
 		return this;
@@ -173,7 +173,9 @@ public:
 		if (parent == NULL) { // root node doesn't have parent node
 			pair = dropMin(target->right);
 			successor = pair[1];
-			successor->left = target->left;
+			if (successor != NULL) {
+				successor->left = target->left;
+			}
 		} else if (target->isLeaf()) { // is a leaf node
 			successor = NULL;
 		} else if (target->left == NULL || target->right == NULL) { // target only has one child
