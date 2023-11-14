@@ -168,6 +168,17 @@ public:
 
 		if (target == NULL) {
 			return NULL; // not found
+		}
+
+		if (parent == NULL) {
+			pair = dropMin(target->right);
+			successor = pair[1];
+
+			if (successor == NULL) {
+				successor = target->left;
+			} else {
+				successor->left = target->left;
+			}
 		} else if (target->isLeaf()) { // a leaf node
 			successor = NULL;
 		} else if (target->left == NULL || target->right == NULL) { // target only has one child
@@ -176,10 +187,8 @@ public:
 			pair = dropMin(target->right);
 			successor = pair[1];
 
-			if (successor != NULL) {
-				successor->left = target->left;
-				successor->right = target->right;
-			}
+			successor->left = target->left;
+			successor->right = target->right;
 		}
 
 		if (parent == NULL) {
