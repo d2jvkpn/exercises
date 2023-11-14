@@ -18,8 +18,8 @@ mod tests {
         assert_eq!(tree.count(), 6);
         println!("tree: {:?}", tree);
 
-        println!("tree.bfs: {:?}", tree.bfs());
-        assert_eq!(tree.bfs(), vec![10, 5, 12, 4, 6, 8]);
+        // println!("tree.bfs: {:?}", tree.bfs_vector());
+        assert_eq!(tree.bfs_vector(), vec![10, 5, 12, 4, 6, 8]);
     }
 
     #[test]
@@ -33,11 +33,11 @@ mod tests {
         slice = &[8, 3, 10, 1, 6, 14, 4, 7, 13, 19];
         tree.push_slice(slice);
         // println!("==> bfs: {:?}", tree.bfs());
-        assert_eq!(tree.bfs(), vec![8, 3, 10, 1, 6, 14, 4, 7, 13, 19]);
+        assert_eq!(tree.bfs_vector(), vec![8, 3, 10, 1, 6, 14, 4, 7, 13, 19]);
         assert_eq!(tree.get_range(10, 30), vec![10, 13, 14, 19]);
 
         print!("==> inorder_do print: ");
-        tree.inorder_do(|v: &usize| print!("{}, ", v));
+        tree.inorder(|v: &usize| print!("{}, ", v));
         println!("");
 
         assert_eq!(tree.count(), slice.len());

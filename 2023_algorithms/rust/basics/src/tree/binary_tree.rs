@@ -263,7 +263,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         }
     }
 
-    pub fn bfs(&self) -> Vec<T> {
+    pub fn bfs_vector(&self) -> Vec<T> {
         let mut vec = Vec::new();
 
         let mut queue = match &self.root {
@@ -286,7 +286,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         vec
     }
 
-    pub fn bfs_do(&self, call: fn(&T)) {
+    pub fn bfs(&self, call: fn(&T)) {
         let mut queue = match &self.root {
             None => return,
             Some(v) => Queue::new_with(v.clone()),
@@ -305,18 +305,20 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         }
     }
 
-    fn inorder_do_recur(node: &Child<T>, call: fn(&T)) {
+    //
+    fn inorder_recur(node: &Child<T>, call: fn(&T)) {
         let node = if let Some(v) = node { v } else { return };
 
-        Self::inorder_do_recur(&node.borrow().left, call);
+        Self::inorder_recur(&node.borrow().left, call);
         call(&node.borrow().data);
-        Self::inorder_do_recur(&node.borrow().right, call);
+        Self::inorder_recur(&node.borrow().right, call);
     }
 
-    pub fn inorder_do(&self, call: fn(&T)) {
-        Self::inorder_do_recur(&self.root, call)
+    pub fn inorder(&self, call: fn(&T)) {
+        Self::inorder_recur(&self.root, call)
     }
 
+    //
     fn get_range_recur(item: &Child<T>, low: &T, high: &T, vec: &mut Vec<T>) {
         let node = if let Some(v) = item { v.borrow() } else { return };
 
