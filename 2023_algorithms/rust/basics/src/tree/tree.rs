@@ -1,5 +1,11 @@
 use super::node::{Child, Node};
-use std::fmt::Debug;
+use crate::structs::queue_linked_list::Queue;
+use std::{
+    cell::RefCell,
+    fmt::Debug,
+    io::{stdin, stdout, Write},
+    rc::Rc,
+};
 
 #[derive(Debug)]
 pub struct Tree<T> {
@@ -52,13 +58,68 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
     }
 }
 
+fn build_string_tree() -> Tree<String> {
+    let mut queue: Queue<Rc<RefCell<Node<String>>>> = Queue::new();
+    let mut input = String::new();
+    let mut tree = Tree::new();
+
+    print!("==> Enter root(\"\"->None, \".\"=>End): ");
+
+    let _ = stdout().flush();
+    stdin().read_line(&mut input).expect("exit");
+
+    let node = Node::new(input.trim().to_string());
+    tree.root = node.clone().into();
+    queue.push(node.into());
+
+    while let Some(node) = queue.pop() {
+        //
+        input.clear();
+        print!("==> Enter: {:?}.left: ", node.borrow().data.borrow().data);
+
+        let _ = stdout().flush();
+        stdin().read_line(&mut input).expect("exit");
+        input = input.trim().to_string();
+
+        match input.as_str() {
+            "" => continue,
+            "." => break,
+            _ => {
+                let left: Rc<RefCell<Node<String>>> = Node::new(input.clone()).into();
+                queue.push(left.clone());
+                node.borrow().data.borrow_mut().left = Some(left);
+            }
+        }
+
+        //
+        input.clear();
+        print!("==> Enter: {:?}.right: ", node.borrow().data.borrow().data);
+
+        let _ = stdout().flush();
+        stdin().read_line(&mut input).expect("exit");
+        input = input.trim().to_string();
+
+        match input.as_str() {
+            "" => continue,
+            "." => break,
+            _ => {
+                let right: Rc<RefCell<Node<String>>> = Node::new(input.clone()).into();
+                queue.push(right.clone());
+                node.borrow().data.borrow_mut().right = Some(right);
+            }
+        }
+    }
+
+    tree
+}
+
 #[cfg(test)]
 mod tests {
     use super::super::traversal::*;
     use super::*;
 
     #[test]
-    fn t_tree() {
+    fn t1_tree() {
         let mut tree = Tree::new();
 
         let mut n1 = Node::new(1);
@@ -98,5 +159,12 @@ mod tests {
         // breath first search
         let expected = vec![1, 2, 3, 4, 5, 6, 7];
         assert_eq!(breath_first_search(&tree.root), expected);
+    }
+
+    #[test]
+    fn t2_tree() {
+        let mut tree = build_string_tree();
+        println!("==> Tree: {:?}", tree);
+        breath_first_search(&tree.root);
     }
 }

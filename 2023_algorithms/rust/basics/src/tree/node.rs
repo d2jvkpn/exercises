@@ -15,10 +15,16 @@ impl<T> From<Node<T>> for Child<T> {
     }
 }
 
+impl<T> From<Node<T>> for Rc<RefCell<Node<T>>> {
+    fn from(node: Node<T>) -> Self {
+        Rc::new(RefCell::new(node))
+    }
+}
+
 impl<T> Drop for Node<T> {
-	fn drop(&mut self) {
-		eprintln!("==> drop Node.");
-	}
+    fn drop(&mut self) {
+        eprintln!("==> drop Node.");
+    }
 }
 
 impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {

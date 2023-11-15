@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use super::super::{binary_tree::Tree, traversal::*, node::Node};
+    use super::super::{binary_tree::Tree, node::Node, traversal::*};
 
     #[test]
     fn t1_binary_tree() {
@@ -93,6 +93,6 @@ mod tests {
 
         tree.push_slice(slice);
 
-		let node: Node<usize> = Node::new(42);
+        let node: Node<usize> = Node::new(42);
     }
 }

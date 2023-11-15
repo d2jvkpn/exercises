@@ -45,6 +45,10 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
         self.size
     }
 
+    pub fn is_empty(&self) -> bool {
+        self.size == 0
+    }
+
     pub fn push(&mut self, data: T) -> &mut Self {
         let next = Node::new(data).into_next();
         self.size += 1;
