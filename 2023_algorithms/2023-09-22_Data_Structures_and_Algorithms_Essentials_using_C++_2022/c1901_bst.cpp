@@ -34,7 +34,7 @@ void test01(vector<int>& vec, int val) {
 	cin >> val;
 	*/
 
-	Node<int>* removed = tree->remove(val);
+	bool removed = tree->remove(val);
 	cout << "==> Removed: " << val  << ", " << removed << endl;
 
 	tree->printOrder();
@@ -44,6 +44,9 @@ void test01(vector<int>& vec, int val) {
 }
 
 int main() {
+	Tree<int>* t0 = new Tree(42);
+	t0->printOrder();
+
 	vector<int> v1 = {8, 3, 10, 1, 6, 14, 4, 7, 13, 19};
 
 	Tree<int>* t1 = new Tree<int>();

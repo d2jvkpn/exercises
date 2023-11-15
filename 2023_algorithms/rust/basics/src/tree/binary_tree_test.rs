@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use super::super::{binary_tree::Tree, traversal::*};
+    use super::super::{binary_tree::Tree, traversal::*, node::Node};
 
     #[test]
     fn t1_binary_tree() {
@@ -84,5 +84,15 @@ mod tests {
         assert_eq!(tree.root_value(), Some(3));
         assert_eq!(inorder_recur_a(&tree.root), vec![3]);
         // println!("==> 5. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
+    }
+
+    #[test]
+    fn t3_binary_tree() {
+        let mut tree: Tree<usize> = Tree::new();
+        let slice: &[usize] = &[8, 10, 14];
+
+        tree.push_slice(slice);
+
+		let node: Node<usize> = Node::new(42);
     }
 }

@@ -140,6 +140,10 @@ public:
 		root = NULL;
 	}
 
+	Tree(T data) {
+		root = new Node(data);
+	}
+
 	~Tree() {
 		if (root != NULL) {
 			delete root;
@@ -183,7 +187,7 @@ public:
 		return searchRecur(root, val);
 	}
 
-	Node<T>* remove(T val) {
+	bool remove(T val) {
 		array<Node<T>*, 2> arr = searchLeaf(root, val);
 
 		Node<T>* parent = arr[0];
@@ -192,7 +196,7 @@ public:
 		Node<T>* successor;
 
 		if (target == NULL) {
-			return NULL; // not found
+			return false; // not found
 		}
 
 		if (parent == NULL) { // root node
@@ -226,9 +230,9 @@ public:
 
 		target->left = NULL;
 		target->right = NULL;
-		// delete target;
+		delete target;
 
-		return target;
+		return true;
 	}
 
 	void printRange(T low, T high) {

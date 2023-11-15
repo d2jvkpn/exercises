@@ -15,6 +15,12 @@ impl<T> From<Node<T>> for Child<T> {
     }
 }
 
+impl<T> Drop for Node<T> {
+	fn drop(&mut self) {
+		eprintln!("==> drop Node.");
+	}
+}
+
 impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
     pub fn new(data: T) -> Self {
         Self { data, left: None, right: None }
