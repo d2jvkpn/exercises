@@ -145,17 +145,13 @@ public:
 private:
 	void clear() {
 		if (this->left != NULL) {
-			if (this->left->isLeaf()) {
-				this->left->clear();
-			}
+			this->left->clear();
 			delete this->left;
 			this->left = NULL;
 		}
 
 		if (this->right != NULL) {
-			if (this->right->isLeaf()) {
-				this->right->clear();
-			}
+			this->right->clear();
 			delete this->right;
 			this->right = NULL;
 		}
