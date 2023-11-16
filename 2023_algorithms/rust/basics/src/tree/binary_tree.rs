@@ -264,10 +264,10 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
     }
 
     pub fn bfs_vector(&self) -> Vec<T> {
-        let mut vec = Vec::new();
+        let mut ans = Vec::new();
 
         let mut queue = match &self.root {
-            None => return vec,
+            None => return ans,
             Some(v) => Queue::new_with(v.clone()),
         };
 
@@ -282,10 +282,10 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
                 _ = queue.push(v.clone());
             }
 
-            vec.push(node.borrow().data.clone());
+            ans.push(node.borrow().data.clone());
         }
 
-        vec
+        ans
     }
 
     pub fn bfs(&self, call: fn(&T)) {

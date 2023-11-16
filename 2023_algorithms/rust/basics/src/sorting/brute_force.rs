@@ -54,25 +54,25 @@ mod tests {
 
     #[test]
     fn t_selection_sort() {
-        let mut vec = ARRAY_01.to_vec();
+        let mut ans = ARRAY_01.to_vec();
 
-        selection_sort(&mut vec);
-        assert_eq!(&vec, EXPECTED_01);
+        selection_sort(&mut ans);
+        assert_eq!(&ans, EXPECTED_01);
     }
 
     #[test]
     fn t_bubble_sort() {
-        let mut vec = ARRAY_01.to_vec();
+        let mut ans = ARRAY_01.to_vec();
 
-        bubble_sort(&mut vec);
-        assert_eq!(&vec, EXPECTED_01);
+        bubble_sort(&mut ans);
+        assert_eq!(&ans, EXPECTED_01);
     }
 
     #[test]
     fn t_insertion_sort() {
-        let mut vec = ARRAY_01.to_vec();
+        let mut ans = ARRAY_01.to_vec();
 
-        bubble_sort(&mut vec);
-        assert_eq!(&vec, EXPECTED_01);
+        bubble_sort(&mut ans);
+        assert_eq!(&ans, EXPECTED_01);
     }
 }

@@ -9,15 +9,15 @@ pub struct LinkedList<T> {
 
 #[derive(PartialEq, Clone)]
 pub struct Node<T> {
-    pub value: T,
+    pub item: T,
     pub next: Next<T>,
 }
 
 pub type Next<T> = Option<Rc<RefCell<Node<T>>>>;
 
 impl<T: PartialEq + Clone> Node<T> {
-    pub fn new(value: T) -> Self {
-        Self { value, next: None }
+    pub fn new(item: T) -> Self {
+        Self { item, next: None }
     }
 }
 
@@ -39,10 +39,10 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
     }
 
     // time complexity: O(1)
-    pub fn push(&mut self, value: T) -> &mut Self {
+    pub fn push(&mut self, item: T) -> &mut Self {
         self.size += 1;
 
-        let node = Rc::new(RefCell::new(Node::new(value)));
+        let node = Rc::new(RefCell::new(Node::new(item)));
 
         let header = match &self.header {
             None => {
@@ -63,14 +63,14 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
     }
 
     // time complexity: O(1)
-    pub fn count(&mut self, value: T) -> usize {
+    pub fn count(&mut self, item: T) -> usize {
         let mut count = 0;
 
         let mut next = self.header.clone();
 
         while let Some(node) = next.clone() {
             let node = node.borrow();
-            if node.value == value {
+            if node.item == item {
                 count += 1;
             }
 
@@ -85,15 +85,15 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
     }
 
     pub fn as_vec(&self) -> Vec<T> {
-        let mut vec = Vec::with_capacity(self.size);
+        let mut ans = Vec::with_capacity(self.size);
         let mut next = self.header.clone();
 
         while let Some(node) = next.clone() {
-            vec.push(node.borrow().value);
+            ans.push(node.borrow().item);
             next = node.borrow().next.clone();
         }
 
-        vec
+        ans
     }
 
     pub fn first(&self, idx: usize) -> Next<T> {
@@ -142,7 +142,7 @@ mod tests {
 
         assert_eq!(list.count(2), 2);
         assert_eq!(list.size(), 6);
-        assert_eq!(list.first(0).unwrap().borrow().value, 1);
-        assert_eq!(list.first(2).unwrap().borrow().value, 3);
+        assert_eq!(list.first(0).unwrap().borrow().item, 1);
+        assert_eq!(list.first(2).unwrap().borrow().item, 3);
     }
 }

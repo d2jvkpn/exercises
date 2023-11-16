@@ -82,15 +82,15 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
     }
 
     pub fn as_vec(&self) -> Vec<T> {
-        let mut vec = Vec::new();
+        let mut ans = Vec::new();
         let mut next = self.header.clone();
 
         while let Some(node) = next {
-            vec.push(node.borrow().item.clone());
+            ans.push(node.borrow().item.clone());
             next = node.borrow().next.clone();
         }
 
-        vec
+        ans
     }
 }
 

@@ -9,15 +9,15 @@ pub struct LinkedList<T> {
 
 #[derive(PartialEq, Clone)]
 pub struct Node<T> {
-    pub value: T,
+    pub item: T,
     pub next: Next<T>,
 }
 
 pub type Next<T> = Option<Rc<RefCell<Node<T>>>>;
 
 impl<T: PartialEq + Clone> Node<T> {
-    pub fn new(value: T) -> Self {
-        Self { value, next: None }
+    pub fn new(item: T) -> Self {
+        Self { item, next: None }
     }
 }
 
@@ -38,27 +38,27 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
         Self { header: None, size: 0 }
     }
 
-    pub fn push(&mut self, value: T) -> &mut Self {
+    pub fn push(&mut self, item: T) -> &mut Self {
         let mut next = self.header.clone();
-        // println!("~~> push value: {:?}", value);
+        // println!("~~> push item: {:?}", item);
 
         if next.is_none() {
             self.size += 1;
-            self.header = Node::new(value).into();
+            self.header = Node::new(item).into();
             return self;
         }
 
         while let Some(node) = next.clone() {
             let mut node = node.borrow_mut();
-            if node.value == value {
-                // avoid duplicate values
+            if node.item == item {
+                // avoid duplicate items
                 return self;
             }
 
             match &node.next {
                 Some(v) => next = Some(v.clone()),
                 None => {
-                    node.next = Node::new(value).into();
+                    node.next = Node::new(item).into();
                     break;
                 }
             }
@@ -73,15 +73,15 @@ impl<T: Debug + Clone + Copy + PartialEq> LinkedList<T> {
     }
 
     pub fn as_vec(&self) -> Vec<T> {
-        let mut vec = Vec::with_capacity(self.size);
+        let mut ans = Vec::with_capacity(self.size);
         let mut next = self.header.clone();
 
         while let Some(node) = next.clone() {
-            vec.push(node.borrow().value);
+            ans.push(node.borrow().item);
             next = node.borrow().next.clone();
         }
 
-        vec
+        ans
     }
 
     pub fn get(&self, idx: usize) -> Next<T> {
@@ -136,8 +136,8 @@ mod tests {
         list.push(1).push(2).push(3).push(2).push(4).push(5);
 
         assert_eq!(list.size(), 5);
-        assert_eq!(list.get(0).unwrap().borrow().value, 1);
-        assert_eq!(list.get(2).unwrap().borrow().value, 3);
-        assert_eq!(list.last().unwrap().borrow().value, 5);
+        assert_eq!(list.get(0).unwrap().borrow().item, 1);
+        assert_eq!(list.get(2).unwrap().borrow().item, 3);
+        assert_eq!(list.last().unwrap().borrow().item, 5);
     }
 }

@@ -1,21 +1,21 @@
 fn merge_sort<T: Copy + Ord>(slice: &mut [T]) {
     fn merge<T: Copy + PartialOrd>(s1: &[T], s2: &[T]) -> Vec<T> {
         let (mut i, mut j) = (0, 0);
-        let mut result = Vec::with_capacity(s1.len() + s2.len());
+        let mut ans = Vec::with_capacity(s1.len() + s2.len());
 
         while i < s1.len() && j < s2.len() {
             if s1[i] < s2[j] {
-                result.push(s1[i]);
+                ans.push(s1[i]);
                 i += 1;
             } else {
-                result.push(s2[j]);
+                ans.push(s2[j]);
                 j += 1;
             }
         }
 
-        result.extend_from_slice(&s1[i..]);
-        result.extend_from_slice(&s2[j..]);
-        result
+        ans.extend_from_slice(&s1[i..]);
+        ans.extend_from_slice(&s2[j..]);
+        ans
     }
 
     if slice.len() < 2 {
@@ -112,24 +112,24 @@ mod tests {
 
     #[test]
     fn t_merge_sort() {
-        let mut vec = ARRAY_01.to_vec();
+        let mut ans = ARRAY_01.to_vec();
 
-        merge_sort(&mut vec);
-        assert_eq!(&vec, &EXPECTED_01);
+        merge_sort(&mut ans);
+        assert_eq!(&ans, &EXPECTED_01);
     }
 
     #[test]
     fn t_merge_sort_v2() {
-        let mut vec = ARRAY_01.to_vec();
+        let mut ans = ARRAY_01.to_vec();
 
-        merge_sort_v2(&mut vec);
-        assert_eq!(&vec, &EXPECTED_01);
+        merge_sort_v2(&mut ans);
+        assert_eq!(&ans, &EXPECTED_01);
     }
 
     #[test]
     fn t_quick_sort() {
-        let mut vec = ARRAY_01.to_vec();
-        quick_sort(&mut vec);
-        assert_eq!(&vec, &EXPECTED_01);
+        let mut ans = ARRAY_01.to_vec();
+        quick_sort(&mut ans);
+        assert_eq!(&ans, &EXPECTED_01);
     }
 }

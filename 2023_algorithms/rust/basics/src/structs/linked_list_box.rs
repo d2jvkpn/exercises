@@ -1,6 +1,6 @@
 #[derive(PartialEq, Debug)]
 struct Node<T> {
-    value: T,
+    item: T,
     next: Option<Box<Node<T>>>,
 }
 
@@ -10,8 +10,8 @@ struct LinkedList<T> {
 }
 
 impl<T> Node<T> {
-    fn new(value: T) -> Self {
-        Self { value, next: None }
+    fn new(item: T) -> Self {
+        Self { item, next: None }
     }
 }
 
@@ -20,21 +20,21 @@ impl<T: PartialEq> LinkedList<T> {
         Self { header: None }
     }
 
-    fn push_front(&mut self, value: T) -> &mut Self {
-        let mut value = Node::new(value);
-        value.next = self.header.take();
-        self.header = Some(Box::new(value));
+    fn push_front(&mut self, item: T) -> &mut Self {
+        let mut item = Node::new(item);
+        item.next = self.header.take();
+        self.header = Some(Box::new(item));
         self
     }
 
     fn pop_front(&mut self) -> Option<Node<T>> {
-        let mut value: Node<T> = match self.header.take() {
+        let mut item: Node<T> = match self.header.take() {
             Some(v) => *v,
             None => return None,
         };
 
-        self.header = value.next.take();
-        Some(value)
+        self.header = item.next.take();
+        Some(item)
     }
 
     pub fn reverse(&mut self) {
@@ -57,7 +57,7 @@ impl<T: PartialEq> LinkedList<T> {
         let mut curr: &Node<T> = match &(self.header) {
             None => return None,
             Some(v) => {
-                if v.value == item {
+                if v.item == item {
                     return Some(ans);
                 }
                 v
@@ -66,7 +66,7 @@ impl<T: PartialEq> LinkedList<T> {
 
         while let Some(v) = &(curr.next) {
             ans += 1;
-            if v.value == item {
+            if v.item == item {
                 return Some(ans);
             }
             curr = v;
@@ -83,7 +83,7 @@ impl<T: PartialEq> LinkedList<T> {
             None => return None,
             Some(v) => v,
         };
-        if node.value == item {
+        if node.item == item {
             self.header = node.next.take();
             return Some(ans);
         }
@@ -94,7 +94,7 @@ impl<T: PartialEq> LinkedList<T> {
 
         while let Some(mut v) = curr.next.take() {
             ans += 1;
-            if v.value == item {
+            if v.item == item {
                 curr.next = v.next.take();
                 return Some(ans);
             }
@@ -106,16 +106,16 @@ impl<T: PartialEq> LinkedList<T> {
     }
 
     fn len(&self) -> usize {
-        let mut value: &Node<T> = match &(self.header) {
+        let mut item: &Node<T> = match &(self.header) {
             None => return 0,
             Some(v) => v,
         };
 
         let mut size: usize = 1;
 
-        while let Some(ref v) = &(value.next) {
+        while let Some(ref v) = &(item.next) {
             size += 1;
-            value = v;
+            item = v;
         }
         size
     }
@@ -129,7 +129,7 @@ impl<T: PartialEq> LinkedList<T> {
         };
 
         loop {
-            stack.push(curr.value);
+            stack.push(curr.item);
 
             curr = match curr.next {
                 None => break,

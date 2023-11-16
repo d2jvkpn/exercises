@@ -7,7 +7,7 @@ pub struct Graph<T> {
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Node<T> {
-    pub value: T,
+    pub item: T,
     pub children: Vec<Child<T>>,
 }
 
@@ -19,8 +19,8 @@ pub struct Child<T> {
 }
 
 impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
-    pub fn new(value: T) -> Self {
-        Self { value, children: vec![] }
+    pub fn new(item: T) -> Self {
+        Self { item, children: vec![] }
     }
 
     pub fn into_child(self, weight: f64) -> Child<T> {
@@ -28,10 +28,10 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
     }
 
     pub fn connect(&mut self, child: Child<T>) -> Rc<RefCell<Node<T>>> {
-        let value = &child.item.borrow().value;
+        let item = &child.item.borrow().item;
 
         for v in &self.children {
-            if &v.item.borrow().value == value {
+            if &v.item.borrow().item == item {
                 return v.item.clone();
             }
         }
@@ -41,8 +41,8 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         child.item.clone()
     }
 
-    pub fn find_child(&self, value: T) -> Option<Rc<RefCell<Node<T>>>> {
-        Some(self.children.iter().find(|v| &v.item.borrow().value == &value)?.item.clone())
+    pub fn find_child(&self, item: T) -> Option<Rc<RefCell<Node<T>>>> {
+        Some(self.children.iter().find(|v| &v.item.borrow().item == &item)?.item.clone())
     }
 }
 

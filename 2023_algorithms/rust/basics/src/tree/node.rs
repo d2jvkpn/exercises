@@ -9,7 +9,7 @@ pub struct Node<T> {
     pub right: Child<T>,
 }
 
-impl<T> From<Node<T>> for Child<T> {
+impl<T> From<Node<T>> for Option<Rc<RefCell<Node<T>>>> {
     fn from(node: Node<T>) -> Self {
         Some(Rc::new(RefCell::new(node)))
     }

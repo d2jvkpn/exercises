@@ -1,26 +1,36 @@
 use std::{cell::RefCell, rc::Rc};
 
+type Child<T> = Option<Rc<RefCell<Node<T>>>>;
+
 #[derive(Clone)]
 struct Node<T> {
-    value: T,
-    next: Option<Rc<RefCell<Node<T>>>>,
-    prev: Option<Rc<RefCell<Node<T>>>>,
+    item: T,
+    next: Child<T>,
+    prev: Child<T>,
 }
 
 impl<T> Node<T> {
-    fn new(value: T) -> Self {
-        Node { value, next: None, prev: None }
+    fn new(item: T) -> Self {
+        Node { item, next: None, prev: None }
     }
+}
 
-    fn into_rc(self) -> Rc<RefCell<Self>> {
-        Rc::new(RefCell::new(self))
+impl<T> From<Node<T>> for Rc<RefCell<Node<T>>> {
+    fn from(node: Node<T>) -> Rc<RefCell<Node<T>>> {
+        Rc::new(RefCell::new(node))
+    }
+}
+
+impl<T> From<Node<T>> for Option<Rc<RefCell<Node<T>>>> {
+    fn from(node: Node<T>) -> Option<Rc<RefCell<Node<T>>>> {
+        Some(Rc::new(RefCell::new(node)))
     }
 }
 
 #[derive(Clone)]
 pub struct LinkedList<T> {
-    head: Option<Rc<RefCell<Node<T>>>>,
-    tail: Option<Rc<RefCell<Node<T>>>>,
+    head: Child<T>,
+    tail: Child<T>,
     size: usize,
 }
 
@@ -30,7 +40,7 @@ impl<T: Clone> LinkedList<T> {
     }
 
     pub fn append(&mut self, v: T) -> &mut Self {
-        let new = Node::new(v).into_rc();
+        let new: Rc<RefCell<Node<T>>> = Node::new(v).into();
 
         match self.tail.take() {
             Some(v) => {
@@ -74,7 +84,7 @@ impl<T: Clone> Iterator for ListIterator<T> {
         self.head = match current {
             Some(ref current) => {
                 let current = current.borrow();
-                result = Some(current.value.clone());
+                result = Some(current.item.clone());
                 current.next.clone()
             }
             None => None,
@@ -92,7 +102,7 @@ impl<T: Clone> DoubleEndedIterator for ListIterator<T> {
         self.tail = match current {
             Some(ref current) => {
                 let current = current.borrow();
-                result = Some(current.value.clone());
+                result = Some(current.item.clone());
                 current.prev.clone()
             }
             None => None,
