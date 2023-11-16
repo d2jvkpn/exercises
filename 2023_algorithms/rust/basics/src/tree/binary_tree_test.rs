@@ -93,6 +93,6 @@ mod tests {
 
         tree.push_slice(slice);
 
-        let node: Node<usize> = Node::new(42);
+        let _: Node<usize> = Node::new(42);
     }
 }

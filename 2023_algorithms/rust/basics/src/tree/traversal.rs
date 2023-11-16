@@ -149,15 +149,17 @@ pub fn breath_first_search<T: Debug + PartialEq + Clone>(item: &Child<T>) -> Vec
     };
 
     while let Some(qn) = queue.pop() {
-        if let Some(v) = &qn.borrow().data.borrow().left {
+        let node = &qn.borrow().item;
+
+        if let Some(v) = &node.borrow().left {
             _ = queue.push(v.clone());
         }
 
-        if let Some(v) = &qn.borrow().data.borrow().right {
+        if let Some(v) = &node.borrow().right {
             _ = queue.push(v.clone());
         }
 
-        ans.push(qn.borrow().data.borrow().data.clone());
+        ans.push(node.borrow().data.clone());
     }
 
     ans

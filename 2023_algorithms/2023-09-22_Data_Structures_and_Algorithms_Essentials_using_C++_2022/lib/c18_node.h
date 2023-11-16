@@ -220,9 +220,7 @@ Node<string>* levelsBuild() {
 		cout << "==> " << data << endl;
 		if (data == ".") {
 			break;
-		}
-
-		if (!data.empty()) {
+		} else if (!data.empty()) {
 			Node<string>* left = new Node(data);
 			temp->left = left;
 			q.push(left);
@@ -231,7 +229,9 @@ Node<string>* levelsBuild() {
 		cout << "Enter " << temp->data << ".right: ";
 		getline(cin, data);
 
-		if (!data.empty()) {
+		if (data == ".") {
+			break;
+		} else if (!data.empty()) {
 			Node<string>* right = new Node(data);
 			temp->right = right;
 			q.push(right);

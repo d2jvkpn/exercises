@@ -23,7 +23,7 @@ impl<T> From<Node<T>> for Rc<RefCell<Node<T>>> {
 
 impl<T> Drop for Node<T> {
     fn drop(&mut self) {
-        eprintln!("==> drop Node.");
+        dbg!("==> drop Node.");
     }
 }
 

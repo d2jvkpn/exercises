@@ -272,15 +272,17 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         };
 
         while let Some(qn) = queue.pop() {
-            if let Some(v) = &qn.borrow().data.borrow().left {
+            let node = &qn.borrow().item;
+
+            if let Some(v) = &node.borrow().left {
                 _ = queue.push(v.clone());
             }
 
-            if let Some(v) = &qn.borrow().data.borrow().right {
+            if let Some(v) = &node.borrow().right {
                 _ = queue.push(v.clone());
             }
 
-            vec.push(qn.borrow().data.borrow().data.clone());
+            vec.push(node.borrow().data.clone());
         }
 
         vec
@@ -293,15 +295,17 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         };
 
         while let Some(qn) = queue.pop() {
-            if let Some(v) = &qn.borrow().data.borrow().left {
+            let node = &qn.borrow().item;
+
+            if let Some(v) = &node.borrow().left {
                 _ = queue.push(v.clone());
             }
 
-            if let Some(v) = &qn.borrow().data.borrow().right {
+            if let Some(v) = &node.borrow().right {
                 _ = queue.push(v.clone());
             }
 
-            call(&qn.borrow().data.clone().borrow().data);
+            call(&node.clone().borrow().data);
         }
     }
 

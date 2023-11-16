@@ -11,7 +11,7 @@ pub type Next<T> = Option<Rc<RefCell<Node<T>>>>;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Node<T> {
-    pub data: T,
+    pub item: T,
     pub next: Next<T>,
 }
 
@@ -22,8 +22,8 @@ impl<T: Debug + Clone + PartialEq> Default for Queue<T> {
 }
 
 impl<T: Debug + Clone + PartialEq> Node<T> {
-    pub fn new(data: T) -> Self {
-        Self { data, next: None }
+    pub fn new(item: T) -> Self {
+        Self { item, next: None }
     }
 
     pub fn into_next(self) -> Next<T> {
@@ -36,8 +36,8 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
         Queue { header: None, tail: None, size: 0 }
     }
 
-    pub fn new_with(data: T) -> Self {
-        let header = Node::new(data).into_next();
+    pub fn new_with(item: T) -> Self {
+        let header = Node::new(item).into_next();
         Queue { header, tail: None, size: 1 }
     }
 
@@ -49,8 +49,8 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
         self.size == 0
     }
 
-    pub fn push(&mut self, data: T) -> &mut Self {
-        let next = Node::new(data).into_next();
+    pub fn push(&mut self, item: T) -> &mut Self {
+        let next = Node::new(item).into_next();
         self.size += 1;
 
         let header = match &self.header {
@@ -86,7 +86,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
         let mut next = self.header.clone();
 
         while let Some(node) = next {
-            vec.push(node.borrow().data.clone());
+            vec.push(node.borrow().item.clone());
             next = node.borrow().next.clone();
         }
 
