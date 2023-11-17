@@ -60,61 +60,77 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
 
 fn build_string_tree() -> Tree<String> {
     let mut queue: Queue<Rc<RefCell<Node<String>>>> = Queue::new();
-    let mut input = String::new();
     let mut tree = Tree::new();
 
     print!("==> Enter root(\"\" -> None, \".\" -> Done): ");
 
-    let _ = stdout().flush();
-    // stdin().read_line(&mut input).expect("exit");
-    stdin().read_line(&mut input).unwrap();
+    match enter_node_string() {
+        NodeString::None | NodeString::Quit => return tree,
+        NodeString::Node(v) => {
+            let root = Rc::new(RefCell::new(v));
+            tree.root = Some(root.clone());
+            queue.push(root);
+        }
+    };
 
-    // !!! not let root = Node::new(input.trim().to_string());
-    let root = Rc::new(RefCell::new(Node::new(input.trim().to_string())));
-    tree.root = Some(root.clone());
-    queue.push(root);
+    // let root = Rc::new(RefCell::new(Node::new(input.trim().to_string())));
 
     while let Some(item) = queue.pop() {
         let node = &item.borrow().item;
 
         //
-        input.clear();
         print!("==> Enter: {:?}.left: ", node.borrow().data);
 
-        let _ = stdout().flush();
-        stdin().read_line(&mut input).unwrap();
-        input = input.trim().to_string();
-
-        match input.as_str() {
-            "" => { /* keep None */ }
-            "." => break,
-            _ => {
-                let left: Rc<RefCell<Node<String>>> = Node::new(input.clone()).into();
+        match enter_node_string() {
+            NodeString::None => {}
+            NodeString::Quit => break,
+            NodeString::Node(v) => {
+                let left: Rc<RefCell<Node<String>>> = v.into();
                 node.borrow_mut().left = Some(left.clone());
                 queue.push(left);
             }
-        }
+        };
 
-        //
-        input.clear();
         print!("==> Enter: {:?}.right: ", node.borrow().data);
 
-        let _ = stdout().flush();
-        stdin().read_line(&mut input).unwrap();
-        input = input.trim().to_string();
-
-        match input.as_str() {
-            "" => { /* keep None */ }
-            "." => break,
-            _ => {
-                let right: Rc<RefCell<Node<String>>> = Node::new(input.clone()).into();
+        match enter_node_string() {
+            NodeString::None => {}
+            NodeString::Quit => break,
+            NodeString::Node(v) => {
+                let right: Rc<RefCell<Node<String>>> = v.into();
                 node.borrow_mut().right = Some(right.clone());
                 queue.push(right);
             }
-        }
+        };
     }
 
     tree
+}
+
+enum NodeString {
+    None,
+    Quit,
+    Node(Node<String>),
+}
+
+fn enter_node_string() -> NodeString {
+    if stdout().flush().is_err() {
+        return NodeString::None;
+    }
+
+    let mut input = String::new();
+
+    if stdin().read_line(&mut input).is_err() {
+        return NodeString::None;
+    };
+
+    input = input.trim().to_string();
+
+    match input.as_str() {
+        "" => NodeString::None,
+        "." => NodeString::Quit,
+        _ => NodeString::Node(Node::new(input.clone()).into()),
+    }
 }
 
 #[cfg(test)]
