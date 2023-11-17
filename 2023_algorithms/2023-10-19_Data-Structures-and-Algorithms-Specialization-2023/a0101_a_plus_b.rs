@@ -1,17 +1,18 @@
-use std::io;
+use std::io::{stdin, stdout, Write};
 
 fn main() {
     let mut input = String::new();
 
-    println!("Enter a and b:");
+    print!("==> Enter a and b: ");
 
+    let _ = stdout().flush();
     input.clear();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
+    stdin().read_line(&mut input).expect("Failed to read line");
     let a: i32 = input.trim().parse().expect("Input not an integer");
 
     input.clear();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
+    stdin().read_line(&mut input).expect("Failed to read line");
     let b: i32 = input.trim().parse().unwrap_or_else(|_| panic!("Input not an integer: {}", input));
 
-    println!("ans: {}", a + b);
+    println!("==> ans: {}", a + b);
 }

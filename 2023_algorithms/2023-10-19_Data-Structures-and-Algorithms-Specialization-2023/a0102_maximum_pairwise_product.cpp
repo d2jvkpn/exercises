@@ -49,7 +49,7 @@ int main() {
 		cin >> nums[i];
 	}
 
-	cout << "ans: " << maximumPairwiseProduct(nums) << endl;
+	cout << "==> ans: " << maximumPairwiseProduct(nums) << endl;
 
 	return 0;
 }

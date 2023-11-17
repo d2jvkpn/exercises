@@ -1,4 +1,4 @@
-use std::io;
+use std::io::{stdin, stdout, Write};
 
 /*
 gcd(a, b) = gcd(a', b) = gcd(a, b')
@@ -10,17 +10,18 @@ n*a + b' = b
 fn main() {
     let mut input = String::new();
 
-    println!("Enter two numbers:");
+    print!("==> Enter two numbers: ");
 
+    let _ = stdout().flush();
     input.clear();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
+    stdin().read_line(&mut input).expect("Failed to read line");
     let a: usize = input.trim().parse().expect("Input not an integer");
 
     input.clear();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
+    stdin().read_line(&mut input).expect("Failed to read line");
     let b: usize = input.trim().parse().expect("Input not an integer");
 
-    println!("ans: {}", greatest_common_divisor(a, b));
+    println!("==> ans: {}", greatest_common_divisor(a, b));
 }
 
 fn greatest_common_divisor(a: usize, b: usize) -> usize {

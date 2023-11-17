@@ -1,12 +1,13 @@
-use std::io;
+use std::io::{stdin, stdout, Write};
 
 fn main() {
     let mut input = String::new();
 
-    println!("Enter size of numbers:");
+    print!("==> Enter size of numbers: ");
 
+    let _ = stdout().flush();
     input.clear();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
+    stdin().read_line(&mut input).expect("Failed to read line");
     let mut num: usize = input.trim().parse().expect("Input not an integer");
 
     if num < 2 {
@@ -17,12 +18,12 @@ fn main() {
 
     for _ in 0..num {
         input.clear();
-        io::stdin().read_line(&mut input).expect("Failed to read line");
+        stdin().read_line(&mut input).expect("Failed to read line");
         num = input.trim().parse().expect("Input not an integer");
         numbers.push(num);
     }
 
-    println!("ans: {}", maximum_pairwise_product(&numbers));
+    println!("==> ans: {}", maximum_pairwise_product(&numbers));
 }
 
 fn maximum_pairwise_product(numbers: &Vec<usize>) -> u128 {

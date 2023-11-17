@@ -1,12 +1,13 @@
-use std::io;
+use std::io::{stdin, stdout, Write};
 
 fn main() {
     let mut input = String::new();
 
-    println!("Enter number:");
+    print!("==> Enter number: ");
 
+    let _ = stdout().flush();
     input.clear();
-    io::stdin().read_line(&mut input).expect("Failed to read line");
+    stdin().read_line(&mut input).expect("Failed to read line");
     let num: usize = input.trim().parse::<usize>().expect("Input not an integer");
 
     let ans = match num {
@@ -34,5 +35,5 @@ fn main() {
         }
     };
 
-    println!("ans: {:?}", ans);
+    println!("==> ans: {:?}", ans);
 }
