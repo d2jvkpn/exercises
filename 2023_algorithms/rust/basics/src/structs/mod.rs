@@ -2,6 +2,7 @@
 
 pub mod doubly_linked_list;
 pub mod graph;
+pub mod heap_priority_queue;
 pub mod linked_list_box;
 pub mod linked_list_general;
 pub mod linked_list_unique;

@@ -105,7 +105,7 @@ impl<T: PartialEq> LinkedList<T> {
         None
     }
 
-    fn len(&self) -> usize {
+    fn size(&self) -> usize {
         let mut item: &Node<T> = match &(self.header) {
             None => return 0,
             Some(v) => v,
@@ -117,6 +117,7 @@ impl<T: PartialEq> LinkedList<T> {
             size += 1;
             item = v;
         }
+
         size
     }
 
@@ -156,10 +157,10 @@ mod tests {
         list.push_front(3).push_front(2).push_front(1);
         dbg!(&list);
 
-        assert_eq!(list.len(), 3);
+        assert_eq!(list.size(), 3);
 
         assert_eq!(list.pop_front(), Some(super::Node::new(1)));
-        assert_eq!(list.len(), 2);
+        assert_eq!(list.size(), 2);
 
         assert_eq!(list.find(1), None);
         assert_eq!(list.find(3), Some(1));

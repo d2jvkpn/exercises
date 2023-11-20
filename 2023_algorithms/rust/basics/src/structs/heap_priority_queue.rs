@@ -51,7 +51,7 @@ impl<T: Ord + Debug> Heap<T> {
 
     pub fn heapify_up(&mut self, index: usize) {
         // dbg!(&index);
-        if index < 1 || index >= self.data.len() {
+        if index < 1 || index + 1 > self.data.len() {
             return;
         }
 
@@ -64,14 +64,10 @@ impl<T: Ord + Debug> Heap<T> {
 
     pub fn heapify_down(&mut self, index: usize) {
         // dbg!(&index);
-        if self.empty() {
-            return;
-        }
-
         let mut parent = index;
         let (left, right) = (2 * index + 1, 2 * index + 2);
 
-        if left > self.data.len() - 1 {
+        if left + 1 > self.data.len() {
             return;
         }
 
@@ -115,7 +111,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn t_heap() {
+    fn t_heap_pq() {
         let nums = vec![9, 7, 5, 11, 12, 2, 14, 3, 10, 6];
         let ans = vec![2, 3, 5, 6, 7, 9, 10, 11, 12, 14];
 
