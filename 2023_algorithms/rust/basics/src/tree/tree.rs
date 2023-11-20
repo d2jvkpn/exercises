@@ -58,7 +58,7 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Tree<T> {
     }
 }
 
-fn build_string_tree() -> Tree<String> {
+pub fn build_string_tree() -> Tree<String> {
     let mut queue: Queue<Rc<RefCell<Node<String>>>> = Queue::new();
     let mut tree = Tree::new();
 
@@ -179,12 +179,5 @@ mod tests {
         // breath first search
         let expected = vec![1, 2, 3, 4, 5, 6, 7];
         assert_eq!(breath_first_search(&tree.root), expected);
-    }
-
-    #[test]
-    fn t2_tree() {
-        let tree = build_string_tree();
-        println!("==> Tree: {:?}", tree);
-        println!("==> breath_first_search: {:?}", breath_first_search(&tree.root));
     }
 }

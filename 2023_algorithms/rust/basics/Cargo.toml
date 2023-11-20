@@ -2,6 +2,12 @@
 name = "basics"
 version = "0.1.0"
 edition = "2021"
+default-run = "basics"
+
+[[bin]]
+name = "build_string_tree"
+path = "bin/build_string_tree.rs"
+
 
 [lib]
 name = "basics"
