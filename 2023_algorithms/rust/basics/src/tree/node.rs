@@ -139,3 +139,48 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
         self.left.is_none() && self.right.is_none()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::super::traversal::*;
+    use super::*;
+
+    #[test]
+    fn t1_node() {
+        let mut n1 = Node::new(1);
+        // let mut n2 = Node::new(2);
+        // let mut n3 = Node::new(3);
+        // n2.push(Node::new(4), Node::new(5));
+        // n3.push(Node::new(6), Node::new(7));
+
+        n1.set_children(Node::triangle(2, 4, 5), Node::triangle(3, 6, 7));
+        /*
+             1
+          2     3
+        4  5  6   7
+        */
+
+        assert_eq!(n1.count(), 7);
+        assert_eq!(n1.height(), 3);
+
+        let root = Some(Rc::new(RefCell::new(n1)));
+
+        // depth first search
+        let expected = vec![4, 2, 5, 1, 6, 3, 7];
+        assert_eq!(inorder_recur_a(&root), expected);
+        assert_eq!(inorder_recur_b(&root), expected);
+        assert_eq!(inorder_stack(&root), expected);
+
+        let expected = vec![1, 2, 4, 5, 3, 6, 7];
+        assert_eq!(preorder_recur(&root), expected);
+        assert_eq!(preorder_stack(&root), expected);
+
+        let expected = vec![4, 5, 2, 6, 7, 3, 1];
+        assert_eq!(postorder_recur(&root), expected);
+        assert_eq!(postorder_stack(&root), expected);
+
+        // breath first search
+        let expected = vec![1, 2, 3, 4, 5, 6, 7];
+        assert_eq!(breath_first_search(&root), expected);
+    }
+}
