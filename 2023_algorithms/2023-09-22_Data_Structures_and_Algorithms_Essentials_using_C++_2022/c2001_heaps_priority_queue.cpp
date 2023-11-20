@@ -18,7 +18,7 @@ private:
 	}
 
 	void heapify_up(int index) {
-		if (index <= 0) {
+		if (index < 1) {
 			return;
 		}
 
@@ -110,6 +110,7 @@ public:
 };
 
 int main() {
+	//
 	// PriorityQueue<int> pq1(10, false);
 	PriorityQueue<int>* pq1 = new PriorityQueue<int>(10, false);
 
@@ -118,12 +119,21 @@ int main() {
 
 	pq1->show();
 
+	//
 	PriorityQueue<int>* pq2 = new PriorityQueue<int>(10, true);
 
 	pq2->push(9)->push(7)->push(5)->push(11)->push(12)
 	  ->push(2)->push(14)->push(3)->push(10)->push(6);
 
 	pq2->show();
+
+	//
+	PriorityQueue<int>* pq3 = new PriorityQueue<int>(10, false);
+
+	pq3->push(9)->push(7)->push(5)->push(11)->push(12)
+	  ->push(2)->push(14)->push(3)->push(10)->push(6);
+
+	pq3->show();
 
 	return 0;
 }

@@ -2,93 +2,111 @@ use std::fmt::Debug;
 
 #[derive(Debug)]
 pub struct Heap<T: Ord + Debug> {
-    vec: Vec<T>,
+    data: Vec<T>,
     comparator: fn(&T, &T) -> bool,
 }
 
 impl<T: Ord + Debug> Heap<T> {
     pub fn new(size: usize, comparator: fn(&T, &T) -> bool) -> Self {
-        Self { vec: Vec::with_capacity(size), comparator }
-    }
-
-    pub fn from_vec(mut vec: Vec<T>, comparator: fn(&T, &T) -> bool) -> Self {
-        Self::push_slice(&mut vec, comparator);
-        Self { vec, comparator }
+        Self { data: Vec::with_capacity(size), comparator }
     }
 
     pub fn min_heap(size: usize) -> Self {
-        Self { vec: Vec::with_capacity(size), comparator: |a, b| a < b }
+        Self { data: Vec::with_capacity(size), comparator: |a, b| a < b }
     }
 
     pub fn max_heap(size: usize) -> Self {
-        Self { vec: Vec::with_capacity(size), comparator: |a, b| a > b }
+        Self { data: Vec::with_capacity(size), comparator: |a, b| a > b }
     }
 
-    pub fn size(&self) -> usize {
-        self.vec.len()
+    pub fn empty(&self) -> bool {
+        self.data.len() == 0
     }
 
-    fn push_slice(vec: &mut [T], comparator: fn(&T, &T) -> bool) {
-        for i in vec.len() / 2..vec.len() {
-            // dbg!(&i);
-            heapify(vec, i, comparator);
-        }
+    pub fn top(&self) -> Option<&T> {
+        self.data.last()
     }
 
-    pub fn peak(&self) -> Option<&T> {
-        self.vec.last()
+    fn compare(&self, parent: usize, child: usize) -> bool {
+        (self.comparator)(&self.data[parent], &self.data[child])
     }
 
-    pub fn compare(&self, value: &T) -> Option<bool> {
-        let top = self.vec.last()?;
-        Some((self.comparator)(top, value))
-    }
-
-    pub fn push(&mut self, value: T) {
-        self.vec.push(value);
-        Self::push_slice(&mut self.vec, self.comparator);
+    pub fn push(&mut self, value: T) -> &mut Self {
+        self.data.push(value);
+        self.heapify_up(self.data.len() - 1);
+        self
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        let value = self.vec.pop()?;
-        Self::push_slice(&mut self.vec, self.comparator);
-        Some(value)
-    }
-
-    pub fn sort(mut self) -> Vec<T> {
-        if self.size() <= 1 {
-            return self.vec;
+        let size = self.data.len();
+        if size == 0 {
+            return None;
         }
 
-        let m = self.size() - 1;
-        for i in 1..self.size() {
-            self.vec.swap(i - 1, m);
-            Self::push_slice(&mut self.vec[i..], self.comparator);
-            // dbg!((i, &self.vec));
+        self.data.swap(0, size - 1);
+        let ans = self.data.pop();
+        self.heapify_down(0);
+        ans
+    }
+
+    pub fn heapify_up(&mut self, index: usize) {
+        // dbg!(&index);
+        if index < 1 || index >= self.data.len() {
+            return;
         }
 
-        self.vec
-    }
-}
-
-pub fn heapify<T: Ord>(slice: &mut [T], idx: usize, comparator: fn(&T, &T) -> bool) {
-    let m = slice.len() - 1;
-    // dbg!(&idx);
-
-    let (left, right) = match idx {
-        _ if m >= 2 * (m - idx) + 2 => (m - 2 * (m - idx) - 1, m - 2 * (m - idx) - 2),
-        _ if m == 2 * (m - idx) + 1 => (m - 2 * (m - idx) - 1, m),
-        _ => return,
-    };
-
-    if right < idx && !comparator(&slice[idx], &slice[right]) {
-        slice.swap(idx, right);
-        heapify(slice, right, comparator);
+        let parent = (index - 1) / 2;
+        if !self.compare(parent, index) {
+            self.data.swap(parent, index);
+            self.heapify_up(parent);
+        }
     }
 
-    if left < idx && !comparator(&slice[idx], &slice[left]) {
-        slice.swap(idx, left);
-        heapify(slice, left, comparator);
+    pub fn heapify_down(&mut self, index: usize) {
+        // dbg!(&index);
+        if self.empty() {
+            return;
+        }
+
+        let mut parent = index;
+        let (left, right) = (2 * index + 1, 2 * index + 2);
+
+        if left > self.data.len() - 1 {
+            return;
+        }
+
+        if !self.compare(parent, left) {
+            parent = left;
+        }
+
+        if right < self.data.len() && !self.compare(parent, right) {
+            parent = right;
+        }
+
+        if parent != index {
+            self.data.swap(parent, index);
+            self.heapify_down(parent);
+        }
+    }
+
+    pub fn from_vector(mut items: Vec<T>, comparator: fn(&T, &T) -> bool) -> Self {
+        let mut heap = Self::new(items.len(), comparator);
+
+        while let Some(val) = items.pop() {
+            heap.push(val);
+        }
+
+        heap
+    }
+
+    pub fn into_vector(mut self) -> Vec<T> {
+        let mut items = Vec::with_capacity(self.data.len());
+
+        while let Some(val) = self.pop() {
+            items.push(val);
+        }
+
+        items
     }
 }
 
@@ -102,26 +120,16 @@ mod tests {
         let ans = vec![2, 3, 5, 6, 7, 9, 10, 11, 12, 14];
 
         //
-        let mut rev = ans.clone();
-        rev.reverse();
-        let mut heap = Heap::new(nums.len(), |a, b| a < b);
-        nums.iter().for_each(|v| heap.push(*v));
-
+        let heap = Heap::from_vector(nums.clone(), |a, b| a < b);
         dbg!(&heap);
-        while let Some(v) = heap.pop() {
-            assert_eq!(Some(v), rev.pop());
-        }
+        assert_eq!(heap.into_vector(), ans);
 
         //
-        let heap = Heap::from_vec(nums.clone(), |a, b| a < b);
-        assert_eq!(heap.sort(), ans);
+        let heap = Heap::from_vector(nums.clone(), |a, b| a > b);
+        dbg!(&heap);
 
-        //
         let mut rev = ans.clone();
         rev.reverse();
-        let heap = Heap::from_vec(nums.clone(), |a, b| a > b);
-
-        dbg!(&heap);
-        assert_eq!(heap.sort(), rev);
+        assert_eq!(heap.into_vector(), rev);
     }
 }
