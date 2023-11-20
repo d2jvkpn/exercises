@@ -12,7 +12,7 @@ impl<T: Ord + Debug> Heap<T> {
     }
 
     pub fn from_vec(mut vec: Vec<T>, comparator: fn(&T, &T) -> bool) -> Self {
-        Self::help(&mut vec, comparator);
+        Self::push_slice(&mut vec, comparator);
         Self { vec, comparator }
     }
 
@@ -28,7 +28,7 @@ impl<T: Ord + Debug> Heap<T> {
         self.vec.len()
     }
 
-    fn help(vec: &mut [T], comparator: fn(&T, &T) -> bool) {
+    fn push_slice(vec: &mut [T], comparator: fn(&T, &T) -> bool) {
         for i in vec.len() / 2..vec.len() {
             // dbg!(&i);
             heapify(vec, i, comparator);
@@ -39,19 +39,19 @@ impl<T: Ord + Debug> Heap<T> {
         self.vec.last()
     }
 
-    pub fn cmp(&self, value: &T) -> Option<bool> {
+    pub fn compare(&self, value: &T) -> Option<bool> {
         let top = self.vec.last()?;
         Some((self.comparator)(top, value))
     }
 
     pub fn push(&mut self, value: T) {
         self.vec.push(value);
-        Self::help(&mut self.vec, self.comparator);
+        Self::push_slice(&mut self.vec, self.comparator);
     }
 
     pub fn pop(&mut self) -> Option<T> {
         let value = self.vec.pop()?;
-        Self::help(&mut self.vec, self.comparator);
+        Self::push_slice(&mut self.vec, self.comparator);
         Some(value)
     }
 
@@ -63,7 +63,7 @@ impl<T: Ord + Debug> Heap<T> {
         let m = self.size() - 1;
         for i in 1..self.size() {
             self.vec.swap(i - 1, m);
-            Self::help(&mut self.vec[i..], self.comparator);
+            Self::push_slice(&mut self.vec[i..], self.comparator);
             // dbg!((i, &self.vec));
         }
 

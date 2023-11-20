@@ -17,39 +17,38 @@ private:
 		}
 	}
 
-	void heapify_up(int i) {
-		if (i <= 0) {
+	void heapify_up(int index) {
+		if (index <= 0) {
 			return;
 		}
 
-		int parent = (i - 1) / 2;
+		int parent = (index - 1) / 2;
 
-		if (!compare(parent, i)) {
-			swap(data[parent], data[i]);
+		if (!compare(parent, index)) {
+			swap(data[parent], data[index]);
 			heapify_up(parent);
 		}
 	}
 
-	void heapify_down(int i) {
-		int left = 2 * i + 1;
-		int right = 2 * i + 2;
-		int max = i;
+	void heapify_down(int index) {
+		int left = 2 * index + 1, right = 2 * index + 2;
+		int parent = index;
 
 		if (left > data.size() - 1) {
 			return;
 		}
 
-		if (!compare(max, left)) {
-			max = left;
+		if (!compare(parent, left)) {
+			parent = left;
 		}
 
-		if (right < data.size() && !compare(max, right)) {
-			max = right;
+		if (right < data.size() && !compare(parent, right)) {
+			parent = right;
 		}
 
-		if (max != i) {
-			swap(data[max], data[i]);
-			heapify_down(max);
+		if (parent != index) {
+			swap(data[parent], data[index]);
+			heapify_down(parent);
 		}
 	}
 
@@ -59,11 +58,11 @@ public:
 		this->isMin = isMin;
 	}
 
-	bool empty() const {
+	bool empty() {
 		return data.empty();
 	}
 
-	T top() const {
+	T top() {
 		if (!data.empty()) {
 			return data.front();
 		} else {
@@ -71,9 +70,18 @@ public:
 		}
 	}
 
-	void push(T value) {
+	PriorityQueue<T>* push(T value) {
 		data.push_back(value);
 		heapify_up(data.size() - 1);
+
+		return this;
+	}
+
+	void push_vector(vector<T>& vec) {
+		for (int i=0; i<vec.size(); i++) {
+			data.push_back(vec[i]);
+			heapify_up(data.size() - 1);
+		}
 	}
 
 	void pop() {
@@ -88,29 +96,34 @@ public:
 
 	void show() {
 		if (isMin) {
-			cout << "Min-Heap PriorityQueue: { ";
+			cout << "Min-Heap Priority Queue: { ";
 		} else {
-			cout << "Max-Heap PriorityQueue: { ";
+			cout << "Max-Heap Priority Queue: { ";
 		}
 
-		for (int i=0; i<data.size(); i++) {
-			cout << data[i] << ", ";
+		while (!empty()) {
+			cout << top() << ", ";
+			pop();
 		}
 		cout << "\b\b }" << endl;
 	}
 };
 
 int main() {
-	PriorityQueue<int> pq(10, false);
+	// PriorityQueue<int> pq1(10, false);
+	PriorityQueue<int>* pq1 = new PriorityQueue<int>(10, false);
 
-	pq.push(3);
-	pq.push(2);
-	pq.push(15);
-	pq.push(5);
-	pq.push(4);
-	pq.push(45);
+	pq1->push(3)->push(2)->push(15)->push(5)->push(4)
+	  ->push(45);
 
-	pq.show();
+	pq1->show();
+
+	PriorityQueue<int>* pq2 = new PriorityQueue<int>(10, true);
+
+	pq2->push(9)->push(7)->push(5)->push(11)->push(12)
+	  ->push(2)->push(14)->push(3)->push(10)->push(6);
+
+	pq2->show();
 
 	return 0;
 }

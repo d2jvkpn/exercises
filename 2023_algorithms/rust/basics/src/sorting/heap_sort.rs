@@ -5,17 +5,17 @@ pub fn min_heap_sort<T: Ord + Debug>(slice: &mut [T]) {
         return;
     }
 
-    fn help<T: Ord + Debug>(slice: &mut [T]) {
+    fn recur<T: Ord + Debug>(slice: &mut [T]) {
         for i in (0..slice.len() / 2).rev() {
             heapify(slice, i, |a, b| a < b);
         }
     }
 
-    help(slice);
+    recur(slice);
     dbg!(&slice);
 
     for i in 1..slice.len() {
-        help(&mut slice[i..]);
+        recur(&mut slice[i..]);
     }
 }
 
@@ -24,17 +24,17 @@ pub fn max_heap_sort<T: Ord + Debug>(slice: &mut [T]) {
         return;
     }
 
-    fn help<T: Ord + Debug>(slice: &mut [T]) {
+    fn recur<T: Ord + Debug>(slice: &mut [T]) {
         for i in (0..slice.len() / 2).rev() {
             heapify(slice, i, |a, b| a > b);
         }
     }
 
-    help(slice);
+    recur(slice);
     dbg!(&slice);
 
     for i in 1..slice.len() {
-        help(&mut slice[i..]);
+        recur(&mut slice[i..]);
     }
 }
 
