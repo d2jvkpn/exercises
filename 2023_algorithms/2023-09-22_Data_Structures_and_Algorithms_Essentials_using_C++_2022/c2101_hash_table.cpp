@@ -145,6 +145,21 @@ public:
 		return true;
 	}
 
+	bool has(string key) {
+		int idx = hashFn(key);
+		Node<T>* temp = table[idx];
+
+		while (temp!=NULL) {
+			if (temp->key == key) {
+				return true;
+			}
+
+			temp = temp->next;
+		}
+
+		return false;
+	}
+
 	T* search(string key) {
 		int idx = hashFn(key);
 		Node<T>* temp = table[idx];
@@ -179,6 +194,18 @@ public:
 
 			cout << endl;
 		}
+	}
+
+	T* operator[] (string key) {
+		T* item = search(key);
+
+		if (item == NULL) {
+			T object;
+			insert(key, object);
+			item = search(key);
+		}
+
+		return item;
 	}
 };
 
