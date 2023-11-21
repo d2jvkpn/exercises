@@ -18,16 +18,11 @@ public:
 
 	~Node() {
 		// next->clear();
-		cout << "!!! delete Node: " << value << endl;
-	}
-
-	void clear() {
-		if (this->next == NULL) {
-			return;
+		if (this->next != NULL) {
+			delete this->next;
+			this->next = NULL;
 		}
-
-		delete this->next;
-		this->next = NULL;
+		cout << "!!! delete Node: key=\"" << key << "\", value=" << value << endl;
 	}
 
 	array<Node<T>*, 2> find(string key) {
@@ -69,10 +64,17 @@ private:
 
 	void rehash() {
 		Node<T>** oldTable = table;
-		int oldTs = ts;
 		Node<T>* temp;
+		int oldTs = ts;
 
-		ts = 2*ts + 1;
+		if (cs * 10 > ts * 8) {
+			ts = 2*ts + 1;
+		} else if (cs > 32 && cs * 2 < ts) {
+			ts = ts/2+1;
+		} else {
+			return;
+		}
+
 		cs = 0;
 		table = new Node<T>*[ts];
 
@@ -107,10 +109,6 @@ public:
 	}
 
 	void insert(string key, T value) {
-		if (cs * 10 > ts * 8) {
-			rehash();
-		}
-
 		int idx = hashFn(key);
 		array<Node<T>*, 2> pair = table[idx]->find(key);
 
@@ -122,6 +120,8 @@ public:
 		} else {
 			pair[1]->value = value;
 		}
+
+		rehash();
 	}
 
 	bool remove(string key) {
@@ -140,6 +140,8 @@ public:
 
 		delete pair[1];
 		cs-=1;
+		rehash();
+
 		return true;
 	}
 
