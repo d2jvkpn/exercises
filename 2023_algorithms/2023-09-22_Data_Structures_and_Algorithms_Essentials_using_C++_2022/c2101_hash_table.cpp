@@ -67,9 +67,9 @@ private:
 		Node<T>* temp;
 		int oldTs = ts;
 
-		if (cs * 10 > ts * 8) {
+		if (cs * 100 > ts * 80) {
 			ts = 2*ts + 1;
-		} else if (cs > 32 && cs * 2 < ts) {
+		} else if (cs > 32 && cs * 100 < ts * 25) {
 			ts = ts/2+1;
 		} else {
 			return;
