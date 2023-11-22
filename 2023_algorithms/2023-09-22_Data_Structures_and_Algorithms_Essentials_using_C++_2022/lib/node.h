@@ -18,7 +18,16 @@ public:
 	}
 
 	~Node() {
-		this->clear();
+		// this->clear();
+		if (left != NULL) {
+			delete left;
+			left = NULL;
+		}
+
+		if (right != NULL) {
+			delete right;
+			right = NULL;
+		}
 
 		cout << "!!! delete Node: " << this->data << endl;
 	}

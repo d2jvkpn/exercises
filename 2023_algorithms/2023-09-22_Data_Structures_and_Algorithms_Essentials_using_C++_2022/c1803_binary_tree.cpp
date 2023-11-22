@@ -1,6 +1,6 @@
 # include <iostream>
 # include <string>
-# include "lib/c18_node.h"
+# include "lib/node.h"
 
 using namespace std;
 

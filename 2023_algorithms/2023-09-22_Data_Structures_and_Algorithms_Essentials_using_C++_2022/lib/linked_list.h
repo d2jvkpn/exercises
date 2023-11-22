@@ -22,7 +22,10 @@ public:
 		}
 		*/
 
-		this->clear();
+		if (next != NULL) {
+			delete next;
+			next = NULL;
+		}
 		cout << "!!! delete Node(" << this->data << "->NULL)" << endl;
 	}
 
@@ -55,16 +58,6 @@ public:
 		}
 
 		cout << "NULL)\n";
-	}
-
-private:
-	void clear() {
-		if (this->next != NULL) {
-			this->next->clear();
-			delete this->next;
-			this->next = NULL;
-		}
-		// delete this; // can't delete self
 	}
 };
 
