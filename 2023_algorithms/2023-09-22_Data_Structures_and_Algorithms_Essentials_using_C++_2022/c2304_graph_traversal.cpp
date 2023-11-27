@@ -1,22 +1,30 @@
 # include <iostream>
-# include <list>
+# include <vector>
 # include <queue>
 
 using namespace std;
 
+template <typename T>
 class Graph {
-	int        size;
-	list<int>* data; // array of list[int]
+	int                 size;
+	vector<vector<T>> data;
 
 public:
 	Graph(int size) {
 		this->size = size;
-		this->data = new list<int>[size];
+
+		vector<T> item;
+		item.reserve(2);
+		this->data.assign(size, item);
+
+		/*
+		for (int i=0; i<size; i++) {
+			data.push_back(item); // push a clone of vector item
+		}
+		*/
 	}
 
 	~Graph() {
-		delete [] data;
-
 		cout << "!!! delete graph" << endl;
 	}
 
@@ -50,7 +58,7 @@ public:
 
         q.push(source);
 
-		cout << "bfs: ";
+		cout << "==> BFS: ";
         while(!q.empty()) {
             int f = q.front();
             cout << f << ", ";
@@ -66,12 +74,32 @@ public:
         }
 		cout << endl;
     }
+
+	void dfs(int source) {
+		bool* visited = new bool[size]{0};
+
+		cout << "==> DFS: ";
+		dfsRecur(source, visited);
+		cout << endl;
+		delete [] visited;
+	}
+
+	void dfsRecur(int node, bool* visited) {
+		cout << node << ", ";
+		visited[node] = true;
+
+		for (int nbr: data[node]) {
+			if (!visited[nbr]) {
+				dfsRecur(nbr, visited);
+			}
+		}
+	}
 };
 
 int main() {
 	// cout << "Hello, world!\n";
 
-	Graph g(7);
+	Graph<int> g(7);
 	g.addEdge(0, 1);
 	g.addEdge(1, 2);
 	g.addEdge(3, 5);
@@ -80,9 +108,9 @@ int main() {
 	g.addEdge(0, 4);
 	g.addEdge(3, 4);
 
-    g.bfs(1);
-
 	g.show();
+    g.bfs(1);
+    g.dfs(1);
 
 	return 0;
 }
