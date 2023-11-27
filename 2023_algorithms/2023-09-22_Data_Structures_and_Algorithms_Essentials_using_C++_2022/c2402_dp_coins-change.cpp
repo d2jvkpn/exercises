@@ -30,8 +30,19 @@ int minNumberOfCoinsForChange(int target, vector<int> denoms) {
 }
 
 int main() {
-	vector<int> denoms = {1, 5, 7, 10};
-	int target = 8;
+	// vector<int> denoms = {1, 5, 7, 10};
+	// int target = 8;
+	vector<int> denoms = {1, 5, 10, 20, 50};
+	int target;
+
+	cout << "~~~ denoms: ";
+	for (int v: denoms) {
+		cout << v << ", ";
+	}
+	cout << endl;
+
+	cout << "==> Enter amount: ";
+	cin >> target;
 
 	cout << minNumberOfCoinsForChange(target, denoms) << endl;
 

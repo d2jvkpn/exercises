@@ -1,5 +1,5 @@
 # include <iostream>
-# include "c1701_queue.h"
+# include "lib/queue_array.h"
 
 using namespace std;
 
