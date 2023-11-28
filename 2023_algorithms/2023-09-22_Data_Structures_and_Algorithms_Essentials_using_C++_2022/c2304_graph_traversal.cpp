@@ -6,7 +6,7 @@ using namespace std;
 
 template <typename T>
 class Graph {
-	int                 size;
+	int               size;
 	vector<vector<T>> data;
 
 public:
@@ -54,14 +54,15 @@ public:
 
     void bfs(int source) {
         queue<int> q;
-        bool *visited = new bool[this->size] {0};
+        bool *visited = new bool[this->size] {false};
 
         q.push(source);
+		visited[source] = true;
 
-		cout << "==> BFS: ";
+		cout << "==> BFS:" << endl;
         while(!q.empty()) {
             int f = q.front();
-            cout << f << ", ";
+            cout << "  CALL: " << f << endl;
             q.pop();
 
             for (auto nbr: data[f]) {
@@ -78,21 +79,24 @@ public:
 	void dfs(int source) {
 		bool* visited = new bool[size]{0};
 
-		cout << "==> DFS: ";
+		cout << "==> DFS:" << endl;
 		dfsRecur(source, visited);
 		cout << endl;
 		delete [] visited;
 	}
 
 	void dfsRecur(int node, bool* visited) {
-		cout << node << ", ";
 		visited[node] = true;
+
+		cout << "  goto: " << node << endl;
 
 		for (int nbr: data[node]) {
 			if (!visited[nbr]) {
 				dfsRecur(nbr, visited);
 			}
 		}
+
+		cout << "  CALL: " << node << endl;
 	}
 };
 
