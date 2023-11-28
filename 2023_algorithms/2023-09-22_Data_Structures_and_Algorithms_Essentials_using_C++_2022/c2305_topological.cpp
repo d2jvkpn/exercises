@@ -4,18 +4,24 @@
 
 using namespace std;
 
+template<typename T>
+using Vector = std::vector<T>;
+
+template<typename T>
+using Queue = std::queue<T>;
+
 template <typename T>
 class Graph {
 	string            name;
 	int               size;
-	vector<vector<T>> data;
+	Vector<Vector<T>> data;
 
 public:
 	Graph(string name, int size) {
 		this->name = name;
 		this->size = size;
 
-		vector<T> item;
+		Vector<T> item;
 		item.reserve(2);
 		this->data.assign(size, item);
 
@@ -56,24 +62,24 @@ public:
 	}
 
     void bfs(int source) {
-        queue<int> q;
+        Queue<int> queue;
         bool *visited = new bool[this->size] {false};
 
-        q.push(source);
+        queue.push(source);
 		visited[source] = true;
 
 		cout << "==> BFS:" << endl;
-        while(!q.empty()) {
-            int f = q.front();
+        while(!queue.empty()) {
+            int f = queue.front();
 			cout << "  goto: " << f << endl;
             cout << "  CALL: " << f << endl;
-            q.pop();
+            queue.pop();
 
             for (auto nbr: data[f]) {
                 if (visited[nbr]) {
                     continue;
                 }
-                q.push(nbr);
+                queue.push(nbr);
                 visited[nbr] = true;
             }
         }
@@ -86,6 +92,7 @@ public:
 		cout << "==> DFS:" << endl;
 		dfsRecur(source, visited);
 		cout << endl;
+
 		delete [] visited;
 	}
 
@@ -103,9 +110,9 @@ public:
 		cout << "  CALL: " << node << endl;
 	}
 
-	void topological_sort() {
+	void topologicalSort() {
 		cout << "==> Topological Sort:" << endl;
-		vector<int> indegree(this->size, 0);
+		Vector<int> indegree(this->size, 0);
 
 		for (int i=0; i<this->size; i++) {
 			for (auto nbr: this->data[i]) {
@@ -118,23 +125,23 @@ public:
 			cout << "  " << i << ": " << indegree[i] << endl;
 		}
 
-		queue<int> q;
+		Queue<int> queue;
 		for (int i=0; i<this->size; i++) {
 			if (indegree[i] == 0) {
-				q.push(i);
+				queue.push(i);
 				cout << "  push: " << i << endl;
 			}
 		}
 
-		while (!q.empty()) {
-			int node = q.front();
-			q.pop();
+		while (!queue.empty()) {
+			int node = queue.front();
+			queue.pop();
 
 			cout << "  CALL: " << node << endl;
 			for (auto nbr: this->data[node]) {
 				indegree[nbr]--;
 				if (indegree[nbr] == 0) {
-					q.push(nbr);
+					queue.push(nbr);
 					cout << "  push: " << nbr << endl;
 				}
 			}
@@ -146,6 +153,7 @@ public:
 int main() {
 	// cout << "Hello, world!\n";
 
+	//
 	Graph<int> g1("g1", 7);
 	g1.addEdge(0, 1, true);
 	g1.addEdge(1, 2, true);
@@ -159,6 +167,7 @@ int main() {
     g1.bfs(1);
     g1.dfs(1);
 
+	//
 	Graph<int> g2("g2", 6);
 	g2.addEdge(0, 2, false);
 	g2.addEdge(2, 3, false);
@@ -167,7 +176,10 @@ int main() {
 	g2.addEdge(1, 4, false);
 	g2.addEdge(1, 2, false);
 
-	g2.topological_sort();
+	g2.show();
+	g2.topologicalSort();
+
+	//
 
 	return 0;
 }
