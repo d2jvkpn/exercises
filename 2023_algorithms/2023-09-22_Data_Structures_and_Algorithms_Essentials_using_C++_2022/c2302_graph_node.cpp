@@ -54,13 +54,13 @@ int main() {
 
 	vector<string> cities = {"Delhi", "London", "Paris", "New York"};
 
-	Graph g(cities);
-	g.addEdge("Delhi", "London");
-	g.addEdge("New York", "London");
-	g.addEdge("Delhi", "Paris");
-	g.addEdge("Paris", "New York");
+	Graph graph(cities);
+	graph.addEdge("Delhi", "London");
+	graph.addEdge("New York", "London");
+	graph.addEdge("Delhi", "Paris");
+	graph.addEdge("Paris", "New York");
 
-	g.show();
+	graph.show();
 
 	return 0;
 }

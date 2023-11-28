@@ -41,16 +41,16 @@ public:
 int main() {
 	// cout << "Hello, world!\n";
 
-	Graph g(6);
-	g.addEdge(0, 1);
-	g.addEdge(0, 4);
-	g.addEdge(2, 1);
-	g.addEdge(3, 4);
-	g.addEdge(4, 5);
-	g.addEdge(2, 3);
-	g.addEdge(3, 5);
+	Graph graph(6);
+	graph.addEdge(0, 1);
+	graph.addEdge(0, 4);
+	graph.addEdge(2, 1);
+	graph.addEdge(3, 4);
+	graph.addEdge(4, 5);
+	graph.addEdge(2, 3);
+	graph.addEdge(3, 5);
 
-	g.show();
+	graph.show();
 
 	return 0;
 }

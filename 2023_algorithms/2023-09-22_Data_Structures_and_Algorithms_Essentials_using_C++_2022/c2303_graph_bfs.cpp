@@ -71,18 +71,18 @@ public:
 int main() {
 	// cout << "Hello, world!\n";
 
-	Graph g(7);
-	g.addEdge(0, 1);
-	g.addEdge(1, 2);
-	g.addEdge(3, 5);
-	g.addEdge(5, 6);
-	g.addEdge(4, 5);
-	g.addEdge(0, 4);
-	g.addEdge(3, 4);
+	Graph graph(7);
+	graph.addEdge(0, 1);
+	graph.addEdge(1, 2);
+	graph.addEdge(3, 5);
+	graph.addEdge(5, 6);
+	graph.addEdge(4, 5);
+	graph.addEdge(0, 4);
+	graph.addEdge(3, 4);
 
-    g.bfs(1);
+    graph.bfs(1);
 
-	g.show();
+	graph.show();
 
 	return 0;
 }
