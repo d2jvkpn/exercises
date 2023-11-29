@@ -118,7 +118,7 @@ public:
 	void dfs(int source) {
 		cout << "==> DFS: source=" << source << endl;
 
-		bool* visited = new bool[size]{0};
+		bool* visited = new bool[size]{false};
 
 		dfsRecur(source, visited);
 
