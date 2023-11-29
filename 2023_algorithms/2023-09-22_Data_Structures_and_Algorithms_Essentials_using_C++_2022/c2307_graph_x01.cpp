@@ -60,17 +60,17 @@ public:
 			return false;
 		}
 
-		data[u].push_back({v, 0});
+		data[u].push_back({v, 0.0});
 
 		if (undirected) {
-			data[v].push_back({u, 0});
+			data[v].push_back({u, 0.0});
 		}
 
 		return true;
 	}
 
 	bool addEdge(int u, Pair<int, double> edge, bool undirected) {
-		if (u > size-1 || edge.first > size - 1) {
+		if (u > size-1 || edge.first > size-1) {
 			return false;
 		}
 
