@@ -1,7 +1,9 @@
 # include <iostream>
-#include <algorithm> 
-#include <cctype>
-#include <locale>
+# include <algorithm>
+# include <cctype>
+# include <locale>
+
+# include <vector>
 
 using namespace std;
 
@@ -18,4 +20,35 @@ static inline int trim(string &s) {
     }).base(), s.end());
 
 	return s.length();
+}
+
+template <typename T>
+void showArray(T* arr, int size) {
+	// cout << "Array<" << typeid(T).name() << "> { ";
+	cout << "Array { ";
+
+	for (int i=0; i<size; i++) {
+		if (i==size-1) {
+			cout << arr[i];
+		} else {
+			cout << arr[i] << ", ";
+		}
+	}
+
+	cout << " }\n";
+}
+
+template <typename T>
+void showArray(vector<T> &vec) {
+	cout << "Vector { ";
+
+	for (int i=0; i<vec.size(); i++) {
+		if (i==vec.size()-1) {
+			cout << vec[i];
+		} else {
+			cout << vec[i] << ", ";
+		}
+	}
+
+	cout << " }\n";
 }
