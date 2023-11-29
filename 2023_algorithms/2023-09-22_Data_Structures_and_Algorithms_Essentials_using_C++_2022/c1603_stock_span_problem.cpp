@@ -1,7 +1,7 @@
 // author: ChatGPT
-# include <iostream>
-# include <stack>
-# include <vector>
+#include <iostream>
+#include <stack>
+#include <vector>
 
 using namespace std;
 

@@ -1,5 +1,5 @@
 // https://www.geeksforgeeks.org/passing-a-function-as-a-parameter-in-cpp/
-# include <iostream>
+#include <iostream>
 
 using namespace std;
 

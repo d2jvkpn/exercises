@@ -1,7 +1,7 @@
-# include <iostream>
-# include <vector>
-# include <ctime>
-# include <algorithm>
+#include <iostream>
+#include <vector>
+#include <ctime>
+#include <algorithm>
 
 using namespace std;
 

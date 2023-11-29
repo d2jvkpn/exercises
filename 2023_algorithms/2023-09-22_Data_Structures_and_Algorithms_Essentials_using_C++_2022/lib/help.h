@@ -1,9 +1,9 @@
-# include <iostream>
-# include <algorithm>
-# include <cctype>
-# include <locale>
+#include <iostream>
+#include <algorithm>
+#include <cctype>
+#include <locale>
 
-# include <vector>
+#include <vector>
 
 using namespace std;
 

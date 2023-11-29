@@ -1,8 +1,9 @@
-# include <iostream>
-# include <climits>
-# include <sstream>
+#include <iostream>
+#include <climits>
+#include <cfloat>
+#include <sstream>
 
-# include "lib/ns01.h"
+#include "lib/ns01.h"
 
 using namespace std;
 using namespace ns01;
@@ -20,15 +21,15 @@ public:
 		this->size = size;
 
 		Vector<Pair<int, double>> item;
-		item.reserve(2);
+		item.reserve(3);
 		this->data.assign(size, item); // push a clone of item to data
 	}
 
 	~Graph() {
-		cout << "!!! Delete Graph: name=\"" << name << "\", size=" << size << endl;
+		cout << "!!! Delete Graph: " << name << endl;
 	}
 
-	string describe() {
+	string info() {
 		int edges = 0;
 		for (int i=0; i<size; i++) {
 			edges += data[i].size();
@@ -41,9 +42,9 @@ public:
 	}
 
 	void show() {
-		cout << "==> Graph: " << describe() << endl;
+		cout << "==> Graph: " << info() << endl;
 
-		for (int i=0; i<this->size; i++) {
+		for (int i=0; i<size; i++) {
 			cout << i << " ->";
 
 			for (auto pair: data[i]) {
@@ -51,8 +52,6 @@ public:
 			}
 			cout << endl;
 		}
-
-		cout << endl;
 	}
 
 	//
@@ -84,12 +83,12 @@ public:
 		return true;
 	}
 
-	//
+	// Kahn's Algorithm (Modified BFS)
 	void bfs(int source) {
-		cout << "==> BFS: source=" << source << endl;
+		cout << "==> Kahn's Algorithm (Modified BFS): source=" << source << endl;
 
 		Queue<int> queue;
-		bool *visited = new bool[this->size] {false};
+		bool *visited = new bool[size] {false};
 
 		queue.push(source);
 		cout << "~ push: " << source << ", ";
@@ -100,8 +99,7 @@ public:
 			queue.pop();
 			cout << "~ pop: " << node << ", ";
 
-			cout << "~ goto: " << node << ", ";
-			cout << "CALL: " << node << endl;
+			// cout << "CALL: " << node << endl;
 			visited[node] = true;
 
 			for (auto pair: data[node]) {
@@ -110,19 +108,19 @@ public:
 					cout << "~ push: " << pair.first << ", ";
 				}
 			}
-		}
 
-		cout << endl;
+			// cout << "~ goto: " << node << ", ";
+			cout << "CALL: " << node << endl;
+		}
 	}
 
 	//
 	void dfs(int source) {
-		bool* visited = new bool[size]{0};
-
 		cout << "==> DFS: source=" << source << endl;
 
+		bool* visited = new bool[size]{0};
+
 		dfsRecur(source, visited);
-		cout << endl;
 
 		delete [] visited;
 	}
@@ -143,22 +141,25 @@ public:
 	//
 	void topologicalSort() {
 		cout << "==> Topological Sort:" << endl;
-		Vector<int> indegree(this->size, 0);
 
-		for (int i=0; i<this->size; i++) {
-			for (auto pair: this->data[i]) {
+		Vector<int> indegree(size, 0);
+		Queue<int> queue;
+
+		for (int i=0; i<size; i++) {
+			for (auto pair: data[i]) {
 				indegree[pair.first]++;
 			}
 		}
 
+		/*
 		cout << "--> indegree: ";
-		for (int i=0; i<this->size; i++) {
+		for (int i=0; i<size; i++) {
 			cout << i << ": " << indegree[i] << ", ";
 		}
 		cout << endl;
+		*/
 
-		Queue<int> queue;
-		for (int i=0; i<this->size; i++) {
+		for (int i=0; i<size; i++) {
 			if (indegree[i] == 0) {
 				queue.push(i);
 				cout << "~ push: " << i << ", ";
@@ -170,27 +171,28 @@ public:
 			queue.pop();
 			cout << "~ pop: " << node << ", ";
 
-			cout << "CALL: " << node << endl;
-			for (auto pair: this->data[node]) {
+			// cout << "CALL: " << node << endl;
+			for (auto pair: data[node]) {
 				indegree[pair.first]--;
 				if (indegree[pair.first] == 0) {
 					queue.push(pair.first);
 					cout << "~ push: " << pair.first << ", ";
 				}
 			}
+
+			cout << "CALL: " << node << endl;
 		}
-		cout << endl;
 	}
 
 	//
-	int dijkstra(int src, int dest) {
-		cout << "==> dijkstra: " << name << endl;
+	double dijkstra(int source, int dest) {
+		printf("==> Dijkstra: source=%d, dest=%d\n", source, dest);
 
-		Vector<bool>        dist(size, INT_MAX);
-		Set<Pair<int, int>> set;
+		Vector<double> dist(size, DBL_MAX);
+		Set<Pair<int, double>> set;
 
-		dist[src] = 0;
-		set.insert({0, src});
+		dist[source] = 0;
+		set.insert({source, 0.0});
 
 		while (!set.empty()) {
 			auto item = set.begin();
@@ -199,26 +201,25 @@ public:
 
 			set.erase(item); // pop
 
-			for (auto pair : data[node]) {
+			for (auto pair: data[node]) {
 				int nbr = pair.first;
 				double wt2 = pair.second;
 
 				if (wt1 + wt2 < dist[nbr]) {
-					auto pair = set.find({dist[nbr], nbr});
+					auto pair = set.find({nbr, dist[nbr]});
 					if (pair != set.end()) {
 						set.erase(pair);
 					}
 
 					dist[nbr] = wt1 + wt2;
-					set.insert({dist[nbr], nbr});
+					set.insert({nbr, dist[nbr]});
 				}
 			}
 		}
 
 		for (int i=0; i<size; i++) {
-			cout << "~ Node: " << i << ", dist=" << dist[i] << endl;
+			printf("~ dist to Node: %d, dist=%.3f\n", i, dist[i]);
 		}
-		cout << endl;
 
 		return dist[dest];
 	}
@@ -238,8 +239,13 @@ int main() {
 	g1.addEdge(3, 4, true);
 
 	g1.show();
+	cout << endl;
+
 	g1.bfs(1);
+	cout << endl;
+
 	g1.dfs(1);
+	cout << endl;
 
 	//
 	Graph g2("g2", 6);
@@ -251,22 +257,27 @@ int main() {
 	g2.addEdge(1, 2, false);
 
 	g2.show();
+	cout << endl;
+
 	g2.topologicalSort();
+	cout << endl;
 
 	//
 	Graph g3("g3", 5);
 
 	g3.addEdge(0, {1, 1.0}, true);
-	g3.addEdge(1, {2, 1.0}, true);
+	g3.addEdge(1, {2, 2.1}, true);
 	g3.addEdge(0, {2, 4.0}, true);
 	g3.addEdge(0, {3, 7.0}, true);
 	g3.addEdge(3, {2, 2.0}, true);
 	g3.addEdge(3, {4, 3.0}, true);
 
 	g3.show();
+	cout << endl;
 
 	double ans = g3.dijkstra(0, 4);
-	cout << "==> Dijkstra(0, 4): " << ans << endl;
+	printf("Ans: %.3f\n", ans);
+	cout << endl;
 
 	return 0;
 }
