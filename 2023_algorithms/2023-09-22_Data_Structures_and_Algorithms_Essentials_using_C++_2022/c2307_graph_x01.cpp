@@ -139,11 +139,8 @@ public:
 	}
 
 	//
-	void topologicalSort() {
-		cout << "==> Topological Sort:" << endl;
-
+	Vector<int> calcIndegree() {
 		Vector<int> indegree(size, 0);
-		Queue<int> queue;
 
 		for (int i=0; i<size; i++) {
 			for (auto pair: data[i]) {
@@ -151,13 +148,22 @@ public:
 			}
 		}
 
-		/*
-		cout << "--> indegree: ";
+		cout << "--> Indegree: ";
 		for (int i=0; i<size; i++) {
-			cout << i << ": " << indegree[i] << ", ";
+			cout << i << "(" << indegree[i] << "), ";
 		}
 		cout << endl;
-		*/
+
+		return indegree;
+	}
+
+	void topologicalSort() {
+		cout << "==> Topological Sort:" << endl;
+
+		Queue<int> queue;
+		Vector<int> indegree;
+
+		indegree = calcIndegree();
 
 		for (int i=0; i<size; i++) {
 			if (indegree[i] == 0) {
@@ -196,10 +202,10 @@ public:
 
 		while (!set.empty()) {
 			auto item = set.begin();
+			set.erase(item); // pop
+
 			int node = item->first;
 			double wt1 = item->second;
-
-			set.erase(item); // pop
 
 			for (auto pair: data[node]) {
 				int nbr = pair.first;
@@ -218,7 +224,7 @@ public:
 		}
 
 		for (int i=0; i<size; i++) {
-			printf("~ dist to Node: %d, dist=%.3f\n", i, dist[i]);
+			printf("~ dist(%d, %d): %.3f\n", source, i, dist[i]);
 		}
 
 		return dist[dest];
