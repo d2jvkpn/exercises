@@ -1,3 +1,4 @@
+#include <array>
 #include <vector>
 #include <tuple>
 #include <stack>
@@ -9,6 +10,9 @@
 using namespace std;
 
 namespace ns01 {
+	template<typename T, size_t N>
+	using Array = array<T, N>;
+
 	template<typename T>
 	using Vector = vector<T>;
 

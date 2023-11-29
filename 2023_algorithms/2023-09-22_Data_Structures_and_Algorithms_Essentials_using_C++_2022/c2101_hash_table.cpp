@@ -90,7 +90,7 @@ private:
 			}
 
 			while (temp != NULL) {
-				insert(temp->key, temp->value);
+				insert(temp->key, temp->value); // children may not have the same idx
 				temp = temp->next;
 			}
 		}

@@ -17,7 +17,7 @@ private:
 		}
 	}
 
-	void heapify_up(int index) {
+	void heapifyUp(int index) {
 		if (index < 1) {
 			return;
 		}
@@ -26,29 +26,30 @@ private:
 
 		if (!compare(parent, index)) {
 			swap(data[parent], data[index]);
-			heapify_up(parent);
+			heapifyUp(parent);
 		}
 	}
 
-	void heapify_down(int index) {
-		int left = 2 * index + 1, right = 2 * index + 2;
-		int parent = index;
+	void heapifyDown(int parent) {
+		int left = 2*parent + 1;
+		int right = 2*parent + 2;
+		int target = parent;
 
 		if (left > data.size() - 1) {
 			return;
 		}
 
-		if (!compare(parent, left)) {
-			parent = left;
+		if (!compare(target, left)) {
+			target = left;
 		}
 
-		if (right < data.size() && !compare(parent, right)) {
-			parent = right;
+		if (right < data.size() && !compare(target, right)) {
+			target = right;
 		}
 
-		if (parent != index) {
-			swap(data[parent], data[index]);
-			heapify_down(parent);
+		if (target != parent) {
+			swap(data[target], data[parent]);
+			heapifyDown(target);
 		}
 	}
 
@@ -72,7 +73,7 @@ public:
 
 	PriorityQueue<T>* push(T value) {
 		data.push_back(value);
-		heapify_up(data.size() - 1);
+		heapifyUp(data.size() - 1);
 
 		return this;
 	}
@@ -80,7 +81,7 @@ public:
 	void push_vector(vector<T>& vec) {
 		for (int i=0; i<vec.size(); i++) {
 			data.push_back(vec[i]);
-			heapify_up(data.size() - 1);
+			heapifyUp(data.size() - 1);
 		}
 	}
 
@@ -88,7 +89,7 @@ public:
 		if (!data.empty()) {
 			data[0] = data.back();
 			data.pop_back();
-			heapify_down(0);
+			heapifyDown(0);
 		} else {
 			throw out_of_range("Heap is empty");
 		}

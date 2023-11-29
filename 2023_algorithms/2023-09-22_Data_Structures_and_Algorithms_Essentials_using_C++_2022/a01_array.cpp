@@ -2,19 +2,27 @@
 
 using namespace std;
 
-void printArray(int array[], int size) {
+void printArray(int arr[], int size) {
 	cout << "==> { ";
 	for (int i=0; i< size; i++) {
-		cout << array[i] << ", ";
+		cout << arr[i] << ", ";
+	}
+	cout << "\b\b }" << endl;
+}
+
+void printArray2(int* arr, int size) {
+	cout << "==> { ";
+	for (int i=0; i< size; i++) {
+		cout << arr[i] << ", ";
 	}
 	cout << "\b\b }" << endl;
 }
 
 int main() {
-	// int array[100]; // size = 100, {undefined, undefined, undefined, ...}
-	// int array[100] = {1}; // size = 100, {1, 0, 0, ...}
-	// int array[100] = {0, 1, 2, 3}; // {0, 1, 2, 3, 0, 0, 0...}
-	int array[] = {0, 1, 2, 3}; // size = 4, {0, 1, 2, 3}
+	// int arr[100]; // size = 100, {undefined, undefined, undefined, ...}
+	// int arr[100] = {1}; // size = 100, {1, 0, 0, ...}
+	// int arr[100] = {0, 1, 2, 3}; // {0, 1, 2, 3, 0, 0, 0...}
+	int arr[] = {0, 1, 2, 3}; // size = 4, {0, 1, 2, 3}
 
 	int marks[100] = {0};
 	int n;

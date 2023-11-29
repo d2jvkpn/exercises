@@ -4,7 +4,7 @@
 
 using namespace std;
 
-// Bottom Up DP
+// DP: Bottom Up
 int minNumberOfCoinsForChange(int target, vector<int> denoms) {
 	vector<int> dp(target+1, 0);
 	dp[0] = 0;

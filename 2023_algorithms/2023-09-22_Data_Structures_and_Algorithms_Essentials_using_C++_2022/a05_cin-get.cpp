@@ -12,22 +12,26 @@ int main() {
 	// cout << sentence << endl;
 
 	cout << "==> 2" << endl;
-	int index = 0;
-	char sentence[100];
+
+	int index = 0, size=8;
+	char sentence[size];
 	char temp;
+
 	while (true) {
 		temp = cin.get();
-		if (temp == '#') {
+		if (index > size-2 || temp == '#') {
 			break;
 		}
+
 		sentence[index] = temp;
 		index++;
 		// cout << temp;
 	}
+
 	// cout << "==> Char at index and index+1: " << sentence[index] << ", " << sentence[index+1] << endl;
 	sentence[index] = '\0';
 
-	cout << "==> Length: " << index << ", sentence: '''" << sentence << "'''" << endl;
+	cout << "==> Length: " << index << ", sentence: <<EOF\n" << sentence << "\nEOF"<< endl;
 
 	return 0;
 }
