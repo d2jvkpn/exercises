@@ -1,19 +1,19 @@
 # include <iostream>
-# include <vector>
-# include <queue>
+# include "lib/ns01.h"
 
 using namespace std;
+using namespace ns01;
 
 template <typename T>
 class Graph {
 	int               size;
-	vector<vector<T>> data;
+	Vector<Vector<T>> data;
 
 public:
 	Graph(int size) {
 		this->size = size;
 
-		vector<T> item;
+		Vector<T> item;
 		item.reserve(2);
 		this->data.assign(size, item);
 
@@ -52,44 +52,47 @@ public:
 		} 
 	}
 
-    void bfs(int source) {
-        queue<int> q;
-        bool *visited = new bool[this->size] {false};
+	void bfs(int source) {
+		Queue<int> queue;
+		bool *visited = new bool[this->size] {false};
 
-        q.push(source);
+		queue.push(source);
 		visited[source] = true;
 
 		cout << "==> BFS:" << endl;
-        while(!q.empty()) {
-            int f = q.front();
-			cout << "  goto: " << f << endl;
-            cout << "  CALL: " << f << endl;
-            q.pop();
 
-            for (auto nbr: data[f]) {
-                if (visited[nbr]) {
-                    continue;
-                }
-                q.push(nbr);
-                visited[nbr] = true;
-            }
-        }
+		while(!queue.empty()) {
+			int node = queue.front();
+			queue.pop();
+
+			cout << "  goto: " << node << endl;
+			cout << "  CALL: " << node << endl;
+			visited[node] = true;
+
+			for (auto nbr: data[node]) {
+				if (!visited[nbr]) {
+					queue.push(nbr);
+				}
+			}
+		}
+
 		cout << endl;
-    }
+	}
 
 	void dfs(int source) {
 		bool* visited = new bool[size]{0};
 
 		cout << "==> DFS:" << endl;
+
 		dfsRecur(source, visited);
 		cout << endl;
+
 		delete [] visited;
 	}
 
 	void dfsRecur(int node, bool* visited) {
-		visited[node] = true;
-
 		cout << "  goto: " << node << endl;
+		visited[node] = true;
 
 		for (int nbr: data[node]) {
 			if (!visited[nbr]) {
@@ -114,8 +117,8 @@ int main() {
 	graph.addEdge(3, 4);
 
 	graph.show();
-    graph.bfs(1);
-    graph.dfs(1);
+	graph.bfs(1);
+	graph.dfs(1);
 
 	return 0;
 }

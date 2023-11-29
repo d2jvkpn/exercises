@@ -1,14 +1,8 @@
 # include <iostream>
-# include <vector>
-# include <queue>
+# include "lib/ns01.h"
 
 using namespace std;
-
-template<typename T>
-using Vector = std::vector<T>;
-
-template<typename T>
-using Queue = std::queue<T>;
+using namespace ns01;
 
 template <typename T>
 class Graph {
@@ -33,7 +27,7 @@ public:
 	}
 
 	~Graph() {
-		cout << "!!! delete graph: " << name << ", size=" << size << endl;
+		cout << "!!! delete graph: name=\"" << name << "\", size=" << size << endl;
 	}
 
 	// bool addEdge(int i, int j, bool undirected=true) {
@@ -61,30 +55,30 @@ public:
 		} 
 	}
 
-    void bfs(int source) {
-        Queue<int> queue;
-        bool *visited = new bool[this->size] {false};
+	void bfs(int source) {
+		Queue<int> queue;
+		bool *visited = new bool[this->size] {false};
 
-        queue.push(source);
+		queue.push(source);
 		visited[source] = true;
 
 		cout << "==> BFS:" << endl;
-        while(!queue.empty()) {
-            int f = queue.front();
-			cout << "  goto: " << f << endl;
-            cout << "  CALL: " << f << endl;
-            queue.pop();
+		while(!queue.empty()) {
+			int node = queue.front();
+			queue.pop();
 
-            for (auto nbr: data[f]) {
-                if (visited[nbr]) {
-                    continue;
-                }
-                queue.push(nbr);
-                visited[nbr] = true;
-            }
-        }
+			cout << "  goto: " << node << endl;
+			cout << "  CALL: " << node << endl;
+			visited[node] = true;
+
+			for (auto nbr: data[node]) {
+				if (!visited[nbr]) {
+					queue.push(nbr);
+				}
+			}
+		}
 		cout << endl;
-    }
+	}
 
 	void dfs(int source) {
 		bool* visited = new bool[size]{0};
@@ -97,9 +91,8 @@ public:
 	}
 
 	void dfsRecur(int node, bool* visited) {
-		visited[node] = true;
-
 		cout << "  goto: " << node << endl;
+		visited[node] = true;
 
 		for (int nbr: data[node]) {
 			if (!visited[nbr]) {
@@ -164,8 +157,8 @@ int main() {
 	g1.addEdge(3, 4, true);
 
 	g1.show();
-    g1.bfs(1);
-    g1.dfs(1);
+	g1.bfs(1);
+	g1.dfs(1);
 
 	//
 	Graph<int> g2("g2", 6);

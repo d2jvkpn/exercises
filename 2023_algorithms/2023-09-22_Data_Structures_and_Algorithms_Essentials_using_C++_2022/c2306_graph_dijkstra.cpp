@@ -1,19 +1,13 @@
 # include <iostream>
-# include <vector>
-# include <set>
 # include <climits>
+# include "lib/ns01.h"
 
 using namespace std;
-
-template<typename T>
-using Vector = std::vector<T>;
-
-template<typename T>
-using Set = std::set<T>;
+using namespace ns01;
 
 template <typename T>
 class Graph {
-	int                    size;
+	int                          size;
 	Vector<Vector<pair<int, T>>> data;
 
 public:

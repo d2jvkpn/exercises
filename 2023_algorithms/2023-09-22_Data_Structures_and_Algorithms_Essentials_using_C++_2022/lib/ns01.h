@@ -24,6 +24,9 @@ namespace ns01 {
 	template<typename T>
 	using Set = set<T>;
 
+	template<typename F, typename S>
+	using Pair = pair<F, S>;
+
 	template<typename K, typename V>
 	using UnorderedMap = unordered_map<K, V, hash<K>, equal_to<K>, allocator<pair<const K, V>>>;
 }
