@@ -220,21 +220,23 @@ int main() {
 	ht.insert("Kiwi", 210);
 	ht.insert("Papaya", 220);
 	ht.insert("Litchi", 30);
-
 	ht.show();
 
 	ht.remove("Kiwi");
 	ht.show();
 
+	ht.insert("Kiwi", 333);
+	ht.show();
+
 	cout << "==> Enter fruit: ";
 	string fruit;
-	cin >> fruit;
+	getline(cin, fruit); // cin >> fruit;
 
 	int* ans = ht.search(fruit);
 	if (ans != NULL) {
 		cout << "Ans: " << *ans << endl;
 	} else {
-		cerr << "Not Found!!!" << endl;
+		cerr << "NotFound: " << fruit << endl;
 	}
 
 	return 0;
