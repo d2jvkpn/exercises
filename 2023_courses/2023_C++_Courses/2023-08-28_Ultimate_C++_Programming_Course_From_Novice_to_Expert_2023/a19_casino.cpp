@@ -1,7 +1,7 @@
-# include <iostream>
-# include <string>
-# include <cstdlib>
-# include <ctime>
+#include <iostream>
+#include <string>
+#include <cstdlib>
+#include <ctime>
 
 using namespace std;
 

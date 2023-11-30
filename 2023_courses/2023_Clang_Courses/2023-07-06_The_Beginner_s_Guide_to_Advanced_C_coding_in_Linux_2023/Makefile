@@ -1,6 +1,6 @@
 # make
 
-# include envfile
+#include envfile
 # export $(shell sed 's/=.*//' envfile)
 
 _path = $(shell mkdir -p target && pwd)
