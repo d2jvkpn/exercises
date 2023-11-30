@@ -1,6 +1,6 @@
 #include <iostream>
 #include <unordered_map>
-#include "lib/help.h"
+#include "include/help.h"
 
 using namespace std;
 

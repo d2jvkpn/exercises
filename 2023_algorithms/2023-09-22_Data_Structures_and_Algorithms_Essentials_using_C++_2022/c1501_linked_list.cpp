@@ -1,5 +1,5 @@
 #include <iostream>
-#include "./lib/linked_list.h"
+#include "./include/linked_list.h"
 
 using namespace std;
 

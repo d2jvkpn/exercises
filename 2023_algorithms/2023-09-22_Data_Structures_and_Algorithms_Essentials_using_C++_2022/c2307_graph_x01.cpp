@@ -3,7 +3,7 @@
 #include <cfloat>
 #include <sstream>
 
-#include "lib/ns01.h"
+#include "include/ns01.h"
 
 using namespace std;
 using namespace ns01;

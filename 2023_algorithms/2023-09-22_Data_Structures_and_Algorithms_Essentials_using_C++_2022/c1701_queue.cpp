@@ -1,5 +1,5 @@
 #include <iostream>
-#include "lib/queue_array.h"
+#include "include/queue_array.h"
 
 using namespace std;
 

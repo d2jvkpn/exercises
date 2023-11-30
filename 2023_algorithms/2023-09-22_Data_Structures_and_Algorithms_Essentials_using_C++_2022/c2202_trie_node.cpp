@@ -1,5 +1,5 @@
 #include <iostream>
-#include "lib/help.h"
+#include "include/help.h"
 
 using namespace std;
 
