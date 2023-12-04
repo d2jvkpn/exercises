@@ -3,8 +3,7 @@
 
 using namespace std;
 
-/*
-void bubbleSort(int array[], int size) {
+void bubbleSortV1(int array[], int size) {
 	for (int i=0; i < size - 1; i++) {
 		for (int j=0; j < size - i - 1; j++) {
 			if (array[j] > array[j+1]) {
@@ -13,9 +12,8 @@ void bubbleSort(int array[], int size) {
 		}
 	}
 }
-*/
 
-void bubbleSort(int array[], int size) {
+void bubbleSortV2(int array[], int size) {
 	for (int i=size-1; i>=0; i--) {
 		for (int j=0; j < i; j++) {
 			if (array[j] > array[j+1]) {
@@ -61,7 +59,7 @@ int main() {
 	//
 	int array1[] = {-2, 3, 4, -1, 5, -12, 6, 1, 3};
 	int size1 = sizeof(array1)/sizeof(int);
-	bubbleSort(array1, size1);
+	bubbleSortV1(array1, size1);
 
 	cout << "==> array1: ";
 	for (int i=0; i< size1; i++) {

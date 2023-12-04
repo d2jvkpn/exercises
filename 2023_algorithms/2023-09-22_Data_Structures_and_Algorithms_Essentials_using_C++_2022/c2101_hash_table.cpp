@@ -63,28 +63,29 @@ private:
 	}
 
 	void rehash() {
-		Node<T>** oldTable = table;
-		Node<T>* temp;
 		int oldTs = ts;
 
-		if (cs * 100 > ts * 80) {
+		if (cs * 100 > ts * 80) { // greater than 80% of capacity
 			ts = 2*ts + 1;
-		} else if (cs > 32 && cs * 100 < ts * 25) {
+		} else if (cs > 32 && cs * 100 < ts * 25) { // less than 25% of capacity and capcity > 32
 			ts = ts/2+1;
-		} else {
+		} else { // don't do anything
 			return;
 		}
 
-		cs = 0;
+		cs = 0; // must reset cs
+		Node<T>** oldTable = table;
 		table = new Node<T>*[ts];
+		Node<T>* temp;
 
+		/*
 		for (int i=0; i<ts; i++) {
 			table[i] = NULL;
 		}
+		*/
 
 		for (int i=0; i<oldTs; i++) {
 			temp = oldTable[i];
-
 			if (temp == NULL) {
 				continue;
 			}
@@ -103,9 +104,11 @@ public:
 		cs = 0, ts = default_size;
 		table = new Node<T>*[ts];
 
+		/*
 		for (int i=0; i<ts; i++) {
 			table[i] = NULL;
 		}
+		*/
 	}
 
 	void insert(string key, T value) {

@@ -4,17 +4,18 @@
 using namespace std;
 
 int partition(vector<int>& vec, int front, int end){
-	int pivot = vec[end], i = front - 1;
+	int target = vec[end], pivot = front;
+	// all(vec[front..pivot]) < target, all(vec[pivot..=end]) >= target
 
 	for(int j=front; j<end; j++){
-		if(vec[j] < pivot){
-			i++;
-			swap(vec[i], vec[j]);
+		if(vec[j] < target){
+			swap(vec[pivot], vec[j]);
+			pivot+=1;
 		}
 	}
-	
-	swap(vec[i+1], vec[end]);
-	return i + 1;
+
+	swap(vec[pivot], vec[end]);
+	return pivot;
 }
 
 void quickSort(vector<int>& vec, int front, int end){
