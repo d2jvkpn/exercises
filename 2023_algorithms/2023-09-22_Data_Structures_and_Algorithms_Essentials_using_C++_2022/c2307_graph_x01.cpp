@@ -29,7 +29,7 @@ public:
 		cout << "!!! Delete Graph: " << name << endl;
 	}
 
-	string info() {
+	string toString() {
 		int edges = 0;
 		for (int i=0; i<size; i++) {
 			edges += data[i].size();
@@ -42,7 +42,7 @@ public:
 	}
 
 	void show() {
-		cout << "==> Graph: " << info() << endl;
+		cout << "==> Graph: " << toString() << endl;
 
 		for (int i=0; i<size; i++) {
 			cout << i << " ->";

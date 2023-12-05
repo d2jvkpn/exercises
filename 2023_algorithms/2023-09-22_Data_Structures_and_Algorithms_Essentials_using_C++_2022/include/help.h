@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <cctype>
 #include <locale>
+#include <sstream>
 
 #include <vector>
 
@@ -10,14 +11,14 @@ using namespace std;
 // trim from both ends (in place)
 static inline int trim(string &s) {
 	// static inline void ltrim(string &s)
-    s.erase(s.begin(), find_if(s.begin(), s.end(), [](int ch) {
-        return !isspace(ch);
-    }));
+	s.erase(s.begin(), find_if(s.begin(), s.end(), [](int ch) {
+		return !isspace(ch);
+	}));
 
 	// static inline void rtrim(string &s)
-    s.erase(find_if(s.rbegin(), s.rend(), [](int ch) {
-        return !isspace(ch);
-    }).base(), s.end());
+	s.erase(find_if(s.rbegin(), s.rend(), [](int ch) {
+		return !isspace(ch);
+	}).base(), s.end());
 
 	return s.length();
 }
@@ -39,7 +40,23 @@ void showArray(T* arr, int size) {
 }
 
 template <typename T>
-void showArray(vector<T> &vec) {
+string arrayToString(T arr[], int size) {
+	// cout << "Array<" << typeid(T).name() << "> { ";
+	stringstream ss;
+
+	ss << "Array { ";
+
+	for (int i=0; i<size; i++) {
+		ss << arr[i] << ", ";
+	}
+
+	string ans = ss.str();
+
+	return ans.substr(0, ans.length()-2) + " }";
+}
+
+template <typename T>
+void showVector(vector<T> &vec) {
 	cout << "Vector { ";
 
 	for (int i=0; i<vec.size(); i++) {
@@ -51,4 +68,19 @@ void showArray(vector<T> &vec) {
 	}
 
 	cout << " }\n";
+}
+
+template <typename T>
+string vectorToString(vector<T> &vec) {
+	// cout << "Array<" << typeid(T).name() << "> { ";
+	stringstream ss;
+	ss << "Array { ";
+
+	for (int i=0; i<vec.size(); i++) {
+		ss << vec[i] << ", ";
+	}
+
+	string ans = ss.str();
+
+	return ans.substr(0, ans.length()-2) + " }";
 }

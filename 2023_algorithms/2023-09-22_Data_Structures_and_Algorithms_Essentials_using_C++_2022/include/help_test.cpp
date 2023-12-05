@@ -22,7 +22,10 @@ int main() {
 	vec1.push_back(2);
 	vec1.push_back(3);
 
-	showArray(vec1);
+	showVector(vec1);
+
+	cout << "==> ans: " << arrayToString(arr1, 5) << endl;
+	cout << "==> ans: " << vectorToString(vec1) << endl;
 
 	return 0;
 }
