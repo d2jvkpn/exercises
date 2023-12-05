@@ -1,3 +1,4 @@
+#include <iomanip>
 #include <iostream>
 #include <vector>
 
@@ -13,6 +14,8 @@ template <typename T>
 int longestIncreasingSubsequence(Vector<T> &vec) {
 	int size = vec.size(), ans = 1;
 	Vector<int> dp(size, 1);
+
+	cout << "==> Longest Increasing Subsequence: " << vectorToString(vec) << endl;
 
 	for (int i=1; i<size; i++) {
 		for (int j=0; j<i; j++) {
@@ -33,81 +36,100 @@ string longestCommonSubstring(string &s1, string &s2) {
 		return longestCommonSubstring(s2, s1);
 	}
 
-    int max_length = 0, index = 0;
-    Vector<int> current(cols+1, 0);
-    Vector<int> dp(cols+1, 0);
+	cout << "==> Longest Increasing Subsequence: " << quoted(s1) << ", " << quoted(s2) << endl;
 
-    for (int i=1; i<=rows; i++) {
-        for (int j=1; j<=cols; j++) {
-            if (s1[i-1] != s2[j-1]) {
-                 continue;
-            }
+	int max_length = 0, index = 0;
+	Vector<int> current(cols+1, 0);
+	Vector<int> dp(cols+1, 0);
 
-            current[j] = dp[j - 1] + 1;
+	for (int i=1; i<rows; i++) {
+		for (int j=1; j<cols; j++) {
+			if (s1[i-1] != s2[j-1]) {
+				 continue;
+			}
 
-            if (current[j] > max_length) {
-                max_length = current[j];
-                index = i - max_length;
-            }
-        }
+			current[j] = dp[j - 1] + 1;
 
-		for (int z=0; z<=cols; z++) {
+			if (current[j] > max_length) {
+				max_length = current[j];
+				index = i - max_length;
+			}
+		}
+
+		for (int z=1; z<=cols; z++) {
 			dp[z] = current[z];
 			current[z] = 0;
 		}
-    }
+	}
 
-    if (max_length > 0) {
-       return s1.substr(index, max_length);
-    } else {
-        return "";
-    }
+	if (max_length > 0) {
+	   return s1.substr(index, max_length);
+	} else {
+		return "";
+	}
 }
 
-int longestCommonSubsequence(string &s1, string &s2) {
+string longestCommonSubsequence(string &s1, string &s2) {
 	int rows = s1.length(), cols = s2.length();
 
 	if (rows < cols) {
 		return longestCommonSubsequence(s2, s1);
 	}
 
-    Vector<int> dp(cols, 0);
-    Vector<int> current(cols, 0);
+	cout << "==> Longest Common Subsequence: " << quoted(s1) << ", " << quoted(s2) << endl;
 
-    for (int i=0; i<rows; i++){
-        for (int j=0; j<cols; j++) {
-            if (s1[i] == s2[j]) {
-                current[j + 1] = dp[j] + 1;
-            } else {
-                current[j + 1] = max(dp[j + 1], current[j]);
-            }
-        }
+	Vector<int> dp(cols+1, 0);
+	Vector<int> current(cols+1, 0);
 
-		for (int z=0; z<=cols; z++) {
-		    dp[z] = current[z];
-		    current[z] = 0;
+	for (int i=1; i<=rows; i++){
+		for (int j=1; j<=cols; j++) {
+			if (s1[i-1] == s2[j-1]) {
+				current[j] = dp[j-1] + 1;
+			} else {
+				current[j] = max(dp[j], current[j-1]);
+			}
 		}
-    }
 
-    return dp[cols];
+		for (int z=1; z<=cols; z++) {
+			dp[z] = current[z];
+			current[z] = 0;
+		}
+	}
+
+	// showVector(dp);
+	// return dp[cols-1];
+	stringstream ss;
+
+	for (int i=1; i<=cols; i++) {
+		if (dp[i-1] != dp[i]) {
+			ss << s2[i-1];
+		}
+	}
+
+	return ss.str();
 }
 
 int main() {
 	// cout << "Hello, world!\n";
+
+	// string t1 = "\"ac";
+	// cout << t1 << ", " << quoted(t1) << endl; // "ac, "\"ac"
+
 	//
 	Vector<int> vec{50, 4, 10, 8, 30, 100};
-	showVector(vec);
-
-	cout << "==> longest_increasing_subsequence ans: " << longestIncreasingSubsequence(vec) << endl;
+	int ans = longestIncreasingSubsequence(vec);
+	cout << "ans: " << ans << endl;
 
 	//
 	string s1 = "abcdxyz";
 	string s2 = "xyzabcdki";
-	cout << "==> longest_common_substring ans: " << longestCommonSubstring(s1, s2) << endl;
+	string ans1 = longestCommonSubstring(s1, s2);
+	cout << "ans: " << quoted(ans1) << endl;
 
 	//
-	s1 = "ADBC";
-    s2 = "ABC";
+	s1 = "ADBCEFKKK";
+	s2 = "ABCFGH";
 
-    cout << "==> longestCommonSubsequence: " << longestCommonSubsequence(s1, s2) << endl;
+	string ans2 = longestCommonSubsequence(s1, s2);
+	cout << "ans: " << quoted(ans2) << endl;
 }

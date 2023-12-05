@@ -10,6 +10,12 @@ int main() {
 
 	cout << "Enter sentence: ";
 	cin.getline(sentence, 5);
+
+	if (cin.fail()) {
+		cerr << "failed to input" << endl;
+		return 1;
+	}
+
 	cout << "==> Sentence: " << strlen(sentence) << " <<EOF\n" << sentence << "\nEOF" << endl;
 	cin.clear();
 	cin.ignore(INT_MAX, '\n');

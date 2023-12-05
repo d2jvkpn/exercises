@@ -74,13 +74,16 @@ template <typename T>
 string vectorToString(vector<T> &vec) {
 	// cout << "Array<" << typeid(T).name() << "> { ";
 	stringstream ss;
-	ss << "Array { ";
+	ss << "Vector { ";
 
 	for (int i=0; i<vec.size(); i++) {
-		ss << vec[i] << ", ";
+		if (i==vec.size()-1) {
+			ss << vec[i];
+		} else {
+			ss << vec[i] << ", ";
+		}
 	}
+	ss << " }";
 
-	string ans = ss.str();
-
-	return ans.substr(0, ans.length()-2) + " }";
+	return ss.str();
 }
