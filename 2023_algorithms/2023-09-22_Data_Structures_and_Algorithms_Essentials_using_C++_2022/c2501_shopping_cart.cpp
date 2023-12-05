@@ -9,8 +9,18 @@ using namespace std;
 template <typename T>
 using Vector = vector<T>;
 
+using StringStream = stringstream;
+
 template<typename K, typename V>
 using UnorderedMap = unordered_map<K, V, hash<K>, equal_to<K>, allocator<pair<const K, V>>>;
+
+void clear() {
+	#ifdef _WIN32
+		system("cls");
+	#else
+		system("clear");
+	#endif
+}
 
 // view product, add product, checkout
 
@@ -39,7 +49,7 @@ public:
 	}
 
 	string toString() {
-		stringstream ss;
+		StringStream ss;
 		ss << "{ id: " << id << ", name: " << quoted(name) << ", price: " << price << " }";
 
 		return ss.str();
@@ -52,8 +62,7 @@ class Item {
 	Product product;
 
 public:
-	int     quantity;
-
+	int quantity;
 	Item(Product p, int q): product(p), quantity(q) {}
 
 	int getId() {
@@ -99,11 +108,11 @@ public:
 
 	string toString() {
 		if (um.empty()) {
-			return "Cart is empty";
+			return "!!! Cart is empty";
 		}
 
 		int total = 0;
-		stringstream ss;
+		StringStream ss;
 
 		for (auto pair: um) {
 			Item* item = pair.second;
@@ -130,7 +139,7 @@ Vector<Product> allProducts = {
 
 Product* chooseProduct() {
 	string products;
-	cout << "Available products:" << endl;
+	cout << "~~~ Available products:" << endl;
 
 	for (int i=0; i<allProducts.size(); i++) {
 		cout << allProducts[i].toString() << endl;
@@ -150,7 +159,7 @@ Product* chooseProduct() {
 		}
 	}
 
-	cerr << "Procut not found!" << endl;
+	cerr << "!!! Procut not found" << endl;
 
 	return NULL;
 }
@@ -163,14 +172,14 @@ bool checkout(Cart &cart) {
 	int total = cart.getPrice();
 	int paid;
 
-	cout << "Total " << total << ", Pay: ";
+	cout << "==> Total " << total << ", Pay: ";
 	cin >> paid;
 
 	if (paid >= total) {
-		cout << "Change " << paid - total << endl;
+		cout << "==> Change " << paid - total << endl;
 		return true;
 	} else {
-		cout << "No enough cash" << endl;
+		cout << "!!! No enough cash" << endl;
 		return false;
 	}
 }
@@ -186,7 +195,6 @@ void test01() {
 
 int main() {
 	// cout << "Hello, world!\n";
-
 	// test01();
 
 	char action;
@@ -198,18 +206,21 @@ int main() {
 
 		switch (action) {
 		case 'a': {
+			clear();
 			Product* product = chooseProduct();
 			if (product != NULL) {
-				cout << "Add to the cart: " << product->toString() << endl;
+				cout << "~~~ Add to the cart: " << product->toString() << endl;
 				cart.add(*product);
 			}
 		} break;
 		case 'v': {
+			clear();
 			cout << "--------------------------------" << endl;
 			cout << cart.toString() << endl;
 			cout << "--------------------------------" << endl;
 		} break;
 		case 'c':
+			clear();
 			if (checkout(cart)) {
 				goto end;
 				break;
