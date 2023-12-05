@@ -36,5 +36,13 @@ int main() {
 	}
 	cout << endl; // 1, 2, 3, 42, 101
 
+	vector<int> v2(3, 0);
+
+	cout << "v2: " << endl;
+	for (int i=0; i<v2.size(); i++) {
+		cout << v2[i] << ", ";
+	}
+	cout << endl; // 1, 2, 3, 42, 101
+
 	return 0;
 }

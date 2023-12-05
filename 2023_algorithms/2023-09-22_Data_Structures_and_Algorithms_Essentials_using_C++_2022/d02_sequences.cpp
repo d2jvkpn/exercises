@@ -39,8 +39,11 @@ string longestCommonSubstring(string &s1, string &s2) {
 	cout << "==> Longest Increasing Subsequence: " << quoted(s1) << ", " << quoted(s2) << endl;
 
 	int max_length = 0, index = 0;
-	Vector<int> current(cols+1, 0);
-	Vector<int> dp(cols+1, 0);
+	// Vector<int> current(cols+1, 0);
+	// Vector<int> dp(cols+1, 0);
+
+	int current[cols+1] = { 0 };
+	int dp[cols+1] = { 0 };
 
 	for (int i=1; i<rows; i++) {
 		for (int j=1; j<cols; j++) {
@@ -62,13 +65,10 @@ string longestCommonSubstring(string &s1, string &s2) {
 		}
 	}
 
-	if (max_length > 0) {
-	   return s1.substr(index, max_length);
-	} else {
-		return "";
-	}
+	return s1.substr(index, max_length);
 }
 
+// TODO: limited gap
 string longestCommonSubsequence(string &s1, string &s2) {
 	int rows = s1.length(), cols = s2.length();
 
@@ -78,8 +78,11 @@ string longestCommonSubsequence(string &s1, string &s2) {
 
 	cout << "==> Longest Common Subsequence: " << quoted(s1) << ", " << quoted(s2) << endl;
 
-	Vector<int> dp(cols+1, 0);
-	Vector<int> current(cols+1, 0);
+	// Vector<int> dp(cols+1, 0);
+	// Vector<int> current(cols+1, 0);
+
+	int dp[cols+1] = { 0 };
+	int current[cols+1] = { 0 };
 
 	for (int i=1; i<=rows; i++){
 		for (int j=1; j<=cols; j++) {
@@ -128,7 +131,7 @@ int main() {
 
 	//
 	s1 = "ADBCEFKKK";
-	s2 = "ABCFGH";
+	s2 = "ABCDDFGH";
 
 	string ans2 = longestCommonSubsequence(s1, s2);
 	cout << "ans: " << quoted(ans2) << endl;

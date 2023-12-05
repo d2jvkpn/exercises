@@ -9,5 +9,8 @@ int main() {
 		cout << "char: " << c << endl;
 	}
 
+	cout << s1.substr(0, 2) << endl;
+	cout << s1.substr(0, 0) << endl;
+
 	return 0;
 }
