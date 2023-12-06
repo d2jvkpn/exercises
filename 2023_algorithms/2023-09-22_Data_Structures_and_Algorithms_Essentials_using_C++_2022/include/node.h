@@ -16,6 +16,23 @@ using Array = array<T, N>;
 
 template <typename T>
 class Node {
+private:
+	void clear() {
+		if (this->left != NULL) {
+			this->left->clear();
+			delete this->left;
+			this->left = NULL;
+		}
+
+		if (this->right != NULL) {
+			this->right->clear();
+			delete this->right;
+			this->right = NULL;
+		}
+
+		// can't delete self/this
+	}
+
 public:
 	T      data;
 	Node*  left;
@@ -56,6 +73,10 @@ public:
 	}
 
 	int count() {
+		if (this == NULL) {
+			return 0;
+		}
+
 		int ans = 1;
 
 		if (this->left != NULL) {
@@ -169,21 +190,35 @@ public:
 		cout << endl;
 	}
 
-private:
-	void clear() {
-		if (this->left != NULL) {
-			this->left->clear();
-			delete this->left;
-			this->left = NULL;
+	// tree is balanced, if ans in {-1, 0, 1}
+	int balanceFactor() {
+		return left.count() - right.count();
+	}
+
+	void rotateLeft() {
+		Node* subtree = this->right;
+		if (subtree == NULL) {
+			return;
 		}
 
-		if (this->right != NULL) {
-			this->right->clear();
-			delete this->right;
-			this->right = NULL;
+		this->right = subtree.left;
+		subtree.left = NULL;
+
+		swap(this, subtree);
+		this->left = subtree;
+	}
+
+	void rotateRight() {
+		Node* subtree = this->left;
+		if (subtree == NULL) {
+			return;
 		}
 
-		// can't delete self/this
+		this->left = subtree.right;
+		subtree.right = NULL;
+
+		swap(this, subtree);
+		this->right = subtree;
 	}
 };
 

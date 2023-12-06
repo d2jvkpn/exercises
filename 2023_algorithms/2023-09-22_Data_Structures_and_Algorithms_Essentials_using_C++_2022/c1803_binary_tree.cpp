@@ -4,9 +4,10 @@
 
 using namespace std;
 
+template <typename T>
 class Tree {
 public:
-	Node* root;
+	Node<T>* root;
 
 	Tree() {
 		root = NULL;
@@ -23,7 +24,7 @@ public:
 
 	void build() {
 		// Node* root = preorderBuild("root");
-		Node* root = levelsBuild();
+		Node<T>* root = levelsBuild();
 		this->root = root;
 	}
 
@@ -45,7 +46,7 @@ public:
 int main() {
 	// cout << "Hello, world!\n";
 
-	Tree* tree = new Tree;
+	Tree<string>* tree = new Tree<string>;
 	tree->build();
 	tree->show();
 
