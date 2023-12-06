@@ -26,6 +26,8 @@ int longestIncreasingSubsequence(Vector<T> &vec) {
 		}
 	}
 
+	cout << "~~~ dp: " << vectorToString(dp) << endl;
+
 	return ans;
 }
 
@@ -119,7 +121,7 @@ int main() {
 	// cout << t1 << ", " << quoted(t1) << endl; // "ac, "\"ac"
 
 	//
-	Vector<int> vec{50, 4, 10, 8, 30, 100};
+	Vector<int> vec{50, 4, 10, 8, 30, 100, 31, 16, 17, 60};
 	int ans = longestIncreasingSubsequence(vec);
 	cout << "ans: " << ans << endl;
 

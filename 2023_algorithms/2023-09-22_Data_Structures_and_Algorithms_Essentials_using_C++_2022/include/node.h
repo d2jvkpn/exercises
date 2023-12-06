@@ -1,8 +1,18 @@
 #include <iostream>
 #include <string>
 #include <queue>
+#include <array>
 
 using namespace std;
+
+template <typename T>
+using Queue = queue<T>;
+
+template <typename F, typename S>
+using Pair = pair<F, S>;
+
+template <typename T, size_t N>
+using Array = array<T, N>;
 
 template <typename T>
 class Node {
@@ -60,17 +70,25 @@ public:
 	}
 
 	int height() {
-		int h1 = 0, h2 = 0;
+		// Pair<int, int> pair = height2();
+		// return pair.first > pair.second ? pair.first + 1: pair.second + 1;
+
+		Array<int, 2> pair = height2();
+		return pair[0] > pair[1] ? pair[0] + 1: pair[1] + 1;
+	}
+
+	Array<int, 2> height2() {
+		Array<int, 2> ans = {0, 0};
 
 		if (this->left != NULL) {
-			h1 = this->left->height();
+			ans[0] = this->left->height();
 		}
 
 		if (this->right != NULL) {
-			h2 += this->right->height();
+			ans[1] = this->right->height();
 		}
 
-		return h1 > h2 ? h1 + 1: h2 + 1;
+		return ans;
 	}
 
 	int diameter() {
@@ -124,14 +142,14 @@ public:
 	}
 
 	void levelsOrder() {
-		queue<Node*> q;
+		Queue<Node*> queue;
 		Node* temp;
 
-		q.push(this);
+		queue.push(this);
 
-		while(!q.empty()) {
-			temp = q.front();
-			q.pop();
+		while(!queue.empty()) {
+			temp = queue.front();
+			queue.pop();
 
 			if (temp == NULL) {
 				break;
@@ -140,11 +158,11 @@ public:
 			cout << temp->data << "-";
 
 			if (temp->left != NULL) {
-				q.push(temp->left);
+				queue.push(temp->left);
 			}
 
 			if (temp->right != NULL) {
-				q.push(temp->right);
+				queue.push(temp->right);
 			}
 		}
 
