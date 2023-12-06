@@ -2,6 +2,7 @@
 #include <string>
 #include <queue>
 #include <array>
+#include <sstream>
 
 using namespace std;
 
@@ -68,6 +69,21 @@ public:
 		cout << "Node { data: " << data << ", left: " << s1 << ", right: " << s2 << " }" << endl;
 	}
 
+	string toString() {
+		if (this == NULL) {
+			return "NULL";
+		}
+
+		string s1 = (this->left == NULL) ? "" : this->left->data;
+		string s2 = (this->right == NULL) ? "" : this->right->data;
+
+		stringstream ss;
+
+		ss << data << "(" << s1 << ", " << s2 << ")";
+
+		return ss.str();
+	}
+
 	bool isLeaf() {
 		return this->left == NULL && this->right == NULL;
 	}
@@ -125,7 +141,13 @@ public:
 
 	// preorder traversal
 	void preorder() {
-		cout << data << "->";
+		cout << "==> Preorder Order Traversal:" << endl;
+		if (this == NULL) {
+			return;
+		}
+
+		// cout << this->data << "->";
+		cout << this->toString() << "->";
 
 		if (this->left != NULL) {
 			this->left->preorder();
@@ -138,11 +160,17 @@ public:
 
 	// inorder traversal
 	void inorder() {
+		cout << "==> Inorder Order Traversal:" << endl;
+		if (this == NULL) {
+			return;
+		}
+
 		if (this->left != NULL) {
 			this->left->inorder();
 		}
 
-		cout << this->data << "->";
+		// cout << this->data << "->";
+		cout << this->toString() << "->";
 
 		if (this->right != NULL) {
 			this->right->inorder();
@@ -151,6 +179,11 @@ public:
 
 	// post traversal
 	void postorder() {
+		cout << "==> Post Order Traversal:" << endl;
+		if (this == NULL) {
+			return;
+		}
+
 		if (this->left != NULL) {
 			this->left->postorder();
 		}
@@ -159,10 +192,16 @@ public:
 			this->right->postorder();
 		}
 
-		cout << this->data << "->";
+		// cout << this->data << "->";
+		cout << this->toString() << "->";
 	}
 
 	void levelsOrder() {
+		cout << "==> Levels Order Traversal:" << endl;
+		if (this == NULL) {
+			return;
+		}
+
 		Queue<Node*> queue;
 		Node* temp;
 
@@ -176,7 +215,7 @@ public:
 				break;
 			}
 
-			cout << temp->data << "-";
+			cout << temp->toString() << "->";
 
 			if (temp->left != NULL) {
 				queue.push(temp->left);
@@ -201,10 +240,17 @@ public:
 			return;
 		}
 
-		this->right = subtree.left;
-		subtree.left = NULL;
+		this->right = subtree->left;
+		subtree->left = NULL;
 
-		swap(this, subtree);
+		/* WRONG
+		swap(*this, *subtree);
+		this->left = subtree;
+		*/
+
+		swap(this->data, subtree->data);
+		swap(this->left, subtree->left);
+		swap(this->right, subtree->right);
 		this->left = subtree;
 	}
 
@@ -214,10 +260,13 @@ public:
 			return;
 		}
 
-		this->left = subtree.right;
-		subtree.right = NULL;
+		this->left = subtree->right;
+		subtree->right = NULL;
 
-		swap(this, subtree);
+		swap(this->data, subtree->data);
+		swap(this->left, subtree->left);
+		swap(this->right, subtree->right);
+
 		this->right = subtree;
 	}
 };
