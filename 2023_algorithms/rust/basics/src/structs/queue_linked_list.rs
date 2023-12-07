@@ -15,19 +15,27 @@ pub struct Node<T> {
     pub next: Next<T>,
 }
 
+impl<T> From<Node<T>> for Next<T> {
+    fn from(node: Node<T>) -> Next<T> {
+        Some(Rc::new(RefCell::new(node)))
+    }
+}
+
 impl<T: Debug + Clone + PartialEq> Default for Queue<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
+/**
+Queue stats:
+1. {header: None, tail: None }
+2. {header: Some(Item), tail: None }
+3. {header: Some(Item)...., tail: Some(Item) }
+*/
 impl<T: Debug + Clone + PartialEq> Node<T> {
     pub fn new(item: T) -> Self {
         Self { item, next: None }
-    }
-
-    pub fn into_next(self) -> Next<T> {
-        Some(Rc::new(RefCell::new(self)))
     }
 }
 
@@ -37,8 +45,8 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
     }
 
     pub fn new_with(item: T) -> Self {
-        let header = Node::new(item).into_next();
-        Queue { header, tail: None, size: 1 }
+        let node = Node::new(item).into();
+        Queue { header: node, tail: None, size: 1 }
     }
 
     pub fn size(&self) -> usize {
@@ -50,7 +58,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
     }
 
     pub fn push(&mut self, item: T) -> &mut Self {
-        let next = Node::new(item).into_next();
+        let next: Next<T> = Node::new(item).into();
         self.size += 1;
 
         let header = match &self.header {
@@ -70,17 +78,29 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
         self
     }
 
+    pub fn push_vec(&mut self, items: Vec<T>) {
+        items.into_iter().for_each(|v| {
+            self.push(v);
+        });
+    }
+
     pub fn pop(&mut self) -> Option<T> {
-        let header = match self.header.take() {
+        let (ans, header) = match self.header.take() {
             None => return None,
-            Some(v) => v,
+            Some(v) => {
+                let h = v.borrow_mut().next.take();
+                (v.borrow().item.clone(), h)
+            }
         };
 
         self.size -= 1;
-        self.header = header.borrow_mut().next.take();
+        if self.size == 1 {
+            self.header = self.tail.take();
+        } else {
+            self.header = header;
+        }
 
-        let ans = &header.borrow_mut().item;
-        Some(ans.clone())
+        Some(ans)
     }
 
     pub fn as_vec(&self) -> Vec<T> {

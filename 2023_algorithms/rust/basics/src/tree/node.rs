@@ -89,21 +89,21 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
         self.right = right.into();
     }
 
-    pub fn push_binary(&mut self, value: T) -> bool {
+    pub fn push_bst(&mut self, value: T) -> bool {
         let mut ans = true;
 
         if value == self.data {
             ans = false;
         } else if value < self.data {
             if let Some(v) = self.left.take() {
-                ans = (*v).borrow_mut().push_binary(value); // !!! not *v.borrow_mut().push(data)
+                ans = (*v).borrow_mut().push_bst(value); // !!! not *v.borrow_mut().push(data)
                 self.left = Some(v); // must return self.left
             } else {
                 self.left = Node::new(value.clone()).into();
             }
         } else {
             if let Some(v) = self.right.take() {
-                ans = (*v).borrow_mut().push_binary(value);
+                ans = (*v).borrow_mut().push_bst(value);
                 self.right = Some(v);
             } else {
                 self.right = Node::new(value.clone()).into();
@@ -208,39 +208,71 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
         self.set_child(side, Some(subtree));
     }
 
-    fn levels_print_help(&self) {
-        let mut queue = Queue::new();
-
-        queue.push(self.clone());
-
-        while let Some(node) = queue.pop() {
-            let left = match &node.left {
-                Some(v) => {
-                    let v = v.borrow().clone();
-                    let ans = format!("{:?}", v.data);
-                    queue.push(v);
-                    ans
-                }
-                None => "".to_string(),
-            };
-
-            let right = match &node.right {
-                Some(v) => {
-                    let v = v.borrow().clone();
-                    let ans = format!("{:?}", v.data);
-                    queue.push(v);
-                    ans
-                }
-                None => "".to_string(),
-            };
-
-            print!("{:?}({}, {})-> ", node.data, left, right);
+    fn levels_from_vec(vec: Vec<T>) -> Option<Self> {
+        // dbg!(&vec);
+        if vec.is_empty() {
+            return None;
         }
+
+        let mut queue: Queue<Rc<RefCell<Node<T>>>> = Queue::new();
+
+        let tree = Rc::new(RefCell::new(Node::new(vec[0].clone())));
+        queue.push(tree.clone().into());
+
+        for i in (1..vec.len()).step_by(2) {
+            let parent = match queue.pop() {
+                Some(v) => v,
+                None => break,
+            };
+
+            let left: Rc<RefCell<Node<T>>> = Node::new(vec[i].clone()).into();
+            parent.borrow_mut().left = Some(left.clone());
+            queue.push(left);
+
+            if i + 1 >= vec.len() {
+                continue;
+            }
+
+            let right: Rc<RefCell<Node<T>>> = Node::new(vec[i + 1].clone()).into();
+            parent.borrow_mut().right = Some(right.clone());
+            queue.push(right);
+        }
+
+        let ans = tree.borrow().clone();
+        Some(ans)
     }
 
-    pub fn levels_print(&self) {
+    fn levels_print(&self) {
         println!("==> Levels Print:");
-        self.levels_print_help();
+        let mut queue: Queue<Rc<RefCell<Node<T>>>> = Queue::new();
+
+        queue.push(self.clone().into());
+
+        while let Some(node) = queue.pop() {
+            let left = match &node.borrow().left {
+                Some(v) => {
+                    let v = v.clone();
+                    let ans = format!("{:?}", v.borrow().data);
+                    queue.push(v);
+                    ans
+                }
+                None => "".to_string(),
+            };
+
+            let right = match &node.borrow().right {
+                Some(v) => {
+                    let v = v.clone();
+                    let ans = format!("{:?}", v.borrow().data);
+                    queue.push(v);
+                    ans
+                }
+                None => "".to_string(),
+            };
+
+            print!("{:?}({}, {})-> ", node.borrow().data, left, right);
+        }
+
+        // dbg!(&queue);
         println!("");
     }
 }
@@ -248,7 +280,7 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
 enum EnterString {
     None,
     Quit,
-    Node(String),
+    Value(String),
 }
 
 fn enter_node() -> EnterString {
@@ -267,18 +299,18 @@ fn enter_node() -> EnterString {
     match input.as_str() {
         "" => EnterString::None,
         "." => EnterString::Quit,
-        _ => EnterString::Node(input),
+        _ => EnterString::Value(input),
     }
 }
 
-pub fn build_node() -> Child<String> {
+pub fn levels_build() -> Child<String> {
     let mut queue: Queue<Rc<RefCell<Node<String>>>> = Queue::new();
 
     print!("==> Enter root({:?} -> None, {:?} -> Done): ", "", ".");
 
     let tree: Rc<RefCell<Node<String>>> = match enter_node() {
         EnterString::None | EnterString::Quit => return None,
-        EnterString::Node(v) => Node::new(v).into(),
+        EnterString::Value(v) => Node::new(v).into(),
     };
 
     queue.push(tree.clone());
@@ -289,7 +321,7 @@ pub fn build_node() -> Child<String> {
         match enter_node() {
             EnterString::None => {}
             EnterString::Quit => break,
-            EnterString::Node(v) => {
+            EnterString::Value(v) => {
                 let left: Rc<RefCell<Node<String>>> = Node::new(v).into();
                 node.borrow_mut().left = Some(left.clone());
                 queue.push(left);
@@ -301,7 +333,7 @@ pub fn build_node() -> Child<String> {
         match enter_node() {
             EnterString::None => {}
             EnterString::Quit => break,
-            EnterString::Node(v) => {
+            EnterString::Value(v) => {
                 let right: Rc<RefCell<Node<String>>> = Node::new(v).into();
                 node.borrow_mut().right = Some(right.clone());
                 queue.push(right);
@@ -370,8 +402,18 @@ mod tests {
 
     #[test]
     fn t3_node() {
-        let tree = build_node().unwrap();
+        /*
+        let tree = levels_build().unwrap();
         tree.borrow_mut().rotate(Side::Left);
         tree.borrow().levels_print();
+
+        let tree = levels_build().unwrap();
+        tree.borrow_mut().rotate(Side::Right);
+        tree.borrow().levels_print();
+        */
+
+        let mut tree = Node::levels_from_vec((1..=7).collect()).unwrap();
+        tree.rotate(Side::Right);
+        tree.levels_print();
     }
 }
