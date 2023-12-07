@@ -122,17 +122,32 @@ impl<T: PartialEq + PartialOrd + Debug + Clone> Node<T> {
     pub fn height(&self) -> usize {
         // println!("~~~ {:?}, {}, {}", self.data, self.left.is_some(), self.right.is_some());
 
-        let h1 = match &self.left {
+        let left = match &self.left {
             Some(v) => v.borrow().height(),
             None => 0,
         };
 
-        let h2 = match &self.right {
+        let right = match &self.right {
             Some(v) => v.borrow().height(),
             None => 0,
         };
 
-        max(h1, h2) + 1
+        max(left, right) + 1
+    }
+
+    pub fn balance_factor(&self) -> i32 {
+        let mut left = 0;
+        let mut right = 0;
+
+        if let Some(v) = &self.left {
+            left = v.borrow().height();
+        }
+
+        if let Some(v) = &self.right {
+            right = v.borrow().height();
+        }
+
+        return (left - right) as i32;
     }
 
     pub fn is_leaf(&self) -> bool {
