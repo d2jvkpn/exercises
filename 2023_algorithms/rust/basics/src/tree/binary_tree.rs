@@ -271,9 +271,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
             Some(v) => Queue::new_with(v.clone()),
         };
 
-        while let Some(qn) = queue.pop() {
-            let node = &qn.borrow().item;
-
+        while let Some(node) = queue.pop() {
             if let Some(v) = &node.borrow().left {
                 _ = queue.push(v.clone());
             }
@@ -294,9 +292,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
             Some(v) => Queue::new_with(v.clone()),
         };
 
-        while let Some(qn) = queue.pop() {
-            let node = &qn.borrow().item;
-
+        while let Some(node) = queue.pop() {
             if let Some(v) = &node.borrow().left {
                 _ = queue.push(v.clone());
             }

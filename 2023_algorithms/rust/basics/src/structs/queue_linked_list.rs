@@ -70,7 +70,7 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
         self
     }
 
-    pub fn pop(&mut self) -> Next<T> {
+    pub fn pop(&mut self) -> Option<T> {
         let header = match self.header.take() {
             None => return None,
             Some(v) => v,
@@ -78,7 +78,9 @@ impl<T: Debug + Clone + PartialEq> Queue<T> {
 
         self.size -= 1;
         self.header = header.borrow_mut().next.take();
-        Some(header)
+
+        let ans = &header.borrow_mut().item;
+        Some(ans.clone())
     }
 
     pub fn as_vec(&self) -> Vec<T> {
@@ -104,13 +106,13 @@ mod tests {
         queue.push(2).push(3).push(4);
 
         assert_eq!(queue.size(), 4);
-        assert_eq!(queue.pop(), Node::new(1).into_next());
+        assert_eq!(queue.pop(), Some(1));
         assert_eq!(queue.size(), 3);
         assert_eq!(queue.as_vec(), vec![2, 3, 4]);
 
         let mut queue = Queue::new_with(1);
         assert!(queue.tail.is_none());
-        assert_eq!(queue.pop(), Node::new(1).into_next());
+        assert_eq!(queue.pop(), Some(1));
         assert!(queue.header.is_none());
     }
 }

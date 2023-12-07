@@ -57,9 +57,7 @@ pub fn build_string_tree() -> Tree<String> {
 
     // let root = Rc::new(RefCell::new(Node::new(input.trim().to_string())));
 
-    while let Some(item) = queue.pop() {
-        let node = &item.borrow().item;
-
+    while let Some(node) = queue.pop() {
         //
         print!("==> Enter: {:?}.left: ", node.borrow().data);
 
