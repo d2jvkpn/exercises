@@ -208,7 +208,7 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
         self.set_child(side, Some(subtree));
     }
 
-    fn levels_from_vec(vec: Vec<T>) -> Option<Self> {
+    pub fn levels_from_vec(vec: Vec<T>) -> Option<Self> {
         // dbg!(&vec);
         if vec.is_empty() {
             return None;
