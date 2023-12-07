@@ -18,10 +18,11 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         self.size = 0;
     }
 
-    pub fn root_value(&self) -> Option<T> {
-        let node = self.root.clone()?;
-        let ans = Some(node.borrow().data.clone());
-        ans
+    pub fn root_eq(&self, value: T) -> bool {
+        match &self.root {
+            None => false,
+            Some(v) => v.borrow().data == value,
+        }
     }
 
     pub fn push_iter(item: &Child<T>, node: Node<T>) {

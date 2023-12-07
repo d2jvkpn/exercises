@@ -35,15 +35,15 @@ impl Not for Side {
     }
 }
 
-impl<T> From<Node<T>> for Child<T> {
-    fn from(node: Node<T>) -> Self {
-        Some(Rc::new(RefCell::new(node)))
-    }
-}
-
 impl<T> From<Node<T>> for Rc<RefCell<Node<T>>> {
     fn from(node: Node<T>) -> Self {
         Rc::new(RefCell::new(node))
+    }
+}
+
+impl<T> From<Node<T>> for Child<T> {
+    fn from(node: Node<T>) -> Self {
+        Some(Rc::new(RefCell::new(node)))
     }
 }
 
@@ -76,41 +76,17 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
         Self { data, left: None, right: None }
     }
 
-    pub fn is_leaf(&self) -> bool {
-        self.left.is_none() && self.right.is_none()
-    }
-
     pub fn triangle(data: T, left: T, right: T) -> Self {
         Self { data, left: Self::new(left).into(), right: Self::new(right).into() }
+    }
+
+    pub fn is_leaf(&self) -> bool {
+        self.left.is_none() && self.right.is_none()
     }
 
     pub fn set_children(&mut self, left: Node<T>, right: Node<T>) {
         self.left = left.into();
         self.right = right.into();
-    }
-
-    pub fn push_bst(&mut self, value: T) -> bool {
-        let mut ans = true;
-
-        if value == self.data {
-            ans = false;
-        } else if value < self.data {
-            if let Some(v) = self.left.take() {
-                ans = (*v).borrow_mut().push_bst(value); // !!! not *v.borrow_mut().push(data)
-                self.left = Some(v); // must return self.left
-            } else {
-                self.left = Node::new(value.clone()).into();
-            }
-        } else {
-            if let Some(v) = self.right.take() {
-                ans = (*v).borrow_mut().push_bst(value);
-                self.right = Some(v);
-            } else {
-                self.right = Node::new(value.clone()).into();
-            }
-        }
-
-        ans
     }
 
     fn count_recur(&self, ans: &mut usize) {
@@ -274,6 +250,54 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
 
         // dbg!(&queue);
         println!("");
+    }
+
+    // return: (None, None), (None, Some), (Some, Some)
+    fn take_most(item: &Child<T>, side: Side) -> (Child<T>, Child<T>) {
+        // parent, target
+        let node = if let Some(v) = item {
+            v
+        } else {
+            return (None, None); // not found
+        };
+
+        let binding = node.borrow();
+        let child = match binding.child(side) {
+            None => return (None, Some(node.clone())), // has no parent
+            Some(v) => v,
+        };
+
+        if child.borrow().child(side).is_none() {
+            node.borrow_mut().set_child(side, child.borrow_mut().take_child(!side));
+            return (Some(node.clone()), Some(child.clone()));
+        }
+
+        Self::take_most(&Some(child.clone()), side)
+    }
+
+    // TODO: move to bst tree
+    pub fn bst_push(&mut self, value: T) -> bool {
+        let mut ans = true;
+
+        if value == self.data {
+            ans = false;
+        } else if value < self.data {
+            if let Some(v) = self.left.take() {
+                ans = (*v).borrow_mut().bst_push(value); // !!! not *v.borrow_mut().push(data)
+                self.left = Some(v); // must return self.left
+            } else {
+                self.left = Node::new(value.clone()).into();
+            }
+        } else {
+            if let Some(v) = self.right.take() {
+                ans = (*v).borrow_mut().bst_push(value);
+                self.right = Some(v);
+            } else {
+                self.right = Node::new(value.clone()).into();
+            }
+        }
+
+        ans
     }
 }
 

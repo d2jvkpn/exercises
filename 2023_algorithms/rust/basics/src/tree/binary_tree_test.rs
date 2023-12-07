@@ -41,11 +41,11 @@ mod tests {
         println!("");
 
         assert_eq!(tree.count(), slice.len());
-        assert_eq!(tree.root_value(), Some(8));
+        assert!(tree.root_eq(8));
 
         tree.remove(8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert_eq!(tree.root_value(), Some(10));
+        assert!(tree.root_eq(10));
         assert_eq!(inorder_recur_a(&tree.root), vec![1, 3, 4, 6, 7, 10, 13, 14, 19]);
         // println!("==> 1. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
@@ -54,7 +54,7 @@ mod tests {
         tree.push_slice(slice);
         tree.remove(8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert_eq!(tree.root_value(), Some(10));
+        assert!(tree.root_eq(10));
         assert_eq!(inorder_recur_a(&tree.root), vec![10, 14]);
         // println!("==> 2. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
@@ -63,7 +63,7 @@ mod tests {
         tree.push_slice(slice);
         tree.remove(10);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert_eq!(tree.root_value(), Some(8));
+        assert!(tree.root_eq(8));
         assert_eq!(inorder_recur_a(&tree.root), vec![8, 14]);
         // println!("==> 3. {:?}, remove {}, inorder: {:?}", slice, 10, inorder_recur_a(&tree.root));
 
@@ -72,7 +72,7 @@ mod tests {
         tree.push_slice(slice);
         tree.remove(8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert_eq!(tree.root_value(), None);
+        assert!(!tree.root_eq(0));
         assert_eq!(inorder_recur_a(&tree.root), vec![]);
         // println!("==> 4. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
@@ -81,7 +81,7 @@ mod tests {
         tree.push_slice(slice);
         tree.remove(8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert_eq!(tree.root_value(), Some(3));
+        assert!(tree.root_eq(3));
         assert_eq!(inorder_recur_a(&tree.root), vec![3]);
         // println!("==> 5. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
     }
