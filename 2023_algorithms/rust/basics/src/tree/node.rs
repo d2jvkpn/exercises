@@ -280,6 +280,7 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
     }
 
     // TODO: move to bst tree
+    /*
     pub fn bst_push(&mut self, value: T) -> bool {
         let mut ans = true;
 
@@ -302,6 +303,33 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
         }
 
         ans
+    }
+    */
+
+    fn bst_push_recur(child: &Child<T>, value: T) -> bool {
+        let node = match child {
+            None => return false,
+            Some(v) => v,
+        };
+
+        let side = if node.borrow().data == value {
+            return false;
+        } else if node.borrow().data < value {
+            Side::Left
+        } else {
+            Side::Right
+        };
+
+        if node.borrow().child(side).is_none() {
+            node.borrow_mut().set_child(side, Node::new(value).into());
+            true
+        } else {
+            Self::bst_push_recur(node.borrow().child(side), value)
+        }
+    }
+
+    pub fn bst_push(&self, value: T) -> bool {
+        Self::bst_push_recur(&(self.clone()).into(), value)
     }
 }
 
