@@ -1,4 +1,4 @@
-use super::node::{Child, Node};
+use super::node::{Child, Node, Side};
 use crate::structs::queue_linked_list::Queue;
 use std::{cmp::PartialOrd, fmt::Debug};
 
@@ -18,42 +18,113 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         self.size = 0;
     }
 
-    pub fn root_eq(&self, value: T) -> bool {
-        match &self.root {
-            None => false,
-            Some(v) => v.borrow().data == value,
+    pub fn push2node_v1(parent: &mut Node<T>, node: Node<T>) -> bool {
+        let ans: bool;
+
+        if node.data == parent.data {
+            ans = false;
+        } else if node.data < parent.data {
+            if let Some(v) = parent.left.take() {
+                // !!! not *v.borrow_mut().push2node_v1(data)
+                ans = Self::push2node_v1(&mut v.borrow_mut(), node);
+                parent.left = Some(v); // must return self.left
+            } else {
+                parent.left = node.into();
+                ans = true;
+            }
+        } else {
+            if let Some(v) = parent.right.take() {
+                ans = Self::push2node_v1(&mut v.borrow_mut(), node);
+                parent.right = Some(v);
+            } else {
+                parent.right = node.into();
+                ans = true;
+            }
         }
+
+        ans
     }
 
-    pub fn push_iter(item: &Child<T>, node: Node<T>) {
+    pub fn push2node_v2(parent: &mut Node<T>, node: Node<T>) -> bool {
+        let ans: bool;
+
+        let side = if node.data == parent.data {
+            return false;
+        } else if node.data < parent.data {
+            Side::Left
+        } else {
+            Side::Right
+        };
+
+        if let Some(v) = parent.take_child(side) {
+            // !!! not *v.borrow_mut().push2node_v1(data)
+            ans = Self::push2node_v2(&mut v.borrow_mut(), node);
+            parent.set_child(side, Some(v)); // must return self.left
+        } else {
+            parent.set_child(side, node.into());
+            ans = true;
+        }
+
+        ans
+    }
+
+    pub fn push2child(item: &Child<T>, node: Node<T>) -> bool {
         let child = match item {
-            None => return,
+            None => return false,
             Some(v) => v,
         };
 
         let v = child.borrow().data.clone();
 
-        if node.data == v {
-        } else if node.data < v {
+        /*
+        if node.data < v {
             if child.borrow().left.is_none() {
                 child.borrow_mut().left = node.into();
+                true
             } else {
-                Self::push_iter(&child.borrow().left, node);
+                Self::push2child(&child.borrow().left, node)
             }
         } else {
-            Self::push_iter(&child.borrow().right, node);
+            if child.borrow().right.is_none() {
+                child.borrow_mut().right = node.into();
+                true
+            } else {
+                Self::push2child(&child.borrow().right, node)
+            }
+        }
+        */
+
+        let side = if node.data == v {
+            return false;
+        } else if node.data < v {
+            Side::Left
+        } else {
+            Side::Right
+        };
+
+        if child.borrow().child(side).is_none() {
+            child.borrow_mut().set_child(side, node.into());
+            true
+        } else {
+            Self::push2child(child.borrow().child(side), node)
         }
     }
 
     pub fn push_node(&mut self, node: Node<T>) -> &mut Self {
+        let pushed: bool;
+
         if let Some(v) = &self.root {
             // _ = v.borrow_mut().push_binary(node);
-            _ = push_recur(&mut v.borrow_mut(), node);
+            // pushed = Self::push2node_v1(&mut v.borrow_mut(), node);
+            pushed = Self::push2child(&Some(v.clone()), node);
         } else {
-            self.root = node.into()
+            self.root = node.into();
+            pushed = true;
         }
 
-        self.size += 1;
+        if pushed {
+            self.size += 1;
+        }
         self
     }
 
@@ -85,67 +156,46 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         find(&self.root, data)
     }
 
-    fn match_left(item: &Child<T>, data: T) -> Child<T> {
-        let node = if let Some(v) = item { v.borrow() } else { return None };
-
-        let node = match &node.left {
-            Some(v) => v,
-            None => return None,
-        };
-
-        if node.borrow().data == data {
-            return Some(node.clone());
+    pub fn child_eq(item: &Child<T>, data: &T) -> bool {
+        match item {
+            Some(v) => &v.borrow().data == data,
+            None => false,
         }
-        None
     }
 
-    fn match_right(item: &Child<T>, data: T) -> Child<T> {
-        let node = if let Some(v) = item { v.borrow() } else { return None };
-
-        let node = match &node.right {
-            Some(v) => v,
-            None => return None,
-        };
-
-        if node.borrow().data == data {
-            return Some(node.clone());
-        }
-        None
-    }
-
-    // find a match node and return parent and target node
-    fn locate_recur(item: &Child<T>, data: T) -> (Child<T>, Child<T>) {
+    /* Find a match node and return parent, side and target node
+    - None, None, None
+    - None, None, Some
+    - Some, Some, Some
+    **/
+    fn locate_recur(item: &Child<T>, data: &T) -> (Child<T>, Option<Side>, Child<T>) {
         // case 1: root node is None
-        let node = if let Some(v) = item { v } else { return (None, None) };
+        let node = if let Some(v) = item { v } else { return (None, None, None) };
 
-        if node.borrow().data == data {
+        if &node.borrow().data == data {
             // case 2: target is root node
-            return (None, Some(node.clone()));
+            return (None, None, Some(node.clone()));
         }
 
-        // case 3: match left
-        let target = Self::match_left(&Some(node.clone()), data.clone());
-        if target.is_some() {
-            return (Some(node.clone()), target);
+        // case 3: match left or right
+        if Self::child_eq(&node.borrow().left, data) {
+            return (Some(node.clone()), Some(Side::Left), node.borrow().left.clone());
         }
 
-        // case 4: match right
-        let target = Self::match_right(&Some(node.clone()), data.clone());
-        if target.is_some() {
-            return (Some(node.clone()), target);
+        if Self::child_eq(&node.borrow().right, data) {
+            return (Some(node.clone()), Some(Side::Right), node.borrow().right.clone());
         }
 
-        // iter left node
-        let (parent, target) = Self::locate_recur(&node.borrow().left, data.clone());
-        if target.is_some() {
-            return (parent, target);
+        // case 4: iter left node and right node
+        let ans = Self::locate_recur(&node.borrow().left, data);
+        if ans.0.is_some() {
+            ans
+        } else {
+            Self::locate_recur(&node.borrow().right, data)
         }
-
-        // iter right node
-        Self::locate_recur(&node.borrow().right, data)
     }
 
-    pub fn locate(&self, data: T) -> (Child<T>, Child<T>) {
+    pub fn locate(&self, data: &T) -> (Child<T>, Option<Side>, Child<T>) {
         Self::locate_recur(&self.root, data)
     }
 
@@ -193,8 +243,8 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         Self::take_min(&Some(right.clone()))
     }
 
-    pub fn remove(&mut self, data: T) -> bool {
-        let (parent, target) = self.locate(data);
+    pub fn remove(&mut self, data: &T) -> bool {
+        let (parent, side, target) = self.locate(data);
         let pair: (Child<T>, Child<T>);
         let mut successor: Child<T>;
 
@@ -238,13 +288,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
                 _ = self.root.take();
                 self.root = successor;
             }
-            Some(v) => {
-                if v.borrow().left == Some(target) {
-                    v.borrow_mut().left = successor;
-                } else {
-                    v.borrow_mut().right = successor;
-                }
-            }
+            Some(v) => v.borrow_mut().set_child(side.unwrap(), successor),
         }
 
         true
@@ -339,21 +383,5 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         Self::get_range_recur(&self.root, &low, &high, &mut ans);
 
         ans
-    }
-}
-
-pub fn push_recur<T: PartialOrd>(parent: &mut Node<T>, node: Node<T>) {
-    if node.data <= parent.data {
-        if let Some(v) = parent.left.take() {
-            push_recur(&mut v.borrow_mut(), node); // !!! not *v.borrow_mut().push(data)
-            parent.left = Some(v); // must return self.left
-        } else {
-            parent.left = node.into();
-        }
-    } else if let Some(v) = parent.right.take() {
-        push_recur(&mut v.borrow_mut(), node);
-        parent.right = Some(v);
-    } else {
-        parent.right = node.into();
     }
 }

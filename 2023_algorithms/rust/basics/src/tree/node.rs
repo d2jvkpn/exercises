@@ -145,6 +145,10 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
         return left - right;
     }
 
+    pub fn is_none(&self, side: Side) -> bool {
+        self.child(side).is_none()
+    }
+
     pub fn child(&self, side: Side) -> &Child<T> {
         match side {
             Side::Left => &self.left,
@@ -159,14 +163,14 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
         }
     }
 
-    fn set_child(&mut self, side: Side, child: Child<T>) {
+    pub fn set_child(&mut self, side: Side, child: Child<T>) {
         match side {
             Side::Left => self.left = child,
             Side::Right => self.right = child,
         }
     }
 
-    fn take_child(&mut self, side: Side) -> Child<T> {
+    pub fn take_child(&mut self, side: Side) -> Child<T> {
         match side {
             Side::Left => self.left.take(),
             Side::Right => self.right.take(),

@@ -1,6 +1,10 @@
 #[cfg(test)]
 mod tests {
-    use super::super::{binary_tree::Tree, node::Node, traversal::*};
+    use super::super::{
+        binary_tree::Tree,
+        node::{Child, Node},
+        traversal::*,
+    };
 
     #[test]
     fn t1_binary_tree() {
@@ -13,8 +17,8 @@ mod tests {
         tree.push(4).push(6).push(8);
 
         assert_eq!(tree.count(), 7);
-        assert!(tree.remove(1));
-        assert!(!tree.remove(13));
+        assert!(tree.remove(&1));
+        assert!(!tree.remove(&13));
         assert_eq!(tree.count(), 6);
         println!("tree: {:?}", tree);
 
@@ -41,47 +45,48 @@ mod tests {
         println!("");
 
         assert_eq!(tree.count(), slice.len());
-        assert!(tree.root_eq(8));
+        assert!(Tree::child_eq(&tree.root, &8));
 
-        tree.remove(8);
+        tree.remove(&8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(tree.root_eq(10));
+        assert!(Tree::child_eq(&tree.root, &10));
         assert_eq!(inorder_recur_a(&tree.root), vec![1, 3, 4, 6, 7, 10, 13, 14, 19]);
         // println!("==> 1. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
         tree.clear();
         slice = &[8, 10, 14];
         tree.push_slice(slice);
-        tree.remove(8);
+        tree.remove(&8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(tree.root_eq(10));
+        assert!(Tree::child_eq(&tree.root, &10));
         assert_eq!(inorder_recur_a(&tree.root), vec![10, 14]);
         // println!("==> 2. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
         tree.clear();
         slice = &[8, 10, 14];
         tree.push_slice(slice);
-        tree.remove(10);
+        tree.remove(&10);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(tree.root_eq(8));
+        assert!(Tree::child_eq(&tree.root, &8));
         assert_eq!(inorder_recur_a(&tree.root), vec![8, 14]);
         // println!("==> 3. {:?}, remove {}, inorder: {:?}", slice, 10, inorder_recur_a(&tree.root));
 
         tree.clear();
         slice = &[8];
         tree.push_slice(slice);
-        tree.remove(8);
+        tree.remove(&8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(!tree.root_eq(0));
+        assert!(!Tree::child_eq(&tree.root, &0));
         assert_eq!(inorder_recur_a(&tree.root), vec![]);
         // println!("==> 4. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
         tree.clear();
         slice = &[8, 3];
         tree.push_slice(slice);
-        tree.remove(8);
+        tree.remove(&8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(tree.root_eq(3));
+        // dbg!(&tree);
+        assert!(Tree::child_eq(&tree.root, &3));
         assert_eq!(inorder_recur_a(&tree.root), vec![3]);
         // println!("==> 5. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
     }
@@ -94,5 +99,21 @@ mod tests {
         tree.push_slice(slice);
 
         let _: Node<usize> = Node::new(42);
+    }
+
+    #[test]
+    fn t4_binary_tree() {
+        let root: Child<usize> = Node::new(5).into();
+
+        Tree::push2child(&root, Node::new(2));
+        Tree::push2child(&root, Node::new(7));
+
+        Tree::push2child(&root, Node::new(1));
+        Tree::push2child(&root, Node::new(3));
+
+        Tree::push2child(&root, Node::new(6));
+        Tree::push2child(&root, Node::new(9));
+
+        dbg!(&root);
     }
 }
