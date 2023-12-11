@@ -206,27 +206,6 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         Self::locate_recur(&self.root, data)
     }
 
-    fn take_most(item: &Child<T>, side: Side) -> Child<T> {
-        let node = if let Some(v) = item {
-            v
-        } else {
-            return None; // not found
-        };
-
-        let binding = node.borrow();
-        let target = match &binding.child(side) {
-            None => return Some(node.clone()), // self
-            Some(v) => v,
-        };
-
-        if target.borrow().child(side).is_none() {
-            node.borrow_mut().set_child(side, target.borrow_mut().take_child(!side));
-            return Some(target.clone());
-        }
-
-        Self::take_most(&Some(target.clone()), side)
-    }
-
     /*
     fn take_min(item: &Child<T>) -> Child<T> {
         // parent, target
@@ -291,7 +270,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         if parent.is_none() {
             dbg!("--> case 2: target is the root");
             // successor = Self::take_min(&right);
-            successor = Self::take_most(&right, Side::Left);
+            successor = Node::take_most(&right, Side::Left).1;
 
             match &successor {
                 None => successor = left, // right is none
@@ -306,10 +285,11 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         } else {
             dbg!("--> case 5: both targte.left and target.right are some");
             // successor = Self::take_min(&right);
-            successor = Self::take_most(&right, Side::Left);
+            successor = Node::take_most(&right, Side::Left).1;
             let node = successor.clone().unwrap();
-            node.borrow_mut().left = left;
-            node.borrow_mut().right = right;
+            // node.borrow_mut().left = left;
+            // node.borrow_mut().right = right;
+            node.borrow_mut().set_children(left, right);
         }
 
         match parent {
