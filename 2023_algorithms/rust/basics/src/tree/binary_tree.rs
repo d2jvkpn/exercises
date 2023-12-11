@@ -156,7 +156,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         find(&self.root, data)
     }
 
-    pub fn child_eq(item: &Child<T>, data: &T) -> bool {
+    pub fn value_eq(item: &Child<T>, data: &T) -> bool {
         match item {
             Some(v) => &v.borrow().data == data,
             None => false,
@@ -178,11 +178,11 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         }
 
         // case 3: match left or right
-        if Self::child_eq(&node.borrow().left, data) {
+        if Self::value_eq(&node.borrow().left, data) {
             return (Some(node.clone()), Some(Side::Left), node.borrow().left.clone());
         }
 
-        if Self::child_eq(&node.borrow().right, data) {
+        if Self::value_eq(&node.borrow().right, data) {
             return (Some(node.clone()), Some(Side::Right), node.borrow().right.clone());
         }
 
@@ -252,7 +252,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
             self.size -= 1;
             v
         } else {
-            dbg!("--> case 1: root is None");
+            dbg!("--> case 1: the root is none");
             return false;
         };
 
@@ -284,10 +284,7 @@ impl<T: Clone + Debug + PartialEq + PartialOrd> Tree<T> {
         }
 
         match parent {
-            None => {
-                _ = self.root.take();
-                self.root = successor;
-            }
+            None => self.root = successor,
             Some(v) => v.borrow_mut().set_child(side.unwrap(), successor),
         }
 

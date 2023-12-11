@@ -45,11 +45,11 @@ mod tests {
         println!("");
 
         assert_eq!(tree.count(), slice.len());
-        assert!(Tree::child_eq(&tree.root, &8));
+        assert!(Tree::data_eq(&tree.root, &8));
 
         tree.remove(&8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(Tree::child_eq(&tree.root, &10));
+        assert!(Tree::data_eq(&tree.root, &10));
         assert_eq!(inorder_recur_a(&tree.root), vec![1, 3, 4, 6, 7, 10, 13, 14, 19]);
         // println!("==> 1. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
@@ -58,7 +58,7 @@ mod tests {
         tree.push_slice(slice);
         tree.remove(&8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(Tree::child_eq(&tree.root, &10));
+        assert!(Tree::data_eq(&tree.root, &10));
         assert_eq!(inorder_recur_a(&tree.root), vec![10, 14]);
         // println!("==> 2. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
@@ -67,7 +67,7 @@ mod tests {
         tree.push_slice(slice);
         tree.remove(&10);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(Tree::child_eq(&tree.root, &8));
+        assert!(Tree::data_eq(&tree.root, &8));
         assert_eq!(inorder_recur_a(&tree.root), vec![8, 14]);
         // println!("==> 3. {:?}, remove {}, inorder: {:?}", slice, 10, inorder_recur_a(&tree.root));
 
@@ -76,7 +76,7 @@ mod tests {
         tree.push_slice(slice);
         tree.remove(&8);
         assert_eq!(tree.count(), slice.len() - 1);
-        assert!(!Tree::child_eq(&tree.root, &0));
+        assert!(!Tree::data_eq(&tree.root, &0));
         assert_eq!(inorder_recur_a(&tree.root), vec![]);
         // println!("==> 4. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
 
@@ -86,7 +86,7 @@ mod tests {
         tree.remove(&8);
         assert_eq!(tree.count(), slice.len() - 1);
         // dbg!(&tree);
-        assert!(Tree::child_eq(&tree.root, &3));
+        assert!(Tree::data_eq(&tree.root, &3));
         assert_eq!(inorder_recur_a(&tree.root), vec![3]);
         // println!("==> 5. {:?}, remove {}, inorder: {:?}", slice, 8, inorder_recur_a(&tree.root));
     }
