@@ -9,6 +9,7 @@ use std::{
     rc::Rc,
 };
 
+pub type ChildNode<T> = Rc<RefCell<Node<T>>>;
 pub type Child<T> = Option<Rc<RefCell<Node<T>>>>;
 
 #[derive(Clone, Debug, PartialEq, PartialOrd)]
@@ -35,7 +36,7 @@ impl Not for Side {
     }
 }
 
-impl<T> From<Node<T>> for Rc<RefCell<Node<T>>> {
+impl<T> From<Node<T>> for ChildNode<T> {
     fn from(node: Node<T>) -> Self {
         Rc::new(RefCell::new(node))
     }
@@ -84,9 +85,9 @@ impl<T: PartialEq + PartialOrd + fmt::Debug + Clone> Node<T> {
         self.left.is_none() && self.right.is_none()
     }
 
-    pub fn set_children(&mut self, left: Node<T>, right: Node<T>) {
-        self.left = left.into();
-        self.right = right.into();
+    pub fn set_children(&mut self, left: Child<T>, right: Child<T>) {
+        self.left = left;
+        self.right = right;
     }
 
     fn count_recur(&self, ans: &mut usize) {
@@ -413,7 +414,7 @@ mod tests {
         // n2.push(Node::new(4), Node::new(5));
         // n3.push(Node::new(6), Node::new(7));
 
-        n1.set_children(Node::triangle(2, 4, 5), Node::triangle(3, 6, 7));
+        n1.set_children(Node::triangle(2, 4, 5).into(), Node::triangle(3, 6, 7).into());
         /*
              1
           2     3
@@ -448,7 +449,7 @@ mod tests {
     fn t2_node() {
         let mut n1 = Node::new(1);
 
-        n1.set_children(Node::triangle(2, 4, 5), Node::triangle(3, 6, 7));
+        n1.set_children(Node::triangle(2, 4, 5).into(), Node::triangle(3, 6, 7).into());
         assert_eq!(n1.count(), 7);
 
         n1.levels_print();
