@@ -8,24 +8,24 @@ using namespace std;
 
 export class Vector {
 public:
-    Vector(int s) {
-        this->elem = new int[s];
-        sz = s;
+	Vector(int s) {
+		this->elem = new int[s];
+		sz = s;
 
-        for (int i=0; i<s; i++) {
-            this->elem[i] = i;
-        }
-    }
+		for (int i=0; i<s; i++) {
+			this->elem[i] = i;
+		}
+	}
 
-    int& operator[](int i) {
-        return elem[i];
-    }
+	int& operator[](int i) {
+		return elem[i];
+	}
 
-    int size() {
-        return sz;
-    }
+	int size() {
+		return sz;
+	}
 
 private:
-    int* elem;
-    int sz;
+	int* elem;
+	int sz;
 };

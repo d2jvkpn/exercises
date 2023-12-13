@@ -1,11 +1,13 @@
-// $ g++ -g -fmodules-ts -std=gnu++20 -o ./target/c0303 c0303.cpp include/vector.cpp
+// $ g++ -g -fmodules-ts -std=gnu++20 -o ./target/c0303_module c0303_module.cpp include/vector.cpp
+
 import Vector;
+
 #include <iostream>
 
 using namespace std;
 
 double sqrt(double val) {
-    return val*val;
+	return val*val;
 }
 
 // why can't put this function in include/vector.cpp
@@ -18,13 +20,13 @@ ostream& operator<<(ostream& os, Vector& vec) {
 
 	os << "\b\b}";
 
-    return os;
+	return os;
 }
 
 int main() {
-    Vector vec(7);
+	Vector vec(7);
 
-    cout << vec << endl;
+	cout << vec << endl;
 
-    return 0;
+	return 0;
 }
