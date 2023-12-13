@@ -54,6 +54,7 @@ wk*/
 /tmp/
 /build-tmp/
 /.*
-/configs/local.env
 *.wasm
 wasm_exec.js
+
+gcm.cache
