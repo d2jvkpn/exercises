@@ -17,6 +17,10 @@ public:
 		}
 	}
 
+	~Vector() {
+		delete [] elem;
+	}
+
 	int& operator[](int i) {
 		return elem[i];
 	}
