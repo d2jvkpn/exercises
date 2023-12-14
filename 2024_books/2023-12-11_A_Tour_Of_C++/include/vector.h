@@ -21,6 +21,11 @@ public:
         return sz;
     }
 
+	~Vector() {
+        cout << "~~~ delete elem" << endl;
+        delete [] elem;
+	}
+
 private:
     int* elem;
     int sz;

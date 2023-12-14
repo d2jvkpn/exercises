@@ -72,7 +72,7 @@ bool operator==(Complex a, Complex b) {
 	return a.real() == b.real() && a.imag() == b.imag();
 }
 
-// a != b
+// a != b, operator!=(a, b)
 bool operator!=(Complex a, Complex b) {
 	return a.real() != b.real() || a.imag() != b.imag();
 }
@@ -125,6 +125,7 @@ int main() {
 
 	Complex z6 = -z3;
 	cout << z6 << endl;
+	cout << (z3 == z4) << ", " << (z3 != z4) << endl;
 
 	return 0;
 }
