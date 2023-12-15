@@ -67,6 +67,22 @@ Complex operator-(Complex a) {
 	return {-a.real(), -a.imag()};
 }
 
+// c=a*b
+Complex operator*(Complex a, Complex b) {
+	double r = a.real() * b.real() - a.imag() * b.imag();
+	double i = a.real() * b.imag() + a.imag() * b.real();
+	return Complex(r, i);
+}
+
+// c=a/b
+Complex operator/(Complex a, Complex b) {
+	double d = sqrt(a.real()) + sqrt(b.imag()); // denominator
+	double r = a.real() * b.real() + a.imag() * b.imag();
+	double i = a.imag()* b.real() - a.real() * b.imag();
+
+	return Complex(r/d, i/d);
+}
+
 // a == b
 bool operator==(Complex a, Complex b) {
 	return a.real() == b.real() && a.imag() == b.imag();
