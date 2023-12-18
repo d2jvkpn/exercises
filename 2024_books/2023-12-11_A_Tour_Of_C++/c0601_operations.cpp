@@ -27,7 +27,7 @@ public:
 
 	Z() {
 		vec.reserve(7);
-		name = "Z0";	
+		name = "Z0";
 	}
 
 	Z& operator=(const Z&) = default; // default copy assignment
