@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cassert>
+#include <vector>
 
 using namespace std;
 
@@ -161,6 +162,16 @@ int main() {
 	assert(vec3.size()==4);
 	assert(vec3.capacity()==4);
 	assert(vec3[0]==50);
+
+	vector<int> v1(5);
+
+	for (int i=0; i<v1.size(); i++) {
+		cout << "v1["<< i << "]: " << v1[i] << endl;
+	}
+
+	for (auto p = v1.begin(); p != v1.end(); p++) {
+		cout << "*p: " << *p << endl;
+	}
 
 	return 0;
 }
