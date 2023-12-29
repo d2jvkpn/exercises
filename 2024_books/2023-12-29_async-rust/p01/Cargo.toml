@@ -1,0 +1,28 @@
+[package]
+name = "p01"
+version = "0.1.0"
+edition = "2021"
+
+default-run = "p01"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+chrono = "0.4"
+reqwest = "0.11"
+tokio = { version = "1.35", features = ["full"] }
+
+[[bin]]
+name = "a01"
+path = "./bin/a01.rs"
+
+[[bin]]
+name = "a02"
+path = "./bin/a02.rs"
+
+[[bin]]
+name = "a03"
+path = "./bin/a03.rs"
+
+[[bin]]
+name = "b01"
+path = "./bin/b01.rs"
