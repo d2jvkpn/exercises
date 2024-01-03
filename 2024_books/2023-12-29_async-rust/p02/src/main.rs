@@ -13,12 +13,15 @@ use std::{
 
 use chrono::{Local, SecondsFormat};
 use futures_util::future::join_all;
-use tokio::task::{spawn, JoinHandle};
+use tokio::{
+    sync::oneshot,
+    task::{spawn, JoinHandle},
+};
 
 type AsyncFileHandle = Arc<Mutex<File>>;
 // type FileJoinHandle = JoinHandle<Result<bool, String>>;
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 4)]
 async fn main() {
     // println!("Hello, world!");
 
@@ -58,6 +61,11 @@ struct AsyncWriteFuture {
     pub entry: String,
 }
 
+fn now() -> String {
+    // Local::now().to_rfc3339_opts(SecondsFormat::Millis, false)
+    Local::now().to_rfc3339_opts(SecondsFormat::Nanos, false)
+}
+
 impl Future for AsyncWriteFuture {
     type Output = Result<bool, String>;
 
@@ -65,17 +73,13 @@ impl Future for AsyncWriteFuture {
         let mut guard = match self.handle.try_lock() {
             Ok(v) => v,
             Err(e) => {
-                println!("!!! error: {}", e);
+                println!("!!! {} error: {}", now(), e);
                 ctx.waker().wake_by_ref();
                 return Poll::Pending;
             }
         };
 
-        let lined_entry = format!(
-            "{} {}\n",
-            Local::now().to_rfc3339_opts(SecondsFormat::Millis, false),
-            self.entry,
-        );
+        let lined_entry = format!("{} {}\n", now(), self.entry,);
 
         match guard.write_all(lined_entry.as_bytes()) {
             Ok(_) => print!("~~~ written for: {}", lined_entry),
@@ -93,6 +97,19 @@ impl Future for AsyncWriteFuture {
 async fn write_log(file_handle: AsyncFileHandle, line: String) {
     let future = AsyncWriteFuture { handle: file_handle, entry: line };
 
+    // a:
     // spawn(async move { future.await });
-    let _ = future.await;
+
+    // b:
+    // let _ = future.await;
+
+    // c:
+    let (tx, rx) = oneshot::channel();
+
+    spawn(async move {
+        let _ = future.await;
+        let _ = tx.send(true);
+    });
+
+    let _ = rx.await;
 }
