@@ -75,7 +75,7 @@ impl Future for AsyncWriteFuture {
         let mut guard = match self.handle.try_lock() {
             Ok(v) => v,
             Err(e) => {
-                println!("!!! {} error: {}", now, e);
+                eprintln!("!!! {} error: {}", now, e);
                 ctx.waker().wake_by_ref();
                 return Poll::Pending;
             }
@@ -86,7 +86,7 @@ impl Future for AsyncWriteFuture {
         match guard.write_all(lined_entry.as_bytes()) {
             Ok(_) => print!("~~~ {} written: {}\n", now, self.entry),
             Err(e) => {
-                println!("!!! {} write error: {}", now, e);
+                eprintln!("!!! {} write error: {}", now, e);
                 ctx.waker().wake_by_ref();
                 return Poll::Pending;
             }
