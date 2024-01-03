@@ -1,9 +1,10 @@
 #![allow(unused_imports)]
 
 use std::{
+    error::Error,
     fs::{create_dir_all, File, OpenOptions},
     future::Future,
-    io::prelude::*,
+    io::{self, prelude::*},
     path::Path,
     pin::Pin,
     sync::{Arc, Mutex},
@@ -21,8 +22,8 @@ type AsyncFileHandle = Arc<Mutex<File>>;
 async fn main() {
     // println!("Hello, world!");
 
-    let login_handle = get_handle(&"logs/login.txt");
-    let logout_handle = get_handle(&"logs/logout.txt");
+    let login_handle = get_handle("logs/login.txt").unwrap();
+    let logout_handle = get_handle("logs/logout.txt").unwrap();
 
     let names = ["one", "two", "three", "four", "five", "six"];
 
@@ -42,16 +43,14 @@ async fn main() {
     let _ = join_all(handles).await;
 }
 
-fn get_handle(fp: &str) -> AsyncFileHandle {
-    match OpenOptions::new().append(true).open(fp) {
-        Ok(v) => return Arc::new(Mutex::new(v)),
-        Err(_) => {}
-    }
+fn get_handle(fp: &str) -> Result<AsyncFileHandle, io::Error> {
+    let path = Path::new(fp).parent().unwrap(); // TODO
+    create_dir_all(path)?;
 
-    let path = Path::new(fp).parent().unwrap();
-    create_dir_all(path).unwrap();
+    OpenOptions::new().append(true).create(true).open(fp).and_then(|v| Ok(Arc::new(Mutex::new(v))))
 
-    return Arc::new(Mutex::new(File::create(fp).unwrap()));
+    // let file = File::create(fp)?;
+    // Ok(Arc::new(Mutex::new(file)))
 }
 
 struct AsyncWriteFuture {
@@ -92,10 +91,7 @@ impl Future for AsyncWriteFuture {
 }
 
 async fn write_log(file_handle: AsyncFileHandle, line: String) {
-    let future = AsyncWriteFuture {
-        handle: file_handle,
-        entry: line,
-    };
+    let future = AsyncWriteFuture { handle: file_handle, entry: line };
 
     // spawn(async move { future.await });
     let _ = future.await;
