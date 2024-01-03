@@ -4,20 +4,22 @@ fn main() {
     // println!("Hello, wrold!");
     let mut start;
 
+    println!("==> sum_seq1(500000) used");
     for _ in 0..10 {
         start = SystemTime::now();
-        let _ = sum_of_n1(500000);
-        println!("sum_of_n1 used {} ns", start.elapsed().unwrap().as_millis());
+        let _ = sum_seq1(500000);
+        println!("  {} ms", start.elapsed().unwrap().as_millis());
     }
 
+    println!("==> sum_seq2(500000) used");
     for _ in 0..10 {
         start = SystemTime::now();
-        let _ = sum_of_n2(500000);
-        println!("sum_of_n2 used {} ns", start.elapsed().unwrap().as_nanos());
+        let _ = sum_seq2(500000);
+        println!("  {} ns", start.elapsed().unwrap().as_nanos());
     }
 }
 
-fn sum_of_n1(n: i64) -> i64 {
+fn sum_seq1(n: i64) -> i64 {
     let mut sum = 0;
 
     for i in 1..=n {
@@ -27,6 +29,6 @@ fn sum_of_n1(n: i64) -> i64 {
     sum
 }
 
-fn sum_of_n2(n: i64) -> i64 {
+fn sum_seq2(n: i64) -> i64 {
     n * (n + 1) / 2
 }
