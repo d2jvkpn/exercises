@@ -61,7 +61,7 @@ struct AsyncWriteFuture {
     pub entry: String,
 }
 
-fn now() -> String {
+fn now_rfc3339() -> String {
     // Local::now().to_rfc3339_opts(SecondsFormat::Millis, false)
     Local::now().to_rfc3339_opts(SecondsFormat::Nanos, false)
 }
@@ -70,21 +70,23 @@ impl Future for AsyncWriteFuture {
     type Output = Result<bool, String>;
 
     fn poll(self: Pin<&mut Self>, ctx: &mut Context) -> Poll<Self::Output> {
+        let now = now_rfc3339();
+
         let mut guard = match self.handle.try_lock() {
             Ok(v) => v,
             Err(e) => {
-                println!("!!! {} error: {}", now(), e);
+                println!("!!! {} error: {}", now, e);
                 ctx.waker().wake_by_ref();
                 return Poll::Pending;
             }
         };
 
-        let lined_entry = format!("{} {}\n", now(), self.entry,);
+        let lined_entry = format!("{} {}\n", now, self.entry);
 
         match guard.write_all(lined_entry.as_bytes()) {
-            Ok(_) => print!("~~~ written for: {}", lined_entry),
+            Ok(_) => print!("~~~ {} written: {}\n", now, self.entry),
             Err(e) => {
-                println!("!!! {}", e);
+                println!("!!! {} write error: {}", now, e);
                 ctx.waker().wake_by_ref();
                 return Poll::Pending;
             }
@@ -98,7 +100,7 @@ async fn write_log(file_handle: AsyncFileHandle, line: String) {
     let future = AsyncWriteFuture { handle: file_handle, entry: line };
 
     // a:
-    // spawn(async move { future.await });
+    // spawn(async move { future.await }); // out of control
 
     // b:
     // let _ = future.await;
