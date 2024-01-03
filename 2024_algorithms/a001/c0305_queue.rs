@@ -72,10 +72,10 @@ impl<T> Queue<T> {
             return None;
         }
 
-        self.size -= 1;
-
         let ans = self.data[self.index].take();
         self.index = (self.index + 1) % self.capacity();
+        self.size -= 1;
+
         ans
     }
 }
