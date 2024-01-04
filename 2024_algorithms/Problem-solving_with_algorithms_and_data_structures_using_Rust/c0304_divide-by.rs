@@ -12,6 +12,9 @@ fn main() {
 
 pub fn divide_by(mut num: u32, base: u32) -> String {
     let digitals = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'];
+    if base > digitals.len() as u32 {
+        panic!("unsupport base value");
+    }
 
     let mut rem = Stack::new();
     let mut val;

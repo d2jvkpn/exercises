@@ -15,8 +15,12 @@ fn main() {
     println!("{:?}", queue);
 
     assert_eq!(queue.dequeue(), Some(1));
+    assert!(queue.enqueue(4).is_ok());
+    println!("{:?}", queue);
+
     assert_eq!(queue.dequeue(), Some(2));
     assert_eq!(queue.dequeue(), Some(3));
+    assert_eq!(queue.dequeue(), Some(4));
 
     assert!(queue.is_empty());
     println!("{:?}", queue);
@@ -25,13 +29,19 @@ fn main() {
 #[derive(Debug)]
 struct Queue<T> {
     size: usize,
-    index: usize,
+    next: usize,
     data: Vec<Option<T>>,
 }
 
 impl<T> Queue<T> {
     pub fn new(cap: usize) -> Self {
-        Self { size: 0, index: 0, data: Vec::with_capacity(cap) }
+        let mut ans = Self { size: 0, next: 0, data: Vec::with_capacity(cap) };
+
+        for _ in 0..cap {
+            ans.data.push(None);
+        }
+
+        ans
     }
 
     pub fn size(&self) -> usize {
@@ -55,13 +65,8 @@ impl<T> Queue<T> {
             return Err("queue is full");
         }
 
-        if self.data.len() == self.capacity() {
-            let next = (self.index + self.size) % self.capacity();
-            self.data[next] = Some(val);
-        } else {
-            self.data.push(Some(val));
-        }
-
+        self.data[self.next] = Some(val);
+        self.next = (self.next + 1) % self.capacity();
         self.size += 1;
 
         Ok(())
@@ -72,10 +77,9 @@ impl<T> Queue<T> {
             return None;
         }
 
-        let ans = self.data[self.index].take();
-        self.index = (self.index + 1) % self.capacity();
+        let front = (self.next + self.capacity() - self.size) % self.capacity();
         self.size -= 1;
 
-        ans
+        self.data[front].take()
     }
 }

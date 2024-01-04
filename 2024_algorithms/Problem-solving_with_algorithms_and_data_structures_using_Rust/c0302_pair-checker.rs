@@ -14,6 +14,13 @@ fn main() {
 }
 
 fn par_checker(par: &str) -> bool {
+    fn par_match(a: char, b: char) -> bool {
+        match (a, b) {
+            ('(', ')') | ('[', ']') | ('{', '}') => true,
+            _ => false,
+        }
+    }
+
     let chars: Vec<char> = par.chars().collect();
     let mut stack: Stack<char> = Stack::with_capacity(par.len());
     let mut c;
@@ -22,7 +29,9 @@ fn par_checker(par: &str) -> bool {
         c = chars[i];
 
         match c {
-            '(' | '[' | '{' => stack.push(c),
+            '(' | '[' | '{' => {
+                stack.push(c);
+            }
             ')' | ']' | '}' => {
                 if stack.is_empty() {
                     return false;
@@ -42,11 +51,4 @@ fn par_checker(par: &str) -> bool {
     }
 
     stack.is_empty()
-}
-
-fn par_match(a: char, b: char) -> bool {
-    match (a, b) {
-        ('(', ')') | ('[', ']') | ('{', '}') => true,
-        _ => false,
-    }
 }
