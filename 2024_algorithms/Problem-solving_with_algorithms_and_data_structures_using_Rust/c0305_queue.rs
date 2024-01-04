@@ -5,9 +5,9 @@ fn main() {
 
     let mut queue = Queue::new(3);
     assert!(queue.enqueue(1).is_ok());
-    assert!(queue.enqueue(2).is_ok());
     println!("{:?}", queue);
 
+    assert!(queue.enqueue(2).is_ok());
     assert!(queue.enqueue(3).is_ok());
 
     assert!(queue.enqueue(4).is_err());
