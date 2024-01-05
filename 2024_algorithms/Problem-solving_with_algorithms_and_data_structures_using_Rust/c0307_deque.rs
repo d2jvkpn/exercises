@@ -4,24 +4,24 @@ fn main() {
     // println!("Hello, wrold!");
     let mut deque = Deque::new(5);
 
-    deque.add_rear(1).unwrap();
-    deque.add_rear(2).unwrap();
-    deque.add_rear(3).unwrap();
+    deque.push_back(1).unwrap();
+    deque.push_back(2).unwrap();
+    deque.push_back(3).unwrap();
 
-    assert!(deque.add_rear(4).is_ok()); // [Some(1), Some(2), Some(3), Some(4), None]
+    assert!(deque.push_back(4).is_ok()); // [Some(1), Some(2), Some(3), Some(4), None]
     assert_eq!(deque.size(), 4);
 
-    assert_eq!(deque.pop_rear(), Some(4)); // [Some(1), Some(2), Some(3), None, None]
+    assert_eq!(deque.pop_back(), Some(4)); // [Some(1), Some(2), Some(3), None, None]
     assert_eq!(deque.pop_front(), Some(1)); // [None, Some(2), Some(3), None, None]
 
-    assert!(deque.add_front(11).is_ok()); // [Some(11), Some(2), Some(3), None, None]
-    assert!(deque.add_front(12).is_ok()); // [Some(11), Some(2), Some(3), None, Some(12)]
+    assert!(deque.push_front(11).is_ok()); // [Some(11), Some(2), Some(3), None, None]
+    assert!(deque.push_front(12).is_ok()); // [Some(11), Some(2), Some(3), None, Some(12)]
     println!("{:?}", deque);
 
-    assert!(deque.add_rear(14).is_ok()); // [Some(11), Some(2), Some(3), Some(14), Some(12)]
+    assert!(deque.push_back(14).is_ok()); // [Some(11), Some(2), Some(3), Some(14), Some(12)]
     println!("{:?}", deque);
 
-    assert_eq!(deque.pop_rear(), Some(14)); // [Some(11), Some(2), Some(3), None, Some(12)]
+    assert_eq!(deque.pop_back(), Some(14)); // [Some(11), Some(2), Some(3), None, Some(12)]
     assert_eq!(deque.pop_front(), Some(12)); // [Some(11), Some(2), Some(3), None, None]
     println!("{:?}", deque);
 }
@@ -59,7 +59,7 @@ impl<T> Deque<T> {
     }
 
     // enqueue
-    pub fn add_rear(&mut self, val: T) -> Result<(), &'static str> {
+    pub fn push_back(&mut self, val: T) -> Result<(), &'static str> {
         if self.capacity() == self.size() {
             return Err("deque is full");
         }
@@ -81,7 +81,7 @@ impl<T> Deque<T> {
         Some(ans)
     }
 
-    pub fn add_front(&mut self, val: T) -> Result<(), &'static str> {
+    pub fn push_front(&mut self, val: T) -> Result<(), &'static str> {
         if self.capacity() == self.size() {
             return Err("deque is full");
         }
@@ -93,7 +93,7 @@ impl<T> Deque<T> {
         Ok(())
     }
 
-    pub fn pop_rear(&mut self) -> Option<T> {
+    pub fn pop_back(&mut self) -> Option<T> {
         if self.size() == 0 {
             return None;
         }
