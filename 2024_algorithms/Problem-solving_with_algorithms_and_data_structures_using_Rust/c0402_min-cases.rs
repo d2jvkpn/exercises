@@ -47,11 +47,15 @@ pub fn min_cashes_dp(cashes: &[u32], amount: u32) -> u32 {
     let mut index: usize;
     let mut min_cashes: Vec<u32> = vec![0; (amount + 1) as usize];
 
+    if cashes.len() == 0 || amount == 0 {
+        return 0;
+    }
+
     for denm in 1..=amount {
         value = denm;
 
         for c in cashes.iter().filter(|&v| *v <= denm).collect::<Vec<&u32>>() {
-            //  dbg!("~~~ denm={}, c={}", denm, *c);
+            // dbg!(format!("~~~ denm={}, c={}", denm, *c));
             index = (denm - *c) as usize;
 
             temp = 1 + min_cashes[index];
