@@ -6,7 +6,7 @@ enum class Color { red, blue, green };
 enum class TrafficLight { green, yellow, red };
 
 
-ostream& operator<<(ostream &os, const Color& c) { 
+ostream& operator<<(ostream& os, const Color& c) { 
 	switch (c) {
 	case Color::red:
 		os << "RED";

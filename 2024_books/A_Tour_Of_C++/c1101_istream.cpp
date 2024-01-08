@@ -35,7 +35,7 @@ vector<int> read_ints(istream& ist, const string& terminator) {
 int main() {
 	// cout << "Hello, world!\n";
 
-	auto v = read_ints(cin,"stop");
+	auto v = read_ints(cin, "stop");
 
 	if (cin.fail()) {
 		cout << "!!! Failed" << endl;
