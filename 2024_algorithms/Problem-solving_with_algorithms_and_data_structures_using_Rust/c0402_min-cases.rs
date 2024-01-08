@@ -7,17 +7,26 @@ fn main() {
     let ans = min_cashes_rec(&cashes, amount);
     println!("==> need refund cashes for {}: {}", amount, ans);
     assert_eq!(ans, 3);
+    assert_eq!(min_cashes_rec(&cashes, 41), 3);
 
-    let amount = 82;
-    let ans = min_cashes_dp(&cashes, amount);
+    for t in &[(31, 3), (41, 3), (51, 2), (60, 2), (82, 5)] {
+        let ans = min_cashes_dp(&cashes, t.0);
 
-    println!("==> need refund cashes for {}: {}", amount, ans);
-    assert_eq!(ans, 5);
+        println!("==> need refund cashes for {}: {}", t.0, t.1);
+        assert_eq!(ans, t.1);
+    }
 }
 
-fn min_cashes_rec(cashes: &[u32], amount: u32) -> u32 {
+// too many calculations for numbers like 51, 81
+pub fn min_cashes_rec(cashes: &[u32], amount: u32) -> u32 {
     let mut ans = amount;
     let mut temp;
+
+    // dbg!(&amount);
+
+    if amount == 0 {
+        return 0;
+    }
 
     if cashes.contains(&amount) {
         return 1;
@@ -33,7 +42,7 @@ fn min_cashes_rec(cashes: &[u32], amount: u32) -> u32 {
     ans
 }
 
-fn min_cashes_dp(cashes: &[u32], amount: u32) -> u32 {
+pub fn min_cashes_dp(cashes: &[u32], amount: u32) -> u32 {
     let (mut value, mut temp): (u32, u32);
     let mut index: usize;
     let mut min_cashes: Vec<u32> = vec![0; (amount + 1) as usize];
