@@ -21,8 +21,28 @@ void helloToFile(path p) {
 	}
 
 	fs << "Hello, world!\n";
+	fs << "2024!\n";
 
 	fs.close();
+}
+
+void readFile(path p) {
+	ifstream file;
+	string line;
+	int c = 0;
+
+	file.open(p);
+
+	if (file.is_open()) {
+		while (file) {
+			c+=1;
+			// mychar = file.get();
+			getline(file, line);
+			cout << c << ":" << file.tellg() << ": " << line << '\n';
+		}
+	} else {
+		cerr << "!!! can't open file " << p << endl;
+	}
 }
 
 void printDirectory(path p) {
@@ -91,7 +111,10 @@ int main(int argc, char* argv[]) {
 		cout << "==> " << fh << " is a dirtory.\n";
 	}
 
-	helloToFile("target/a01/b01/hello.txt");
+	string p = "target/a01/b01/hello.txt";
+	remove(p);
+	helloToFile(p);
+	readFile(p);
 
 	printDirectory("target");
 
