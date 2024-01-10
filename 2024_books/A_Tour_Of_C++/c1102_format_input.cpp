@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fmt>
 
 using namespace std;
 
@@ -7,22 +8,24 @@ int main() {
 
 	//
 	char c;
+	cout << "==> Enter a char: ";
 	cin >> c;
-	cout << "Got: " << c << endl;
+	cout << "==> Got: " << c << endl;
 
 	//
 	constexpr double pi = 3.14159;
-	cout << pi << "; "
+	cout << "==> Pi: " << pi << "; "
 		<< scientific << pi << "; "
 		<< hexfloat << pi << "; "
 		<< fixed << pi << "; "
 		<< defaultfloat << pi << '\n';
 
 	cout.precision(3);
-	cout << "precision(3): " << pi << endl;
+	cout << "==> Precision(3): Pi=" << pi << endl;
 
 	//
-	printf("an int %g and a string '%s'\n",12e3,"Hello!");
+	printf("==> An int %g and a string '%s'\n", 12e3, "Hello!");
+	cout << format("%s", "a") << endl;
 
 	return 0;
 }

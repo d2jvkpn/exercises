@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <sstream>
 
 using namespace std;
 
@@ -35,6 +36,14 @@ vector<int> read_ints(istream& ist, const string& terminator) {
 int main() {
 	// cout << "Hello, world!\n";
 
+	//
+	ostringstream oss;
+	oss << "Hello, world!\n";
+
+	cout << oss.view();
+
+	//
+	cout << "Enter integers(enter \"stop\" to terminate): ";
 	auto v = read_ints(cin, "stop");
 
 	if (cin.fail()) {
