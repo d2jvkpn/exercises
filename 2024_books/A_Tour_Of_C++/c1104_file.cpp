@@ -36,7 +36,7 @@ void printDirectory(path p) {
 			const path& f = x;
 
 			if (f.extension() == ".exe") {
-				cout << f.stem() << " is a Windows executable\n";
+				cout << f.stem() << " is a Windows executable.\n";
 			} else {
 				string n = f.extension().string();
 				if (n == ".cpp" || n == ".C" || n == ".cxx") {
