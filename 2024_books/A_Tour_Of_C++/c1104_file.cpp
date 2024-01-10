@@ -8,22 +8,24 @@ using namespace std;
 using namespace filesystem;
 
 void helloToFile(path p) {
-	// fstream fs;
-	ofstream fs;
+	create_directories(p.parent_path());
+
+	// ofstream fs;
+	fstream fs;
+
+	fs.open(p, fstream::in | fstream::out | fstream::app);
 
 	if (!fs) {
 		cerr << "!!! bad file: " << p << endl;
 		return;
 	}
 
-	fs.open(p, fstream::in | fstream::out | fstream::app);
-
-	fs << "Hello, world\n";
+	fs << "Hello, world!\n";
 
 	fs.close();
 }
 
-void print_directory(path p) {
+void printDirectory(path p) {
 	try {
 		if (is_directory(p)) {
 			cout << "==> contents in directory " << p << ":\n";
@@ -66,7 +68,7 @@ is_fifo(f)
 is_regular_file(f)
 is_socket(f)
 is_symlink(f)
-status_known
+status_known(f)
 */
 
 int main(int argc, char* argv[]) {
@@ -89,9 +91,9 @@ int main(int argc, char* argv[]) {
 		cout << "==> " << fh << " is a dirtory.\n";
 	}
 
-	helloToFile("target/hello.txt");
+	helloToFile("target/a01/b01/hello.txt");
 
-	print_directory("target");
+	printDirectory("target");
 
 	return 0;
 }
