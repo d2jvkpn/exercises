@@ -6,8 +6,13 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 # https://github.com/nvm-sh/nvm
 # https://nodejs.org/en
 
-# curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+version=${version:-""} # v0.39.7
+
+if [ -z $version ]; then
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v${version#v}/install.sh | bash
+else
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+fi
 
 cat >> ~/.bashrc <<'EOF'
 #### NVM
@@ -17,11 +22,11 @@ export NVM_DIR="$HOME/.nvm"
 EOF
 
 nvm install --lts
-version=$(node --version | sed 's/^v//') # 20.11.0
+node_version=$(node --version | sed 's/^v//') # 20.11.0
 # nvm ls
 # nvm use $version
-nvm use --delete-prefix $version
-nvm alias default $version
+nvm use --delete-prefix $node_version
+nvm alias default $node_version
 # nvm unalias default
 
 npm config set registry https://registry.npm.taobao.org
@@ -33,6 +38,5 @@ npm set --location=global prefix ~/Apps
 
 npm install -g create-react-app yarn
 ls -al ~/Apps/npm/bin
-
 # npm install --save react@latest
 # npx browserslist@latest --update-db
