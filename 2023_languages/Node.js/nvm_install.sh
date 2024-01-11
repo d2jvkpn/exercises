@@ -17,8 +17,12 @@ export NVM_DIR="$HOME/.nvm"
 EOF
 
 nvm install --lts
-node --version
-# nvm use --delete-prefix v20.11.0
+version=$(node --version | sed 's/^v//') # 20.11.0
+# nvm ls
+# nvm use $version
+nvm use --delete-prefix $version
+nvm alias default $version
+# nvm unalias default
 
 npm config set registry https://registry.npm.taobao.org
 # npm config set registry https://registry.npmjs.org/
