@@ -1,8 +1,0 @@
-# directories
-wk*/
-configs/
-logs/
-target/
-
-# files
-docker-compose.yaml
