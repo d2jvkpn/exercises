@@ -47,7 +47,7 @@ async fn main() {
 }
 
 fn get_handle(fp: &str) -> Result<AsyncFileHandle, io::Error> {
-    let path = Path::new(fp).parent().unwrap(); // TODO
+    let path = Path::new(fp).parent().ok_or(io::ErrorKind::Other)?;
     create_dir_all(path)?;
 
     OpenOptions::new().append(true).create(true).open(fp).and_then(|v| Ok(Arc::new(Mutex::new(v))))

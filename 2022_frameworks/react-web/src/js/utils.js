@@ -31,7 +31,10 @@ export function fixString(str, len=12) {
 
 // time
 export function datetime(at=null) {
-  if (!at) at = new Date();
+  if (!at) {
+    at = new Date();
+  }
+
   function padH0 (value, len=2) { return value.toString().padStart(len, '0')}
 
   function timezoneOffset(offset) {
@@ -53,7 +56,8 @@ export function datetime(at=null) {
   at.rfc3339 = at.datetime + `${at.tz}`;
   at.rfc3339ms = at.datetime + `.${at.ms}${at.tz}`;
 
-  return at
+  return at;
+  // ts = new Date(at.rfc3339).getTime()
 }
 
 export function datetimeAsFilename(at=null) {
