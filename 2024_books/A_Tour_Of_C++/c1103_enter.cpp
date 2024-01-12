@@ -36,8 +36,6 @@ istream& operator>>(istream& is, Entry& e) {
 	return is;
 }
 
-
-
 int main() {
 	// cout << "Hello, world!\n";
 
