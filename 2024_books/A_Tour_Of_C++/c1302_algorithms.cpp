@@ -11,7 +11,7 @@ bool has_c(const string& s, char c) {
 vector<char> find_all(const string& s, char c) {
 	vector<char> res;
 
-	for (auto p = s.begin(); p!=s.end(); p++) {
+	for (auto p = s.begin(); p != s.end(); p++) {
 		if (*p == c) {
 			res.push_back(*p);
 		}
