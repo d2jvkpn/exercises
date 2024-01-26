@@ -33,11 +33,7 @@ fn arc_counting() {
 
         let handle = thread::spawn(move || {
             let mut value = counter.lock().unwrap();
-            println!(
-                "~~~ thread id: {:?}, value={}",
-                thread::current().id(),
-                value
-            );
+            println!("~~~ thread id: {:?}, value={}", thread::current().id(), value);
             *value += 1;
         });
 

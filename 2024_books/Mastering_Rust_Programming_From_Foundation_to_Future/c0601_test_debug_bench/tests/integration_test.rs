@@ -1,4 +1,4 @@
-use c0601_debugging::greet;
+use c0601::greet;
 
 #[test]
 fn t_greet() {

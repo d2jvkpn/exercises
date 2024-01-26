@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use c0601_debugging::my_module;
+    use c0601::my_module;
 
     #[test]
     fn t_add() {
