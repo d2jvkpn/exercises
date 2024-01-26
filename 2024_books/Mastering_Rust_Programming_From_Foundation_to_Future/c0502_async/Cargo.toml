@@ -13,6 +13,11 @@ path = "bin/async.rs"
 name = "tokio"
 path = "bin/tokio.rs"
 
+[[bin]]
+name = "channel"
+path = "bin/channel.rs"
+
 [dependencies]
 async-std = { version = "1.12.0", features = ["attributes"] }
+reqwest = "0.11.23"
 tokio = { version = "1.35.1", features = ["full"] }

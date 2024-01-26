@@ -1,3 +1,5 @@
+#![allow(unused_imports)]
+
 use async_std::{fs, io::prelude::*, task};
 
 use std::io;
