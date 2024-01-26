@@ -11,5 +11,7 @@ cargo install cargo-profiler
 cargo add chrono@0.4 --features=serde
 cargo add env_logger
 cargo add log --features=std,serde
-
 cargo add --dev criterion
+
+cargo bench
+cargo flamegraph
