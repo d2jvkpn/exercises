@@ -1,0 +1,28 @@
+---
+- name: a03 git
+  hosts: all
+  become: true
+  vars:
+    # work_path: "/root"
+    _wd: "{{lookup('env', 'PWD')}}"
+    _hd: "{{lookup('env', 'HOME')}}"
+
+  tasks:
+  - name: ensure git
+    apt:
+      name: git
+      state: present
+
+  - name: creates directory
+    file:
+      path: ~/ansible_test
+      state: directory
+
+  - name: git demo
+    git:
+      repo: git@github.com:d2jvkpn/playground.git
+      # accept_hostkey: true
+      accept_newhostkey: true
+      dest: ~/ansible_test/playground
+      update: yes
+      # key_file: "..."

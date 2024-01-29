@@ -1,0 +1,57 @@
+---
+- name: a01 basics
+  hosts: all
+  become: false
+  vars:
+    # work_path: "/root"
+    _wd: "{{lookup('env', 'PWD')}}"
+    _hd: "{{lookup('env', 'HOME')}}"
+    wait_secs: "3"
+
+  tasks:
+  - name: test connection
+    ping:
+
+  - name: print wd
+    debug:
+      msg: wd={{_wd}}
+      verbosity: 2 # 0-3
+
+  - name: check uptime
+    command: uptime
+    register: uptime_output
+
+  - name: uptime output
+    debug:
+      var: uptime_output.stdout_lines
+
+  - name: creates directory
+    file:
+      path: ~/ansible_test
+      state: directory
+
+  - name: lineinfile demo
+    lineinfile:
+      state: present
+      dest: ~/ansible_test/lineinfile_demo.txt
+      create: true
+      line: Hello, lineinfile!
+
+  - name: blockinfile demo
+    blockinfile:
+      state: present
+      dest: ~/ansible_test/blockinfile_demo.txt
+      create: true
+      content: |
+       192.168.0.200 demo.example.com
+       192.168.0.201 hello.example.com
+
+  - name: pause demo
+    pause:
+      seconds: "{{ wait_secs | int }}"
+      prompt: "~~~ pause 3"
+      echo: yes
+
+  - name: end
+    debug:
+      msg: "The End"

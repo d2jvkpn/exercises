@@ -1,0 +1,33 @@
+---
+- name: a01 playbook
+  hosts: all
+  become: false
+  vars:
+    # work_path: "/root"
+    _wd: "{{lookup('env', 'PWD')}}"
+    _hd: "{{lookup('env', 'HOME')}}"
+    myvar: "hello"
+    mybool: true
+    cities: ["New York", "Paris"]
+
+  tasks:
+  - name: print var
+    ansible.builtin.debug:
+      # var: myvar
+      msg: "value: {{myvar}}"
+    notify: reload
+
+  - name: condition
+    debug:
+      msg: "exaple condition"
+    when: mybool
+
+  - name: print cities
+    debug:
+      var: item
+    loop: "{{cities}}"
+
+  handlers:
+  - name: reload
+    debug:
+      msg: "example handler"

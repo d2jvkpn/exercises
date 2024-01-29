@@ -1,0 +1,37 @@
+---
+- name: a04 copy
+  hosts: all
+  become: true
+  vars:
+    # work_path: "/root"
+    _wd: "{{lookup('env', 'PWD')}}"
+    _hd: "{{lookup('env', 'HOME')}}"
+
+  tasks:
+  - name: ensure rsync
+    apt:
+      name: rsync
+      state: present
+
+  - name: copy from remote
+    synchronize:
+      archive: true
+      compress: true
+      partial: true
+      mode: pull
+      src: ~/.bashrc
+      dest: ~/ansible_test/bashrc
+
+  - name: creates directory
+    file:
+      path: ~/ansible_test
+      state: directory
+
+  - name: copy to remote
+    synchronize:
+      archive: true
+      compress: true
+      partial: true
+      mode: pull
+      src: ~/ansible_test/bashrc
+      dest: ~/ansible_test/bashrc
