@@ -128,7 +128,7 @@ impl Command {
             Self::AddText(v) => format!("add_text({:?})", v),
             Self::MoveCursor(ref x, ref y) => format!("move_coursor({}, {})", x, y),
             Self::Replace { ref from, to } => {
-                format!("replace{{from: {:?}, to: {:?}}}", from, to)
+                format!(r#"{{"replace":{{"from":{:?},"to":{:?}}}}}"#, from, to)
             }
         }
     }
