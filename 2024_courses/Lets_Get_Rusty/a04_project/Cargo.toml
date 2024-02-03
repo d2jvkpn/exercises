@@ -1,4 +1,4 @@
 [workspace]
 resolver = "2"
 
-members = ["p1", "utils"]
+members = [ "auth_service", "draw", "draw_consumer", "utils"]
