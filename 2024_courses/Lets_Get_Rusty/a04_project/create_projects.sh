@@ -12,7 +12,7 @@ resolver = "2"
 members = []
 EOF
 
-cargo install cargo-modules
+cargo install cargo-modules bench
 cargo modules structure
 cargo modules structure --package auth_service 
 

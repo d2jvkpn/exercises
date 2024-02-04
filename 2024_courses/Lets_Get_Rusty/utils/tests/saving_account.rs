@@ -9,3 +9,4 @@ fn t_savings_account() {
     let account = SavingsAccount::new();
     assert_eq!(account.get_balance(), 0.0);
 }
+

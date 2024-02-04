@@ -7,9 +7,5 @@ edition = "2021"
 
 [dependencies]
 
-[[bench]]
-name = "sorting_benchmark"
-harness = false
-
 [dev-dependencies]
 criterion = "0.5.1"
