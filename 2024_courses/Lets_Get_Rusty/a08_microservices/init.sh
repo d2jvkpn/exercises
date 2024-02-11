@@ -8,9 +8,9 @@ _path=$(dirname $0 | xargs -i readlink -f {})
 sudo apt update && sudo apt upgrade -y && sudo apt install -y protobuf-compiler libprotobuf-dev
 # sudo apk update && sudo apk add protoc protobuf-dev
 
-cargo add tonic prost
-cargo add tokio --features=full
-cargo add --build tonic-build
+cargo add tonic@0.11 prost@0.12
+cargo add tokio@1 --features=full
+cargo add --build tonic-build@0.11
 
 mkdir -p proto
 
@@ -19,15 +19,15 @@ syntax = "proto3";
 package hello;
 
 service Greeter {
-    rpc SayHello (HelloRequest) returns (HelloReply);
+	rpc SayHello (HelloRequest) returns (HelloReply);
 }
 
 message HelloRequest {
-   string name = 1;
+	string name = 1;
 }
 
 message HelloReply {
-    string message = 1;
+	string message = 1;
 }
 EOF
 
