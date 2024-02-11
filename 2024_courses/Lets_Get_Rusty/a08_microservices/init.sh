@@ -5,13 +5,8 @@ _wd=$(pwd)
 _path=$(dirname $0 | xargs -i readlink -f {})
 
 
-sudo apt update && sudo apt upgrade -y
-sudo apt install -y protobuf-compiler libprotobuf-dev
-
-# sudo apk add protoc protobuf-dev
-
-cargo new auth
-cd auth
+sudo apt update && sudo apt upgrade -y && sudo apt install -y protobuf-compiler libprotobuf-dev
+# sudo apk update && sudo apk add protoc protobuf-dev
 
 cargo add tonic prost
 cargo add tokio --features=full
