@@ -8,7 +8,7 @@ use hello_proto::{
     HelloReply, HelloRequest,
 };
 
-#[derive(Debug, Default)]
+#[derive(Debug)]
 pub struct Server {}
 
 #[tonic::async_trait]
@@ -31,6 +31,6 @@ impl Greeter for Server {
 
 impl Server {
     pub fn new() -> GreeterServer<Self> {
-        GreeterServer::new(Default::default())
+        GreeterServer::new(Server {})
     }
 }
