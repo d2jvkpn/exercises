@@ -20,10 +20,8 @@ impl Greeter for Server {
         // Return an instance of type HelloReply
         println!("==> Got a request: {:?}", request);
 
-        let reply = hello_proto::HelloReply {
-            // We must use .into_inner() as the fields of gRPC requests and responses are private
-            message: format!("Hello {}!", request.into_inner().name),
-        };
+        // We must use .into_inner() as the fields of gRPC requests and responses are private
+        let reply = HelloReply { message: format!("Hello {}!", request.into_inner().name) };
 
         Ok(Response::new(reply)) // Send back our formatted greeting
     }
