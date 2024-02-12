@@ -13,6 +13,10 @@ path = "bin/server.rs"
 name = "client"
 path = "bin/client.rs"
 
+[[bin]]
+name = "server_00"
+path = "bin/server_00.rs"
+
 [dependencies]
 prost = "0.12"
 tokio = { version = "1", features = ["full"] }

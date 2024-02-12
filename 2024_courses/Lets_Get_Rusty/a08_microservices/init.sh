@@ -5,7 +5,9 @@ _wd=$(pwd)
 _path=$(dirname $0 | xargs -i readlink -f {})
 
 
-sudo apt update && sudo apt upgrade -y && sudo apt install -y protobuf-compiler libprotobuf-dev
+sudo apt update && sudo apt upgrade -y && \
+  sudo apt install -y protobuf-compiler libprotobuf-dev
+
 # sudo apk update && sudo apk add protoc protobuf-dev
 
 cargo add tonic@0.11 prost@0.12
@@ -38,6 +40,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 EOF
 
-# cargo install protoc-gen-tonic protoc-gen-prost
-# mkdir -p proto/gen
-# protoc -I proto proto/hello.proto --prost_out=proto/gen --tonic_out=proto/gen
+
+exit
+
+cargo install protoc-gen-tonic protoc-gen-prost
+mkdir -p proto/gen
+protoc -I proto proto/hello.proto --prost_out=proto/gen --tonic_out=proto/gen

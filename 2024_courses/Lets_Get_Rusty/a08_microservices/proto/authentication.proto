@@ -9,9 +9,9 @@ service Auth {
 
 
 enum StatusCode {
-	SUCCESS = 1;
-	FAILURE = 2;
-	ERROR = 3;
+	SUCCESS = 0;
+	FAILURE = 1;
+	ERROR = 2;
 }
 
 //
