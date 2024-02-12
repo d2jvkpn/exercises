@@ -1,3 +1,4 @@
+use clap::Parser;
 use tonic::Request;
 
 pub mod hello_proto {
@@ -7,11 +8,23 @@ use hello_proto::{greeter_client::GreeterClient, HelloRequest};
 
 use std::error::Error;
 
+#[derive(Parser, Debug)]
+struct Args {
+    #[clap(short = 'a', long = "addr", default_value = "http://127.0.0.1:50001")]
+    addr: String,
+
+    #[clap(short = 'n', long = "name", default_value = "Tonic")]
+    name: String,
+}
+
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn Error>> {
-    let mut client = GreeterClient::connect("http://127.0.0.1:50001").await?;
+    let args = Args::parse();
+    dbg!(&args);
 
-    let request = Request::new(HelloRequest { name: "Tonic".into() });
+    let mut client = GreeterClient::connect(args.addr).await?;
+
+    let request = Request::new(HelloRequest { name: args.name });
 
     let response = client.say_hello(request).await?;
     let response = response.into_inner();

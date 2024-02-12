@@ -24,7 +24,8 @@ impl Greeter for MyGreeter {
 
         let reply = hello::HelloReply {
             // We must use .into_inner() as the fields of gRPC requests and responses are private
-            message: format!("Hello {}!", request.into_inner().name),
+            msg: format!("Hello {}!", request.into_inner().name),
+            timestamp: "".to_string(),
         };
 
         Ok(Response::new(reply)) // Send back our formatted greeting

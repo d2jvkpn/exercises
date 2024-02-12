@@ -1,3 +1,4 @@
+use chrono::{Local, SecondsFormat};
 use tonic::{Request, Response, Status};
 
 pub mod hello_proto {
@@ -21,7 +22,10 @@ impl Greeter for Server {
         println!("==> Got a request: {:?}", request);
 
         // We must use .into_inner() as the fields of gRPC requests and responses are private
-        let reply = HelloReply { message: format!("Hello {}!", request.into_inner().name) };
+        let reply = HelloReply {
+            msg: format!("Hello {}!", request.into_inner().name),
+            timestamp: Local::now().to_rfc3339_opts(SecondsFormat::Millis, true),
+        };
 
         Ok(Response::new(reply)) // Send back our formatted greeting
     }
