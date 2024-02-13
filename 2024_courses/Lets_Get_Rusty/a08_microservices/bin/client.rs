@@ -8,7 +8,7 @@ use hello_proto::{greeter_client::GreeterClient, HelloRequest};
 
 use std::error::Error;
 
-#[derive(Parser, Debug)]
+#[derive(Debug, Parser)]
 struct Args {
     #[clap(short = 'a', long = "addr", default_value = "http://127.0.0.1:50001")]
     addr: String,
