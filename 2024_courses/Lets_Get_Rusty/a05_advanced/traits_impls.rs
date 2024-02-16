@@ -1,4 +1,4 @@
-use std::fmt;
+use std::{convert::AsRef, fmt, ops::Deref};
 
 fn main() {
     // println!("Hello, wrold!");
@@ -14,7 +14,8 @@ fn main() {
     let p5: PointWrapper = p3.into();
     println!("~~~ p4: {p4}, p5: {p5}");
 
-    p4.as_ref().hello();
+    p4.as_ref().hello(); // use AsRef
+    p4.hello(); // auto Deref
 }
 
 #[derive(Debug, Default, PartialEq)]
@@ -56,5 +57,13 @@ impl AsRef<Point> for PointWrapper {
 impl fmt::Display for PointWrapper {
     fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
         write!(w, "PointWrapper({}, {})", self.0.x, self.0.y)
+    }
+}
+
+impl Deref for PointWrapper {
+    type Target = Point;
+
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
