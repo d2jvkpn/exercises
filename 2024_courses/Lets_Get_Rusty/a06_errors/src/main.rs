@@ -9,7 +9,7 @@ fn main() {
 
     let credit_cards: HashMap<&str, &str> = HashMap::from([
         ("Amy", "1234567 04 25 123"),
-        ("Tim", "1234567 06 27 123"),
+        ("Tim", "1234567 06 27"),
         ("bob", "1234567 12 27 123"),
     ]);
 
@@ -27,7 +27,7 @@ fn main() {
                 CreditCarError::Other(_, _) => eprintln!("!!! something went wrong!"),
             }
 
-            log::error!("{e:?}");
+            log::error!("{e}");
         }
     }
 }
@@ -37,7 +37,7 @@ fn get_credit_card_info(
     name: &str,
 ) -> Result<Card, CreditCarError> {
     let card =
-        credit_cards.get(name).ok_or(CreditCarError::InvlaidInput("No credit card".into()))?;
+        credit_cards.get(name).ok_or(CreditCarError::InvlaidInput("no credit card".into()))?;
 
     let card =
         parse_card(card).map_err(|e| CreditCarError::Other(Box::new(e), format!("{}", name)))?;
@@ -51,7 +51,7 @@ fn parse_card(card: &str) -> Result<Card, ParsePaymentError> {
     if numbers.len() != 4 {
         return Err(ParsePaymentError {
             source: None,
-            msg: Some(format!("incorrect number of elements parsed. expect 4 but got {:?}", card)),
+            msg: format!("incorrect number of elements parsed. expect 4 but got {:?}", card),
         });
     }
 
@@ -72,14 +72,15 @@ fn parse_card_numbers(card: &str) -> Result<Vec<u32>, ParsePaymentError> {
     let numbers = card
         .split_whitespace()
         .into_iter()
-        .map(|v| {
-            v.parse().map_err(|_| ParsePaymentError { source: None, msg: Some(format!("{v}")) })
-        })
-        .collect::<Result<Vec<u32>, _>>()
-        .map_err(|e| ParsePaymentError {
-            source: Some(Box::new(e)),
-            msg: Some(format!("failed to parse input as numbers")),
-        })?;
+        .map(|v| v.parse().map_err(|_| ParsePaymentError { source: None, msg: format!("{v}") }))
+        .collect::<Result<Vec<u32>, _>>()?;
+
+    /*
+    .map_err(|e| ParsePaymentError {
+        source: Some(Box::new(e)),
+        msg: format!("failed to parse input as numbers"),
+    })?;
+     */
 
     Ok(numbers)
 }
@@ -97,15 +98,35 @@ enum CreditCarError {
     Other(Box<dyn error::Error>, String),
 }
 
-#[derive(Debug)]
+impl error::Error for CreditCarError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        match self {
+            CreditCarError::InvlaidInput(_) => None,
+            CreditCarError::Other(e, _) => Some(e.as_ref()),
+        }
+    }
+}
+
+impl fmt::Display for CreditCarError {
+    fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::InvlaidInput(v) => write!(w, "invalid input: {v}"),
+            Self::Other(e, msg) => write!(w, "{msg}\nCaused by:\n\t{e}"),
+        }
+    }
+}
+
 struct ParsePaymentError {
     source: Option<Box<dyn error::Error>>,
-    msg: Option<String>,
+    msg: String,
 }
 
 impl From<num::ParseIntError> for ParsePaymentError {
     fn from(e: num::ParseIntError) -> Self {
-        ParsePaymentError { source: Some(Box::new(e)), msg: None }
+        ParsePaymentError {
+            source: Some(Box::new(e)),
+            msg: format!("failed to parse input as numbers"),
+        }
     }
 }
 
@@ -117,8 +138,21 @@ impl error::Error for ParsePaymentError {
 
 impl fmt::Display for ParsePaymentError {
     fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
-        write!(w, "parsing payment error: invalid payment info")
+        write!(w, "Credit card error: ")
         // w.write_str("parsing payment error: invalid payment info")
+    }
+}
+
+impl fmt::Debug for ParsePaymentError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{self}\n\t{:?}", self.msg)?;
+
+        // convert Option<T> to Option<&T>
+        if let Some(e) = self.source.as_ref() {
+            write!(f, "\n\nCaused by:\n\t{e:?}")?
+        }
+
+        Ok(())
     }
 }
 
