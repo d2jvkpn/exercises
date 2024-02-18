@@ -17,5 +17,6 @@ name = "propagating"
 path = "bin/propagating.rs"
 
 [dependencies]
+chrono = "0.4.34"
 env_logger = "0.11.2"
 log = "0.4.20"
