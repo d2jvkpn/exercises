@@ -1,0 +1,15 @@
+[package]
+name = "a06"
+version = "0.1.0"
+edition = "2021"
+default-run = "a06"
+
+[[bin]]
+name = "unrecoverable"
+path = "bin/unrecoverable.rs"
+
+[[bin]]
+name = "recoverable"
+path = "bin/recoverable.rs"
+
+[dependencies]
