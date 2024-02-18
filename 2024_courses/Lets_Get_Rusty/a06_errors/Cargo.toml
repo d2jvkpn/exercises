@@ -12,4 +12,10 @@ path = "bin/unrecoverable.rs"
 name = "recoverable"
 path = "bin/recoverable.rs"
 
+[[bin]]
+name = "propagating"
+path = "bin/propagating.rs"
+
 [dependencies]
+env_logger = "0.11.2"
+log = "0.4.20"
