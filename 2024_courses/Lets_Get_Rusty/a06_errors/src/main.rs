@@ -19,11 +19,11 @@ fn main() {
         .format(|buf, record| {
             writeln!(
                 buf,
-                "{} [{}] - {}",
+                "{} {} - {}",
                 // Local::now().format("%Y-%m-%dT%H:%M:%S%:z"),
                 Local::now().to_rfc3339_opts(SecondsFormat::Millis, true),
                 record.level(),
-                record.args()
+                record.args(),
             )
         })
         .filter(None, LevelFilter::Info)
@@ -45,8 +45,10 @@ fn main() {
         Err(e) => {
             // eprintln!("!!! error: {e:?}")
             match &e {
-                CreditCarError::InvlaidInput(v) => eprintln!("{v}"),
-                CreditCarError::Other(_, _) => eprintln!("Something went wrong! Try again!"),
+                CreditCarError::InvlaidInput(v) => eprintln!("==> Notification: {v}"),
+                CreditCarError::Other(_, _) => {
+                    eprintln!("==> Notification: Something went wrong! Try again!")
+                }
             }
 
             log::error!("\n{e:?}");
@@ -60,7 +62,7 @@ fn get_credit_card_info(
 ) -> Result<Card, CreditCarError> {
     let card = credit_cards
         .get(name)
-        .ok_or(CreditCarError::InvlaidInput(format!("No credit card found for {name}.")))?;
+        .ok_or(CreditCarError::InvlaidInput(format!("No credit card found for {name:?}.")))?;
 
     let card = parse_card(card).map_err(|e| {
         CreditCarError::Other(Box::new(e), format!("{name}'s card could not be parsed."))
