@@ -1,12 +1,13 @@
 #![allow(dead_code)]
 
 use chrono::{Local, SecondsFormat};
+use env_logger::Builder;
 use log::LevelFilter;
 
 use std::{
     collections::HashMap,
     error, fmt,
-    io::{self, Write},
+    io::{self, BufRead, Write},
     num,
 };
 
@@ -15,7 +16,7 @@ use std::{
 fn main() {
     // env_logger::init();
 
-    env_logger::Builder::new()
+    Builder::new()
         .format(|buf, record| {
             writeln!(
                 buf,
@@ -38,7 +39,7 @@ fn main() {
     let mut input = Default::default();
     println!("==> Enter name:"); // invalid, Tim, Bob
 
-    io::stdin().read_line(&mut input).expect("!!! failed to read line");
+    io::stdin().lock().read_line(&mut input).expect("!!! failed to read line");
 
     match get_credit_card_info(&credit_cards, input.trim()) {
         Ok(v) => println!("\nCredit card info: {v:?}"),
@@ -91,7 +92,7 @@ fn parse_card(card: &str) -> Result<Card, PaymentError> {
     let number = numbers.pop().unwrap();
      */
 
-    let (cvv, year, month, number) = (numbers[3], numbers[2], numbers[1], numbers[0]);
+    let (number, month, year, cvv) = (numbers[0], numbers[1], numbers[2], numbers[3]);
 
     Ok(Card { number, exp: (year, month), cvv })
 }
@@ -104,7 +105,7 @@ fn parse_card_numbers(card: &str) -> Result<Vec<u32>, PaymentError> {
         .map(|v| {
             v.parse().map_err(|_| PaymentError {
                 source: None,
-                msg: format!("{v} could not be parsed as u32"),
+                msg: format!("{v:?} could not be parsed as u32"),
             })
         })
         .collect::<Result<Vec<u32>, _>>()
