@@ -1,10 +1,10 @@
 #![allow(dead_code)]
 
-use anyhow::Context;
+use anyhow::{Context, Error as AError};
 use chrono::{Local, SecondsFormat};
 use env_logger::Builder;
 use log::LevelFilter;
-use thiserror::Error;
+use thiserror::Error as TError;
 
 use std::{
     collections::HashMap,
@@ -109,18 +109,18 @@ struct Card {
     cvv: u32,
 }
 
-#[derive(Error, Debug)]
+#[derive(TError, Debug)]
 #[error("{msg}")]
 struct PaymentError {
-    source: Option<anyhow::Error>,
+    source: Option<AError>,
     msg: String,
 }
 
-#[derive(Error, Debug)]
+#[derive(TError, Debug)]
 enum CreditCardError {
     #[error("{0}")]
     InvalidInput(String),
 
     #[error(transparent)]
-    Other(#[from] anyhow::Error),
+    Other(#[from] AError),
 }
