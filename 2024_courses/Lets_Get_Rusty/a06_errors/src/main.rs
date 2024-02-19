@@ -46,8 +46,8 @@ fn main() {
         Err(e) => {
             // eprintln!("!!! error: {e:?}")
             match &e {
-                CreditCarError::InvlaidInput(v) => eprintln!("==> Notification: {v}"),
-                CreditCarError::Other(_, _) => {
+                CreditCardError::InvalidInput(v) => eprintln!("==> Notification: {v}"),
+                CreditCardError::Other(_, _) => {
                     eprintln!("==> Notification: Something went wrong! Try again!")
                 }
             }
@@ -60,13 +60,13 @@ fn main() {
 fn get_credit_card_info(
     credit_cards: &HashMap<&str, &str>,
     name: &str,
-) -> Result<Card, CreditCarError> {
+) -> Result<Card, CreditCardError> {
     let card = credit_cards
         .get(name)
-        .ok_or(CreditCarError::InvlaidInput(format!("No credit card found for {name:?}.")))?;
+        .ok_or(CreditCardError::InvalidInput(format!("No credit card found for {name}.")))?;
 
     let card = parse_card(card).map_err(|e| {
-        CreditCarError::Other(Box::new(e), format!("{name}'s card could not be parsed."))
+        CreditCardError::Other(Box::new(e), format!("{name}'s card could not be parsed."))
     })?;
 
     Ok(card)
@@ -81,7 +81,7 @@ fn parse_card(card: &str) -> Result<Card, PaymentError> {
     if len != expected_len {
         return Err(PaymentError {
             source: None,
-            msg: format!("Incorrect number of elements parsed. Expect {expected_len} but get {len}. Elements: {numbers:?}"),
+            msg: format!("Incorrect number of elements parsed. Expect {expected_len} but get {len}. Elements: {card:?}"),
         });
     }
 
@@ -103,6 +103,7 @@ fn parse_card_numbers(card: &str) -> Result<Vec<u32>, PaymentError> {
         .split_whitespace()
         .into_iter()
         .map(|v| {
+            // num::ParseIntError
             v.parse().map_err(|_| PaymentError {
                 source: None,
                 msg: format!("{v:?} could not be parsed as u32"),
@@ -111,7 +112,7 @@ fn parse_card_numbers(card: &str) -> Result<Vec<u32>, PaymentError> {
         .collect::<Result<Vec<u32>, _>>()
         .map_err(|e| PaymentError {
             source: Some(Box::new(e)),
-            msg: format!("Failed to parse input as numbers. Input: {card}"),
+            msg: format!("Failed to parse input as numbers. Input: {card:?}"),
         })?;
 
     // .collect::<Result<Vec<u32>, _>>()?;
@@ -127,31 +128,31 @@ struct Card {
 }
 
 // #[derive(Debug)]
-enum CreditCarError {
-    InvlaidInput(String),
+enum CreditCardError {
+    InvalidInput(String),
     Other(Box<dyn error::Error>, String),
 }
 
-impl error::Error for CreditCarError {
+impl error::Error for CreditCardError {
     fn source(&self) -> Option<&(dyn error::Error + 'static)> {
         match self {
-            CreditCarError::InvlaidInput(_) => None,
+            CreditCardError::InvalidInput(_) => None,
             // convert &Box<dyn Error> to &(dyn error::Error + 'static)
-            CreditCarError::Other(e, _) => Some(e.as_ref()),
+            CreditCardError::Other(e, _) => Some(e.as_ref()),
         }
     }
 }
 
-impl fmt::Display for CreditCarError {
+impl fmt::Display for CreditCardError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         f.write_str("Credit card error: Could not retrieve credit card.")
     }
 }
 
-impl fmt::Debug for CreditCarError {
+impl fmt::Debug for CreditCardError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::InvlaidInput(msg) => write!(f, "{self}\nMessage: {msg}"),
+            Self::InvalidInput(msg) => write!(f, "{self}\nMessage: {msg}"),
             // Self::Other(e, msg) => f.debug_tuple("Other").field(msg).finish(),
             Self::Other(e, msg) => write!(f, "{self}\nMessage: {msg}\n\nCaused by:\n\t{e:?}"),
         }
@@ -195,7 +196,6 @@ impl fmt::Debug for PaymentError {
     }
 }
 
-///
 /*
 pub trait Error: Debug + Display {
     // Provided methods
@@ -204,7 +204,6 @@ pub trait Error: Debug + Display {
     fn cause(&self) -> Option<&dyn Error> { ... }
     fn provide<'a>(&'a self, request: &mut Request<'a>) { ... }
 }
-*/
 
 enum APIError {
     UserInput(String),
@@ -217,3 +216,4 @@ struct ServerError {
     source: Box<dyn error::Error>,
     err_type: APIError,
 }
+*/

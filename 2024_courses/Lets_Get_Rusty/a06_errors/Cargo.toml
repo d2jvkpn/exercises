@@ -16,7 +16,13 @@ path = "bin/recoverable.rs"
 name = "propagating"
 path = "bin/propagating.rs"
 
+[[bin]]
+name = "errorx"
+path = "bin/errorx.rs"
+
 [dependencies]
-chrono = "0.4.34"
-env_logger = "0.11.2"
-log = "0.4.20"
+anyhow = { version = "1", features = ["backtrace"] }
+chrono = "0.4"
+env_logger = "0.11"
+log = "0.4"
+thiserror = "1"
