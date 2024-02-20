@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use tokio::{spawn, sync::mpsc, task::spawn_blocking, time::sleep};
 
 use std::{
@@ -11,6 +9,7 @@ use std::{
 async fn main() -> Result<(), Box<dyn error::Error>> {
     channel().await?;
     buffer().await;
+    concat_str().await?;
 
     Ok(())
 }
@@ -69,7 +68,7 @@ async fn concat_str() -> Result<(), Box<dyn error::Error>> {
 }
 
 async fn hello(val: usize) {
-    println!("==> {val}, {:?}", thread::current().id());
+    println!("==> hello {val}, {:?}", thread::current().id());
     log_mdc::insert("hello", val.to_string());
     sleep(Duration::new(2, 0)).await;
 

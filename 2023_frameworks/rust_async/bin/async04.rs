@@ -4,7 +4,7 @@ use chrono::{Local, SecondsFormat};
 use futures::{executor::block_on, future::join_all, join};
 
 use std::{
-    any, thread,
+    thread,
     time::{Duration, Instant},
 };
 
@@ -22,7 +22,7 @@ fn main() {
     let fut1 = async_blocking(1);
     // holds the program for the result of the first future
     let outcome = block_on(fut1);
-    println!("--> result: {}, time elapsed {:?}\n", outcome, elapsed(now));
+    println!("--> result: {}, elapsed: {:?}\n", outcome, now.elapsed());
 
     // #### 2. Futures(a blocking func wrapped in async func) can't run in concurrent
     println!("==> {} Batch2 join!(...)", now_string());
@@ -38,8 +38,7 @@ fn main() {
     };
     // holds the program for the result from the async block
     let results = block_on(batch2);
-    //println!("~~~ time elapsed {:?}, results: {:?}\n", now.elapsed(), results);
-    println!("--~ time elapsed {:?}, results: {:?}\n", elapsed(now), results);
+    println!("--> results: {:?}, elapsed: {:?}\n", results, now.elapsed());
 
     // #### 3. Futures run in concurrent
     println!("==> {} Batch3 join!(...)", now_string());
@@ -49,21 +48,19 @@ fn main() {
     let batch3 = async {
         // defines two futures
         let fut5 = hello_async(5);
-
         // core::future::from_generator::GenFuture<async_functions::hello_async::{{closure}}>
-        println!("    {}", type_name(&fut5));
 
         let fut6 = hello_async(6);
         let fut7 = hello_async(7);
 
-        println!("    blocking sleep 1s");
+        println!("--> blocking sleep 1s");
         thread::sleep(Duration::new(1, 0));
         // waits for both futures to complete in sequence
         return join!(fut5, fut6, fut7); // !!! start running now
     };
     // holds the program for the result from the async block
     let results = block_on(batch3);
-    println!("--> results: {:?}, elapsed {:?}\n", results, elapsed(now));
+    println!("--> results: {:?}, elapsed: {:?}\n", results, now.elapsed());
 
     // #### 4. Futures run in concurrent and get results, task::spawn multiply tasks
     println!("==> {} Batch4 join_all(...)", now_string());
@@ -83,7 +80,7 @@ fn main() {
     println!("--> blocking sleep 1s");
     thread::sleep(Duration::new(1, 0));
     let results = block_on(batch4);
-    println!("--> results: {:?}, elapsed {:?}\n", results, elapsed(now));
+    println!("--> results: {:?}, elapsed: {:?}\n", results, now.elapsed());
 
     // #### 5. multithreading by using std
     println!("==> {} Batch6 join threads", now_string());
@@ -99,7 +96,7 @@ fn main() {
     thread::sleep(Duration::new(1, 0));
     let results: Vec<i8> = batch5.into_iter().map(|t| t.join().unwrap()).collect();
     // print the outcomes again from the threads
-    println!("--> results: {:?}, elapsed {:?}\n", results, elapsed(now));
+    println!("--> results: {:?}, elapsed: {:?}\n", results, now.elapsed());
 }
 
 fn hello_blocking(number: i8) -> i8 {
@@ -133,14 +130,6 @@ async fn hello_async(number: i8) -> i8 {
     println!("--~ {} hello_async number {:02} is done", now_string(), number);
 
     return 2;
-}
-
-fn type_name<T>(_v: &T) -> String {
-    format!("{}", any::type_name::<T>())
-}
-
-fn elapsed(t: Instant) -> Duration {
-    Duration::from_millis(t.elapsed().as_millis().try_into().unwrap())
 }
 
 fn now_string() -> String {
