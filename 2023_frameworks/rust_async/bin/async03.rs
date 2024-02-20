@@ -9,6 +9,13 @@ use std::{
 
 #[tokio::main(flavor = "multi_thread", worker_threads = 1)]
 async fn main() -> Result<(), Box<dyn error::Error>> {
+    channel().await?;
+    buffer().await;
+
+    Ok(())
+}
+
+async fn channel() -> Result<(), Box<dyn error::Error>> {
     let (tx, mut rx) = mpsc::channel(2);
     let start = 5;
 
@@ -25,11 +32,23 @@ async fn main() -> Result<(), Box<dyn error::Error>> {
     }
 
     assert_eq!(acc, 95);
-    worker.await.unwrap();
-
-    buffer().await;
+    worker.await?;
 
     Ok(())
+}
+
+async fn buffer() {
+    let now = Instant::now();
+    let mut buffer = Vec::new();
+
+    for i in 0..16 {
+        // let handle = tokio::spawn(async move { hello(i).await });
+        let handle = spawn(hello(i));
+        buffer.push(handle);
+    }
+
+    futures::future::join_all(buffer).await;
+    println!("~~- elapsed: {:.2?}", now.elapsed());
 }
 
 async fn concat_str() -> Result<(), Box<dyn error::Error>> {
@@ -47,20 +66,6 @@ async fn concat_str() -> Result<(), Box<dyn error::Error>> {
     assert_eq!(res.as_str(), "Hello, world");
 
     Ok(())
-}
-
-async fn buffer() {
-    let now = Instant::now();
-    let mut buffer = Vec::new();
-
-    for i in 0..16 {
-        // let handle = tokio::spawn(async move { hello(i).await });
-        let handle = spawn(hello(i));
-        buffer.push(handle);
-    }
-
-    futures::future::join_all(buffer).await;
-    println!("<<< elapsed: {:.2?}", now.elapsed());
 }
 
 async fn hello(val: usize) {

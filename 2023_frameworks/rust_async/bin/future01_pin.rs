@@ -5,14 +5,16 @@ use std::time::Duration;
 
 // Calling the following async fn returns a Future which does not
 // implement Unpin
-async fn run(sec: u64, val: usize) -> usize {
+async fn call(sec: u64, val: usize) -> usize {
     task::sleep(Duration::new(sec, 0)).await;
+
     val
 }
 
-async fn fut1() {
-    let fut_1 = run(1, 2).fuse();
-    let fut_2 = run(1, 3).fuse();
+async fn run() {
+    let fut_1 = call(1, 2).fuse();
+    let fut_2 = call(1, 3).fuse();
+
     let mut fut_1 = Box::pin(fut_1); // Pins the Future on the heap
     pin_mut!(fut_2); // Pins the Future on the stack
 
@@ -26,5 +28,5 @@ async fn fut1() {
 }
 
 fn main() {
-    block_on(fut1());
+    block_on(run());
 }

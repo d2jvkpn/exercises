@@ -7,18 +7,6 @@ default-run = "rust_async"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "iter01"
-path = "bin/iter01.rs"
-
-[[bin]]
-name = "iter02"
-path = "bin/iter02.rs"
-
-[[bin]]
-name = "iter03"
-path = "bin/iter03.rs"
-
-[[bin]]
 name = "async01"
 path = "bin/async01.rs"
 
@@ -31,16 +19,24 @@ name = "async03"
 path = "bin/async03.rs"
 
 [[bin]]
+name = "async04"
+path = "bin/async04.rs"
+
+[[bin]]
 name = "chan01"
-path = "bin/chan01.rs"
+path = "bin/chan01_mpsc.rs"
 
 [[bin]]
 name = "chan02"
-path = "bin/chan02.rs"
+path = "bin/chan02_select.rs"
 
 [[bin]]
-name = "chan03"
-path = "bin/chan03.rs"
+name = "future01"
+path = "bin/future01_pin.rs"
+
+[[bin]]
+name = "future02"
+path = "bin/future02_select.rs"
 
 [dependencies]
 async-std = "1"

@@ -13,6 +13,7 @@ async fn hello(input: i32) -> i32 {
 
     let id2 = thread::current().id();
     println!("<-- hello: {input}, {id2:?}");
+
     input
     // id1 may not equals to id2
 }
@@ -29,11 +30,10 @@ async fn main() {
     }
 
     thread::sleep(Duration::from_millis(10));
-    println!(">>> Joining");
+    println!("==> Joining");
     //	for i in buffer {
     //		let _ = i.await;
     //	}
     let results = future::join_all(buffer).await;
-    println!("results = {results:?}");
-    println!("Elapsed: {:.2?}", now.elapsed());
+    println!("--> results: {results:?}, elapsed: {:.3?}", now.elapsed());
 }
