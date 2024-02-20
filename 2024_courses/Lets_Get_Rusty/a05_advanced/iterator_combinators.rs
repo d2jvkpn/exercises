@@ -1,5 +1,4 @@
-#![allow(dead_code)]
-#![allow(unused_variables)]
+#![allow(dead_code, unused_variables)]
 
 fn main() {
     let students = vec!["Bogdan 3.1", "Wallace 2.3", "Lidiya 3.5", "Kyle 3.9", "Anatoliy 4.0"];

@@ -1,0 +1,41 @@
+[package]
+name = "rust_tokio"
+version = "0.1.0"
+edition = "2021"
+default-run = "rust_tokio"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[[bin]]
+name = "a01"
+path = "bin/a01.rs"
+
+[[bin]]
+name = "a02"
+path = "bin/a02.rs"
+
+[[bin]]
+name = "async01"
+path = "bin/async01.rs"
+
+[[bin]]
+name = "async02"
+path = "bin/async02.rs"
+
+[[bin]]
+name = "chan01"
+path = "bin/chan01.rs"
+
+[[bin]]
+name = "chan02"
+path = "bin/chan02.rs"
+
+[[bin]]
+name = "chan03"
+path = "bin/chan03.rs"
+
+[dependencies]
+chrono = { version = "0.4", features = ["serde"] }
+futures = "0.3"
+tokio = { version = "1", features = ["full"] }
+log-mdc = "0.1"

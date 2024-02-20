@@ -1,0 +1,20 @@
+[package]
+name = "a08"
+version = "0.1.0"
+edition = "2021"
+default-run = "a08"
+
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.36.0", features = ["full"] }
+tokio-stream = "0.1.14"
+
+[[bin]]
+name = "tcp"
+path = "bin/tcp.rs"
+
+[[bin]]
+name = "threads"
+path = "bin/threads.rs"

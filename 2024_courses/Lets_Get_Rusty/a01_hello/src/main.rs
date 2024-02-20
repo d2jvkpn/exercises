@@ -1,6 +1,4 @@
-#![allow(dead_code)]
-#![allow(unused_assignments)]
-#![allow(unused_variables)]
+#![allow(dead_code, unused_assignments, unused_variables)]
 
 const MAX_PLAYERS: u8 = 10;
 static mut CASINO_NAME: &str = "Rusty Casino";

@@ -1,6 +1,5 @@
 // Ownership Based Resouce Management
-#![allow(dead_code)]
-#![allow(unused_variables)]
+#![allow(dead_code, unused_variables)]
 
 use std::{fs, path, rc::Rc};
 
