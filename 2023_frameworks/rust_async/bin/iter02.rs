@@ -1,5 +1,6 @@
 use async_std::task;
 use futures::{executor::block_on, future::FutureExt, pin_mut, select};
+
 use std::time::Duration;
 
 // Calling the following async fn returns a Future which does not

@@ -1,5 +1,5 @@
-use futures::{future, select};
 use chrono::{Local, SecondsFormat};
+use futures::{future, select};
 
 fn now_string() -> String {
     Local::now().to_rfc3339_opts(SecondsFormat::Millis, true)

@@ -2,6 +2,7 @@
 use async_std::task;
 use chrono::{Local, SecondsFormat};
 use futures::{executor::block_on, future::join_all, join};
+
 use std::{
     any, thread,
     time::{Duration, Instant},
@@ -21,9 +22,11 @@ fn run1(number: i8) -> i8 {
         number,
         thread::current().id()
     );
+
     let two_seconds = Duration::new(2, 0);
     thread::sleep(two_seconds);
     println!("    {} Run1 number {:02} is done", now_string(), number);
+
     return 2;
 }
 
@@ -34,9 +37,11 @@ async fn run2(number: i8) -> i8 {
         number,
         thread::current().id()
     );
+
     let two_seconds = Duration::new(2, 0);
     task::sleep(two_seconds).await;
     println!("    {} Run2 number {:02} is done", now_string(), number);
+
     return 2;
 }
 
