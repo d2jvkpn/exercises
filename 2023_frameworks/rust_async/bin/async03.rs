@@ -1,10 +1,13 @@
 #![allow(dead_code)]
 
-use tokio::{sync::mpsc, task::spawn_blocking};
+use tokio::{spawn, sync::mpsc, task::spawn_blocking, time::sleep};
 
-use std::error;
+use std::{
+    error, thread,
+    time::{Duration, Instant},
+};
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 1)]
 async fn main() -> Result<(), Box<dyn error::Error>> {
     let (tx, mut rx) = mpsc::channel(2);
     let start = 5;
@@ -24,6 +27,8 @@ async fn main() -> Result<(), Box<dyn error::Error>> {
     assert_eq!(acc, 95);
     worker.await.unwrap();
 
+    buffer().await;
+
     Ok(())
 }
 
@@ -42,4 +47,29 @@ async fn concat_str() -> Result<(), Box<dyn error::Error>> {
     assert_eq!(res.as_str(), "Hello, world");
 
     Ok(())
+}
+
+async fn buffer() {
+    let now = Instant::now();
+    let mut buffer = Vec::new();
+
+    for i in 0..16 {
+        // let handle = tokio::spawn(async move { hello(i).await });
+        let handle = spawn(hello(i));
+        buffer.push(handle);
+    }
+
+    futures::future::join_all(buffer).await;
+    println!("<<< elapsed: {:.2?}", now.elapsed());
+}
+
+async fn hello(val: usize) {
+    println!("==> {val}, {:?}", thread::current().id());
+    log_mdc::insert("hello", val.to_string());
+    sleep(Duration::new(2, 0)).await;
+
+    let mut mdc = vec![];
+    log_mdc::iter(|k, v| mdc.push((k.to_owned(), v.to_owned())));
+
+    println!("<== {val}, {:?}, {:?}", thread::current().id(), mdc);
 }

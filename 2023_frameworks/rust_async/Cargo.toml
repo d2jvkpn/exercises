@@ -19,20 +19,16 @@ name = "iter03"
 path = "bin/iter03.rs"
 
 [[bin]]
-name = "a01"
-path = "bin/a01.rs"
-
-[[bin]]
-name = "a02"
-path = "bin/a02.rs"
-
-[[bin]]
 name = "async01"
 path = "bin/async01.rs"
 
 [[bin]]
 name = "async02"
 path = "bin/async02.rs"
+
+[[bin]]
+name = "async03"
+path = "bin/async03.rs"
 
 [[bin]]
 name = "chan01"
