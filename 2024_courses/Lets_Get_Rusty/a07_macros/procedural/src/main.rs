@@ -1,3 +1,7 @@
+use procedural::*;
+
 fn main() {
-    println!("Hello, world!");
+    do_nothing!(println!("Hello, world!"));
+
+    log_info!([TIME] starting program...);
 }
