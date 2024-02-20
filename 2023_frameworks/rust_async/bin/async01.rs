@@ -5,32 +5,6 @@ use std::{
     time::{Duration, Instant},
 };
 
-async fn hello_async(input: i32) -> i32 {
-    let id1 = thread::current().id();
-    println!("--> hello_async: {input}, {id1:?}");
-
-    time::sleep(Duration::from_secs(2)).await;
-
-    let id2 = thread::current().id();
-    println!("<-- hello_async: {input}, {id2:?}");
-
-    input
-    // id1 may not equals to id2
-}
-
-async fn hello_blocking(input: i32) -> i32 {
-    let id1 = thread::current().id();
-    println!("--> hello_blocking: {input}, {id1:?}");
-
-    thread::sleep(Duration::from_secs(2));
-
-    let id2 = thread::current().id();
-    println!("--~ hello_blocking: {input}, {id2:?}");
-
-    input
-    // id1 may not equals to id2
-}
-
 #[tokio::main(flavor = "multi_thread", worker_threads = 2)]
 async fn main() {
     let threads = thread::available_parallelism().unwrap().get();
@@ -92,4 +66,30 @@ async fn main() {
     println!("==> Joining...");
     let results = join!(fut10, fut11, fut12); // start running now
     println!("--> results: {results:?}, elapsed: {:.3?}", now.elapsed());
+}
+
+async fn hello_async(input: i32) -> i32 {
+    let id1 = thread::current().id();
+    println!("--> hello_async: {input}, {id1:?}");
+
+    time::sleep(Duration::from_secs(2)).await;
+
+    let id2 = thread::current().id();
+    println!("<-- hello_async: {input}, {id2:?}");
+
+    input
+    // id1 may not equals to id2
+}
+
+async fn hello_blocking(input: i32) -> i32 {
+    let id1 = thread::current().id();
+    println!("--> hello_blocking: {input}, {id1:?}");
+
+    thread::sleep(Duration::from_secs(2));
+
+    let id2 = thread::current().id();
+    println!("--~ hello_blocking: {input}, {id2:?}");
+
+    input
+    // id1 may not equals to id2
 }

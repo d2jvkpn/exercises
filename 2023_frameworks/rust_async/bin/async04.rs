@@ -11,17 +11,17 @@ use std::{
 fn main() {
     // wrap a blocking function in async
     async fn async_blocking(number: i8) -> i8 {
-        blocking_fn(number)
+        hello_blocking(number)
     }
     // let elapsed = |t: Instant| Duration::from_millis(t.elapsed().as_millis().try_into().unwrap());
 
     // #### 1. A future runs when block_on called
-    println!("==> {} Future_1 is created", now_string());
+    println!("==> {} Future1 is created", now_string());
     let now = Instant::now();
     // defines a future
-    let future_1 = async_blocking(1);
+    let fut1 = async_blocking(1);
     // holds the program for the result of the first future
-    let outcome = block_on(future_1);
+    let outcome = block_on(fut1);
     println!("--> result: {}, time elapsed {:?}\n", outcome, elapsed(now));
 
     // #### 2. Futures(a blocking func wrapped in async func) can't run in concurrent
@@ -30,11 +30,11 @@ fn main() {
     // defines the async block for multiple futures (just like an async function)
     let batch2 = async {
         // defines two futures
-        let future_2 = async_blocking(2);
-        let future_3 = async_blocking(3);
-        let future_4 = async_blocking(4);
+        let fut2 = async_blocking(2);
+        let fut3 = async_blocking(3);
+        let fut4 = async_blocking(4);
         // waits for both futures to complete in sequence
-        return join!(future_2, future_3, future_4);
+        return join!(fut2, fut3, fut4);
     };
     // holds the program for the result from the async block
     let results = block_on(batch2);
@@ -48,18 +48,18 @@ fn main() {
     println!("--> created...");
     let batch3 = async {
         // defines two futures
-        let future_5 = async_fn(5);
+        let fut5 = hello_async(5);
 
-        // core::future::from_generator::GenFuture<async_functions::async_fn::{{closure}}>
-        println!("    {}", type_name(&future_5));
+        // core::future::from_generator::GenFuture<async_functions::hello_async::{{closure}}>
+        println!("    {}", type_name(&fut5));
 
-        let future_6 = async_fn(6);
-        let future_7 = async_fn(7);
+        let fut6 = hello_async(6);
+        let fut7 = hello_async(7);
 
         println!("    blocking sleep 1s");
         thread::sleep(Duration::new(1, 0));
         // waits for both futures to complete in sequence
-        return join!(future_5, future_6, future_7); // !!! start running now
+        return join!(fut5, fut6, fut7); // !!! start running now
     };
     // holds the program for the result from the async block
     let results = block_on(batch3);
@@ -92,8 +92,8 @@ fn main() {
     // spawn a few functions with the same function
     println!("--> creating...");
     let batch5: Vec<thread::JoinHandle<i8>> =
-        vec![11, 12, 13].into_iter().map(|v| thread::spawn(move || blocking_fn(v))).collect();
-    // vec![thread::spawn(|| blocking_fn(12)), thread::spawn(|| blocking_fn(13)), thread::spawn(|| blocking_fn(14))];
+        vec![11, 12, 13].into_iter().map(|v| thread::spawn(move || hello_blocking(v))).collect();
+    // vec![thread::spawn(|| hello_blocking(12)), thread::spawn(|| hello_blocking(13)), thread::spawn(|| hello_blocking(14))];
 
     println!("--> blocking sleep 1s");
     thread::sleep(Duration::new(1, 0));
@@ -102,12 +102,12 @@ fn main() {
     println!("--> results: {:?}, elapsed {:?}\n", results, elapsed(now));
 }
 
-fn blocking_fn(number: i8) -> i8 {
+fn hello_blocking(number: i8) -> i8 {
     //  DateTime<Local>
     // let now = || chrono::Local::now().to_rfc3339_opts(chrono::SecondsFormat::Millis, true);
 
     println!(
-        "==> {} blocking_fn number {:02} is running, {:?}",
+        "==> {} hello_blocking number {:02} is running, {:?}",
         now_string(),
         number,
         thread::current().id()
@@ -115,14 +115,14 @@ fn blocking_fn(number: i8) -> i8 {
 
     let two_seconds = Duration::new(2, 0);
     thread::sleep(two_seconds);
-    println!("--~ {} blocking_fn number {:02} is done", now_string(), number);
+    println!("--~ {} hello_blocking number {:02} is done", now_string(), number);
 
     return 2;
 }
 
-async fn async_fn(number: i8) -> i8 {
+async fn hello_async(number: i8) -> i8 {
     println!(
-        "==> {} async_fn number {:02} is running, {:?}",
+        "==> {} hello_async number {:02} is running, {:?}",
         now_string(),
         number,
         thread::current().id()
@@ -130,7 +130,7 @@ async fn async_fn(number: i8) -> i8 {
 
     let two_seconds = Duration::new(2, 0);
     task::sleep(two_seconds).await;
-    println!("--~ {} async_fn number {:02} is done", now_string(), number);
+    println!("--~ {} hello_async number {:02} is done", now_string(), number);
 
     return 2;
 }
