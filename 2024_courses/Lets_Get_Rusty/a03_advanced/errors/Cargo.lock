@@ -3,17 +3,6 @@
 version = 3
 
 [[package]]
-name = "a06"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "chrono",
- "env_logger",
- "log",
- "thiserror",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -198,6 +187,17 @@ dependencies = [
  "env_filter",
  "humantime",
  "log",
+]
+
+[[package]]
+name = "errors"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chrono",
+ "env_logger",
+ "log",
+ "thiserror",
 ]
 
 [[package]]

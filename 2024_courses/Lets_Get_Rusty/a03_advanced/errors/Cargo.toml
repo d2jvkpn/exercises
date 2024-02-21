@@ -1,8 +1,8 @@
 [package]
-name = "a06"
+name = "errors"
 version = "0.1.0"
 edition = "2021"
-default-run = "a06"
+default-run = "errors"
 
 [[bin]]
 name = "unrecoverable"
