@@ -63,4 +63,5 @@ struct Product {
 #[log_call(verbose)]
 fn buy_product(product: &Product, discount: u32) {
     // ...
+    println!("--- xxxx");
 }

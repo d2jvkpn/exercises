@@ -140,7 +140,7 @@ fn impl_log_call(attr_args: &MacroArgs, input: &mut syn::ItemFn) -> TokenStream 
         input.block.stmts.insert(
             0,
             syn::parse_quote! {
-                println!("INFO - calling {}", stringify!(#fn_name));
+                println!("INFO - calling {:?}", stringify!(#fn_name));
             },
         );
     }
@@ -168,7 +168,7 @@ fn generate_verbos_log(fn_name: &syn::Ident, fn_args: Vec<&syn::Ident>) -> Vec<s
     let mut statements = Vec::with_capacity(fn_args.len() + 1);
 
     statements.push(syn::parse_quote! {
-        println!("INFO - calling {}", stringify!(#fn_name));
+        println!("INFO - calling {:?}", stringify!(#fn_name));
     });
 
     for arg in fn_args {
