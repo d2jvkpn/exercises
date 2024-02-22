@@ -1,8 +1,4 @@
-use std::{
-    sync::Arc,
-    thread,
-    time::Duration,
-};
+use std::{sync::Arc, thread, time::Duration};
 
 use tokio::{
     sync::Mutex,
@@ -13,13 +9,11 @@ use tokio::{
 async fn main() {
     let shared_data = Arc::new(Mutex::new(SharedData { counter: 0 }));
 
-	let data = shared_data.clone();
-    let handle_one: JoinHandle<()> =
-        spawn(async { count(3, data, CounterType::Increment).await });
+    let data = shared_data.clone();
+    let handle_one: JoinHandle<()> = spawn(async { count(3, data, CounterType::Increment).await });
 
-	let data = shared_data.clone();
-    let handle_two: JoinHandle<()> =
-        spawn(async { count(3, data, CounterType::Decrement).await });
+    let data = shared_data.clone();
+    let handle_two: JoinHandle<()> = spawn(async { count(3, data, CounterType::Decrement).await });
 
     let (_, _) = tokio::join!(handle_one, handle_two);
 }
