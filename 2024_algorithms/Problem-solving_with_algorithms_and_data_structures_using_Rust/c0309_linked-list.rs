@@ -1,6 +1,4 @@
 fn main() {
-    println!("Hello, wrold!");
-
     let mut list = List::new();
     list.push(1).push(2).push(4).push(8);
 }

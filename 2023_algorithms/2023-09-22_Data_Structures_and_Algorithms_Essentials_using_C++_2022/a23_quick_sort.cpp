@@ -4,19 +4,23 @@
 using namespace std;
 
 int partition(vector<int> &vec, int low, int high) {
-	int pivot = vec[high];
-	int index = low;
+	if (low >= high) {
+		return low;
+	}
 
-	// .index...i...
+	int value = vec[high];
+	int pivot = low;
+
+	// .pivot...i...
 	for (int i=low; i<=high; i++) {
-		if (vec[i] < pivot) {
-			swap(vec[index], vec[i]);
-			index+=1;  // vec[idx] >= pivot
+		if (vec[i] < value) {
+			swap(vec[pivot], vec[i]);
+			pivot+=1; // vec[idx] >= value
 		}
 	}
-	swap(vec[index], vec[high]);
+	swap(vec[pivot], vec[high]);
 
-	return index;
+	return pivot;
 }
 
 void quickSort(vector<int> &vec, int low, int high) {
@@ -24,9 +28,15 @@ void quickSort(vector<int> &vec, int low, int high) {
 		return;
 	}
 
-	int index = partition(vec, low, high);
-	quickSort(vec, low, index-1);
-	quickSort(vec, index+1, high);
+	int pivot = partition(vec, low, high);
+
+	if (low + 1 < pivot) {
+		quickSort(vec, low, pivot-1);
+	}
+
+	if (pivot+1 < high) {
+		quickSort(vec, pivot+1, high);
+	}
 }
 
 int main() {

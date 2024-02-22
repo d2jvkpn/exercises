@@ -30,14 +30,14 @@ fn anagram1(s1: &str, s2: &str) -> bool {
     }
 
     true
-
-    /*
-    // anagram2:
-    v1.sort();
-    v2.sort();
-    v1 == v2
-    */
 }
+
+/*
+// anagram2:
+v1.sort();
+v2.sort();
+v1 == v2
+*/
 
 // for a-z only
 fn anagram3(s1: &str, s2: &str) -> bool {
@@ -66,12 +66,14 @@ fn anagram3(s1: &str, s2: &str) -> bool {
 }
 
 fn anagram4(s1: &str, s2: &str) -> bool {
-    if s1.len() != s2.len() {
+    let cap = s1.chars().count();
+
+    if s2.chars().count() != cap {
         return false;
     }
 
-    let mut hm1 = HashMap::with_capacity(64);
-    let mut hm2 = HashMap::with_capacity(64);
+    let mut hm1 = HashMap::with_capacity(cap);
+    let mut hm2 = HashMap::with_capacity(cap);
 
     s1.chars().for_each(|v| *hm1.entry(v).or_insert_with(|| 0) += 1);
     s1.chars().for_each(|v| *hm2.entry(v).or_insert_with(|| 0) += 1);

@@ -1,44 +1,52 @@
 package goimpls
 
 import (
-	"fmt"
+// "fmt"
 )
 
-func quickSortPartition(arr []int, low, high int) int {
+func partition(nums []int, low, high int) int {
 	if low >= high {
 		return low
 	}
 
-	index := low
-	pivot := arr[high]
+	pivot, value := low, nums[high]
 
 	for i := low; i < high; i++ {
-		if arr[i] <= pivot {
-			// fmt.Printf("~~~ i=%d, index=%d, arr[i]=%d\n", i, index, arr[i])
-			if index != i {
-				arr[index], arr[i] = arr[i], arr[index]
+		if nums[i] <= value {
+			// fmt.Printf("~~~ i=%d, index=%d, nums[i]=%d\n", i, index, nums[i])
+			if pivot != i {
+				nums[pivot], nums[i] = nums[i], nums[pivot]
 			}
-			index += 1
+			pivot += 1
 		}
 	}
-	arr[index], arr[high] = arr[high], arr[index]
 
-	return index
+	nums[pivot], nums[high] = nums[high], nums[pivot]
+
+	return pivot
 }
 
-func quickSortRange(arr []int, low, high int) {
-	if len(arr) <= 1 {
+func qs(nums []int, low, high int) {
+	if low >= high {
 		return
 	}
 
-	if low < high {
-		pivotIndex := quickSortPartition(arr, low, high)
-		fmt.Println("~~>", arr, low, high, pivotIndex)
-		quickSortRange(arr, low, pivotIndex-1)
-		quickSortRange(arr, pivotIndex+1, high)
+	pivot := partition(nums, low, high)
+	// fmt.Println("~~>", nums, low, high, pivot)
+
+	if low+1 < pivot {
+		qs(nums, low, pivot-1)
+	}
+
+	if pivot+1 < high {
+		qs(nums, pivot+1, high)
 	}
 }
 
-func QuckSort(arr []int) {
-	quickSortRange(arr, 0, len(arr)-1)
+func QuckSort(nums []int) {
+	if len(nums) < 2 {
+		return
+	}
+
+	qs(nums, 0, len(nums)-1)
 }
