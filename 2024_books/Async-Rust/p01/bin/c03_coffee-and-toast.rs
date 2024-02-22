@@ -35,19 +35,21 @@ async fn make_toast() {
     println!("~~~ 3.2 toasted bread buttered.");
 }
 
-#[tokio::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 4)]
 async fn main() {
     // println!("Hello, wrold!");
 
     let start = Instant::now();
 
-    let coffee_mug_step = prep_coffee_mug();
-    let coffee_step = make_coffee();
-    let toast_step = make_toast();
+    let person_one = tokio::task::spawn(async {
+        prep_coffee_mug().await;
+        make_coffee().await;
+        make_toast().await;
+    });
 
-    // 3s(sync) + 3s(10s async) + 15s(10s async + 5s sync)
-    tokio::join!(coffee_mug_step, coffee_step, toast_step); // 18s
+    let _ = person_one.await;
+
     let elapsed = start.elapsed();
 
-    println!("It took: {} seconds", elapsed.as_secs());
+    println!("It took: {} seconds", elapsed.as_secs()); // 31s
 }

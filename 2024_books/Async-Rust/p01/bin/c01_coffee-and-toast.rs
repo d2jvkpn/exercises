@@ -2,10 +2,10 @@ use tokio::time::{sleep, Duration};
 
 use std::{thread, time::Instant};
 
-// 100ms+3s
+// 3s+3s
 async fn prep_coffee_mug() {
     println!("==> 1.1 Pouring milk...");
-    sleep(Duration::from_millis(100)).await;
+    thread::sleep(Duration::from_secs(3));
     println!("~~~ 1.1 milk poured.");
 
     println!("==> 1.2 Putting instant coffee...");
@@ -35,23 +35,19 @@ async fn make_toast() {
     println!("~~~ 3.2 toasted bread buttered.");
 }
 
-#[tokio::main(flavor = "multi_thread", worker_threads = 4)]
+#[tokio::main]
 async fn main() {
     // println!("Hello, wrold!");
 
     let start = Instant::now();
 
-    let person_one = tokio::task::spawn(async {
-        let coffee_mug_step = prep_coffee_mug();
-        let coffee_step = make_coffee();
-        let toast_step = make_toast();
+    let coffee_mug_step = prep_coffee_mug();
+    let coffee_step = make_coffee();
+    let toast_step = make_toast();
 
-        tokio::join!(coffee_mug_step, coffee_step, toast_step);
-    });
-
-    let _ = person_one.await;
-
+    // 6s(sync) + 3s(10s async) + 15s(10s async + 5s sync)
+    tokio::join!(coffee_mug_step, coffee_step, toast_step); // 24s
     let elapsed = start.elapsed();
 
-    println!("It took: {} seconds", elapsed.as_secs()); // 18s
+    println!("It took: {} seconds", elapsed.as_secs()); // 24s
 }

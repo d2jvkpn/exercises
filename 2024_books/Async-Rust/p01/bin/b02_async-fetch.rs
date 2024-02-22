@@ -1,4 +1,3 @@
-use reqwest;
 use serde::Deserialize;
 use tokio::time::{sleep, Duration};
 

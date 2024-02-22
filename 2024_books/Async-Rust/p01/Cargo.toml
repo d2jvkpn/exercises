@@ -11,7 +11,7 @@ chrono = "0.4"
 reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
-tokio = { version = "1.35", features = ["full"] }
+tokio = { version = "1", features = ["full"] }
 
 [[bin]]
 name = "a01"
@@ -19,27 +19,19 @@ path = "./bin/a01_reqwest.rs"
 
 [[bin]]
 name = "a02"
-path = "./bin/a02_reqwest-seq.rs"
-
-[[bin]]
-name = "a03"
-path = "./bin/a03_reqwest-async.rs"
+path = "./bin/a02_parallel.rs"
 
 [[bin]]
 name = "b01"
-path = "./bin/b01_sleep-seq.rs"
+path = "./bin/b01_async-fetch.rs"
 
 [[bin]]
 name = "b02"
-path = "./bin/b02_parallel.rs"
+path = "./bin/b02_async-fetch.rs"
 
 [[bin]]
-name = "b03"
-path = "./bin/b03_async-fetch.rs"
-
-[[bin]]
-name = "b04"
-path = "./bin/b04_async-fetch.rs"
+name = "c01"
+path = "./bin/c01_coffee-and-toast.rs"
 
 [[bin]]
 name = "c02"
@@ -52,10 +44,6 @@ path = "./bin/c03_coffee-and-toast.rs"
 [[bin]]
 name = "c04"
 path = "./bin/c04_coffee-and-toast.rs"
-
-[[bin]]
-name = "c05"
-path = "./bin/c05_coffee-and-toast.rs"
 
 [[bin]]
 name = "d01"

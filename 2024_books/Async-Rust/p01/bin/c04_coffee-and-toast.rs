@@ -42,14 +42,16 @@ async fn main() {
     let start = Instant::now();
 
     let person_one = tokio::task::spawn(async {
-        prep_coffee_mug().await;
-        make_coffee().await;
-        make_toast().await;
+        let coffee_mug_step = prep_coffee_mug();
+        let coffee_step = make_coffee();
+        let toast_step = make_toast();
+
+        tokio::join!(coffee_mug_step, coffee_step, toast_step);
     });
 
     let _ = person_one.await;
 
     let elapsed = start.elapsed();
 
-    println!("It took: {} seconds", elapsed.as_secs()); // 31s
+    println!("It took: {} seconds", elapsed.as_secs()); // 18s
 }
