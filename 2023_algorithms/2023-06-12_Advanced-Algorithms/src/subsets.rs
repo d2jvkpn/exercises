@@ -1,6 +1,6 @@
 // Time: O(n*2^n), Space: O(n), nums is sorted
 pub fn subsets_without_dups<T: Clone + PartialEq>(nums: &[T]) -> Vec<Vec<T>> {
-    // TODO: overflow
+    // TODO: avoid overflow
     let mut subsets = Vec::with_capacity(2_usize.pow(nums.len() as u32)); // Vec::new();
     let mut curset = Vec::with_capacity(nums.len());
 

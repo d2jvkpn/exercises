@@ -1,21 +1,4 @@
 pub fn quick_sort<T: Copy + Ord>(arr: &mut [T]) {
-    fn partition<T: Copy + Ord>(arr: &mut [T], low: usize, high: usize) -> usize {
-        let mut pivot = low;
-        let value = arr[high];
-
-        for i in low..high {
-            if arr[i] <= value {
-                if pivot != i {
-                    arr.swap(pivot, i);
-                }
-                pivot += 1;
-            }
-        }
-
-        arr.swap(pivot, high);
-        pivot
-    }
-
     fn qs<T: Copy + Ord>(arr: &mut [T], low: usize, high: usize) {
         if low >= high {
             return;
@@ -37,6 +20,23 @@ pub fn quick_sort<T: Copy + Ord>(arr: &mut [T]) {
     }
 
     qs(arr, 0, arr.len() - 1);
+}
+
+pub fn partition<T: Copy + Ord>(arr: &mut [T], low: usize, high: usize) -> usize {
+    let mut pivot = low;
+    let value = arr[high];
+
+    for i in low..high {
+        if arr[i] <= value {
+            if pivot != i {
+                arr.swap(pivot, i);
+            }
+            pivot += 1;
+        }
+    }
+
+    arr.swap(pivot, high);
+    pivot
 }
 
 #[cfg(test)]

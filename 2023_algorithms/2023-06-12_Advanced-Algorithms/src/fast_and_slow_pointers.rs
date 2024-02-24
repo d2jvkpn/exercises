@@ -15,7 +15,7 @@ pub fn has_cycle<T: Debug + Copy + PartialEq>(list: &LinkedList<T>) -> (Next<T>,
             Some(ref v) => v,
         };
 
-        if v.borrow().value == slow.clone().unwrap().borrow().value {
+        if v.borrow().item == slow.clone().unwrap().borrow().item {
             return (fast, true);
         }
         */
@@ -25,7 +25,7 @@ pub fn has_cycle<T: Debug + Copy + PartialEq>(list: &LinkedList<T>) -> (Next<T>,
             _ => return (None, false),
         };
 
-        if v1.borrow().value == v2.borrow().value {
+        if v1.borrow().item == v2.borrow().item {
             return (fast, true);
         }
     }
@@ -47,7 +47,7 @@ pub fn cycle_start<T: Debug + Copy + PartialEq>(list: &LinkedList<T>) -> Next<T>
             _ => return None,
         };
 
-        if v1.borrow().value == v2.borrow().value {
+        if v1.borrow().item == v2.borrow().item {
             return slow;
         }
 
@@ -67,13 +67,13 @@ mod tests {
 
         let n2 = list.get(1);
         let last = list.last();
-        assert_eq!(LinkedList::walk(&n2, 2).unwrap().borrow().value, 4);
+        assert_eq!(LinkedList::walk(&n2, 2).unwrap().borrow().item, 4);
 
         last.unwrap().borrow_mut().next = n2;
         let (next, ok) = has_cycle(&list);
         assert!(ok);
-        assert_eq!(next.unwrap().borrow().value, 5);
+        assert_eq!(next.unwrap().borrow().item, 5);
 
-        assert_eq!(cycle_start(&list).unwrap().borrow().value, 2);
+        assert_eq!(cycle_start(&list).unwrap().borrow().item, 2);
     }
 }

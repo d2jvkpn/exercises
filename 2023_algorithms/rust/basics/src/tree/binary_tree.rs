@@ -1,6 +1,6 @@
 use super::node::{Child, ChildNode, Node, Side};
 use crate::structs::queue_linked_list::Queue;
-use std::{cmp::PartialOrd, fmt::Debug};
+use std::fmt::Debug;
 
 #[derive(Debug)]
 pub struct Tree<T> {
