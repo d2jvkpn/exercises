@@ -1,4 +1,7 @@
-use std::io::{stdin, stdout, Write};
+use std::{
+    error,
+    io::{stdin, stdout, Write},
+};
 
 /*
 gcd(a, b) = gcd(a', b) = gcd(a, b')
@@ -8,20 +11,22 @@ n*a + b' = b
 3918848, 1653264
 */
 fn main() {
-    let mut input = String::new();
-
-    print!("==> Enter two numbers: ");
-
-    let _ = stdout().flush();
-    input.clear();
-    stdin().read_line(&mut input).expect("Failed to read line");
-    let a: usize = input.trim().parse().expect("Input not an integer");
-
-    input.clear();
-    stdin().read_line(&mut input).expect("Failed to read line");
-    let b: usize = input.trim().parse().expect("Input not an integer");
+    let a: usize = read_number("==> Enter number a: ").unwrap();
+    let b: usize = read_number("==> Enter number b: ").unwrap();
 
     println!("==> ans: {}", greatest_common_divisor(a, b));
+}
+
+fn read_number(prompt: &str) -> Result<usize, Box<dyn error::Error>> {
+    let mut input = String::new();
+
+    print!("{}", prompt);
+    stdout().flush()?;
+    input.clear();
+    stdin().read_line(&mut input)?;
+    let num: usize = input.trim().parse()?;
+
+    Ok(num)
 }
 
 fn greatest_common_divisor(a: usize, b: usize) -> usize {

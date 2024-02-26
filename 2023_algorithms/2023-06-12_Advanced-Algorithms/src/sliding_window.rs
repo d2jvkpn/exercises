@@ -27,11 +27,12 @@ fn contains_duplicates_set(nums: &[i32], k: usize) -> bool {
     }
 
     let mut low = 0;
-    let mut set = HashSet::new();
+    // let mut set = HashSet::new();
+    let mut set = HashSet::with_capacity(k);
 
     for (high, v) in nums.iter().enumerate() {
         if high - low + 1 > k {
-            set.remove(v);
+            set.remove(&nums[low]);
             low += 1;
         }
 
