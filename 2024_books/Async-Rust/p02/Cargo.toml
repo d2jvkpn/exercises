@@ -7,8 +7,12 @@ default-run = "p02"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [[bin]]
-name = "logging"
-path = "bin/logging.rs"
+name = "log1"
+path = "bin/log1.rs"
+
+[[bin]]
+name = "log2"
+path = "bin/log2.rs"
 
 [dependencies]
 chrono = "0.4"

@@ -1,5 +1,3 @@
-#![allow(dead_code)]
-
 use chrono::{Local, SecondsFormat};
 use tokio::{sync::oneshot, task::spawn};
 
@@ -39,7 +37,6 @@ struct Entry {
 }
 
 struct Logger {
-    pub fp: String,
     pub handle: Arc<Mutex<File>>,
 }
 
@@ -52,7 +49,7 @@ impl Logger {
 
         // let file = File::create(fp)?;
         // Ok(Arc::new(Mutex::new(file)))
-        Ok(Self { fp: fp.to_string(), handle: Arc::new(Mutex::new(file)) })
+        Ok(Self { handle: Arc::new(Mutex::new(file)) })
     }
 
     async fn write(&self, line: String) {
