@@ -27,6 +27,8 @@ vocab = {token:integer for integer,token in enumerate(all_words)}
 class SimpleTokenizer:
   decode_re = r'([,.?_!"()\']|--|\s)'
   encode_re = r'\s+([,.?!"()\'])'
+  unknown = "<|unk|>"
+  end_of_text = "<|endoftext|>"
 
   def __init__(self, vocab):
     self.str_to_int = vocab #A
@@ -35,11 +37,11 @@ class SimpleTokenizer:
   def encode(self, text): #C
     preprocessed = re.split(self.decode_re, text)
     preprocessed = [item.strip() for item in preprocessed if item.strip()]
-    ids = [self.str_to_int[s] for s in preprocessed]
+    ids = [self.str_to_int.get(s, self.unknown)  for s in preprocessed]
     return ids
         
   def decode(self, ids): #D
-    text = " ".join([self.int_to_str[i] for i in ids]) 
+    text = " ".join([self.int_to_str.get(i, self.unknown) for i in ids]) 
         
     text = re.sub(self.encode_re, r'\1', text) #E
     return text
@@ -51,3 +53,9 @@ ids = tokenizer.encode(text)
 
 print("==> ids:", ids)
 print("==> text:", tokenizer.decode(ids))
+
+
+####
+text = 'Hello, do you like tea? <|endoftext|> In the sunlit terraces of the palace.'
+print(tokenizer.decode(tokenizer.encode(text)))
+print(tokenizer.decode(tokenizer.encode(text)))
