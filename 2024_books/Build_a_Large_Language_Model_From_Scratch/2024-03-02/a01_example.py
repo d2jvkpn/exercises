@@ -15,6 +15,8 @@ for t in re.split(r'([,.?_!"()\']|--|\s)', raw_text):
 
 
 all_words = sorted(list(set(preprocessed)))
+all_words.extend(["<|endoftext|>", "<|unk|>"])
+
 vocab_size = len(all_words)
 
 vocab = {token:integer for integer,token in enumerate(all_words)}

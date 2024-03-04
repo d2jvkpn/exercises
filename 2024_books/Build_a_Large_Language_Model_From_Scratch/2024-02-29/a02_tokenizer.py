@@ -19,6 +19,7 @@ for t in re.split(r'([,.?_!"()\']|--|\s)', raw_text):
 
 
 all_words = sorted(list(set(preprocessed)))
+all_words.extend(["<|endoftext|>", "<|unk|>"])
 vocab_size = len(all_words)
 
 print(f"==> vocab_size: {vocab_size}")
