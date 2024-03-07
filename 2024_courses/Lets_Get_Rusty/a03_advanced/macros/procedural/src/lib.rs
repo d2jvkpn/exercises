@@ -4,7 +4,7 @@ use chrono::{Local, SecondsFormat};
 use darling::{FromMeta, ToTokens};
 use proc_macro::TokenStream;
 use quote::quote;
-use syn;
+// use syn;
 
 /// proc_macro
 #[proc_macro]
