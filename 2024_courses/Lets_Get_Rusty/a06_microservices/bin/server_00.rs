@@ -1,5 +1,7 @@
 use tonic::{transport::Server, Request, Response, Status};
 
+use std::error;
+
 pub mod hello {
     tonic::include_proto!("hello"); // grpc package name
 }
@@ -7,8 +9,6 @@ use hello::{
     greeter_server::{Greeter, GreeterServer},
     HelloReply, HelloRequest,
 };
-
-use std::error;
 
 #[derive(Debug, Default)]
 pub struct MyGreeter {}
