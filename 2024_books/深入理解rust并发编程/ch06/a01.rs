@@ -1,27 +1,27 @@
 use std::{
-    sync::{Arc, Mutex},
-    thread,
+	sync::{Arc, Mutex},
+	thread,
 };
 
 fn main() {
-    let num = 15;
-    let vec = Arc::new(Mutex::new(Vec::with_capacity(num)));
-    let mut handles = Vec::with_capacity(num);
+	let num = 15;
+	let vec = Arc::new(Mutex::new(Vec::with_capacity(num)));
+	let mut handles = Vec::with_capacity(num);
 
-    for i in 0..num {
-        let vec = vec.clone();
+	for i in 0..num {
+		let vec = vec.clone();
 
-        let handle = thread::spawn(move || {
-            let mut vec = vec.lock().unwrap();
-            vec.push(i);
-        });
+		let handle = thread::spawn(move || match vec.lock() {
+			Ok(mut v) => v.push(i),
+			Err(e) => eprintln!("!!! lock error: {e:?}"),
+		});
 
-        handles.push(handle);
-    }
+		handles.push(handle);
+	}
 
-    for handle in handles {
-        handle.join().unwrap();
-    }
+	for handle in handles {
+		handle.join().unwrap();
+	}
 
-    println!("==> final vec: {:?}", vec.lock().unwrap());
+	println!("==> final vec: {:?}", vec.lock().unwrap());
 }
