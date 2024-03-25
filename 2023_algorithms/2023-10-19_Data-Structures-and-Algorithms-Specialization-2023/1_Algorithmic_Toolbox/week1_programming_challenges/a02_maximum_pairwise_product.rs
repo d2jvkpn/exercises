@@ -2,16 +2,17 @@ use std::io::{stdin, stdout, Write};
 
 fn main() {
     let mut input = String::new();
+    let mut val;
 
     print!("==> Enter size of numbers: ");
 
     let _ = stdout().flush();
     input.clear();
     stdin().read_line(&mut input).expect("Failed to read line");
-    let mut num: usize = input.trim().parse().expect("Input not an integer");
+    let num: usize = input.trim().parse().expect("Input not an integer");
 
     if num < 2 {
-        panic!("invalid size");
+        panic!("invalid size: {}", num);
     }
 
     let mut numbers: Vec<usize> = Vec::with_capacity(num);
@@ -19,11 +20,11 @@ fn main() {
     for _ in 0..num {
         input.clear();
         stdin().read_line(&mut input).expect("Failed to read line");
-        num = input.trim().parse().expect("Input not an integer");
-        numbers.push(num);
+        val = input.trim().parse().expect("Input not an integer");
+        numbers.push(val);
     }
 
-    println!("==> ans: {}", maximum_pairwise_product(&numbers));
+    println!("==> Ans: {}", maximum_pairwise_product(&numbers));
 }
 
 fn maximum_pairwise_product(numbers: &Vec<usize>) -> u128 {
@@ -37,11 +38,7 @@ fn maximum_pairwise_product(numbers: &Vec<usize>) -> u128 {
         }
     });
 
-    numbers.iter().enumerate().for_each(|(i, v)| {
-        if i == idx1.0 {
-            return;
-        }
-
+    numbers.iter().enumerate().filter(|(i, _)| *i != idx1.0).for_each(|(i, v)| {
         if !idx2.1 || v > &numbers[idx2.0] {
             idx2.0 = i;
             idx2.1 = true;

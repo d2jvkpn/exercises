@@ -10,7 +10,7 @@ int main() {
 	cin >> b;
 
 	ans = a + b;
-	cout << "==> ans: " << ans << endl;
+	cout << "==> Ans: " << ans << endl;
 
 	return 0;
 }

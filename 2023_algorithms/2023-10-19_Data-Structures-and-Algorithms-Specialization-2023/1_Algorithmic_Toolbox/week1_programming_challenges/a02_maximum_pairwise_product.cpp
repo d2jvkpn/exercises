@@ -32,7 +32,7 @@ long long maximumPairwiseProduct(vector<int>& nums) {
 
 int main() {
 	srand (time(NULL));
-	cout << "==> A random number: " << rand()%10 + 1 << endl;
+	cout << "==> Random number: " << rand()%10 + 1 << endl;
 
 	int size, val;
 
@@ -40,7 +40,7 @@ int main() {
 	cin >> size;
 
 	if (size < 2) {
-		cerr << "!!! invalid size" << endl;
+		cerr << "!!! invalid size: " << size << endl;
 		exit(1);
 	}
 
@@ -49,7 +49,7 @@ int main() {
 		cin >> nums[i];
 	}
 
-	cout << "==> ans: " << maximumPairwiseProduct(nums) << endl;
+	cout << "==> Ans: " << maximumPairwiseProduct(nums) << endl;
 
 	return 0;
 }
