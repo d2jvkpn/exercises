@@ -66,3 +66,5 @@ echo $ans
 echo "$(epr 4 + 2)"
 
 echo "4 + 0.2" | bc
+
+exit 223
