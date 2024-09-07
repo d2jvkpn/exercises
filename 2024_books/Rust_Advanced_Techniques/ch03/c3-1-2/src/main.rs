@@ -17,7 +17,8 @@ fn main() {
 	match_on_black_cats(&black_cat);
 	match_on_black_cats(&cheshire_cat);
 
-	write_to_file().unwrap();
+	// write_to_file().unwrap();
+	try_to_write_to_file();
 }
 
 // 1.
@@ -76,10 +77,35 @@ fn match_on_black_cats(cat: &Cat) {
 }
 
 // 4.
-fn write_to_file() -> std::io::Result<()> {
+enum ErrorTypes {
+	IoError(std::io::Error),
+	FormatError(std::fmt::Error),
+}
+
+struct ErrorWrapper {
+	source: ErrorTypes,
+	message: String,
+}
+
+impl From<std::io::Error> for ErrorWrapper {
+	fn from(source: std::io::Error) -> Self {
+		Self { source: ErrorTypes::IoError(source), message: "there was an IO error!".into() }
+	}
+}
+
+// fn write_to_file() -> std::io::Result<()> {
+fn write_to_file() -> Result<(), ErrorWrapper> {
 	create_dir_all("data")?;
 
 	let mut file = File::create("data/test01.txt")?;
 	file.write_all(b"File contents\n")?;
 	Ok(())
+}
+
+fn try_to_write_to_file() {
+	match write_to_file() {
+		Ok(()) => println!("Write succeeded"),
+		// Err(err) => println!("Write failed: {}", err.to_string()),
+		Err(err) => println!("Write failed: {}", err.message),
+	}
 }
