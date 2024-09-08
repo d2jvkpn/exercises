@@ -1,3 +1,7 @@
+#![allow(dead_code)]
+
+use std::{cell::RefCell, rc::Rc};
+
 fn main() {
 	// println!("Hello, world!");
 
@@ -29,13 +33,13 @@ fn main() {
 	println!("add_fn={}, x={}", add_fn(5), x); // Prints 15, 10
 	println!("add_fn={}, x={}", add_fn(5), x); // Prints 15, 10
 
-    let x = vec![1, 2, 3]; // `x` is captured by value
-    let consume_x = move || {
-        println!("{:?}", x); // Consumes `x`
-    };
+	let x = vec![1, 2, 3]; // `x` is captured by value
+	let consume_x = move || {
+		println!("{:?}", x); // Consumes `x`
+	};
 
-    consume_x(); // Prints [1, 2, 3]
-    consume_x(); // Prints [1, 2, 3]
+	consume_x(); // Prints [1, 2, 3]
+	consume_x(); // Prints [1, 2, 3]
 
 	// 4. FnMut
 	let mut x = 10;
@@ -48,7 +52,10 @@ fn main() {
 	println!("add_fn_mut={}", add_fn_mut(10)); // Prints 25
 
 	// 5. FnOnce
-	fn take_closure<F> (mut clo: F) where F: FnOnce(u32) -> Vec<u32> {
+	fn take_closure<F>(clo: F)
+	where
+		F: FnOnce(u32) -> Vec<u32>,
+	{
 		let vec = clo(12);
 		println!("modified vector is {:?}", vec);
 		// let value2 = clo(32); // second call is not allowed throws an error
@@ -59,4 +66,36 @@ fn main() {
 		v.push(x);
 		v
 	});
+
+	// take_closure(...); // value used here after move
+
+	// 6. LinkedList
+	struct Node<T> {
+		item: T,
+		next: NextNode<T>,
+	}
+
+	type NextNode<T> = Option<Rc<RefCell<Node<T>>>>;
+
+	impl<T> Node<T> {
+		pub fn new(item: T) -> Self{
+			Self{item, next: None}
+		}
+	}
+	
+	impl<T> From<Node<T>> for NextNode<T> {
+		fn from(node: Node<T>) -> Self {
+			Some(Rc::new(RefCell::new(node)))
+		}
+	}
+
+	struct LinkedList<T> {
+		header: NextNode<T>,
+	}
+
+	impl<T> LinkedList<T> {
+		fn new(t: T) -> Self {
+			Self { header: Node::new(t).into()}
+		}
+	}
 }
