@@ -82,16 +82,21 @@ fn main() {
 	}
 
 	numbers.reset_cursor();
-
 	while let Some(item) = numbers.next() {
 		println!("--> 2. item: {}", item.borrow());
 	}
+
+	numbers.reset_cursor();
+	numbers.head.iter().for_each(|v| println!("--> v: {:?}", v.borrow()));
+
+	numbers.reset_cursor();
+	println!("--> numbers last: {:?}", numbers.last());
 
 	let mut persons = LinkedList::new(Person::new("d2jvkpn".into()));
 
 	while let Some(person) = persons.next() {
 		person.borrow().hello();
-		// let p = person.into_inner(); // Clone required
+		// let p = person.into_inner(); // Clone is required for T
 		// p.hello();
 	}
 }
