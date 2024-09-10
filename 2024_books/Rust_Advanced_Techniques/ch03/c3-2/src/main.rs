@@ -86,6 +86,14 @@ fn main() {
 	while let Some(item) = numbers.next() {
 		println!("--> 2. item: {}", item.borrow());
 	}
+
+	let mut persons = LinkedList::new(Person::new("d2jvkpn".into()));
+
+	while let Some(person) = persons.next() {
+		person.borrow().hello();
+		// let p = person.into_inner(); // Clone required
+		// p.hello();
+	}
 }
 
 // #[derive(Debug)]
@@ -170,5 +178,19 @@ impl<T> Iterator for LinkedList<T> {
 		let ans = cursor.borrow();
 		self.cursor = ans.next.clone();
 		Some(ans.item.clone())
+	}
+}
+
+struct Person {
+	name: String,
+}
+
+impl Person {
+	pub fn new(name: String) -> Self {
+		Self { name }
+	}
+
+	pub fn hello(&self) {
+		println!("Hello, I'm {}.", self.name);
 	}
 }
