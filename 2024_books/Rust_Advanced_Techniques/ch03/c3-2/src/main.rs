@@ -1,6 +1,7 @@
 #![allow(dead_code)]
+#![allow(unused_imports)]
 
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, fmt, rc::Rc};
 
 fn main() {
 	// println!("Hello, world!");
@@ -70,32 +71,104 @@ fn main() {
 	// take_closure(...); // value used here after move
 
 	// 6. LinkedList
-	struct Node<T> {
-		item: T,
-		next: NextNode<T>,
+	let mut numbers = LinkedList::new(1);
+	numbers.push(2).push(3).push(4).push(5);
+	assert_eq!(numbers.size(), 5);
+
+	println!("==> numbers: {numbers:?}");
+
+	while let Some(item) = numbers.next() {
+		println!("--> 1. item: {}", item.borrow());
 	}
 
-	type NextNode<T> = Option<Rc<RefCell<Node<T>>>>;
+	numbers.reset_cursor();
 
-	impl<T> Node<T> {
-		pub fn new(item: T) -> Self{
-			Self{item, next: None}
+	while let Some(item) = numbers.next() {
+		println!("--> 2. item: {}", item.borrow());
+	}
+}
+
+// #[derive(Debug)]
+struct Node<T> {
+	item: Rc<RefCell<T>>,
+	next: NextNode<T>,
+}
+
+type NextNode<T> = Option<Rc<RefCell<Node<T>>>>;
+
+impl<T> Node<T> {
+	pub fn new(item: T) -> Self {
+		Self { item: Rc::new(RefCell::new(item)), next: None }
+	}
+
+	pub fn push(&mut self, item: T) {
+		match &self.next {
+			None => self.next = Node::new(item).into(),
+			Some(v) => v.borrow_mut().push(item),
 		}
 	}
-	
-	impl<T> From<Node<T>> for NextNode<T> {
-		fn from(node: Node<T>) -> Self {
-			Some(Rc::new(RefCell::new(node)))
+}
+
+impl<T: fmt::Debug> fmt::Debug for Node<T> {
+	fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+		let mut vec = Vec::new();
+		vec.push(self.item.clone());
+
+		let mut next = self.next.clone();
+		while let Some(node) = next {
+			vec.push(node.borrow().item.clone());
+			next = node.borrow().next.clone();
 		}
+
+		write!(f, "{:?}", vec)
+	}
+}
+
+impl<T> From<Node<T>> for NextNode<T> {
+	fn from(node: Node<T>) -> Self {
+		Some(Rc::new(RefCell::new(node)))
+	}
+}
+
+#[derive(Debug)]
+struct LinkedList<T> {
+	head: NextNode<T>,
+	size: usize,
+	cursor: NextNode<T>,
+}
+
+impl<T> LinkedList<T> {
+	fn new(t: T) -> Self {
+		let head: NextNode<T> = Node::new(t).into();
+		Self { head: head.clone(), size: 1, cursor: head.clone() }
 	}
 
-	struct LinkedList<T> {
-		header: NextNode<T>,
+	pub fn push(&mut self, item: T) -> &mut Self {
+		match &self.head {
+			None => self.head = Node::new(item).into(),
+			Some(v) => v.borrow_mut().push(item),
+		};
+
+		self.size += 1;
+		self
 	}
 
-	impl<T> LinkedList<T> {
-		fn new(t: T) -> Self {
-			Self { header: Node::new(t).into()}
-		}
+	pub fn size(&self) -> usize {
+		self.size
+	}
+
+	pub fn reset_cursor(&mut self) {
+		self.cursor = self.head.clone();
+	}
+}
+
+impl<T> Iterator for LinkedList<T> {
+	type Item = Rc<RefCell<T>>;
+
+	fn next(&mut self) -> Option<Self::Item> {
+		let cursor = self.cursor.clone()?;
+		let ans = cursor.borrow();
+		self.cursor = ans.next.clone();
+		Some(ans.item.clone())
 	}
 }
