@@ -4,6 +4,11 @@
 mod linked_list;
 
 use linked_list::LinkedList;
+use std::{
+	cell::{Ref, RefCell, RefMut},
+	fmt,
+	rc::Rc,
+};
 
 fn main() {
 	// println!("Hello, world!");
@@ -94,17 +99,95 @@ fn main() {
 	numbers.reset_cursor();
 	println!("--> numbers last: {:?}", numbers.last());
 
+	//
 	let mut persons = LinkedList::new(Person::new("d2jvkpn".into()));
+	persons.push("alice".into());
 
 	while let Some(person) = persons.next() {
 		person.borrow().hello();
 		// let p = person.into_inner(); // Clone is required for T
 		// p.hello();
 	}
+
+	// 7. smart pointers
+	let rc_name: Rc<RefCell<String>> = Rc::new(RefCell::new("d2jvkpn".to_string()));
+	// dbg!(&rc_name);
+
+	{
+		let name: Ref<String> = rc_name.borrow();
+		println!("==> 1. name: {name}"); // 1. name: d2jvkpn
+	}
+
+	{
+		let mut name: RefMut<String> = rc_name.borrow_mut();
+		*name = "D2JVKPN".to_string();
+	}
+	// dbg!(&rc_name);
+
+	let name: String = <RefCell<String> as Clone>::clone(&rc_name).into_inner();
+	println!("==> 2. name: {name}"); // 2. name: D2JVKPN
+
+	//
+	let rc_name: Rc<RefCell<String>> = Rc::new(RefCell::new("d2jvkpn".to_string()));
+
+	let name: Result<String, Rc<RefCell<String>>> = Rc::try_unwrap(rc_name).map(|v| v.into_inner());
+
+	println!("==> 3. name: {name:?}"); // 3. name: Ok("d2jvkpn")
+
+	// 8. iter
+	let arr = ["duck", "1", "2", "goose", "3", "4"];
+
+	let ans: Vec<i32> = arr.iter().flat_map(|v| v.parse::<i32>()).collect();
+	println!("{:?}", ans); // [1, 2, 3, 4]
+
+	let (successes, failures): (Vec<_>, Vec<_>) =
+		arr.iter().map(|v| v.parse::<i32>()).partition(Result::is_ok);
+
+	println!("successses={:?}", successes); // successses=[Ok(1), Ok(2), Ok(3), Ok(4)]
+	println!("failures={:?}", failures);
+	/*
+	failures=[Err(ParseIntError { kind: InvalidDigit }), Err(ParseIntError { kind: InvalidDigit})]
+	*/
+
+	let successes: Vec<_> = successes.into_iter().map(Result::unwrap).collect();
+	let failures: Vec<_> = failures.into_iter().map(Result::unwrap_err).collect();
+
+	println!("successses={:?}", successes); // successses=[1, 2, 3, 4]
+	println!("failures={:?}", failures);
+	// failures=[ParseIntError { kind: InvalidDigit }, ParseIntError { kind: InvalidDigit }]
+
+	let popular_dog_breeds = vec![
+		"Labrador",
+		"French Bulldog",
+		"Golden Retriever",
+		"German Shepherd",
+		"Poodle",
+		"Bulldog",
+		"Beagle",
+		"Rottweiler",
+		"Pointer",
+		"Dachshund",
+	];
+	let ranked_breeds: Vec<_> = popular_dog_breeds.clone().into_iter().enumerate().collect();
+	println!("{:?}", ranked_breeds); // [(0, "Labrador"), (1, "French Bulldog")...]
+
+	let ranked_breeds: Vec<_> = popular_dog_breeds.clone()
+		.into_iter()
+		.enumerate()
+		.map(|(idx, breed)| (idx + 1, breed))
+		.collect();
+
+	println!("{:?}", ranked_breeds);
 }
 
 struct Person {
 	name: String,
+}
+
+impl From<&str> for Person {
+	fn from(name: &str) -> Self {
+		Self { name: name.to_string() }
+	}
 }
 
 impl Person {

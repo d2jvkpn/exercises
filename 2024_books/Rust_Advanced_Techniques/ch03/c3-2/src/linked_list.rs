@@ -55,10 +55,10 @@ impl<T> LinkedList<T> {
 		Self { head: head.clone(), size: 1, cursor: head.clone() }
 	}
 
-	pub fn push(&mut self, item: T) -> &mut Self {
+	pub fn push(&mut self, d: T) -> &mut Self {
 		match &self.head {
-			None => self.head = Node::new(item).into(),
-			Some(v) => v.borrow_mut().push(item),
+			None => self.head = Node::new(d).into(),
+			Some(v) => v.borrow_mut().push(d),
 		};
 
 		self.size += 1;
