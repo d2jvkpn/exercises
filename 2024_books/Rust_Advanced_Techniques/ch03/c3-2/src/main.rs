@@ -89,7 +89,7 @@ fn main() {
 	}
 
 	numbers.reset_cursor();
-	// numbers.head.iter().for_each(|v| println!("--> v: {:?}", v.borrow()));
+	numbers.get_head().iter().for_each(|v| println!("--> iter v: {:?}", v.borrow()));
 
 	numbers.reset_cursor();
 	println!("--> numbers last: {:?}", numbers.last());

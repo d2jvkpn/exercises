@@ -72,6 +72,10 @@ impl<T> LinkedList<T> {
 	pub fn reset_cursor(&mut self) {
 		self.cursor = self.head.clone();
 	}
+
+	pub fn get_head(&self) -> NextNode<T> {
+		self.head.clone()
+	}
 }
 
 impl<T> Iterator for LinkedList<T> {
