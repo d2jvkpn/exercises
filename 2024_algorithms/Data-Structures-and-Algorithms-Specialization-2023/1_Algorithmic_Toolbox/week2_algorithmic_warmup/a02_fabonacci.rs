@@ -1,9 +1,11 @@
+#![allow(dead_code)]
+
 mod utils;
 
 fn main() {
     let num: usize = utils::read_usize("==> Enter number: ").unwrap();
 
-    println!("==> Ans: {}", fibnacci_array(num).pop().unwrap());
+    // println!("==> Ans: {}", fibnacci_array(num).pop().unwrap());
     println!("==> Ans: {}", fibnacci_dp(num));
 }
 
@@ -26,6 +28,10 @@ fn fibnacci_array(num: usize) -> Vec<u128> {
 }
 
 fn fibnacci_dp(num: usize) -> u128 {
+    if num < 2 {
+        return num as u128;
+    }
+
     let mut dp = (1, 1);
     let mut val = 0;
 

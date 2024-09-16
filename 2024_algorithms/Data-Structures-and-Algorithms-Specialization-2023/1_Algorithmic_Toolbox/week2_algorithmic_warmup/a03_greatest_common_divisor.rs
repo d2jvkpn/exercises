@@ -15,15 +15,6 @@ fn main() {
     println!("==> Ans: {}", gdc(a, b));
 }
 
-fn gdc_rec(a: usize, b: usize) -> usize {
-    println!("~~~ a={a}, b={b}");
-    if b == 0 {
-        return a;
-    }
-
-    return gdc_rec(b, a % b);
-}
-
 fn gdc(mut a: usize, mut b: usize) -> usize {
     while b != 0 {
         (a, b) = (b, a % b);
@@ -32,12 +23,22 @@ fn gdc(mut a: usize, mut b: usize) -> usize {
     a
 }
 
+fn gdc_rec(a: usize, b: usize) -> usize {
+    dbg!("a={a}, b={b}");
+    if b == 0 {
+        return a;
+    }
+
+    return gdc_rec(b, a % b);
+}
+
 #[cfg(tests)]
 mod tests {
     use super::*;
 
     #[test]
     fn t_gcd() {
+        assert_eq!(gdc(3918848, 1653264), 61232);
         assert_eq!(gdc_rec(3918848, 1653264), 61232);
     }
 }
