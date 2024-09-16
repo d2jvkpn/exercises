@@ -1,3 +1,4 @@
+use std::cmp::max;
 use std::io::{stdin, stdout, Write};
 
 fn main() {
@@ -28,22 +29,18 @@ fn main() {
 }
 
 fn maximum_pairwise_product(numbers: &Vec<usize>) -> u128 {
-    let mut idx1 = (0, false);
-    let mut idx2 = (0, false);
+    let mut ans = 0;
+    dbg!(&numbers);
 
-    numbers.iter().enumerate().for_each(|(i, v)| {
-        if !idx1.1 || v > &numbers[idx1.0] {
-            idx1.0 = i;
-            idx1.1 = true;
-        }
+    if numbers.len() < 2 {
+        return 0;
+    }
+
+    numbers.iter().enumerate().for_each(|(i, v1)| {
+        numbers[i + 1..].iter().for_each(|v2| {
+            ans = max(ans, (*v1 as u128) * (*v2 as u128));
+        });
     });
 
-    numbers.iter().enumerate().filter(|(i, _)| *i != idx1.0).for_each(|(i, v)| {
-        if !idx2.1 || v > &numbers[idx2.0] {
-            idx2.0 = i;
-            idx2.1 = true;
-        }
-    });
-
-    (numbers[idx1.0] as u128) * (numbers[idx2.0] as u128)
+    ans
 }
