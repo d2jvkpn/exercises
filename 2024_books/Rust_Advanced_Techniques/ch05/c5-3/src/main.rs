@@ -18,6 +18,20 @@ macro_rules! with_type {
 	};
 }
 
+macro_rules! accessor {
+	($func:ident, &$ret:ty) => {
+		pub fn $func(&self) -> &$ret {
+			&self.$func
+		}
+	};
+
+	($func:ident, $ret:ty) => {
+		pub fn $func(&self) -> $ret {
+			self.$func
+		}
+	};
+}
+
 fn main() {
 	// 1.
 	let mut bicycle_builder = BicycleBuilder::new();
@@ -39,6 +53,8 @@ fn main() {
 		.with_color("red");
 
 	println!("==> My new bike: {:#?}", bicycle);
+
+	println!("==> color={:?}, size={}", bicycle.color(), bicycle.size());
 }
 
 #[derive(Debug, Default)]
@@ -50,21 +66,6 @@ struct Bicycle {
 }
 
 impl Bicycle {
-	fn make(&self) -> &String {
-		&self.make
-	}
-
-	fn model(&self) -> &String {
-		&self.model
-	}
-
-	fn size(&self) -> i32 {
-		self.size
-	}
-	fn color(&self) -> &String {
-		&self.color
-	}
-
 	fn new() -> Self {
 		Bicycle { make: String::new(), model: String::new(), size: 0, color: String::new() }
 	}
@@ -84,15 +85,38 @@ impl Bicycle {
 		self.size = size;
 		self
 	}
+	*/
+	with_type!(with_size, size, i32);
 
+	/*
 	fn with_color(mut self, color: &str) -> Self {
 		self.color = color.into();
 		self
 	}
 	*/
-
 	with_str!(with_color, color);
-	with_type!(with_size, size, i32);
+
+	fn make(&self) -> &String {
+		&self.make
+	}
+
+	fn model(&self) -> &String {
+		&self.model
+	}
+
+	/*
+	fn size(&self) -> i32 {
+		self.size
+	}
+	*/
+	accessor!(size, i32);
+
+	/*
+	fn color(&self) -> &String {
+		&self.color
+	}
+	*/
+	accessor!(color, &String);
 }
 
 struct BicycleBuilder {
