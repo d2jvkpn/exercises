@@ -12,8 +12,9 @@ macro_rules! with_str {
 macro_rules! with_type {
 	($func:ident, $name:ident, $type:ty) => {
 		fn $func(mut self, $name: $type) -> Self {
-			self.$name = $name;
-			self
+			//self.$name = $name;
+			//self
+			Self { $name: $name.into(), ..self }
 		}
 	};
 }
