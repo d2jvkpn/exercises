@@ -1,8 +1,25 @@
 #![allow(dead_code)]
 
-fn main() {
-	// println!("Hello, world!");
+macro_rules! with_str {
+	($func:ident, $name:ident) => {
+		fn $func(mut self, $name: &str) -> Self {
+			self.$name = $name.into();
+			self
+		}
+	};
+}
 
+macro_rules! with_type {
+	($func:ident, $name:ident, $type:ty) => {
+		fn $func(mut self, $name: $type) -> Self {
+			self.$name = $name;
+			self
+		}
+	};
+}
+
+fn main() {
+	// 1.
 	let mut bicycle_builder = BicycleBuilder::new();
 
 	bicycle_builder
@@ -14,6 +31,7 @@ fn main() {
 	let bicycle = bicycle_builder.build();
 	println!("==> My new bike: {:#?}", bicycle);
 
+	// 2.
 	let bicycle: Bicycle = Bicycle::new()
 		.with_make("Huffy")
 		.with_model("Radio")
@@ -35,9 +53,11 @@ impl Bicycle {
 	fn make(&self) -> &String {
 		&self.make
 	}
+
 	fn model(&self) -> &String {
 		&self.model
 	}
+
 	fn size(&self) -> i32 {
 		self.size
 	}
@@ -59,6 +79,7 @@ impl Bicycle {
 		self
 	}
 
+	/*
 	fn with_size(mut self, size: i32) -> Self {
 		self.size = size;
 		self
@@ -68,6 +89,10 @@ impl Bicycle {
 		self.color = color.into();
 		self
 	}
+	*/
+
+	with_str!(with_color, color);
+	with_type!(with_size, size, i32);
 }
 
 struct BicycleBuilder {
