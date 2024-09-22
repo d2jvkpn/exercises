@@ -11,7 +11,7 @@ macro_rules! with_str {
 
 macro_rules! with_type {
 	($func:ident, $name:ident, $type:ty) => {
-		fn $func(mut self, $name: $type) -> Self {
+		fn $func(self, $name: $type) -> Self {
 			//self.$name = $name;
 			//self
 			Self { $name: $name.into(), ..self }
@@ -44,7 +44,7 @@ fn main() {
 		.with_color("red");
 
 	let bicycle = bicycle_builder.build();
-	println!("==> My new bike: {:#?}", bicycle);
+	println!("==> 1. My new bike: {:#?}", bicycle);
 
 	// 2.
 	let bicycle: Bicycle = Bicycle::new()
@@ -53,9 +53,22 @@ fn main() {
 		.with_size(46)
 		.with_color("red");
 
-	println!("==> My new bike: {:#?}", bicycle);
+	println!("==> 2. My new bike: {:#?}", bicycle);
 
-	println!("==> color={:?}, size={}", bicycle.color(), bicycle.size());
+	// 3.
+	println!("==> 3. color={:?}, size={}", bicycle.color(), bicycle.size());
+
+	// 4.
+	let bicycle1 = Bicycle {
+		make: "Rivendell".into(),
+		model: "A. Homer Hilsen".into(),
+		size: 51,
+		color: "red".into(),
+	};
+
+	let bicycle2 = Bicycle { size: 58, ..bicycle1 };
+
+	println!("==> 4. bicycle2: {bicycle2:?}");
 }
 
 #[derive(Debug, Default)]

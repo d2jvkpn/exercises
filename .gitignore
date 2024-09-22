@@ -60,3 +60,4 @@ wasm_exec.js
 configs/
 gcm.cache
 logs/
+*.local
