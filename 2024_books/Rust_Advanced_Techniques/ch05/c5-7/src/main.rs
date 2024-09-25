@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use std::ops::{Deref, DerefMut};
+
 fn main() {
 	// 1.
 	let bits = BitCount(8);
@@ -19,14 +21,17 @@ fn main() {
 	let bits: BitCount = bytes.into();
 	dbg!(&bits);
 
-	// 3.
+	// 3. AsRef, Deref, Into
 	let xbit = XBit::new(32);
-	xbit.as_ref().hello();
+	xbit.as_ref().hello(); // AsRef
 
-	let bits: BitCount = xbit.into();
+	xbit.hello(); // Deref
+
+	let bits: BitCount = xbit.into(); // Into
 	bits.hello();
 }
 
+//
 #[derive(Debug)]
 struct BitCount(u32);
 
@@ -65,12 +70,29 @@ impl XBit {
 	}
 }
 
+//
 impl AsRef<BitCount> for XBit {
 	fn as_ref(&self) -> &BitCount {
 		&self.item
 	}
 }
 
+//
+impl Deref for XBit {
+	type Target = BitCount;
+
+	fn deref(&self) -> &Self::Target {
+		&self.item
+	}
+}
+
+impl DerefMut for XBit {
+	fn deref_mut(&mut self) -> &mut Self::Target {
+		&mut self.item
+	}
+}
+
+//
 impl Into<BitCount> for XBit {
 	fn into(self) -> BitCount {
 		self.item
