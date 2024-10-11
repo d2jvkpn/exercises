@@ -41,9 +41,10 @@ async fn fetch_url(url: &str) -> Result<String, reqwest::Error> {
 
     let mut builder = reqwest::Client::builder().timeout(Duration::new(5, 0));
 
-    if let Ok(v) = env::var("https_proxy") {
-        dbg!(&v);
-        let proxy = reqwest::Proxy::all(v)?;
+    let proxy_url = env::var("https_proxy").unwrap_or("".to_string());
+    if proxy_url.len() > 0 {
+        dbg!(&proxy_url);
+        let proxy = reqwest::Proxy::all(&proxy_url)?;
         builder = builder.proxy(proxy);
     }
 
