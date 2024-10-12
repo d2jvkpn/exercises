@@ -2,7 +2,7 @@ use futures::future::join_all;
 use reqwest;
 use tokio::task;
 
-use std::{env, time::Duration};
+use std::{env, error::Error, time::Duration};
 
 #[tokio::main]
 async fn main() {
@@ -30,9 +30,25 @@ async fn main() {
     */
 
     let handles = urls.iter().map(|url| task::spawn(fetch_url(url)));
-    let result_list = join_all(handles).await;
 
-    println!("==> result list: {:?}", result_list);
+    // convert Result<Result<String, reqwest::Error>, JoinError>
+    // let results: Vec<_> = join_all(handles).await;
+
+    /*
+    |r| -> Result<String, Box<dyn Error>> {
+        match r {
+        Ok(v) => v.map_err(Into::into),
+        Err(e) => Err(e.into()),
+        }
+    }
+    */
+    let results: Vec<_> = join_all(handles)
+        .await
+        .into_iter()
+        .map(|r| Ok::<String, Box<dyn Error>>(r??))
+        .collect();
+
+    println!("==> results: {:?}", results);
 }
 
 async fn fetch_url(url: &str) -> Result<String, reqwest::Error> {
