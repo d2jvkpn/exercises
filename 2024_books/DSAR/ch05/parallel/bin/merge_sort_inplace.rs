@@ -6,37 +6,35 @@ fn main() {
     println!("==> ans: {ans:?}");
 }
 
-fn parallel_merge_sort<T: Ord + Send + Sync + Clone>(arr: &mut [T]) {
-    let len = arr.len();
+fn parallel_merge_sort<T: Ord + Send + Sync>(slice: &mut [T]) {
+    let len = slice.len();
     if len < 2 {
         return; // Base case: arrays of length 0 or 1 are already sorted
     }
 
     let mid = len / 2;
-    let (left, right) = arr.split_at_mut(mid);
+    let (left, right) = slice.split_at_mut(mid);
     
     rayon::join(
         || parallel_merge_sort(left),
         || parallel_merge_sort(right),
     );
 
-    merge(arr, mid);
+    merge(slice, mid);
 }
 
-fn merge<T: Ord + Send + Sync + Clone>(arr: &mut [T], mut mid: usize) {
+fn merge<T: Ord + Send + Sync>(slice: &mut [T], mut index: usize) {
     let mut k = 0;
 
-    while k < mid {
+    while k < index {
         // dbg!(&[k, mid]);
-        if arr[k] <= arr[mid] {
+        if slice[k] <= slice[index] {
             k += 1;
         } else {
-            arr.swap(k, mid);
-            if mid < arr.len() - 1 {
-                mid += 1;
+            slice.swap(k, index);
+            if index < slice.len() - 1 {
+                index += 1;
             }
         }
     }
-
-    return;
 }

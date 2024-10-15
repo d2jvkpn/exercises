@@ -6,13 +6,13 @@ fn main() {
     println!("==> ans: {ans:?}");
 }
 
-fn parallel_quick_sort<T: Ord + Send + Sync>(arr: &mut [T]) {
-    if arr.len() <= 1 {
+fn parallel_quick_sort<T: Ord + Send + Sync>(slice: &mut [T]) {
+    if slice.len() < 2 {
         return; // Base case: array is already sorted
     }
 
-    let pivot_index = partition(arr);
-    let (left, right) = arr.split_at_mut(pivot_index);
+    let pivot_index = partition(slice);
+    let (left, right) = slice.split_at_mut(pivot_index);
 
     rayon::join(
         || parallel_quick_sort(&mut left[0..pivot_index]),
@@ -20,19 +20,20 @@ fn parallel_quick_sort<T: Ord + Send + Sync>(arr: &mut [T]) {
     );
 }
 
-fn partition<T: Ord>(arr: &mut [T]) -> usize {
-    let len = arr.len();
+fn partition<T: Ord>(slice: &mut [T]) -> usize {
+    let len = slice.len();
     let pivot_index = len / 2;
-    arr.swap(pivot_index, len - 1);
     let mut i = 0;
 
+    slice.swap(pivot_index, len - 1);
+
     for j in 0..len - 1 {
-        if arr[j] <= arr[len - 1] {
-            arr.swap(i, j);
+        if slice[j] <= slice[len - 1] {
+            slice.swap(i, j);
             i += 1;
         }
     }
 
-    arr.swap(i, len - 1);
+    slice.swap(i, len - 1);
     i
 }

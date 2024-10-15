@@ -6,14 +6,14 @@ fn main() {
     println!("==> ans: {ans:?}");
 }
 
-fn merge_sort<T: Ord + Send + Sync + Clone>(arr: &mut [T]) {
-    if arr.len() <= 1 {
+fn merge_sort<T: Ord + Send + Sync + Clone>(slice: &mut [T]) {
+    if slice.len() <= 1 {
         return; // Base case: array of length 0 or 1 is already sorted
     }
 
-    let mid = arr.len() / 2;
-    let len = arr.len();
-    let (left, right) = arr.split_at_mut(mid);
+    let mid = slice.len() / 2;
+    let len = slice.len();
+    let (left, right) = slice.split_at_mut(mid);
 
     // Sort the halves in parallel
     rayon::join(
@@ -26,7 +26,7 @@ fn merge_sort<T: Ord + Send + Sync + Clone>(arr: &mut [T]) {
 
     // Copy sorted elements back to original array
     for (i, elem) in sorted.into_iter().enumerate() {
-        arr[i] = elem;
+        slice[i] = elem;
     }
 }
 
