@@ -2,11 +2,11 @@ use rayon;
 
 fn main() {
     let mut ans = vec![127, 9, 99, 10, 42, 12];
-    parallel_merge_sort(&mut ans);
+    merge_sort(&mut ans);
     println!("==> ans: {ans:?}");
 }
 
-fn parallel_merge_sort<T: Ord + Send + Sync + Clone>(arr: &mut [T]) {
+fn merge_sort<T: Ord + Send + Sync + Clone>(arr: &mut [T]) {
     if arr.len() <= 1 {
         return; // Base case: array of length 0 or 1 is already sorted
     }
@@ -17,8 +17,8 @@ fn parallel_merge_sort<T: Ord + Send + Sync + Clone>(arr: &mut [T]) {
 
     // Sort the halves in parallel
     rayon::join(
-        || parallel_merge_sort(left),
-        || parallel_merge_sort(right),
+        || merge_sort(left),
+        || merge_sort(right),
     );
 
     let mut sorted = Vec::with_capacity(len);
