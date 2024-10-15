@@ -29,9 +29,7 @@ async fn main() {
     }
     */
 
-    let handles = urls.iter().map(|url| task::spawn(fetch_url(url)));
-
-    // convert Result<Result<String, reqwest::Error>, JoinError>
+    // convert Result<Result<String, reqwest::Error>, tokio::task::JoinError>
     // let results: Vec<_> = join_all(handles).await;
 
     /*
@@ -42,11 +40,11 @@ async fn main() {
         }
     }
     */
-    let results: Vec<_> = join_all(handles)
-        .await
-        .into_iter()
-        .map(|r| Ok::<String, Box<dyn Error>>(r??))
-        .collect();
+
+    let handles = urls.iter().map(|url| task::spawn(fetch_url(url)));
+
+    let results: Vec<Result<String, Box<dyn Error>>> =
+        join_all(handles).await.into_iter().map(|r| Ok(r??)).collect();
 
     println!("==> results: {:?}", results);
 }
@@ -58,6 +56,7 @@ async fn fetch_url(url: &str) -> Result<String, reqwest::Error> {
     let mut builder = reqwest::Client::builder().timeout(Duration::new(5, 0));
 
     let proxy_url = env::var("https_proxy").unwrap_or("".to_string());
+
     if proxy_url.len() > 0 {
         dbg!(&proxy_url);
         let proxy = reqwest::Proxy::all(&proxy_url)?;
