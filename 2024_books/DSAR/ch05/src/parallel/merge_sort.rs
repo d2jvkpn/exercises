@@ -1,12 +1,6 @@
 use rayon;
 
-fn main() {
-    let mut ans = vec![127, 9, 99, 10, 42, 12];
-    merge_sort(&mut ans);
-    println!("==> ans: {ans:?}");
-}
-
-fn merge_sort<T: Ord + Send + Sync + Clone>(slice: &mut [T]) {
+pub fn merge_sort<T: Ord + Send + Sync + Clone>(slice: &mut [T]) {
     if slice.len() <= 1 {
         return; // Base case: array of length 0 or 1 is already sorted
     }
@@ -16,10 +10,7 @@ fn merge_sort<T: Ord + Send + Sync + Clone>(slice: &mut [T]) {
     let (left, right) = slice.split_at_mut(mid);
 
     // Sort the halves in parallel
-    rayon::join(
-        || merge_sort(left),
-        || merge_sort(right),
-    );
+    rayon::join(|| merge_sort(left), || merge_sort(right));
 
     let mut sorted = Vec::with_capacity(len);
     merge(left, right, &mut sorted);
@@ -55,5 +46,35 @@ fn merge<T: Ord + Clone>(left: &[T], right: &[T], merged: &mut Vec<T>) {
     while let Some(val) = right_val {
         merged.push(val.clone());
         right_val = right_iter.next();
+    }
+}
+
+pub fn merge_sort_v2<T: Ord + Send + Sync>(slice: &mut [T]) {
+    let len = slice.len();
+    if len < 2 {
+        return; // Base case: arrays of length 0 or 1 are already sorted
+    }
+
+    let mid = len / 2;
+    let (left, right) = slice.split_at_mut(mid);
+
+    rayon::join(|| merge_sort_v2(left), || merge_sort_v2(right));
+
+    merge_v2(slice, mid);
+}
+
+fn merge_v2<T: Ord + Send + Sync>(slice: &mut [T], mut index: usize) {
+    let mut k = 0;
+
+    while k < index {
+        // dbg!(&[k, mid]);
+        if slice[k] <= slice[index] {
+            k += 1;
+        } else {
+            slice.swap(k, index);
+            if index < slice.len() - 1 {
+                index += 1;
+            }
+        }
     }
 }

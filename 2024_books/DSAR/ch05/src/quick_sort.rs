@@ -1,10 +1,4 @@
-fn main() {
-    let mut ans = vec![127, 9, 99, 10, 42, 12];
-    quick_sort(&mut ans);
-    println!("==> ans: {ans:?}");
-}
-
-fn quick_sort<T: Ord>(slice: &mut [T]) {
+pub fn quick_sort<T: Ord>(slice: &mut [T]) {
     if slice.len() < 2 {
         return; // Base case: array is already sorted
     }
@@ -32,4 +26,16 @@ fn partition<T: Ord>(slice: &mut [T]) -> usize {
 
     slice.swap(index, len - 1);
     index
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn t_quick_sort() {
+        let mut ans = vec![127, 9, 99, 10, 42, 12];
+        quick_sort(&mut ans);
+        println!("==> ans: {ans:?}");
+    }
 }

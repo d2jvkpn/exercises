@@ -1,14 +1,4 @@
-fn main() {
-    let ans = vec![127, 9, 99, 10, 42, 12];
-    let ans = merge_sort(&ans);
-    println!("==> ans: {ans:?}");
-
-    let mut ans = vec![127, 9, 99, 10, 42, 12];
-    merge_sort_inplace(&mut ans);
-    println!("==> ans: {ans:?}");
-}
-
-fn merge_sort<T: Ord + Clone>(slice: &[T]) -> Vec<T> {
+pub fn merge_sort<T: Ord + Clone>(slice: &[T]) -> Vec<T> {
     let len = slice.len();
     if len < 2 {
         return slice.to_vec(); // Base case: arrays of length 0 or 1 are already sorted
@@ -55,7 +45,7 @@ fn merge<T: Ord + Clone>(left: &mut Vec<T>, right: &mut Vec<T>, merged: &mut Vec
     }
 }
 
-fn merge_sort_inplace<T: Ord + Clone>(slice: &mut [T]) {
+pub fn merge_sort_v2<T: Ord + Clone>(slice: &mut [T]) {
     let len = slice.len();
     if len < 2 {
         return; // Base case: arrays of length 0 or 1 are already sorted
@@ -63,13 +53,13 @@ fn merge_sort_inplace<T: Ord + Clone>(slice: &mut [T]) {
 
     let mid = len / 2;
 
-    merge_sort_inplace(&mut slice[0..mid]);
-    merge_sort_inplace(&mut slice[mid..]);
+    merge_sort_v2(&mut slice[0..mid]);
+    merge_sort_v2(&mut slice[mid..]);
 
-    merge_inplace(slice, mid);
+    merge_v2(slice, mid);
 }
 
-fn merge_inplace<T: Ord + Clone>(slice: &mut [T], mut mid: usize) {
+fn merge_v2<T: Ord + Clone>(slice: &mut [T], mut mid: usize) {
     let mut k = 0;
 
     while k < mid {

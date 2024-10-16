@@ -1,12 +1,6 @@
 use rayon;
 
-fn main() {
-    let mut ans = vec![127, 9, 99, 10, 42, 12];
-    parallel_quick_sort(&mut ans);
-    println!("==> ans: {ans:?}");
-}
-
-fn parallel_quick_sort<T: Ord + Send + Sync>(slice: &mut [T]) {
+pub fn quick_sort<T: Ord + Send + Sync>(slice: &mut [T]) {
     if slice.len() < 2 {
         return; // Base case: array is already sorted
     }
@@ -14,10 +8,7 @@ fn parallel_quick_sort<T: Ord + Send + Sync>(slice: &mut [T]) {
     let pivot_index = partition(slice);
     let (left, right) = slice.split_at_mut(pivot_index);
 
-    rayon::join(
-        || parallel_quick_sort(&mut left[0..pivot_index]),
-        || parallel_quick_sort(&mut right[1..]),
-    );
+    rayon::join(|| quick_sort(&mut left[0..pivot_index]), || quick_sort(&mut right[1..]));
 }
 
 fn partition<T: Ord>(slice: &mut [T]) -> usize {
