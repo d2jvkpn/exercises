@@ -1,3 +1,4 @@
+// generate a sorted slice from the end(S), by moving the lastest value to the head of S
 pub fn bubble_sort<T: Ord>(slice: &mut [T]) {
     let len = slice.len();
     let mut swapped: bool;
@@ -17,6 +18,7 @@ pub fn bubble_sort<T: Ord>(slice: &mut [T]) {
     }
 }
 
+// generate a sorted slice from the head(S), by moving the next element to the right position of S
 pub fn insertion_sort<T: Ord>(slice: &mut [T]) {
     for i in 1..slice.len() {
         let mut j = i;
@@ -28,6 +30,7 @@ pub fn insertion_sort<T: Ord>(slice: &mut [T]) {
     }
 }
 
+// get the index of min element in the slice and move to then front
 pub fn selection_sort<T: Ord>(slice: &mut [T]) {
     let len = slice.len();
 
