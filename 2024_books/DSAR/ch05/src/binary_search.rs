@@ -1,12 +1,13 @@
 use std::cmp::Ordering;
 
-pub fn binary_search<T: Ord>(arr: &[T], target: T) -> Option<usize> {
+pub fn binary_search<T: Ord>(slice: &[T], target: T) -> Option<usize> {
     let mut left = 0;
-    let mut right = arr.len();
+    let mut right = slice.len();
 
     while left < right {
         let mid = left + (right - left) / 2;
-        match arr[mid].cmp(&target) {
+
+        match slice[mid].cmp(&target) {
             Ordering::Equal => return Some(mid),
             Ordering::Less => left = mid + 1,
             Ordering::Greater => right = mid,
