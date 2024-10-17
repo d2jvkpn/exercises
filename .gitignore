@@ -61,3 +61,4 @@ configs/
 gcm.cache
 logs/
 *.local
+*.git
