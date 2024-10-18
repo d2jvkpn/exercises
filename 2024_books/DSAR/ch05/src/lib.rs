@@ -1,5 +1,6 @@
 pub mod basic;
 pub mod gen;
+pub mod my;
 pub mod parallel;
 
 mod binary_search;
@@ -13,6 +14,3 @@ pub use quick_sort::*;
 
 mod heap_sort;
 pub use heap_sort::*;
-
-mod priority_queue;
-pub use priority_queue::*;
