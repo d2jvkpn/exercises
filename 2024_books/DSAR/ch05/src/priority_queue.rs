@@ -95,12 +95,24 @@ impl<T: PartialOrd + Debug> Heap<T> {
     }
 
     pub fn into_ordered_vector(mut self) -> Vec<T> {
+        /*
         let mut ans = Vec::with_capacity(self.size());
 
         while let Some(v) = self.pop() {
             ans.push(v);
         }
 
+        ans
+        */
+        let high = self.size() - 1;
+        let mut ans = self.data;
+
+        for i in (1..=high).rev() {
+            ans.swap(0, i);
+            build_heap(&mut ans[..i], self.comparator);
+        }
+
+        ans.reverse();
         ans
     }
 }
