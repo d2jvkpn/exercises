@@ -127,12 +127,10 @@ impl<T: PartialOrd + Debug> From<Heap<T>> for Vec<T> {
         let compare = heap.comparator;
         let mut ans = heap.data;
 
-        for i in (1..=high).rev() {
-            ans.swap(0, i);
-            build_heap(&mut ans[..i], compare);
+        for i in 1..ans.len() {
+            build_heap(&mut ans[i..], compare);
         }
 
-        ans.reverse();
         ans
     }
 }
