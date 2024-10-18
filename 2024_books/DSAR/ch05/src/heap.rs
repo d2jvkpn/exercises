@@ -112,7 +112,7 @@ impl<T: PartialOrd + Debug> Debug for Heap<T> {
 }
 
 impl<T: PartialOrd + Debug> From<Heap<T>> for Vec<T> {
-    fn from(heap: Heap<T>) -> Vec<T> {
+    fn from(mut heap: Heap<T>) -> Vec<T> {
         /*
         let mut ans = Vec::with_capacity(self.size());
 
@@ -123,14 +123,11 @@ impl<T: PartialOrd + Debug> From<Heap<T>> for Vec<T> {
         ans
         */
 
-        let compare = heap.comparator;
-        let mut ans = heap.data;
-
-        for i in 1..ans.len() {
-            build_heap(&mut ans[i..], compare);
+        for i in 1..heap.data.len() {
+            build_heap(&mut heap.data[i..], heap.comparator);
         }
 
-        ans
+        heap.data
     }
 }
 
