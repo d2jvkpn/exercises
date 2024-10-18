@@ -123,7 +123,6 @@ impl<T: PartialOrd + Debug> From<Heap<T>> for Vec<T> {
         ans
         */
 
-        let high = heap.size() - 1;
         let compare = heap.comparator;
         let mut ans = heap.data;
 
