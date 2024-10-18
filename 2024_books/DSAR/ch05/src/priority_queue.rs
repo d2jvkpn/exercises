@@ -3,41 +3,67 @@ use std::fmt::Debug;
 #[derive(Debug)]
 pub struct Heap<T: PartialOrd + Debug> {
     data: Vec<T>,
+    ascending: bool,
     comparator: fn(&T, &T) -> bool,
 }
 
+pub fn build_heap<T: PartialOrd>(slice: &mut [T], compare: fn(&T, &T) -> bool) {
+    for i in (0..=slice.len() / 2).rev() {
+        heapify(slice, i, compare);
+    }
+}
+
+pub fn heapify<T: PartialOrd>(slice: &mut [T], index: usize, compare: fn(&T, &T) -> bool) {
+    let left = 2 * index + 1;
+    let right = 2 * index + 2;
+    let mut next = index;
+
+    if left < slice.len() && !compare(&slice[next], &slice[left]) {
+        next = left;
+    }
+
+    if right < slice.len() && !compare(&slice[next], &slice[right]) {
+        next = right;
+    }
+
+    if next != index {
+        slice.swap(index, next);
+        heapify(slice, next, compare);
+    }
+}
+
 impl<T: PartialOrd + Debug> Heap<T> {
-    pub fn new(size: usize, comparator: fn(&T, &T) -> bool) -> Self {
-        Self { data: Vec::with_capacity(size), comparator }
-    }
-
-    pub fn min_heap(size: usize) -> Self {
-        Self { data: Vec::with_capacity(size), comparator: |a, b| a < b }
-    }
-
-    pub fn max_heap(size: usize) -> Self {
-        Self { data: Vec::with_capacity(size), comparator: |a, b| a > b }
+    pub fn new(size: usize, ascending: bool) -> Self {
+        Self {
+            data: Vec::with_capacity(size),
+            ascending,
+            comparator: if ascending { |a, b| a < b } else { |a, b| a > b },
+        }
     }
 
     pub fn size(&self) -> usize {
         self.data.len()
     }
 
-    pub fn is_empty(&self) -> bool {
-        self.data.len() == 0
+    pub fn cap(&self) -> usize {
+        self.data.capacity()
     }
 
-    pub fn peek_top(&self) -> Option<&T> {
-        self.data.last()
+    pub fn is_empty(&self) -> bool {
+        self.data.len() == 0
     }
 
     fn compare(&self, a: usize, b: usize) -> bool {
         (self.comparator)(&self.data[a], &self.data[b])
     }
 
+    pub fn peek(&self) -> Option<&T> {
+        self.data.first()
+    }
+
     pub fn push(&mut self, value: T) -> &mut Self {
         self.data.push(value);
-        self.heapify_up(self.data.len() - 1);
+        build_heap(&mut self.data, self.comparator);
 
         self
     }
@@ -51,65 +77,31 @@ impl<T: PartialOrd + Debug> Heap<T> {
 
         self.data.swap(0, size - 1);
         let ans = self.data.pop();
-        self.heapify_down(0);
+        build_heap(&mut self.data, self.comparator);
 
         ans
     }
 
-    pub fn heapify_up(&mut self, index: usize) {
-        // dbg!(&index);
-        if index < 1 || index + 1 > self.data.len() {
-            return;
-        }
+    pub fn from_vector(items: Vec<T>, ascending: bool) -> Self {
+        let mut heap = Self {
+            data: items,
+            ascending,
+            comparator: if ascending { |a, b| a < b } else { |a, b| a > b },
+        };
 
-        let parent = (index - 1) / 2;
-        if !self.compare(parent, index) {
-            self.data.swap(parent, index);
-            self.heapify_up(parent);
-        }
-    }
-
-    pub fn heapify_down(&mut self, index: usize) {
-        // dbg!(&index);
-        let mut parent = index;
-        let (left, right) = (2 * index + 1, 2 * index + 2);
-
-        if left + 1 > self.data.len() {
-            return;
-        }
-
-        if !self.compare(parent, left) {
-            parent = left;
-        }
-
-        if right < self.data.len() && !self.compare(parent, right) {
-            parent = right;
-        }
-
-        if parent != index {
-            self.data.swap(parent, index);
-            self.heapify_down(parent);
-        }
-    }
-
-    pub fn from_vector(mut items: Vec<T>, comparator: fn(&T, &T) -> bool) -> Self {
-        let mut heap = Self::new(items.len(), comparator);
-
-        while let Some(val) = items.pop() {
-            heap.push(val);
-        }
+        build_heap(&mut heap.data, heap.comparator);
 
         heap
     }
 
-    pub fn into_vector(mut self) -> Vec<T> {
-        let mut items = Vec::with_capacity(self.data.len());
+    pub fn into_ordered_vector(mut self) -> Vec<T> {
+        let mut ans = Vec::with_capacity(self.size());
 
-        while let Some(val) = self.pop() {
-            items.push(val);
+        while let Some(v) = self.pop() {
+            ans.push(v);
         }
 
-        items
+        ans
     }
 }
 
@@ -119,20 +111,28 @@ mod tests {
 
     #[test]
     fn t_heap() {
+        //
         let nums = vec![9, 7, 5, 11, 12, 2, 14, 3, 10, 6];
-        let ans = vec![2, 3, 5, 6, 7, 9, 10, 11, 12, 14];
+
+        let mut heap = Heap::from_vector(nums.clone(), false);
+        println!("==> heap: {:?}", heap);
+
+        assert_eq!(heap.peek(), Some(&14));
+        assert_eq!(heap.pop(), Some(14));
+        assert_eq!(heap.pop(), Some(12));
+
+        println!("==> heap: {:?}", heap);
 
         //
-        let heap = Heap::from_vector(nums.clone(), |a, b| a < b);
-        dbg!(&heap);
-        assert_eq!(heap.into_vector(), ans);
+        let heap = Heap::from_vector(nums.clone(), false);
+
+        let sorted = vec![14, 12, 11, 10, 9, 7, 6, 5, 3, 2];
+        assert_eq!(heap.into_ordered_vector(), sorted);
 
         //
-        let heap = Heap::from_vector(nums.clone(), |a, b| a > b);
-        dbg!(&heap);
+        let heap = Heap::from_vector(nums.clone(), true);
 
-        let mut rev = ans.clone();
-        rev.reverse();
-        assert_eq!(heap.into_vector(), rev);
+        let sorted = vec![2, 3, 5, 6, 7, 9, 10, 11, 12, 14];
+        assert_eq!(heap.into_ordered_vector(), sorted);
     }
 }
