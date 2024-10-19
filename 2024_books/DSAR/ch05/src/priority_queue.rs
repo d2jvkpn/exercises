@@ -180,6 +180,7 @@ mod tests {
 
         // 5.
         let d1: Vec<i32> = generate::random_vec(256);
+        println!("==> d1: {d1:?}");
 
         let heap = Heap::min_heap(d1);
         let output: Vec<_> = heap.into();
