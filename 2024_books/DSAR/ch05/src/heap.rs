@@ -150,12 +150,22 @@ mod tests {
         println!("==> heap: {:?}", heap);
 
         // 2.
+        let mut heap = Heap::min_heap(nums.clone());
+        println!("==> heap: {:?}", heap);
+
+        assert_eq!(heap.peek(), Some(&2));
+        assert_eq!(heap.pop(), Some(2));
+        assert_eq!(heap.pop(), Some(3));
+
+        println!("==> heap: {:?}", heap);
+
+        // 3.
         let heap = Heap::max_heap(nums.clone());
 
         let output: Vec<_> = heap.into();
         assert_eq!(output, vec![14, 12, 11, 10, 9, 7, 6, 5, 3, 2]);
 
-        // 3.
+        // 4.
         let heap = Heap::min_heap(nums.clone());
 
         let output: Vec<_> = heap.into();

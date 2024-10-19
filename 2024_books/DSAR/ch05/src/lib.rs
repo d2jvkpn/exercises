@@ -3,7 +3,7 @@ pub mod gen;
 pub mod parallel;
 
 mod heap;
-use heap::*;
+pub use heap::*;
 
 mod binary_search;
 pub use binary_search::*;
