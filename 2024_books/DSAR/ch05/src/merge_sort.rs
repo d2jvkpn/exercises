@@ -1,15 +1,12 @@
 pub fn merge_sort<T: Ord + Clone>(slice: &[T]) -> Vec<T> {
-    let len = slice.len();
-    if len < 2 {
-        return slice.to_vec(); // Base case: arrays of length 0 or 1 are already sorted
-    }
+    let len = match slice.len() {
+        // Base case: arrays of length 0 or 1 are already sorted
+        v if v < 2 => return slice.to_vec(),
+        v => v,
+    };
 
-    let mid = len / 2;
-    let left = &slice[0..mid];
-    let right = &slice[mid..];
-
-    let mut left_sorted = merge_sort(left);
-    let mut right_sorted = merge_sort(right);
+    let mut left_sorted = merge_sort(&slice[0..len / 2]);
+    let mut right_sorted = merge_sort(&slice[len / 2..]);
 
     let mut merged = Vec::with_capacity(len);
     merge(&mut left_sorted, &mut right_sorted, &mut merged);
