@@ -62,15 +62,15 @@ impl<T: PartialOrd + Debug> Heap<T> {
         (self.comparator)(&self.data[a], &self.data[b])
     }
 
-    pub fn peek(&self) -> Option<&T> {
-        self.data.first()
-    }
-
     pub fn push(&mut self, value: T) -> &mut Self {
         self.data.push(value);
         build_heap(&mut self.data, self.comparator);
 
         self
+    }
+
+    pub fn peek(&self) -> Option<&T> {
+        self.data.first()
     }
 
     pub fn pop(&mut self) -> Option<T> {
@@ -170,5 +170,11 @@ mod tests {
 
         let output: Vec<_> = heap.into();
         assert_eq!(output, vec![2, 3, 5, 6, 7, 9, 10, 11, 12, 14]);
+
+        // 5.
+        let mut d1 = nums.clone();
+        assert_eq!(d1.capacity(), nums.len());
+        _ = d1.pop();
+        assert_eq!(d1.capacity(), nums.len());
     }
 }
