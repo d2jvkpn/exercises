@@ -1,9 +1,9 @@
 pub mod basic;
-pub mod gen;
+pub mod generate;
 pub mod parallel;
 
-mod heap;
-pub use heap::*;
+mod priority_queue;
+pub use priority_queue::*;
 
 mod binary_search;
 pub use binary_search::*;

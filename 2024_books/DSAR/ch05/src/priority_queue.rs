@@ -74,14 +74,14 @@ impl<T: PartialOrd + Debug> Heap<T> {
     }
 
     pub fn pop(&mut self) -> Option<T> {
-        let size = self.size();
-
-        if size == 0 {
-            return None;
-        }
+        let size = match self.size() {
+            0 => return None,
+            v => v,
+        };
 
         self.data.swap(0, size - 1);
         let ans = self.data.pop();
+
         build_heap(&mut self.data, self.comparator);
 
         ans
@@ -134,6 +134,7 @@ impl<T: PartialOrd + Debug> From<Heap<T>> for Vec<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::generate;
 
     #[test]
     fn t_heap() {
@@ -165,16 +166,24 @@ mod tests {
         let output: Vec<_> = heap.into();
         assert_eq!(output, vec![14, 12, 11, 10, 9, 7, 6, 5, 3, 2]);
 
-        // 4.
         let heap = Heap::min_heap(nums.clone());
 
         let output: Vec<_> = heap.into();
         assert_eq!(output, vec![2, 3, 5, 6, 7, 9, 10, 11, 12, 14]);
 
-        // 5.
+        // 4.
         let mut d1 = nums.clone();
         assert_eq!(d1.capacity(), nums.len());
+
         _ = d1.pop();
         assert_eq!(d1.capacity(), nums.len());
+
+        // 5.
+        let d1: Vec<i32> = generate::random_vec(256);
+
+        let heap = Heap::min_heap(d1);
+        let output: Vec<_> = heap.into();
+
+        assert!(generate::is_sorted(&output, true));
     }
 }
