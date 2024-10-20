@@ -24,3 +24,9 @@ npm install
 npm update
 
 npm run serve -- --port=3000
+
+#### 3.
+# add to package.json scripts
+#   "start": "vue-cli-service serve --port 3000"
+
+yarn run start
