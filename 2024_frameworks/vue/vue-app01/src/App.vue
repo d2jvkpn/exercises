@@ -1,30 +1,26 @@
-<template>
-  <!--img alt="Vue logo" src="./assets/logo.png"-->
-  <!--HelloWorld msg="Welcome to Your Vue.js App"/-->
-  <MyCounter />
-</template>
+<script setup>
+import { ref, computed } from 'vue';
 
-<script>
-// import HelloWorld from './components/HelloWorld.vue'
+import MyCounter from "./components/Ch03_MyCounter.vue";
 
-import MyCounter from './components/MyCounter.vue'
+// const init = 5;
 
-export default {
-  name: 'App',
-  components: {
-    // HelloWorld
-    MyCounter: MyCounter
-  }
-}
+const count = ref(0);
+const doubleCount = computed(()=>count.value*2);
+const increment = () => count.value++;
+
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<template>
+  <!--MyCounter :init="init+2" :end="20" :limits="{init:10, end:20}"/-->
+  <!--MyCounter v-bind:init="init+2" end="20" v-bind:limits="{init:10, end:20}"/-->
+
+  <br>
+  <MyCounter :auto="false" :count="count" :doubleCount="doubleCount"/>
+
+  <br><br>
+  <button @click="increment()"> Button in App.vue count+1</button>
+</template>
+
+<style scoped>
 </style>

@@ -19,8 +19,8 @@
     return count.value * 2;
   });
 
-  vue.onBeforeMount(() => { console.log("==> onBeforeMount: The component is about to be mounted in the DOM."); });
-  vue.onMounted(() => { console.log("==> onMounted: The component has been mounted in the DOM."); });
+  vue.onBeforeMount(() => console.log("==> onBeforeMount: The component is about to be mounted in the DOM."));
+  vue.onMounted(() => console.log("==> onMounted: The component has been mounted in the DOM."));
 
   //vue.onBeforeUpdate(() => { console.log("==> onBeforeUpdate: The component is about to be updated."); });
   //vue.onUpdated(() => { console.log("==> onUpdated: The component has been updated."); });
@@ -35,10 +35,10 @@
     timer = setInterval(function() { increment(); }, 1000);
   };
 
-  const stop = () => { clearInterval(timer); };
+  const stop = () => clearInterval(timer);
 
-  vue.onMounted(() => { start(); });
-  vue.onUnmounted(() => { stop(); });
+  vue.onMounted(() => start());
+  vue.onUnmounted(() => stop());
 
   // 3.
   const maximum = 10;
