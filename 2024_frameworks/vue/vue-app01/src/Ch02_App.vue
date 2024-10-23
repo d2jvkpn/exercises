@@ -1,14 +1,11 @@
 <script setup>
-import { ref, computed } from 'vue';
+  import { ref, computed } from 'vue';
+  import MyCounter from "./components/Ch03_MyCounter.vue";
 
-import MyCounter from "./components/Ch03_MyCounter.vue";
-
-// const init = 5;
-
-const count = ref(0);
-const doubleCount = computed(()=>count.value*2);
-const increment = () => count.value++;
-
+  // const init = 5;
+  const count = ref(0);
+  const doubleCount = computed(() => count.value*2);
+  const increment = () => count.value+=1;
 </script>
 
 <template>

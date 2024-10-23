@@ -10,7 +10,9 @@
   const start= () => timer.value = setInterval(() => count.value+=1, 1000);
 
   const stop = () => {
-    if (timer.value) { clearInterval(timer.value); }
+    if (timer.value) {
+      clearInterval(timer.value);
+    }
     timer.value = null;
   }
 </script>

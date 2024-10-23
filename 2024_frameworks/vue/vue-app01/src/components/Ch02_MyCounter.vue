@@ -1,44 +1,41 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted, defineProps } from 'vue';
+  import { ref, computed, onMounted, onUnmounted, defineProps } from 'vue';
 
-const props = defineProps(["init", "end", "auto", "limits"]);
-// console.log("~~~", typeof(props.init));
-console.log(`~~~ limits:`, JSON.stringify(props.limits));
+  const props = defineProps(["init", "end", "auto", "limits"]);
+  // console.log("~~~", typeof(props.init));
+  console.log(`~~~ limits:`, JSON.stringify(props.limits));
 
-//
-const params = {
-  init: parseInt(props.init) || 0,
-  end: parseInt(props.end) || 0,
-  auto: String(props.auto) != "false",
-};
+  //
+  const params = {
+    init: parseInt(props.init) || 0,
+    end: parseInt(props.end) || 0,
+    auto: String(props.auto) != "false",
+  };
 
-const count = ref(params.init);
-const doubleCount = computed(() => count.value * 2);
+  const count = ref(params.init);
+  const doubleCount = computed(() => count.value * 2);
 
-//
-let timer;
+  //
+  let timer;
 
-const start = () => {
-  timer = setInterval(() => {
-    increment();
-  }, 1000);
-};
+  const start = () => {
+    timer = setInterval(() => increment(), 1000);
+  };
 
-const stop = () => clearInterval(timer);
+  const stop = () => clearInterval(timer);
 
-const increment = () => {
-  if (!params.end || count.value < params.end) {
-    count.value++;
-  } else {
-    stop();
+  const increment = () => {
+    if (!params.end || count.value < params.end) {
+      count.value+=1;
+    } else {
+      stop();
+    }
+  };
+
+  if (params.auto) {
+    onMounted(() => start());
+    onUnmounted(() => stop());
   }
-};
-
-if (params.auto) {
-  onMounted(() => start());
-  onUnmounted(() => stop());
-}
-
 </script>
 
 <template>

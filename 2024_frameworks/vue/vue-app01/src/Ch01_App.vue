@@ -1,21 +1,21 @@
+<script>
+  // import HelloWorld from './components/HelloWorld.vue'
+  import MyCounter from './components/Ch01_MyCounter.vue';
+
+  export default {
+    name: 'App',
+    components: {
+      // HelloWorld
+      MyCounter: MyCounter
+    }
+  }
+</script>
+
 <template>
   <!--img alt="Vue logo" src="./assets/logo.png"-->
   <!--HelloWorld msg="Welcome to Your Vue.js App"/-->
   <MyCounter />
 </template>
-
-<script>
-// import HelloWorld from './components/HelloWorld.vue'
-import MyCounter from './components/Ch01_MyCounter.vue';
-
-export default {
-  name: 'App',
-  components: {
-    // HelloWorld
-    MyCounter: MyCounter
-  }
-}
-</script>
 
 <style>
 #app {

@@ -1,5 +1,5 @@
 <script setup>
-import { defineProps, onUpdated, ref } from "vue"
+  import { defineProps, onUpdated, ref } from "vue"
 
   const props = defineProps(["count", "doubleCount"]);
   console.log(`~~~ props:`, JSON.stringify(props));
