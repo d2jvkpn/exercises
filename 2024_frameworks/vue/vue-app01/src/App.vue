@@ -2,6 +2,7 @@
   import MyCounter from "./components/Ch05_MyCounter.vue";
   import MyInput from "./components/MyInput.vue";
   import MyForm from "./components/MyForm.vue";
+  import MyEvents from "./components/MyEvents.vue";
 
   const limits = [
     {init: 0, end: 10},
@@ -16,4 +17,6 @@
   <MyInput/>
 
   <MyForm/>
+
+  <MyEvents/>
 </template>
