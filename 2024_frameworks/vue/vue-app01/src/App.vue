@@ -1,5 +1,7 @@
 <script setup>
   import MyCounter from "./components/Ch05_MyCounter.vue";
+  import MyInput from "./components/MyInput.vue";
+  import MyForm from "./components/MyForm.vue";
 
   const limits = [
     {init: 0, end: 10},
@@ -10,4 +12,8 @@
 
 <template>
   <MyCounter v-for="(limit, i) in limits" :key="i" :index="i+1" :limit="limit" />
+
+  <MyInput/>
+
+  <MyForm/>
 </template>
