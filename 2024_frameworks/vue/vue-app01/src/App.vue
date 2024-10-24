@@ -9,6 +9,8 @@
     {init: 5},
     {end: 10},
   ];
+
+  const get = (msg) => console.log(`~~~ get: ${msg}`);
 </script>
 
 <template>
@@ -18,5 +20,5 @@
 
   <MyForm/>
 
-  <MyEvents/>
+  <MyEvents @get="get"/>
 </template>

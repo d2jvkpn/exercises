@@ -1,5 +1,5 @@
 <script setup>
-  import { ref } from "vue"
+  import { ref, defineEmits } from "vue"
 
   const count = ref();
 
@@ -28,12 +28,36 @@
       message.value = "Don't exceed 100!";
     }
   };
+
+  const eraseField = () => {
+    event.target.value = "";
+    count.value = "";
+    message.value = "";
+  };
+
+
+  const emit = defineEmits(["get"]);
+
+  const call = () => {
+    console.log("~~~ called in MyEvents.vue");
+    emit("get", "called");
+  };
 </script>
 
 <template>
+  <br><br>
+  <button @click="call()">Call</button>
+  <br><br>
+
   <h3>MyCounter Component</h3>
   Reactive variable count:
-  <input type="text" @keydown="verifyKey()" @input="verifyMax(100)" v-model="count" />
+
+  <input type="text"
+    @keydown="verifyKey()"
+    @input="verifyMax(100)"
+    @focus="eraseField()"
+    v-model="count"
+  />
 
   <br/><br/>
   Entered value: <b>{{count}}</b>
