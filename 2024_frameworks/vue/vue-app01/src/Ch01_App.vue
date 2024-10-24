@@ -5,8 +5,8 @@
   export default {
     name: 'App',
     components: {
-      // HelloWorld
-      MyCounter: MyCounter
+      // HelloWorld,
+      MyCounter: MyCounter,
     }
   }
 </script>

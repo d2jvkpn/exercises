@@ -4,7 +4,7 @@
   const limits = [
     {init: 0, end: 10},
     {init: 5},
-    {end: 10}
+    {end: 10},
   ];
 </script>
 
