@@ -8,35 +8,38 @@
   let countries= [];
 
   //
+  const handle = data => {
+    countries = JSON.parse(data).map(function(elem) {
+      let name = elem.name.common;
+
+      if (elem.cca2) {
+        name += `(${elem.cca2})`;
+      }
+
+      return name;
+    });
+
+    // In ascending alphabetical order
+    countries = countries.sort((n1, n2) => {
+      if (n1 > n2) { return 1 }
+      if (n1 < n2) { return -1 }
+
+      return 0;
+    });
+
+    names.value = countries; // Updating the displayed list.
+  };
+
   onMounted(() => {
     var url = "https://restcountries.com/v3.1/all";
 
     fetch(url)
       .then(res => res.text())
-      .then(data => {
-         countries = JSON.parse(data).map(function(elem) {
-           let name = elem.name.common;
-
-           if (elem.cca2) {
-             name += `(${elem.cca2})`;
-           }
-
-           return name;
-         });
-
-        // In ascending alphabetical order
-        countries = countries.sort((n1, n2) => {
-          if (n1 > n2) { return 1 }
-          if (n1 < n2) { return -1 }
-
-          return 0;
-        });
-
-        names.value = countries; // Updating the displayed list.
-      })
+      .then(handle)
       .catch(err => {
         /*names.value = [err.toString()]; */
         alert(err.toString());
+        // if (err instanceof TypeError && err.message.startsWith("NetworkError"))
         // if (err instanceof TypeError)
         // if (err instanceof SyntaxError)
       });
@@ -49,10 +52,10 @@
 
     countries = JSON.parse(data).map(elem => elem.name.common);
     countries = countries.sort((n1, n2) => {
-        if (n1 > n2) return 1;
-        if (n1 < n2) return -1;
+      if (n1 > n2) return 1;
+      if (n1 < n2) return -1;
 
-        return 0;
+      return 0;
     });
 
     return countries;
