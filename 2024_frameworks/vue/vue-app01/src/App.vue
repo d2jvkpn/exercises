@@ -1,4 +1,6 @@
 <script setup>
+  import { ref, provide } from "vue";
+
   import MyCounter from "./components/Ch05_MyCounter.vue";
   import MyInput from "./components/MyInput.vue";
   import MyForm from "./components/MyForm.vue";
@@ -11,6 +13,9 @@
   ];
 
   const get = (msg) => console.log(`~~~ get: ${msg}`);
+
+  const total = ref(0);
+  provide("total", total);
 </script>
 
 <template>
@@ -21,4 +26,9 @@
   <MyForm/>
 
   <MyEvents @get="get"/>
+
+  <br>
+  <hr>
+  Overall Total: <b>{{total}}</b>
+  <br>
 </template>

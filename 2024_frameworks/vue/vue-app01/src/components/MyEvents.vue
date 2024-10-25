@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, defineEmits } from "vue"
+  import { ref, defineEmits, inject } from "vue"
 
   const count = ref();
 
@@ -36,11 +36,14 @@
   };
 
 
+  const total = inject("total");
+
   const emit = defineEmits(["get"]);
 
   const call = () => {
     console.log("~~~ called in MyEvents.vue");
     emit("get", "called");
+    total.value += 1;
   };
 </script>
 
