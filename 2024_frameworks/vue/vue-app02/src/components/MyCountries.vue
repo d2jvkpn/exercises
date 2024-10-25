@@ -33,15 +33,23 @@
   onMounted(() => {
     var url = "https://restcountries.com/v3.1/all";
 
-    fetch(url)
-      .then(res => res.text())
+    fetch(url).then(res => res.text())
       .then(handle)
       .catch(err => {
         /*names.value = [err.toString()]; */
-        alert(err.toString());
-        // if (err instanceof TypeError && err.message.startsWith("NetworkError"))
-        // if (err instanceof TypeError)
-        // if (err instanceof SyntaxError)
+        let msg = "";
+
+        if (err instanceof TypeError && err.message.startsWith("NetworkError")) {
+          msg = `NetworkError: request failed`;
+        } else if (err instanceof TypeError) {
+          msg = `TypeError: ${err.message}`;
+        } else if (err instanceof SyntaxError) {
+          msg = `SyntaxError: invalid response data`;
+        } else {
+          msg = `UnexpectedError: ${err.message}`;
+        }
+
+        alert(msg);
       });
   });
 
