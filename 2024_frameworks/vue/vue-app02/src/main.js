@@ -17,6 +17,7 @@ app.directive("focus", focusDirective);
 
 for (let name in directives) {
   // Creation of the directive name within the application
+  console.log(`~~~ directive:`, name);
   app.directive(name, directives[name]);
 }
 
