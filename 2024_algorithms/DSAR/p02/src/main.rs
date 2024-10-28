@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use ch05::{basic, binary_search, generate, heap_sort, parallel};
+use p02::{basic, binary_search, generate, heap_sort, parallel};
 
 fn main() {
     let input = generate::random_vec(16);

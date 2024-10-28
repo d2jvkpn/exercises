@@ -1,6 +1,8 @@
 <script setup>
-  import MyCountries from './components/MyCountries.vue'
   import { ref, provide, onMounted } from "vue";
+
+  import MyCountries from './components/MyCountries.vue';
+  import MyCounter from './components/MyCounter.vue'
 
   const name = ref("");
 
@@ -12,6 +14,10 @@
 </script>
 
 <template>
+  <MyCounter />
+
+  <hr>
+
   <b>Country</b>: <input type="text" id="country" v-model="name" />
   <br>
 

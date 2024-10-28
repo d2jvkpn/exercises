@@ -95,7 +95,6 @@
     names.value = countries.filter(val => val.match(reg) ? true : false);
   });
 
-
   // 3. watch inject
   const name = inject("name"); // The reactive variable name is retrieved
 

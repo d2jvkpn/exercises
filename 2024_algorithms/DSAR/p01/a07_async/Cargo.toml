@@ -1,13 +1,13 @@
 [package]
-name = "a10_async"
+name = "a07_async"
 version = "0.1.0"
 edition = "2021"
 
-default-run = "a10_async"
+default-run = "a07_async"
 
 [[bin]]
-name = "c01"
-path = "bin/c01.rs"
+name = "x01"
+path = "bin/x01.rs"
 
 [dependencies]
 futures = "0.3.31"
