@@ -1,18 +1,14 @@
-pub mod basic;
+#![allow(unused_imports, dead_code)]
+
 pub mod generate;
+
 pub mod parallel;
 
-mod priority_queue;
-pub use priority_queue::*;
+mod searching;
+pub use searching::*;
 
-mod binary_search;
-pub use binary_search::*;
+mod sorting;
+pub use sorting::*;
 
-mod merge_sort;
-pub use merge_sort::*;
-
-mod quick_sort;
-pub use quick_sort::*;
-
-mod heap_sort;
-pub use heap_sort::*;
+mod stats;
+pub use stats::*;
