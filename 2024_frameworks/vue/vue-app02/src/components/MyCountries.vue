@@ -90,7 +90,7 @@
 
   // 1. watch
   watch(() => props.name, newName => {
-    console.log(`~~~ 1. watch: ${props.name}`);
+    // console.log(`~~~ 1. watch: ${props.name}`);
 
     if (!newName) {
       names.value = countries;
@@ -106,7 +106,7 @@
   // 2. watchEffect
   watchEffect(() => {
     // Do not delete: allows the observation of props.name
-    console.log(`~~~ 2. watchEffect: ${props.name}`);
+    // console.log(`~~~ 2. watchEffect: ${props.name}`);
 
     // const reg = new RegExp("^" + props.name, "i");
     const reg = countryRegExp(props.name);
@@ -118,7 +118,7 @@
   const name = inject("name"); // The reactive variable name is retrieved
 
   watch(name, () => {
-    console.log(`~~~ 3. watch inject: ${name.value}`);
+    // console.log(`~~~ 3. watch inject: ${name.value}`);
 
     // const reg = new RegExp("^" + name.value, "i");
     const reg = countryRegExp(props.name);
