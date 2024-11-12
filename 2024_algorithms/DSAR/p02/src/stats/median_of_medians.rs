@@ -1,7 +1,7 @@
 fn median_of_medians<T: Ord + Copy>(array: &[T], k: usize) -> Option<T> {
     let len = array.len();
 
-    if len < k {
+    if k >= len {
         return None;
     }
 
