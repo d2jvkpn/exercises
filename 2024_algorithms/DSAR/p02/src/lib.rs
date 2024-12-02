@@ -4,6 +4,8 @@ pub mod generate;
 
 pub mod parallel;
 
+pub mod graph;
+
 mod searching;
 pub use searching::*;
 
