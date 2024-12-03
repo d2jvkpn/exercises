@@ -2,33 +2,34 @@ use num::traits::{CheckedAdd, CheckedSub, Zero};
 
 use std::collections::BTreeMap;
 
-#[derive(Debug)]
-pub struct Pallet<AccountId, Balance> {
-    balances: BTreeMap<AccountId, Balance>,
+pub trait Config {
+    type AccountId: Ord + Clone;
+    type Balance: Zero + CheckedSub + CheckedAdd + Copy;
 }
 
-impl<AccountId, Balance> Pallet<AccountId, Balance>
-where
-    AccountId: Ord + Clone,
-    Balance: Zero + CheckedSub + CheckedAdd + Copy,
-{
+#[derive(Debug)]
+pub struct Pallet<T: Config> {
+    balances: BTreeMap<T::AccountId, T::Balance>,
+}
+
+impl<T: Config> Pallet<T> {
     pub fn new() -> Self {
         Self { balances: BTreeMap::new() }
     }
 
-    pub fn set_balance(&mut self, who: &AccountId, amount: Balance) {
+    pub fn set_balance(&mut self, who: &T::AccountId, amount: T::Balance) {
         self.balances.insert(who.clone(), amount);
     }
 
-    pub fn balance(&self, who: &AccountId) -> Balance {
-        *self.balances.get(who).unwrap_or(&Balance::zero())
+    pub fn balance(&self, who: &T::AccountId) -> T::Balance {
+        *self.balances.get(who).unwrap_or(&T::Balance::zero())
     }
 
     pub fn transfer(
         &mut self,
-        caller: &AccountId,
-        to: &AccountId,
-        amount: Balance,
+        caller: &T::AccountId,
+        to: &T::AccountId,
+        amount: T::Balance,
     ) -> Result<(), &'static str> {
         let caller_balance = self.balance(caller);
         let to_balance = self.balance(to);
@@ -49,9 +50,16 @@ where
 mod tests {
     use super::*;
 
+    struct TestConfig;
+
+    impl Config for TestConfig {
+        type AccountId = String;
+        type Balance = u128;
+    }
+
     #[test]
     fn init_balances() {
-        let mut pallet = Pallet::<String, u128>::new();
+        let mut pallet = Pallet::<TestConfig>::new();
 
         assert_eq!(pallet.balance(&"alice".to_string()), 0);
         pallet.set_balance(&"alice".to_string(), 100);
@@ -60,7 +68,7 @@ mod tests {
 
     #[test]
     fn transfer_balance() {
-        let mut pallet = Pallet::<String, u128>::new();
+        let mut pallet = Pallet::<TestConfig>::new();
         let alice = "alice".to_string();
         let bob = "bob".to_string();
 
@@ -76,7 +84,7 @@ mod tests {
         let alice = "alice".to_string();
         let bob = "bob".to_string();
 
-        let mut pallet = Pallet::<String, u128>::new();
+        let mut pallet = Pallet::<TestConfig>::new();
         pallet.set_balance(&alice, 100);
 
         let result = pallet.transfer(&alice, &bob, 200);
@@ -90,7 +98,7 @@ mod tests {
     fn transfer_balance_overflow() {
         let alice = "alice".to_string();
         let bob = "bob".to_string();
-        let mut pallet = Pallet::<String, u128>::new();
+        let mut pallet = Pallet::<TestConfig>::new();
 
         pallet.set_balance(&alice, 100);
         pallet.set_balance(&bob, u128::MAX);

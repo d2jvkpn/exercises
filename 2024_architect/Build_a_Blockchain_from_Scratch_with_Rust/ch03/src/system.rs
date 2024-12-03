@@ -20,7 +20,7 @@ pub struct Pallet<T: Config> {
     nonce: BTreeMap<T::AccountId, T::Nonce>,
 }
 
-impl<T: Config> Pallet<T>{
+impl<T: Config> Pallet<T> {
     pub fn new() -> Self {
         Self { block_number: T::BlockNumber::zero(), nonce: BTreeMap::new() }
     }
