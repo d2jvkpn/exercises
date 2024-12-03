@@ -1,5 +1,6 @@
 use std::collections::BTreeMap;
 
+#[derive(Debug)]
 pub struct Pallet {
     balances: BTreeMap<String, u128>,
 }
@@ -17,7 +18,12 @@ impl Pallet {
         *self.balances.get(who).unwrap_or(&0)
     }
 
-    pub fn transfer(&mut self, caller: &String, to: &String, amount: u128) -> Result<(), &'static str> {
+    pub fn transfer(
+        &mut self,
+        caller: &String,
+        to: &String,
+        amount: u128,
+    ) -> Result<(), &'static str> {
         let caller_balance = self.balance(caller);
         let to_balance = self.balance(to);
 
