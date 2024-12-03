@@ -50,6 +50,6 @@ impl system::Config for Runtime {
 }
 
 impl balances::Config for Runtime {
-    type AccountId = types::AccountId;
+    // type AccountId = types::AccountId;
     type Balance = types::Balance;
 }

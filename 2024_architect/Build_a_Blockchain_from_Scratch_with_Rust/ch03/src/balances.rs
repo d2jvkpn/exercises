@@ -2,8 +2,14 @@ use num::traits::{CheckedAdd, CheckedSub, Zero};
 
 use std::collections::BTreeMap;
 
+/*
 pub trait Config {
     type AccountId: Ord + Clone;
+    type Balance: Zero + CheckedSub + CheckedAdd + Copy;
+}
+*/
+
+pub trait Config: crate::system::Config {
     type Balance: Zero + CheckedSub + CheckedAdd + Copy;
 }
 
