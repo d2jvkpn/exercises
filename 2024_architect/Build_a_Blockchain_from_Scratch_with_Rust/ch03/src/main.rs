@@ -27,7 +27,7 @@ fn main() {
 #[derive(Debug)]
 pub struct Runtime {
     balances: balances::Pallet<types::AccountId, types::Balance>,
-    system: system::Pallet<types::AccountId, types::BlockNumber, types::Nonce>,
+    system: system::Pallet<Runtime>,
 }
 
 impl Runtime {
@@ -41,4 +41,10 @@ mod types {
     pub type Balance = u128;
     pub type BlockNumber = u32;
     pub type Nonce = u32;
+}
+
+impl system::Config for Runtime {
+    type AccountId = types::AccountId;
+    type BlockNumber = types::BlockNumber;
+    type Nonce = types::Nonce;
 }
