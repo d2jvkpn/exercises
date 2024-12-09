@@ -13,6 +13,20 @@ fn main() {
     let bob = "bob".to_string();
     let charlie = "charlie".to_string();
 
+    /*
+    runtime.balances.set_balance(&alice, 100);
+    runtime.system.inc_block_number();
+
+    assert_eq!(runtime.system.block_number(), 1);
+    runtime.system.inc_nonce(&alice);
+
+    let _ = runtime.balances.transfer(&alice, &bob, 30).map_err(|e| println!("!!! 1. Error: {e}"));
+
+    let _ =
+        runtime.balances.transfer(&alice, &charlie, 20).map_err(|e| println!("!!! 2. Error: {e}"));
+    */
+
+    /*
     runtime.balances.set_balance(&alice, 100);
 
     let block_1 = types::Block {
@@ -29,36 +43,32 @@ fn main() {
         ],
     };
 
-    let block_2 = types::Block {
-        header: support::Header { block_number: 2 },
+    runtime.execute_block(block_1).expect("wrong block execution");
+    */
+
+    runtime.balances.set_balance(&alice, 100);
+
+    let block_1 = types::Block {
+        header: support::Header { block_number: 1 },
         extrinsics: vec![
             support::Extrinsic {
                 caller: alice.clone(),
-                call: RuntimeCall::BalancesTransfer { to: bob.clone(), amount: 30 },
+                call: RuntimeCall::Balances(balances::Call::Transfer {
+                    to: bob.clone(),
+                    amount: 30,
+                }),
             },
             support::Extrinsic {
                 caller: alice.clone(),
-                call: RuntimeCall::BalancesTransfer { to: charlie.clone(), amount: 20 },
+                call: RuntimeCall::Balances(balances::Call::Transfer {
+                    to: charlie.clone(),
+                    amount: 20,
+                }),
             },
         ],
     };
 
     runtime.execute_block(block_1).expect("wrong block execution");
-
-    runtime.execute_block(block_2).expect("wrong block execution");
-
-    /*
-    runtime.balances.set_balance(&alice, 100);
-    runtime.system.inc_block_number();
-
-    assert_eq!(runtime.system.block_number(), 1);
-    runtime.system.inc_nonce(&alice);
-
-    let _ = runtime.balances.transfer(&alice, &bob, 30).map_err(|e| println!("!!! 1. Error: {e}"));
-
-    let _ =
-        runtime.balances.transfer(&alice, &charlie, 20).map_err(|e| println!("!!! 2. Error: {e}"));
-    */
 
     println!("{:#?}", runtime);
 }
@@ -76,7 +86,8 @@ mod types {
 }
 
 pub enum RuntimeCall {
-    BalancesTransfer { to: types::AccountId, amount: types::Balance },
+    // BalancesTransfer { to: types::AccountId, amount: types::Balance },
+    Balances(balances::Call<Runtime>),
 }
 
 #[derive(Debug)]
@@ -120,9 +131,10 @@ impl crate::support::Dispatch for Runtime {
 
     fn dispatch(&mut self, caller: Self::Caller, call: Self::Call) -> support::DispatchResult {
         match call {
-            RuntimeCall::BalancesTransfer { to, amount } => {
-                self.balances.transfer(&caller, &to, amount)?;
-            }
+            //RuntimeCall::BalancesTransfer { to, amount } => {
+            //    self.balances.transfer(&caller, &to, amount)?;
+            //}
+            RuntimeCall::Balances(call) => self.balances.dispatch(caller, call)?,
         }
 
         Ok(())

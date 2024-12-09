@@ -53,7 +53,7 @@ impl<T: Config> Pallet<T> {
 }
 
 pub enum Call<T: Config> {
-    Tranfer { to: T::AccountId, amount: T::Balance },
+    Transfer { to: T::AccountId, amount: T::Balance },
     // RemoveMe{core::marker::PhantomData{}},
 }
 
@@ -67,7 +67,7 @@ impl<T: Config> crate::support::Dispatch for Pallet<T> {
         call: Self::Call,
     ) -> crate::support::DispatchResult {
         match call {
-            Call::Tranfer { to, amount } => self.transfer(&caller, &to, amount),
+            Call::Transfer { to, amount } => self.transfer(&caller, &to, amount),
         }
     }
 }
