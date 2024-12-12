@@ -119,6 +119,7 @@ impl Runtime {
                     block.header.block_number, i, e,
                 );
 
+                self.system.dec_block_number();
                 return Err(e);
             }
         }

@@ -35,6 +35,10 @@ impl<T: Config> Pallet<T> {
         self.block_number = self.block_number.checked_add(&T::BlockNumber::one()).unwrap();
     }
 
+    pub fn dec_block_number(&mut self) {
+        self.block_number = self.block_number.checked_sub(&T::BlockNumber::one()).unwrap();
+    }
+
     pub fn inc_nonce(&mut self, who: &T::AccountId) {
         // let nonce = self.nonce.get(who).unwrap_or(&0);
         // self.nonce.insert(who.clone(), nonce.checked_add(1).unwrap());
