@@ -58,18 +58,24 @@ mod tests {
 
     struct TestConfig;
 
-    impl Config for TestConfig {
+    impl crate::system::Config for TestConfig {
         type AccountId = String;
+        type BlockNumber = u32;
+        type Nonce = u32;
+    }
+
+    impl Config for TestConfig {
         type Balance = u128;
     }
 
     #[test]
     fn init_balances() {
         let mut pallet = Pallet::<TestConfig>::new();
+        let alice = "alice".to_string();
 
-        assert_eq!(pallet.balance(&"alice".to_string()), 0);
-        pallet.set_balance(&"alice".to_string(), 100);
-        assert_eq!(pallet.balance(&"alice".to_string()), 100);
+        assert_eq!(pallet.balance(&alice), 0);
+        pallet.set_balance(&alice, 100);
+        assert_eq!(pallet.balance(&alice), 100);
     }
 
     #[test]
@@ -87,10 +93,11 @@ mod tests {
 
     #[test]
     fn transfer_balance_insufficent() {
+        let mut pallet = Pallet::<TestConfig>::new();
+
         let alice = "alice".to_string();
         let bob = "bob".to_string();
 
-        let mut pallet = Pallet::<TestConfig>::new();
         pallet.set_balance(&alice, 100);
 
         let result = pallet.transfer(&alice, &bob, 200);
@@ -102,9 +109,10 @@ mod tests {
 
     #[test]
     fn transfer_balance_overflow() {
+        let mut pallet = Pallet::<TestConfig>::new();
+
         let alice = "alice".to_string();
         let bob = "bob".to_string();
-        let mut pallet = Pallet::<TestConfig>::new();
 
         pallet.set_balance(&alice, 100);
         pallet.set_balance(&bob, u128::MAX);

@@ -78,8 +78,13 @@ mod tests {
 
     struct TestConfig;
 
-    impl Config for TestConfig {
+    impl crate::system::Config for TestConfig {
         type AccountId = String;
+        type BlockNumber = u128;
+        type Nonce = u128;
+    }
+
+    impl Config for TestConfig {
         type Balance = u128;
     }
 

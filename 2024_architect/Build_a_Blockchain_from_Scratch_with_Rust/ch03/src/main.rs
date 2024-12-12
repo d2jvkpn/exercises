@@ -3,7 +3,6 @@ mod system;
 
 fn main() {
     // println!("Hello, world! WEB3DEV is cool!");
-
     let mut runtime = Runtime::new();
 
     let alice = "alice".to_string();

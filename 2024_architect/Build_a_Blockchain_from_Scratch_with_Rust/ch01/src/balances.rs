@@ -44,10 +44,11 @@ mod tests {
     #[test]
     fn init_balances() {
         let mut pallet = Pallet::new();
+        let alice = "alice".to_string();
 
-        assert_eq!(pallet.balance(&"alice".to_string()), 0);
-        pallet.set_balance(&"alice".to_string(), 100);
-        assert_eq!(pallet.balance(&"alice".to_string()), 100);
+        assert_eq!(pallet.balance(&alice), 0);
+        pallet.set_balance(&alice, 100);
+        assert_eq!(pallet.balance(&alice), 100);
     }
 
     #[test]
@@ -58,17 +59,17 @@ mod tests {
 
         pallet.set_balance(&alice, 100);
 
-        let _ = pallet.transfer(&alice, &bob, 90);
+        pallet.transfer(&alice, &bob, 90).unwrap();
         assert_eq!(pallet.balance(&alice), 10);
         assert_eq!(pallet.balance(&bob), 90);
     }
 
     #[test]
     fn transfer_balance_insufficent() {
+        let mut pallet = Pallet::new();
         let alice = "alice".to_string();
         let bob = "bob".to_string();
 
-        let mut pallet = Pallet::new();
         pallet.set_balance(&alice, 100);
 
         let result = pallet.transfer(&alice, &bob, 200);
@@ -80,9 +81,9 @@ mod tests {
 
     #[test]
     fn transfer_balance_overflow() {
+        let mut pallet = Pallet::new();
         let alice = "alice".to_string();
         let bob = "bob".to_string();
-        let mut pallet = Pallet::new();
 
         pallet.set_balance(&alice, 100);
         pallet.set_balance(&bob, u128::MAX);

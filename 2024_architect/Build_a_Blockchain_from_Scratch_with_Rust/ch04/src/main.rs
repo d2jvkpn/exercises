@@ -1,8 +1,8 @@
-use support::Dispatch;
-
 mod balances;
 mod support;
 mod system;
+
+use support::Dispatch;
 
 fn main() {
     // println!("Hello, world! WEB3DEV is cool!");
@@ -80,9 +80,9 @@ mod types {
     pub type Balance = u128;
     pub type BlockNumber = u32;
     pub type Nonce = u32;
-    pub type Extrinsic = support::Extrinsic<AccountId, crate::RuntimeCall>;
     pub type Header = support::Header<BlockNumber>;
     pub type Block = support::Block<Header, Extrinsic>;
+    pub type Extrinsic = support::Extrinsic<AccountId, crate::RuntimeCall>;
 }
 
 pub enum RuntimeCall {
@@ -108,7 +108,9 @@ impl Runtime {
             return Err("Block number mismatch");
         }
 
-        for (i, support::Extrinsic { caller, call }) in block.extrinsics.into_iter().enumerate() {
+        let extrinsics = block.extrinsics.into_iter().enumerate();
+
+        for (i, support::Extrinsic { caller, call }) in extrinsics {
             self.system.inc_nonce(&caller);
             // self.dispatch(caller, call)?;
             if let Err(e) = self.dispatch(caller, call) {

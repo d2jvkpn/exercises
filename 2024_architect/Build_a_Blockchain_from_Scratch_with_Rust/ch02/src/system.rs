@@ -67,8 +67,9 @@ mod tests {
 
     #[test]
     fn inc_nonce() {
-        let alice = "alice".to_string();
         let mut pallet = Pallet::new();
+
+        let alice = "alice".to_string();
 
         pallet.inc_nonce(&alice);
         pallet.inc_nonce(&alice);

@@ -59,7 +59,7 @@ mod tests {
 
         pallet.set_balance(&alice, 100);
 
-        let _ = pallet.transfer(&alice, &bob, 90);
+        pallet.transfer(&alice, &bob, 90).unwrap();
         assert_eq!(pallet.balance(&alice), 10);
         assert_eq!(pallet.balance(&bob), 90);
     }
