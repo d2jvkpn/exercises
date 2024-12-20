@@ -29,7 +29,7 @@ fn main() {
     parallel::merge_sort_v2(&mut d1);
     assert!(generate::is_sorted(&d1, true));
 
-    assert_eq!(binary_search(&d1, 9), Some(0));
+    assert_eq!(binary_search(&d1, &9), Some(0));
 
     let mut d1 = input.clone();
     heap_sort(&mut d1);

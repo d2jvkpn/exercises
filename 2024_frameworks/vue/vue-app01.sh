@@ -3,7 +3,7 @@ set -eu -o pipefail # -x
 _wd=$(pwd); _path=$(dirname $0 | xargs -i readlink -f {})
 
 #### 1.
-npm install -g @vue/cli
+npm install --global @vue/cli yarn
 
 # npm init vite@latest
 # my-vue-project
