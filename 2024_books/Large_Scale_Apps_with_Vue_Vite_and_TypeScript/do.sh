@@ -17,5 +17,7 @@ npm run dev
 exit
 npm install vite-tsconfig-paths
 
+npm i --save-dev @types/node
+
 npm update
 npm fund
