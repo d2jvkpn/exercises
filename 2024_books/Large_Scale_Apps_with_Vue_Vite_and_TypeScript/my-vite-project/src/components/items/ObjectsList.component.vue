@@ -20,7 +20,7 @@
   <div>
     <h3>Objects:</h3>
     <ul>
-      <li v-for="(item, index) in objects" :key="item.id" @click="handleClick(item)">
+      <li v-for="(item, _index) in objects" :key="item.id" @click="handleClick(item)">
         {{item.name}} [{{item.selected}}]
       </li>
     </ul>

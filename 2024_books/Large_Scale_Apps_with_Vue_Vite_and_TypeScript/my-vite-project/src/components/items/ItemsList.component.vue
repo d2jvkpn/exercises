@@ -3,7 +3,7 @@
   // defineProps<{ items: any[] }>()
   // explicetely using any[] as we'll replace this with an interface in the next chapters
 
-  import type { ItemInterface } from 'models/items/Item.interface.ts';
+  import type { ItemInterface } from 'components/models/items/Item.interface.ts';
 
   defineProps<{ items: ItemInterface[] }>();
 
@@ -18,7 +18,7 @@
   <div>
     <h3>Items:</h3>
     <ul>
-      <li v-for="(item, index) in items" :key="item.id" @click="handleClick(item)">
+      <li v-for="(item, _index) in items" :key="item.id" @click="handleClick(item)">
         {{item.name}} [{{item.selected}}]
       </li>
     </ul>
