@@ -10,6 +10,7 @@ function getArg(key: string): string | undefined {
 }
 
 const base = getArg('--base');
+console.log(`==> base=${base}`);
 
 // Can't read BASE_URL from env
 // const BASE_URL="/";
