@@ -8,7 +8,7 @@ npm init vite@latest
 
 npm i -D esbuild@0.24.0
 
-cd vite-vue-01
+cd vite-vue-ts
 
 npm install
 npm run format
