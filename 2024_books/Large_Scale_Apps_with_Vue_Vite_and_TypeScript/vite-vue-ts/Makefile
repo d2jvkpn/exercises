@@ -1,8 +1,10 @@
 run:
-	npm run dev -- --port=9001 --host=127.0.0.1
+	# --mode dev
+	npm run dev -- --port 9001 --host 127.0.0.1
 
 build:
 	rm -rf dist
+	# --mode dev
 	npm run build -- --base /
 	ls -al dist
 
