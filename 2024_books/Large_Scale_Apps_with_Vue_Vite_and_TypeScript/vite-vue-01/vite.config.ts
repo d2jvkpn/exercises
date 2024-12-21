@@ -16,7 +16,7 @@ const base = getArg('--base');
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue(), tsconfigPaths()],
-  base,
+  // base: BASE_URL,
   build: {
     outDir: 'dist' + base,
   },
