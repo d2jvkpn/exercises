@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { reactive } from 'vue';
 
-  import type { ItemInterface } from './models/items/Item.interface';
+  import type { ItemInterface } from './components/models/Item.interface';
   import ItemsListComponent from './components/items/ItemsList.component.vue';
   import ObjectsListComponent from './components/items/ObjectsList.component.vue';
 

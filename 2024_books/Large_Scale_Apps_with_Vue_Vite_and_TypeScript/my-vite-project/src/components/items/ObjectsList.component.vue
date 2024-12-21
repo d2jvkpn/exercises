@@ -3,7 +3,7 @@
   // defineProps<{ items: any[] }>()
   // explicetely using any[] as we'll replace this with an interface in the next chapters
 
-  import type { ItemInterface } from '../../models/items';
+  import type { ItemInterface } from '../models/Item.interface.ts';
 
   defineProps<{ objects: ItemInterface[] }>();
 
