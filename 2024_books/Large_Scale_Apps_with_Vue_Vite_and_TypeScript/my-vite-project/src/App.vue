@@ -5,12 +5,18 @@
   import ItemsListComponent from './components/items/ItemsList.component.vue';
   import ObjectsListComponent from './components/items/ObjectsList.component.vue';
 
-  //
+  const app_env = import.meta.env.VITE_APP_ENV
+  const base_url = import.meta.env.BASE_URL;
+  const api_url = import.meta.env.VITE_API_URL
+  const settings = `app_env=${app_env}, base_url=${base_url}, api_url=${api_url}`;
+
+  console.log(`==> ${window.location}, ${settings}`);
+
   const items: ItemInterface[] = [
     { id: 1, name: 'Item 1', selected: false },
     { id: 2, name: 'Item 2', selected: false },
     { id: 3, name: 'Item 3', selected: false },
-  ]
+  ];
 
   //
   const list = reactive([
@@ -35,7 +41,7 @@
     }
 
     item.selected = !item.selected;
-    console.log('--> onSelectObject: ', item.id, item.selected);
+    console.log(`--> onSelectObject: ${item.id}, ${item.selected}`);
   };
 </script>
 
