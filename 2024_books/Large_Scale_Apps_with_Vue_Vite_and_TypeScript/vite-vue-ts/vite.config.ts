@@ -3,14 +3,21 @@ import vue from '@vitejs/plugin-vue';
 
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-// get --base /site, not --base=/site
 function getArg(key: string): string | undefined {
-  const index = process.argv.indexOf(key);
-  return index !== -1 ? process.argv[index + 1] : "/";
+  let index = process.argv.indexOf(key);
+  // return index !== -1 ? process.argv[index + 1] : "/";
+
+  if (index !== -1) {
+    return process.argv[index + 1];
+  }
+
+  let base = process.argv.find(v => v.startsWith("--base="));
+
+  return base ? base.slice(7) : "/";
 }
 
 const base = getArg('--base');
-console.log(`==> base=${base}`);
+console.log(`==> vite: base=${base}`);
 
 // Can't read BASE_URL from env
 // const BASE_URL="/";

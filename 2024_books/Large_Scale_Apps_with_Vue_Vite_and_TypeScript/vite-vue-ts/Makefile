@@ -5,10 +5,10 @@ run:
 build:
 	rm -rf dist
 	# --mode dev
-	npm run build -- --base /
+	npm run build -- --base=/
 	ls -al dist
 
 build-site:
 	rm -rf dist
-	npm run build --  --base /site
+	npm run build --  --base=/site
 	ls -al dist
