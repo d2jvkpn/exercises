@@ -5,10 +5,10 @@
   import ItemsListComponent from './components/items/ItemsList.component.vue';
   import ObjectsListComponent from './components/items/ObjectsList.component.vue';
 
-  const app_env = import.meta.env.VITE_APP_ENV
-  const base_url = import.meta.env.BASE_URL;
+  const env = import.meta.env.VITE_ENV
+  const base = import.meta.env.VITE_BASE;
   const api_url = import.meta.env.VITE_API_URL
-  const settings = `app_env=${app_env}, base_url=${base_url}, api_url=${api_url}`;
+  const settings = `env=${env}, base=${base}, api_url=${api_url}`;
 
   console.log(`==> ${window.location}, ${settings}`);
 

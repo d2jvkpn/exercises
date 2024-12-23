@@ -2,7 +2,7 @@ include .env
 
 run:
 	# --mode dev
-	npm run dev -- --port 9001 --host 127.0.0.1
+	npm run dev -- --port $(PORT) --host 0.0.0.0
 
 build:
 	rm -rf dist
