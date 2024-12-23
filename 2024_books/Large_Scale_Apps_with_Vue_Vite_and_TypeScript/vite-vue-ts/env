@@ -1,6 +1,6 @@
 # path: .env
 PORT=9001
 
-VITE_BASE=/
 VITE_ENV=local
-VITE_API_URL=localhost:9010
+VITE_BASE=/
+VITE_API_URL=localhost:9011
