@@ -7,6 +7,7 @@ Learn more about the recommended Project Setup and IDE Support in the [Vue Docs 
 
 #### setup .env
 ```
+# path: .env
 PORT=9001
 
 VITE_BASE=/site

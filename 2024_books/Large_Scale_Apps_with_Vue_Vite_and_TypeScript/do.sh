@@ -21,3 +21,8 @@ npm install --save-dev @types/node
 exit
 npm update
 npm fund
+
+exit
+
+npm install --global yarn
+yarn --version
