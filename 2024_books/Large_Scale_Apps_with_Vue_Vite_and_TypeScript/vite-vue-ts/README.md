@@ -10,7 +10,7 @@ Learn more about the recommended Project Setup and IDE Support in the [Vue Docs 
 # path: .env
 PORT=9001
 
-VITE_BASE=/site
+VITE_BASE=/
 VITE_ENV=local
 VITE_API_URL=localhost:9010
 ```
