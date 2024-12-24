@@ -8,7 +8,6 @@ npm init vite@latest
 
 cd vite-vue-ts
 
-npm install --save-dev @types/node
 npm install
 npm run dev
 
