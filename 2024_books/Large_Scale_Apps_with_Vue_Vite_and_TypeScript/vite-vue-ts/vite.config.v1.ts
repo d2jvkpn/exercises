@@ -21,7 +21,7 @@ console.log(`==> vite: base=${base}`);
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [vue()],
-  // base: base,
+  base: base,
   build: {
     outDir: 'target/static' + base,
   },
