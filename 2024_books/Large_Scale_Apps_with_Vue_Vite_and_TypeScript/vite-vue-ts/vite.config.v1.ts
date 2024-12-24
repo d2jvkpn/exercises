@@ -1,3 +1,5 @@
+// npm install --save-dev @types/node
+
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
