@@ -1,8 +1,6 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
-import tsconfigPaths from 'vite-tsconfig-paths';
-
 function getArg(key: string): string | undefined {
   let index = process.argv.indexOf(key);
   // return index !== -1 ? process.argv[index + 1] : "/";
@@ -24,9 +22,9 @@ console.log(`==> vite: base=${base}`);
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue(), tsconfigPaths()],
+  plugins: [vue()],
   // base: BASE_URL,
   build: {
-    outDir: 'dist' + base,
+    outDir: 'target/static' + base,
   },
 })
