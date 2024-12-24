@@ -21,4 +21,7 @@ yarn --version
 
 exit
 npm install -D esbuild@0.24.0
+
 npm install vite-tsconfig-paths
+
+npm install --save-dev @types/node
