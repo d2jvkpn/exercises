@@ -1,9 +1,9 @@
 <script setup lang="ts">
   import { reactive } from 'vue';
 
-  import type { ItemInterface } from './components/models/Item.interface';
-  import ItemsListComponent from './components/items/ItemsList.component.vue';
-  import ObjectsListComponent from './components/items/ObjectsList.component.vue';
+  import type { ItemInterface } from '@/components/models/Item.interface.ts';
+  import ItemsListComponent from '@/components/items/ItemsList.component.vue';
+  import ObjectsListComponent from '@/components/items/ObjectsList.component.vue';
 
   const env = import.meta.env.VITE_ENV
   const base = import.meta.env.VITE_BASE;
