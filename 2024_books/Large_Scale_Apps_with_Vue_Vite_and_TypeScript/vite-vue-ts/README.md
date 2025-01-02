@@ -16,8 +16,9 @@ VITE_API_URL=localhost:9011
 ```
 
 #### C02. Enable path alias
-1. vite.config.ts add "import path from 'path';"
-2. vite.config.ts add in defineConfig({...})
+1. vite.config.ts
+- "import path from 'path';"
+- in defineConfig({...})
 ```ts
   resolve: {
     alias: {
@@ -38,5 +39,5 @@ VITE_API_URL=localhost:9011
     },
   },
 ```
-3. package.json replace scripts.build "vue-tsc -b && vite build" with "vite build"
-4. tsconfig.json add "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+2. package.json replace scripts.build "vue-tsc -b && vite build" with "vite build"
+3. tsconfig.json add "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
