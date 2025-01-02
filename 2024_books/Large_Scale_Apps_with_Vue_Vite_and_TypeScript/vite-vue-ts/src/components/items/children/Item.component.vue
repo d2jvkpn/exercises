@@ -24,7 +24,7 @@ export default defineComponent({
     model: {
       type: Object as PropType<ItemInterface>,
       default: () => {
-        return {}
+        return {};
       }
     }
   },
