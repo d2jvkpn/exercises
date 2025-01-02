@@ -3,6 +3,8 @@ set -eu -o pipefail; _wd=$(pwd); _path=$(dirname $0)
 
 #### 1.
 tag=$1
+# GIT_Pull=$(printenv GIT_Pull || true)
+GIT_Pull=${GIT_Pull:-"true"}
 DOCKER_Pull=${DOCKER_Pull:-false}
 DOCKER_Push=${DOCKER_Push:-false}
 
@@ -17,6 +19,9 @@ image_name=$(yq .image_name $yaml)
 image_tag=$(yq .$tag.image_tag $yaml)
 image=$image_name:$image_tag
 
+build_time=$(date +'%FT%T%:z')
+build_host=$(hostname)
+
 git_branch=$(yq .$tag.branch $yaml)
 git_commit_id=$(git rev-parse --verify HEAD) # git log --pretty=format:'%h' -n 1
 git_commit_time=$(git log -1 --format="%at" | xargs -I{} date -d @{} +%FT%T%:z)
@@ -27,7 +32,12 @@ unpushed=$(git diff origin/$git_branch..HEAD --name-status)
 [[ ! -z "$unpushed" ]] && git_tree_state="unpushed"
 [[ ! -z "$uncommitted" ]] && git_tree_state="uncommitted"
 
-build_time=$(date +'%FT%T%:z')
+if [[ "$GIT_Pull" != "false" && ! -z "$uncommitted$unpushed" ]]; then
+    >&2 echo '!!! '"git state is dirty"
+    exit 1
+fi
+
+[[ "$GIT_Pull" != "false" ]] && git pull --no-edit
 
 VUE_APP_PUBLIC_PATH=$(yq .$tag.VUE_APP_PUBLIC_PATH $yaml)
 VUE_APP_API_URL=$(yq .$tag.VUE_APP_API_URL $yaml)
@@ -91,8 +101,10 @@ docker build --no-cache --tag $image \
 
 [ "$DOCKER_Push" != "false" ] && docker push $image
 
+#### 5.
 docker image prune --force --filter label=app=${app_name} --filter label=stage=build &> /dev/null
 
-for img in $(docker images --filter "dangling=true" --quiet $image); do
+# docker images --filter "dangling=true" --quiet $image | xargs -i docker rmi {}
+for img in $(docker images --filter=dangling=true --filter=label=app=$app_name --quiet); do
     docker rmi $img || true
 done
