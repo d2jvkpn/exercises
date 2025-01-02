@@ -13,13 +13,16 @@ export default defineConfig({
     },
     extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
+
   css: {
     preprocessorOptions: {
       css: {
         preprocessorOptions: {
-          scss: { additionalData: `@import "@/assets/scss/base.scss";` },
-          javascriptEnabled: true,
-        }
+          scss: {
+            additionalData: `@import "@/assets/scss/base.scss";`,
+            javascriptEnabled: true,
+          },
+        },
       },
     },
   },
