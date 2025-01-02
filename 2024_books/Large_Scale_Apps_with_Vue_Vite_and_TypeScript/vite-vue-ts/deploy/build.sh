@@ -62,7 +62,6 @@ git_tree_state: $git_tree_state
 
 build_time: $build_time
 
-VUE_APP_ENV: $VUE_APP_ENV
 VUE_APP_API_URL: $VUE_APP_API_URL
 VUE_APP_PUBLIC_PATH: $VUE_APP_PUBLIC_PATH
 EOF
