@@ -5,7 +5,7 @@ This template should help get you started developing with Vue 3 and TypeScript i
 Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
 
 
-#### C01. setup .env
+#### C01. Setup env
 ```
 # path: .env
 PORT=9001
@@ -15,25 +15,28 @@ VITE_BASE=/
 VITE_API_URL=localhost:9011
 ```
 
-#### C02. path alias
-1. vite.config.ts "import path from 'path';"
-2. vite.config.ts defineConfig({...}) add
+#### C02. Enable path alias
+1. vite.config.ts add "import path from 'path';"
+2. vite.config.ts add in defineConfig({...})
 ```ts
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/'),
+      '@': path.resolve(__dirname, 'src'),
+      // extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
     },
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
   },
   css: {
     preprocessorOptions: {
       css: {
         preprocessorOptions: {
-          scss: { additionalData: `@import "@/assets/scss/base.scss";` },
-          javascriptEnabled: true,
+          scss: {
+            additionalData: `@import "@/assets/scss/base.scss";`,
+            javascriptEnabled: true,
+          },
         }
       },
     },
   },
 ```
 3. package.json replace scripts.build "vue-tsc -b && vite build" with "vite build"
+4. tsconfig.json add "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
