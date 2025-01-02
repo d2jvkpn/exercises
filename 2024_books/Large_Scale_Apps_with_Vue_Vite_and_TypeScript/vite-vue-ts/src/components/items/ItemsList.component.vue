@@ -6,7 +6,13 @@
   // import type { ItemInterface } from '@models/items/Item.interface.ts';
   import type { ItemInterface } from '@/models';
 
-  defineProps<{ items: ItemInterface[] }>();
+  import ItemComponent from './children/Item.component.vue';
+  import Loader from '@/components/shared/Loader.component.vue';
+
+  defineProps<{
+    items: ItemInterface[]
+    loading: boolean
+  }>();
 
   const handleClick = (item: ItemInterface) => {
     item.selected = !item.selected;
@@ -17,7 +23,11 @@
 
 <template>
   <div>
-    <h3>Items:</h3>
+    <h3>Items - loading: {{loading}}:</h3>
+
+    <Loader v-show="loading" />
+    <ul v-show="!loading"> </ul>
+
     <ul>
       <li v-for="(item, _index) in items" :key="item.id" @click="handleClick(item)">
         {{item.name}} [{{item.selected}}]
