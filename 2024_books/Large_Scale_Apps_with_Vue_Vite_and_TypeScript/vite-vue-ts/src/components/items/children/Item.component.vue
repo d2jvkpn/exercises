@@ -9,20 +9,20 @@
 // import reference to Vue's defineComponent
 import { defineComponent, computed, PropType } from 'vue'
 // import a reference to our ItemInterace
-import type { ItemInterface } from '../../../models/items/Item.interface'
-// create our component with defineComponent
+import type { ItemInterface } from '@/models/items/Item.interface';
 
+// create our component with defineComponent
 export default defineComponent({
   name: 'ItemComponent',
   emits: ['selectItem'],
   props: {
-  // add testid prop here as well
+    // add testid prop here as well
     testid: {
-    default: 'not-set'
-  },
-  // expose a property called model of type ItemInterface
-  model: {
-    type: Object as PropType<ItemInterface>,
+      default: 'not-set'
+    },
+    // expose a property called model of type ItemInterface
+    model: {
+      type: Object as PropType<ItemInterface>,
       default: () => {
         return {}
       }
