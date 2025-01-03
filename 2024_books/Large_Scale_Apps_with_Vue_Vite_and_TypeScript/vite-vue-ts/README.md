@@ -26,6 +26,7 @@ VITE_API_URL=localhost:9011
       // extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
     },
   },
+
   css: {
     preprocessorOptions: {
       css: {
@@ -40,4 +41,4 @@ VITE_API_URL=localhost:9011
   },
 ```
 2. package.json replace scripts.build "vue-tsc -b && vite build" with "vite build"
-3. tsconfig.json add "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
+3. ~~tsconfig.json add "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]~~
