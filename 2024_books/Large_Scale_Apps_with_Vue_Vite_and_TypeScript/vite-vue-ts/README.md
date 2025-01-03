@@ -5,7 +5,10 @@ This template should help get you started developing with Vue 3 and TypeScript i
 Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
 
 
-#### C01. Setup env
+#### C01. Reference
+Large ScaleApps with Vue Vite and TypeScript
+
+#### C02. Setup env
 ```
 # path: .env
 PORT=9001
@@ -15,7 +18,7 @@ VITE_BASE=/
 VITE_API_URL=localhost:9011
 ```
 
-#### C02. Enable path alias
+#### C03. Enable path alias
 1. vite.config.ts
 - "import path from 'path';"
 - in defineConfig({...})

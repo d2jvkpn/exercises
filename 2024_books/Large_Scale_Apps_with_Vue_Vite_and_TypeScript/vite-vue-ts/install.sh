@@ -2,9 +2,8 @@
 set -eu -o pipefail # -x
 _wd=$(pwd); _path=$(dirname $0)
 
-exit
-npm init vite@latest
-# interactive
+# npm init vite@latest # interactive
+npm init vite@latest vite-vue-ts -- --template vue-ts
 
 cd vite-vue-ts
 
