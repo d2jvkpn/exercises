@@ -7,6 +7,7 @@ tag=$1
 GIT_Pull=${GIT_Pull:-"true"}
 DOCKER_Pull=${DOCKER_Pull:-false}
 DOCKER_Push=${DOCKER_Push:-false}
+region=${region:-""}
 
 yaml=${yaml:-${_path}/build.yaml}
 
@@ -39,16 +40,16 @@ fi
 
 [[ "$GIT_Pull" != "false" ]] && git pull --no-edit
 
-VUE_APP_PUBLIC_PATH=$(yq .$tag.VUE_APP_PUBLIC_PATH $yaml)
-VUE_APP_API_URL=$(yq .$tag.VUE_APP_API_URL $yaml)
+VITE_BASE=$(yq .$tag.VITE_BASE $yaml)
+VITE_API_URL=$(yq .$tag.VITE_API_URL $yaml)
 
 
 #### 2.
 mkdir -p cache.local
 
 cat > cache.local/env <<EOF
-VUE_APP_PUBLIC_PATH=$VUE_APP_PUBLIC_PATH
-VUE_APP_API_URL=$VUE_APP_API_URL
+VITE_BASE=$VITE_BASE
+VITE_API_URL=$VITE_API_URL
 EOF
 
 cat > cache.local/build.yaml <<EOF
@@ -62,8 +63,8 @@ git_tree_state: $git_tree_state
 
 build_time: $build_time
 
-VUE_APP_API_URL: $VUE_APP_API_URL
-VUE_APP_PUBLIC_PATH: $VUE_APP_PUBLIC_PATH
+VITE_BASE: $VITE_BASE
+VITE_API_URL: $VITE_API_URL
 EOF
 
 yq -o json cache.local/build.yaml > cache.local/build.json
@@ -88,14 +89,15 @@ trap onExit EXIT
 
 git checkout $git_branch
 
-echo "==> Building image=$image, base_path=$VUE_APP_PUBLIC_PATH"
+echo "==> Building image=$image, base_path=$VITE_BASE"
 
 # --build-arg=mode=$mode
 docker build --no-cache --tag $image \
   --file ${_path}/Containerfile \
   --build-arg=APP_Name=$app_name \
   --build-arg=APP_Version=$app_version \
-  --build-arg=BASE_Path="$VUE_APP_PUBLIC_PATH" \
+  --build-arg=BASE_Path="$VITE_BASE" \
+  --build-arg=region="$region" \
   ./
 
 [ "$DOCKER_Push" != "false" ] && docker push $image
