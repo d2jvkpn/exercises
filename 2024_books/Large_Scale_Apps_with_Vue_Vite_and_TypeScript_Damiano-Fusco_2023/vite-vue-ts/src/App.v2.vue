@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import ItemsView from '@/views/Items.view.vue';
+
+const metaEnv = import.meta.env;
 </script>
 
 <template>
 <div class="home">
+  [{{metaEnv}}]
+
   <ItemsView />
 </div>
 </template>

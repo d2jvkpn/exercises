@@ -21,6 +21,7 @@ RUN echo "==> BASE_Path: ${BASE_Path}"
 
 ADD *.js *.json *.ts index.html ./
 COPY public/ ./public
+COPY static/ ./static
 COPY src/ ./src
 
 COPY cache.local ./cache.local

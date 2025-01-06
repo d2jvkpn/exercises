@@ -11,6 +11,8 @@ npm install
 npm run dev
 
 exit
+npm i -D axios --save
+
 npm update
 npm fund
 

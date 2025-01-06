@@ -41,15 +41,13 @@ fi
 [[ "$GIT_Pull" != "false" ]] && git pull --no-edit
 
 VITE_BASE=$(yq .$tag.VITE_BASE $yaml)
-VITE_API_URL=$(yq .$tag.VITE_API_URL $yaml)
 
 
 #### 2.
 mkdir -p cache.local
 
 cat > cache.local/env <<EOF
-VITE_BASE=$VITE_BASE
-VITE_API_URL=$VITE_API_URL
+$(yq .$tag $yaml | grep "^VITE_" | sed 's/: /=/')
 EOF
 
 cat > cache.local/build.yaml <<EOF
@@ -63,8 +61,7 @@ git_tree_state: $git_tree_state
 
 build_time: $build_time
 
-VITE_BASE: $VITE_BASE
-VITE_API_URL: $VITE_API_URL
+$(yq .$tag $yaml | grep "^VITE_")
 EOF
 
 yq -o json cache.local/build.yaml > cache.local/build.json

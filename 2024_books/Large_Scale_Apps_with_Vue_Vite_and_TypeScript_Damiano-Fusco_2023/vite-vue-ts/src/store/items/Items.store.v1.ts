@@ -8,19 +8,23 @@ const itemsState = reactive<ItemsStateInterface>({
   items: [],
 })
 
-import { apiClient } from '@/api-client';
-
 const actions = {
-  // action that we invoke to load the items from an api:
   loadItems: async () => {
+    itemsState.loading = true
+    itemsState.items = []
 
-  // set loading to true and clear current data:
-  itemsState.loading = true
-  itemsState.items = []
+    let mockData: ItemInterface[] = [
+      {id: 1, name: 'item 1', selected: false},
+      {id: 2, name: 'item 2', selected: false},
+      {id: 3, name: 'item 3', selected: false},
+      {id: 4, name: 'item 4', selected: false},
+      {id: 5, name: 'item 5', selected: false},
+    ]
 
-  const data = await apiClient.items.fetchItems()
-  itemsState.items = data
-  itemsState.loading = false
+    setTimeout(() => {
+      itemsState.items = mockData
+      itemsState.loading = false
+    }, 1000)
   },
 
   toggleItemSelected: async (id: number) => {
