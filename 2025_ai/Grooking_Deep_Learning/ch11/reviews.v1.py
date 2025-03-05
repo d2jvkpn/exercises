@@ -8,7 +8,7 @@ import numpy as np
 
 #### 1.
 with open("reviews.txt", 'r') as f:
-     reviews = [v.strip() for v in  f.readlines() if len(v.strip()) > 0]
+    reviews = [v.strip() for v in  f.readlines() if len(v.strip()) > 0]
 
 with open("labels.txt", 'r') as f:
     labels = [v.strip() for v in  f.readlines() if len(v.strip()) > 0]
@@ -19,26 +19,28 @@ assert(len(reviews) == len(labels))
 #### 2.
 vocabs = set()
 for s in reviews:
-    vocabs.update(set([w for w in s.split()]))
+    subset = set([w for w in s.split()]) # if len(w) > 1
+    subset.discard(",")
+    subset.discard(".")
+    vocabs.update(subset)
 
-vocabs.discard("")
 vocabs = list(vocabs)
 vocabs.sort()
 
 word2index = {}
 for i, w in enumerate(vocabs):
-     word2index[w] = i
+    word2index[w] = i
 
 dataset = list()
 for s in reviews:
-    indices =  [word2index[w] for w in s.split()]
+    indices =  [word2index[w] for w in s.split() if w in word2index]
     dataset.append(list(set(indices))) # duplicates will be removed
 
 print(f"--> reviews[0]:{reviews[0]}")
 print(f"--> dataset[0]: {dataset[0]}")
 print(f"--> labels[0]: {labels[0]}")
 
-#### 3. 
+#### 3. prepare
 np.random.seed(1)
 
 def sigmoid(x):
@@ -46,8 +48,7 @@ def sigmoid(x):
 
 alpha = 0.01
 hidden_size = 100
-
-iterations = 20
+iterations = 2
 
 weights_0_1 = 0.2 * np.random.random((len(word2index), hidden_size)) - 0.1
 weights_1_2 = 0.2 * np.random.random((hidden_size, 1)) - 0.1
@@ -55,8 +56,11 @@ weights_1_2 = 0.2 * np.random.random((hidden_size, 1)) - 0.1
 train_size = int(len(dataset)*0.8)
 test_size = len(dataset) - train_size
 
-print(f"==> iterations={iterations}, train_size={train_size}, test_size={test_size}")
+print(f"==> Parameters: alpha{alpha}, hidden_size={hidden_size}, iterations={iterations}, weights_0_1={weights_0_1.shape}, weights_1_2={weights_1_2.shape}")
+print(f"==> Dataset: train_size={train_size}, test_size={test_size}")
 
+
+#### 4. trainning
 for n in range(iterations):
     n+=1
     correct = 0
@@ -85,3 +89,22 @@ for n in range(iterations):
 
     test_acc = correct/float(test_size)
     sys.stdout.write(f"--> I{n:03d}: train_accuracy={train_acc:.3f}, test_accuracy={test_acc:.3f}\n")
+
+#### 5. similar
+from collections import Counter
+import math
+
+def similar(target="beautiful"):
+    index = word2index[target]
+    scores = Counter()
+
+    for w, i in word2index.items():
+        difference = weights_0_1[i] - weights_0_1[index]
+        squared = difference * difference
+        scores[w] = -math.sqrt(squared.sum())
+
+    return scores.most_common(10)
+
+print(similar("beautiful"))
+print(similar("atmosphere"))
+print(similar("terrible"))

@@ -56,6 +56,7 @@ def flatten_v1(layer, shape): # matrix(n, 28, 28), tuple(3, 3) -> matrix(n*(28-3
     result = expanded_input.reshape(es[0] * es[1], -1)
     return result
 
+# TODO: speedup
 def flatten_v2(layer, shape):  # matrix(n, 28, 28), tuple(3, 3) -> matrix(n*(28-3)*(28-3), 3*3)
     def  cnn_convert(matrix, shape): # Convolutional Neural Networks
         dims = (matrix.shape[0] - shape[0] + 1, matrix.shape[1] - shape[1] + 1, shape[0], shape[1])
