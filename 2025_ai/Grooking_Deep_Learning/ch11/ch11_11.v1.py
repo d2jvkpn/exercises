@@ -12,7 +12,7 @@ random.seed(1)
 with open('reviews.txt') as f:
     reviews = f.readlines()
 
-tokens = list(map(lambda x: x.split(), reviews))
+tokens = list(map(lambda x: x.replace(".", " ").split(), reviews))
 
 wordcnt = Counter()
 for s in tokens:
