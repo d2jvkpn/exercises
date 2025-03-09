@@ -1,95 +1,98 @@
 #!/usr/bin/env python3
 
-import os, random, math
+import sys
 from collections import Counter
 
 import numpy as np
-
 np.random.seed(1)
 
 
 with open("data/tasksv11/en/qa1_single-supporting-fact_train.txt", 'r') as f:
     raw = f.readlines()
 
-tokens = list()
-vocabs = set()
-train_size = 1000
+tokens, vocabs = list(), set()
+for line in raw[:1000]:
+    sent = line.lower().replace("\n", "").split()[1:]
+    tokens.append(sent)
+    vocabs.update(set(sent))
 
-for line in raw[0:train_size]:
-    words = line.lower().split()[1:]
-    tokens.append(words)
-    vocabs.update(set(words))
+vocabs = list(vocabs)
+vocabs.sort()
+print(f"==> Tokens: length={len(tokens)}, tokens[0:3]={tokens[0:3]}")
 
 word2index = {}
 for i, w in enumerate(vocabs):
     word2index[w] = i
 
-def words2indices(sentence):
-    return [word2index[w] for w in sentence]
+def words2indices(sent):
+    return [word2index[w] for w in sent]
 
-def softmax(x):
-     e_x = np.exp(x - np.max(x))
-     return e_x / e_x.sum(axis=0)
-
-print(tokens[:3])
+def softmax(a):
+    b = np.exp(a - np.max(a))
+    return b / b.sum(axis=0)
 
 alpha = 0.001
-embed_szie = 10
-embed = (np.random.rand(len(vocabs), embed_szie) - 0.5) * 0.1 # word embeddings: range=[-0.05, 0.05], shape=(N, embed_szie)
-recurrent = np.eye(embed_szie) # embedding -> embedding (initially the identity matrix): shape=(embed_szie, embed_szie)
-start = np.eye(embed_szie)         # sentence embedding for empty sentence: shape=(embed_szie, embed_szie)
+iterations = 100 
+embed_size = 10
 
-decoder = (np.random.rand(embed_szie, len(vocabs)) - 0.5) * 0.1 # embedding -> output weights: range=[-0.05, 0.05], shape=(embed_szie, N)
-one_hot  = np.eye(len(vocabs))
+embed = (np.random.rand(len(vocabs) ,embed_size) - 0.5) * 0.1 # word embeddings, range=(-0.05, 0.05)
+recurrent = np.eye(embed_size) # embedding -> embedding (initially the identity matrix)
+start = np.zeros(embed_size)      # sentence embedding for empty sentence
+decoder = (np.random.rand(embed_size, len(vocabs)) - 0.5) * 0.1 # embedding -> output weights
+one_hot = np.eye(len(vocabs)) # one hot lookups (for loss function)
 
 def predict(sent):
-    layers = [ {"hidden": start} ]
+    layers = [{"hidden": start}]
     loss = 0
+    preds = list() # forward propagate
 
-   # forward propagate
     for i in range(len(sent)):
-        hidden = layers[-1]["hidden"] # shape=(embed_szie, embed_szie)
-
         layer = {
-            # state, try to predict the next term
-            "pred": softmax(np.dot(hidden, decoder)), # shape=(embed_szie, N)
-            # previous -> hidden, generate the next hidden state
-            "hidden": np.dot(hidden, recurrent) + embed[sent[i]], # shape=(embed_szie, embed_szie) + shape=(embed_szie, )
+            'pred': softmax(layers[-1]['hidden'].dot(decoder)), # try to predict the next term
+            "hidden": layers[-1]['hidden'].dot(recurrent) + embed[sent[i]] # generate the next hidden state
         }
 
-        loss += -np.log(layer["pred"][:, sent[i]])
+        #if np.isnan(layer['pred']).any(): break
+        loss += -np.log(layer['pred'][sent[i]])
         layers.append(layer)
 
     return layers, loss
 
-# Red Sox defeat Yankees
-for n in range(train_size * 3):
-    sent = words2indices(tokens[n%len(tokens)][1:])
+# forward
+steps = len(tokens) * iterations
+for n in range(steps):
+    sent = words2indices(tokens[n%len(tokens)])
+    size = float(len(sent))
     layers, loss = predict(sent)
 
+    # back propagate
     for i in reversed(range(len(layers))):
         layer = layers[i]
 
-        if i > 0:
+        if(i > 0):
             target = sent[i-1]
-            layer["output_delta"] = layer["pred"] - one_hot[target]
-            hidden_delta  = np.dot(layer["output_delta"], decoder.T)
+            layer['output_delta'] = layer['pred'] - one_hot[target]
+            new_hidden_delta = layer['output_delta'].dot(decoder.transpose())
 
-            if i == len(layers)-1:
-                layer["hidden_delta"] = hidden_delta
+            # if the last layer - don't pull from a later one becasue it doesn't exist
+            if(i == len(layers)-1):
+                layer['hidden_delta'] = new_hidden_delta
             else:
-                layer["hidden_delta"] = hidden_delta + np.dot(layers[i+1]["hidden_delta"], recurrent.T)
+                layer['hidden_delta'] = new_hidden_delta + layers[i+1]['hidden_delta'].dot(recurrent.transpose())
         else:
-             layer["hidden_delta"]  = np.dot(layers[i+1]["hidden_delta"], recurrent.T)
+            layer['hidden_delta'] = layers[i+1]['hidden_delta'].dot(recurrent.transpose())
 
-
-    start -= layers[0]["hidden_delta"] * alpha / float(len(sent))
+    # update weights
+    #if np.isnan(layers[0]['hidden_delta']).any(): break
+    start -= layers[0]['hidden_delta'] * alpha / size
 
     for i, layer in enumerate(layers[1:]):
-        #print("~~~", layers[i]["hidden"].shape, layer["output_delta"].shape)
-        decoder -= np.dot(layers[i]["hidden"], layer["output_delta"]) * alpha / float(len(sent))
-        embed[sent[i]] -= layers[i]["hidden_delta"] * alpha / float(len(sent))
-        recurrent -= np.dot(layers[i]["hidden"], layer["hidden_delta"]) * alpha / float(len(sent))
+        prev = layers[i]
+        decoder -= np.outer(prev['hidden'], layer['output_delta']) * alpha / size
+        embed[sent[i]] -= prev['hidden_delta'] * alpha / size
+        recurrent -= np.outer(prev['hidden'], layer['hidden_delta']) * alpha / size
 
-    if n%1000 == 0:
-        print("Perplexity:", np.exp(loss/len(sent)))
+    n+=1
+    if n % 1000 == 0 or n == steps:
+        perplexity = np.exp(loss/size)
+        print(f"--> I{n:05d}: perplexity={perplexity:.3f}")
