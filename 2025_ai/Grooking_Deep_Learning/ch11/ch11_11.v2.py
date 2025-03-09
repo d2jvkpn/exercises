@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 
+import os, json
+from os import path
 import sys, random, math
 from datetime import datetime
 from collections import Counter
 
 import numpy as np
+import polars as pl
 
 np.random.seed(1)
 random.seed(1)
@@ -12,7 +15,8 @@ random.seed(1)
 #### 1. data process
 tokens = []
 with open('reviews.txt') as f:
-    tokens = [line.replace(".", " ").split() for line in f.readlines()] # [["w11", "w12"], ["w21", "w22"]]
+    # line.replace(".", " ")
+    tokens = [line.split() for line in f.readlines()] # [["w11", "w12"], ["w21", "w22"]]
 
 vocabs = set()
 for s in tokens:
@@ -82,7 +86,7 @@ for n in range(train_size):
         right = review[i+1 : min(len(review), i + window)]
 
         # shape=(hidden_size,)
-        layer_1 = np.mean(weights_0_1[left+right], axis=0) # mean of indexes, review[(i-window) : (i+window)]
+        layer_1 = np.mean(weights_0_1[left+right], axis=0)
         # print("~~~ layer_1", layer_1.shape)
 
         # (hidden_size,) * (window * 2 + 2, hidden_size).T = (window * 2 + 2,)
@@ -107,3 +111,18 @@ print(f"==> {datetime.now().astimezone().isoformat('T')} Predication: word=terri
 
 pred = similar("beautiful")
 print(f"==> {datetime.now().astimezone().isoformat('T')} Predication: word=beautiful, similar={pred}")
+
+#### 4. dump
+os.makedirs("data", mode=511, exist_ok=True)
+
+with open(path.join("data", "tokens.json"), 'w') as f:
+    json.dump(tokens, f, indent=2)
+
+with open(path.join("data", "word2index.json"), 'w') as f:
+    json.dump(word2index, f, indent=2)
+
+wts_0_1 = pl.from_numpy(weights_0_1)
+wts_0_1.write_csv(path.join("data", "weights_0_1.tsv"), separator='\t')
+
+wts_1_2 = pl.from_numpy(weights_1_2)
+wts_1_2.write_csv(path.join("data", "weights_1_2.tsv"), separator='\t')
