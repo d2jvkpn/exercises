@@ -116,11 +116,11 @@ for n in range(steps):
 #### 4. test
 sent_idx = 4
 layers, loss = predict(words2indices(tokens[sent_idx]))
-print(tokens[sent_idx])
 
-print(f"==> Test: {tokens[sent_idx]}")
-for i in range(len(layers) - 1):
-    target = tokens[sent_idx][i]
+print(f"==> Test: {tokens[sent_idx]}, layers={len(layers)}")
+for i in range(len(layers) - 2):
+    prev = tokens[sent_idx][i]
+    target = tokens[sent_idx][i+1]
     layer = layers[i+1]
     pred = vocabs[layer["pred"].argmax()]
-    print(f"--> target='{target}', predication='{pred}', layer={layer}")
+    print(f"--> input='{prev}', target='{target}', predication='{pred}'")
