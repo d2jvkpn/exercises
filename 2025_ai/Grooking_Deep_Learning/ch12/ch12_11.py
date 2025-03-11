@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import numpy as np
+np.random.seed(1)
+
 
 def softmax(x_):
     x = np.atleast_2d(x_)

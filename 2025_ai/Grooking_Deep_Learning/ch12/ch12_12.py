@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 import numpy as np
+np.random.seed(1)
+
 
 #### 1. identity matrix
 this = np.array([2., 4, 6])
@@ -49,10 +51,10 @@ print(f"pred={pred}")
 y = np.array([1., 0., 0., 0., 0., 0., 0., 0., 0.])
 
 # yankees -> defeat -> sox -> red
-pred_delta = pred - y                                      # yankees
+pred_delta = pred - y                       # yankees
 delta_2 = pred_delta.dot(sent2output.T) * 1 # defeat
-delta_1 = delta_2.dot(identity.T)  * 1              # sox
-delta_0 = delta_1.dot(identity.T) * 1               # red
+delta_1 = delta_2.dot(identity.T)  * 1      # sox
+delta_0 = delta_1.dot(identity.T) * 1       # red
 
 alpha = 0.01
 word_vects["red"] -= delta_0 * alpha
@@ -62,3 +64,6 @@ word_vects["defeat"] -= delta_2 * alpha
 identity -= np.outer(layer_0, delta_1) * alpha
 identity -= np.outer(layer_1, delta_2) * alpha
 sent2output -= np.outer(layer_2,  pred_delta) * alpha
+
+print(f"==> sent2output={sent2output}")
+print(f"==> identity={identity}")
