@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 
 
+random_seed = 1
+
 import os
 from os import path
 from sys import stdout, stderr
@@ -10,8 +12,9 @@ import yaml
 import numpy as np
 import polars as pl
 from keras.datasets import mnist
+np.random.seed(random_seed)
 
-random_seed = 1
+
 batch_size = 100
 alpha = 2
 iterations = 500  # 500, 1000, 2000, 5000
@@ -21,7 +24,7 @@ image_shape, kernel_shape = (28, 28), (3, 3)
 num_kernels =  16 # 4, 8, 16, 32
 hidden_size = (image_shape[0] - kernel_shape[0] + 1) * (image_shape[1] - kernel_shape[1] + 1)  * num_kernels
 
-np.random.seed(random_seed)
+
 
 tanh = lambda x: np.tanh(x)
 tanh2deriv = lambda y: 1 - y**2

@@ -2,11 +2,11 @@
 
 import sys, random, math
 from collections import Counter
+random.seed(1)
 
 import numpy as np
-
 np.random.seed(1)
-random.seed(1)
+
 
 #### 1. data process
 with open('reviews.txt') as f:

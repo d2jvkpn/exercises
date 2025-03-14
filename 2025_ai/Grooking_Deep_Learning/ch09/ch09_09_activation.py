@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+random_seed = 1
 
 import os
 from os import path
@@ -10,14 +11,13 @@ import yaml
 import numpy as np
 import polars as pl
 from keras.datasets import mnist
+np.random.seed(random_seed)
 
-random_seed = 1
+
 batch_size = 100
 alpha = 5
 iterations = 1000  # 500, 1000, 2000, 5000
 hidden_size = 256# 128, 256, 512, 1024
-
-np.random.seed(random_seed)
 
 tanh = lambda x: np.tanh(x)
 tanh2deriv = lambda y: 1 - y**2

@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 
-
 from sys import stdout, stderr
 from datetime import datetime
 
 import numpy as np
 import polars as pl
 from keras.datasets import mnist
-
 np.random.seed(1)
+
+
 alpha, iterations = 0.005, 350
 hidden_size, number_of_pixels = 40, 28*28
 

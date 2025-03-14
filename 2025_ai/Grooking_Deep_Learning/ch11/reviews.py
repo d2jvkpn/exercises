@@ -4,6 +4,7 @@
 from os import sys
 
 import numpy as np
+np.random.seed(1)
 
 
 #### 1.
@@ -41,8 +42,6 @@ print(f"--> dataset[0]: {dataset[0]}")
 print(f"--> labels[0]: {labels[0]}")
 
 #### 3. prepare
-np.random.seed(1)
-
 def sigmoid(x):
     return 1/(1 + np.exp(-x))
 

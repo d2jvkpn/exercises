@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+random_seed = 1
 
 import os
 from os import path
@@ -10,14 +11,13 @@ import yaml
 import numpy as np
 import polars as pl
 from keras.datasets import mnist
+np.random.seed(random_seed)
 
-random_seed = 1
+
 batch_size = 100
 alpha = 0.001
 iterations = 5000  # 1000, 2000, 5000
 hidden_size = 256 # 128, 256
-
-np.random.seed(random_seed)
 
 relu = lambda x: (x>=0) * x     # returns x if x > 0, return 0 otherwise
 relu2deriv = lambda y: y>=0  # returns 1 for input > 0, return 0 otherwise

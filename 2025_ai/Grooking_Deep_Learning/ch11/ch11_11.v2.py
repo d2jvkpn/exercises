@@ -5,12 +5,12 @@ from os import path
 import sys, random, math
 from datetime import datetime
 from collections import Counter
+random.seed(1)
 
 import numpy as np
 import polars as pl
-
 np.random.seed(1)
-random.seed(1)
+
 
 #### 1. data process
 tokens = []
