@@ -63,3 +63,4 @@ logs/
 *.local
 local
 *.git
+__pycache__
