@@ -1,0 +1,13 @@
+[package]
+name = "ch02_a01"
+version = "0.1.0"
+edition = "2024"
+
+[lints.rust]
+# We silence dead code warnings for the time being in order to reduce
+# compiler noise.
+# We'll re-enable them again once we explain how visibility works in Rust.
+dead_code = "allow"
+unused_variables = "allow"
+
+[dependencies]
