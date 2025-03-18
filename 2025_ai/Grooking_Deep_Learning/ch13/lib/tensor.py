@@ -87,6 +87,12 @@ class Tensor(object):
         elif "expand" in self.creation_op:
             dim = int(self.creation_op.split("_")[1])
             self.creators[0].backward(self.grad.sum(dim))
+        elif self.creation_op == "sigmoid":
+            delta = Tensor(np.ones_like(self.grad.data)) - self
+            return self.creators[0].backward(self * delta * self.grad)
+        elif self.creation_op == "tanh":
+            delta = Tensor(np.ones_like(self.grad.data)) - self * self
+            return self.creators[0].backward(self * delta * self.grad)
 
 
     #def all_children_grads_accounted_for(self):
@@ -115,69 +121,78 @@ class Tensor(object):
 
 
     def __neg__(self):
+        data = self.data * -1
+
         if self.autograd:
             return Tensor(
-              self.data * -1, id=f"(-{self.id})",
-              creators=[self], creation_op="neg",
-              autograd=True,
+              data, id=f"(-{self.id})", autograd=True, creators=[self], creation_op="neg",
             )
 
-        return Tensor(self.data * -1)
+        return Tensor(data)
 
     def __sub__(self, other):
-        if self.autograd and other.autograd:
-            return Tensor(
-              self.data - other.data, autograd = True,
-              creators=[self, other], creation_op = "sub",
-            )
+        data = self.data - other.data
 
-        return Tensor(self.data - other.data)
+        if self.autograd and other.autograd:
+            return Tensor(data, autograd = True, creators=[self, other], creation_op="sub")
+
+        return Tensor(data)
 
     def __mul__(self, other):
-        if self.autograd and other.autograd:
-            return Tensor(
-              self.data * other.data, autograd=True,
-              creators=[self, other], creation_op="mul",
-            )
+        data = self.data * other.data
 
-        return Tensor(self.data * other.data)
+        if self.autograd and other.autograd:
+            return Tensor(data, autograd=True, creators=[self, other], creation_op="mul")
+
+        return Tensor(data)
 
     def sum(self, dim):
-        if self.autograd:
-            return Tensor(
-              self.data.sum(dim), autograd=True,
-              creators=[self], creation_op=f"sum_{dim}",
-            )
+        data = self.data.sum(dim)
 
-        return Tensor(self.data.sum(dim))
+        if self.autograd:
+            return Tensor(data, autograd=True, creators=[self], creation_op=f"sum_{dim}")
+
+        return Tensor(data)
 
     def expand(self, dim, copies):
         trans_cmd = list(range(0, self.data.ndim))
         trans_cmd.insert(dim, self.data.ndim)
-        new_shape = list(self.data.shape) + [copies]
-        new_data = self.data.repeat(copies).reshape(new_shape)
-        new_data = new_data.transpose(trans_cmd)
+        shape = list(self.data.shape) + [copies]
+        data = self.data.repeat(copies).reshape(shape)
+        data = data.transpose(trans_cmd)
 
         if self.autograd:
-            return Tensor(new_data, creators=[self], creation_op=f"expand_{dim}", autograd=True)
+            return Tensor(data, creators=[self], creation_op=f"expand_{dim}", autograd=True)
 
-        return Tensor(new_data)
+        return Tensor(data)
 
 
     def transpose(self):
-        if self.autograd:
-            return Tensor(
-              self.data.transpose(), autograd=True,
-              creators=[self], creation_op="transpose",
-            )
+        data = self.data.transpose()
 
-        return Tensor(self.data.transpose())
+        if self.autograd:
+            return Tensor(data, autograd=True, creators=[self], creation_op="transpose")
+
+        return Tensor(data)
 
     def mm(self, x):
-        if self.autograd:
-            return Tensor(
-              self.data.dot(x.data), autograd=True,
-              creators=[self, x], creation_op="mm",
-            )
+        data = self.data.dot(x.data)
 
-        return Tensor(self.data.dot(x.data))
+        if self.autograd:
+            return Tensor(data, autograd=True, creators=[self, x], creation_op="mm")
+
+        return Tensor(data)
+
+    def sigmoid(self):
+        data = 1.0 / (1.0 + np.exp(-self.data))
+
+        if self.autograd:
+            return Tensor(data, autograd=True, creators=[self], creation_op="sigmoid")
+        return Tensor(data)
+
+    def tanh(self):
+        data = np.tanh(self.data)
+
+        if self.autograd:
+            return Tensor(data, autograd=True, creators=[self], creation_op="tanh")
+        return Tensor(data)

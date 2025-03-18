@@ -26,7 +26,11 @@ for n in range(20):
     if np.isinf(pred.data).any():
         break
 
-    loss = ((pred - target) * (pred - target)).sum(0)
+    temp = ((pred - target) * (pred - target)).sum(0)
+    if np.isinf(temp.data).any():
+        break
+
+    loss = temp
     print(f"==> I{n:04d}: loss={loss.data[0]}")
     # np.isnan(loss.data[0]):
 
