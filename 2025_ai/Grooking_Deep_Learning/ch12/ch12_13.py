@@ -83,6 +83,8 @@ for n in range(steps):
     sent = words2indices(tokens[n%len(tokens)]) # list()
     size = float(len(sent))
     layers, loss = predict(sent)
+    if np.isnan(loss).any():
+        break
 
     # back propagate
     for i in reversed(range(1, len(layers))):

@@ -52,10 +52,10 @@ class Tensor(object):
 
         if self.all_children_grads() or grad_origin is None: # recursive
             #print(f"--> backward: id={self.id}, grad={grad}")
-            self._backward()
+            self._backward(grad)
 
 
-    def _backward(self):
+    def _backward(self, grad):
         if self.creation_op == "add":
             self.creators[0].backward(self.grad, self)
             self.creators[1].backward(self.grad, self)
@@ -93,7 +93,17 @@ class Tensor(object):
         elif self.creation_op == "tanh":
             delta = Tensor(np.ones_like(self.grad.data)) - self * self
             return self.creators[0].backward(self * delta * self.grad)
+        elif self.creation_op == "index_select":
+            new_grad = np.zeros_like(self.creators[0].data)
+            indices_ = self.index_select_indices.data.flatten()
+            grad_ = grad.data.reshape(len(indices_), -1)
+            for i in range(len(indices_)):
+                new_grad[indices_[i]] += grad_[i]
 
+            self.creators[0].backward(Tensor(new_grad))
+        elif self.creation_op == "cross_entropy":
+            dx = self.softmax_output - self.target_dist
+            self.creators[0].backward(Tensor(dx))
 
     #def all_children_grads_accounted_for(self):
     def all_children_grads(self):
@@ -101,7 +111,6 @@ class Tensor(object):
             if cnt != 0: return False
 
         return True
-
 
     def __repr__(self):
         # return str(self.data.__repr__())
@@ -119,7 +128,6 @@ class Tensor(object):
           autograd=(self.autograd or other.autograd),
         )
 
-
     def __neg__(self):
         data = self.data * -1
 
@@ -127,7 +135,6 @@ class Tensor(object):
             return Tensor(
               data, id=f"(-{self.id})", autograd=True, creators=[self], creation_op="neg",
             )
-
         return Tensor(data)
 
     def __sub__(self, other):
@@ -135,7 +142,6 @@ class Tensor(object):
 
         if self.autograd and other.autograd:
             return Tensor(data, autograd = True, creators=[self, other], creation_op="sub")
-
         return Tensor(data)
 
     def __mul__(self, other):
@@ -151,7 +157,6 @@ class Tensor(object):
 
         if self.autograd:
             return Tensor(data, autograd=True, creators=[self], creation_op=f"sum_{dim}")
-
         return Tensor(data)
 
     def expand(self, dim, copies):
@@ -163,7 +168,6 @@ class Tensor(object):
 
         if self.autograd:
             return Tensor(data, creators=[self], creation_op=f"expand_{dim}", autograd=True)
-
         return Tensor(data)
 
 
@@ -172,7 +176,6 @@ class Tensor(object):
 
         if self.autograd:
             return Tensor(data, autograd=True, creators=[self], creation_op="transpose")
-
         return Tensor(data)
 
     def mm(self, x):
@@ -180,7 +183,6 @@ class Tensor(object):
 
         if self.autograd:
             return Tensor(data, autograd=True, creators=[self, x], creation_op="mm")
-
         return Tensor(data)
 
     def sigmoid(self):
@@ -196,3 +198,26 @@ class Tensor(object):
         if self.autograd:
             return Tensor(data, autograd=True, creators=[self], creation_op="tanh")
         return Tensor(data)
+
+    def index_select(self, indices):
+        data = self.data[indices.data]
+        if self.autograd:
+            new = Tensor(data, autograd=True, creators=[self], creation_op="index_select")
+            new.index_select_indices = indices
+            return new
+        return Tensor(data)
+
+    def cross_entropy(self, target_indices):
+        temp = np.exp(self.data)
+        softmax_output = temp / np.sum(temp, axis=self.data.ndim - 1, keepdims=True)
+        t = target_indices.data.flatten()
+        p = softmax_output.reshape(len(t), -1)
+        target_dist = np.eye(p.shape[1])[t]
+        loss = -(np.log(p) * target_dist).sum(1).mean()
+
+        if self.autograd:
+            out = Tensor(loss, autograd=True, creators=[self], creation_op="cross_entropy")
+            out.softmax_output = softmax_output
+            out.target_dist = target_dist
+            return out
+        return Tensor(loss)
