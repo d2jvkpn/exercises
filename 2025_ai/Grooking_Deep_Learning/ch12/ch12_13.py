@@ -28,10 +28,10 @@ word2index = {}
 for i, w in enumerate(vocabs):
     word2index[w] = i
 
-#### 2. prepare trainning
 def words2indices(sent):
     return [word2index[w] for w in sent]
 
+#### 2. prepare trainning
 def softmax(a):
     b = np.exp(a - np.max(a))
     return b / b.sum(axis=0)

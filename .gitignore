@@ -56,8 +56,8 @@ wk*/
 *.wasm
 wasm_exec.js
 
-data/
-configs/
+data
+configs
 gcm.cache
 logs/
 *.local
