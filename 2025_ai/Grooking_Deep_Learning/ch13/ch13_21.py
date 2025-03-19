@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import sys, random, math
-from collections import Counter
 
 from lib.tensor import Tensor
 from lib.sgd import SGD
@@ -49,8 +48,7 @@ class RNNCell(Layer):
 with open("data/tasksv11/en/qa1_single-supporting-fact_train.txt", 'r') as f:
     raw_lines = f.readlines()
 
-tokens, m, vocabs = list(), 0, set()
-vocabs.add("-")
+tokens, m, vocabs = list(), 0, set({"-"})
 
 for line in raw_lines[:1000]:
     # skip the first word(numeric index)
@@ -92,9 +90,9 @@ for n in range(5000):
     hidden = model.init_hidden(batch_size=batch_size)
 
     for t in range(5):
-        d = Tensor(data[0:batch_size, t], autograd=True)
-        rnn_input = embed.forward(d)
-        output, hidden = model.forward(rnn_input, hidden=hidden)
+        x = Tensor(data[0:batch_size, t], autograd=True)
+        y = embed.forward(x)
+        output, hidden = model.forward(y, hidden=hidden)
 
     target = Tensor(data[0:batch_size, t+1], autograd=True)
     loss = criterion.forward(output, target)
@@ -105,4 +103,4 @@ for n in range(5000):
     if n%200 == 0:
         p_correct = (target.data == np.argmax(output.data, axis=1)).mean()
         loss_frac = total_loss / (len(data) / batch_size)
-        print(f"I{n:04d}: loss={loss_frac:.3f}, correct={p_correct}")
+        print(f"--> I{n:04d}: loss={loss_frac:.3f}, correct={p_correct}")
