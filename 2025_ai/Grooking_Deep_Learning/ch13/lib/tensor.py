@@ -121,12 +121,11 @@ class Tensor(object):
 
     def __add__(self, other):
         #print(f"--> operation: {self.id} + {other.id}")
+        data = self.data + other.data
 
-        return Tensor(
-          self.data + other.data,
-          creators=[self, other], creation_op="add",
-          autograd=(self.autograd or other.autograd),
-        )
+        if self.autograd or other.autograd:
+            return Tensor(data, creators=[self, other], creation_op="add", autograd=True)
+        return Tensor(data)
 
     def __neg__(self):
         data = self.data * -1
@@ -201,6 +200,7 @@ class Tensor(object):
 
     def index_select(self, indices):
         data = self.data[indices.data]
+
         if self.autograd:
             new = Tensor(data, autograd=True, creators=[self], creation_op="index_select")
             new.index_select_indices = indices
