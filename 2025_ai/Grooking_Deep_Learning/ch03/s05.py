@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+# dN * wN -> p1
 def neural_network(data, weights):
     pred = w_sum(data, weights)
     return pred

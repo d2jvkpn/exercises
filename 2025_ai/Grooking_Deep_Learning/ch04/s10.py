@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 
 
-alpha = 0.01
 
 def neural_network(data, weight):
     pred = data * weight
     return pred
 
-
+alpha = 0.01
 weight = 0.1
 
 number_of_toes = [8.5]
@@ -26,4 +25,4 @@ alpha = 0.01
 weight -= weight_delta * alpha
 
 error = error = (pred - goal) ** 2
-print("==> Prediction: weight={}, error={}".format(round(weight, 6), error))
+print(f"==> Prediction: weight={weight:.3f}, error={error:.6f}")

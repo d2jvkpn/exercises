@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+# dN * wN -> pN
 def elementwise_multiplication(vec_a, vec_b):
     assert(len(vec_a) == len(vec_b))
 
@@ -10,6 +11,7 @@ def elementwise_multiplication(vec_a, vec_b):
 
     return result
 
+# N*N -> 1
 def w_sum(a, b):
     assert(len(a) == len(b))
     output = 0

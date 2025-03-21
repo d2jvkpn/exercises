@@ -1,20 +1,19 @@
 #!/usr/bin/env python3
 
-
 import numpy as np
 
+
 def neural_network(data, weights):
-    hid = data.dot(weights[0])
-    pred = hid.dot(weights[1])
+    hid = data.dot(weights[0]) # np.dot(dN, wNP1) -> pP1
+    pred = hid.dot(weights[1]) # np.dot(pP1, wP1P2) -> pP2
 
     return pred
-
 
 # input->hidden: toes % win # fans
 ih_wgt = np.array([
   [0.1, 0.2, -0.1], # hid[0]
   [-0.1, 0.1, 0.9], # hid[1]
-  [0.1, 0.4, 0.1], # hid[2]
+  [0.1, 0.4, 0.1],  # hid[2]
 ])
 
 # hidden->predication: hid[0], hid[1], hid[2]
@@ -26,15 +25,29 @@ hp_wgt = np.array([
 
 weights = [ih_wgt, hp_wgt]
 
-data = np.array([
-  [8.5, 9.5, 9.9, 9.0],  # toes
-  [0.65, 0.8, 0.8, 0.9], # wrate
-  [1.2, 1.3, 0.5, 1.0],  # nfans
-]).T
+#data = np.array([
+#  [8.5, 9.5, 9.9, 9.0],  # toes
+#  [0.65, 0.8, 0.8, 0.9], # wrate
+#  [1.2, 1.3, 0.5, 1.0],  # nfans
+#]).T
 
-print("~~~ layers: input, hidden, output")
+# columns: toes, wrate, nfans
+data = np.array([
+  [8.5, 0.65, 1.2],
+  [9.5, 0.8, 1.3],
+  [9.9, 0.8, 0.5],
+  [9.0, 1.3, 1.0],
+])
+
+print("~~~ Layers: input -> hidden -> output")
 print()
 
-for d in data:
+for i in range(len(data)):
+    d = data[i]
     pred = neural_network(d, weights)
-    print("--> Predications: inputs={}, outputs={}".format(d, pred))
+    print(f"--> I{i}: inputs={d}, predication={pred}")
+
+
+print()
+predication = data.dot(ih_wgt).dot(hp_wgt)
+print(f"==> Predication={predication}")

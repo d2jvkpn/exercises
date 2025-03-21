@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 
+# dN * wN -> p1
 def neural_network(d, weight):
     predication = d * weight
     return predication

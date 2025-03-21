@@ -1,17 +1,17 @@
 #!/usr/bin/env python3
 
 
-data = 0.5
-goal = 0.8
-
+data, goal = 0.5, 0.8
 weight = 0.5
 step_amount = 0.001
 
-for iteration in range(1101):
+for n in range(1000):
+    n += 1
     pred = data * weight
     error = (pred - goal) ** 2
 
-    print("--> Prediction: iteration={}, error={}, prediction={}".format( iteration+1, error, pred))
+    if n%100 == 0:
+        print(f"--> I{n:04d}: prediction={pred:.3f}, error={error:.3f}")
 
     pred = data * (weight + step_amount)
     err_up = (pred - goal) ** 2
@@ -21,12 +21,10 @@ for iteration in range(1101):
 
     if error <= err_up and error <= err_down:
         break
-
-    if (err_down < err_up):
+    elif err_down < err_up:
         weight -= step_amount
-
-    if (err_down > err_up):
+    elif err_up < err_down:
         weight += step_amount
 
 error = error = (pred - goal) ** 2
-print("==> Prediction: weight={}, error={}".format(round(weight, 6), error))
+print(f"==> weight={round(weight, 6)}, error={error:.3f}")
