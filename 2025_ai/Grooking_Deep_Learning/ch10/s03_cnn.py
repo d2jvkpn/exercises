@@ -29,11 +29,11 @@ np.random.seed(args.random_seed)
 # CNN
 image_shape, kernel_shape = (28, 28), (3, 3)
 
-# image_sects=(28-3+1, 28-3+1)=(26, 26)
-image_sects = (image_shape[0] - kernel_shape[0] + 1, image_shape[1] - kernel_shape[1] + 1)
+# sects_shape=(28-3+1, 28-3+1)=(26, 26)
+sects_shape = (image_shape[0] - kernel_shape[0] + 1, image_shape[1] - kernel_shape[1] + 1)
 
 # hidden_size = 26 * 26 * 16
-hidden_size = image_sects[0] * image_sects[1] * args.num_kernels
+hidden_size = sects_shape[0] * sects_shape[1] * args.num_kernels
 
 # range=(-1.0, 1.0)
 tanh = lambda x: np.tanh(x)
@@ -167,7 +167,7 @@ for n in range(args.iterations):
         #flattened_input =  expanded_input.reshape(es[0]*es[1], -1) # shape=(67600, 9)=(100 * (28-3+1)**2, 3**2)
 
         # 1. forward propagation
-        # sections_size = image_sects[0]*image_sects[1], kernel_size = kernel_shape[0]*kernel_shape[1]
+        # sections_size = sects_shape[0]*sects_shape[1], kernel_size = kernel_shape[0]*kernel_shape[1]
         # shape=(batch_size * sections_size, kernel_size)
         flattened_input = flatten_v4(layer_0, kernel_shape)
 
