@@ -40,7 +40,7 @@ delta = pred - goal
 error = delta ** 2
 weight_deltas = ele_mul(delta, input)
 
-print("--> 1. pred={}, error={}, weight_deltas={}".format(pred, error, weight_deltas))
+print(f"--> 1. pred={pred:.6f}, error={error:.6f}, weight_deltas={weight_deltas}")
 
 alpha = 0.01
 

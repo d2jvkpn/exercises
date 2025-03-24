@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 
-random_seed = 1
-
-import os
+import os, argparse
 from os import path
 from sys import stdout, stderr
 from datetime import datetime, timedelta
@@ -11,16 +9,27 @@ import yaml
 import numpy as np
 import polars as pl
 from keras.datasets import mnist
-np.random.seed(random_seed)
 
 
-batch_size = 100
-alpha = 0.001
-iterations = 5000  # 1000, 2000, 5000
-hidden_size = 256 # 128, 256
+parser = argparse.ArgumentParser()
+parser.add_argument("--train_size", type=int, default=1000)
+parser.add_argument("--batch_size", type=int,default=100)
+parser.add_argument("--alpha", type=float, default=0.001)
+parser.add_argument("--iterations", type=int, default=5000)
+parser.add_argument("--hidden_size", type=int, default=256)
+parser.add_argument("--random_seed", type=int, default=1)
+args = parser.parse_args()
 
-relu = lambda x: (x>=0) * x     # returns x if x > 0, return 0 otherwise
-relu2deriv = lambda y: y>=0  # returns 1 for input > 0, return 0 otherwise
+#train_size = 1000
+#batch_size = 100
+#alpha = 0.001
+#iterations = 5000 # 1000, 2000, 5000
+#hidden_size = 256 # 128, 256
+
+np.random.seed(args.random_seed)
+
+relu = lambda x: (x>=0.0).astype("float") * x   # returns x if x > 0, return 0 otherwise
+relu2deriv = lambda y: (y>=0.0).astype("float") # returns 1 for input > 0, return 0 otherwise
 
 def one_hot_labels(labels): # [2] -> [[0, 0, 1, 0, 0, 0, 0, 0, 0, 0]]
     result = np.zeros((len(labels),10))
@@ -37,40 +46,42 @@ def format_timedelta(td: timedelta) -> str:
     return f"{sign}{hours}:{minutes:02}:{seconds:02}.{td.microseconds:06}"
 
 print()
-print(f"==> 1. Parameters: random_seed={random_seed}, alpha={alpha}, iterations={iterations}, hidden_size={hidden_size}")
+print(f"==> 1. Parameters: args={args}")
 
 #### 1. load data
 (x_train, y_train), (x_test, y_test) = mnist.load_data() # ~/.keras/datasets/mnist.npz
+# x_train.shape = (6000, 28, 28)
 
-train_size = min(1000, len(x_train))
+args.train_size = min(args.train_size, len(x_train))
 test_size = len(x_test)
 pixels = x_train[0].size # 28*28
 
-train_inputs = x_train[0:train_size].reshape(train_size, pixels) / 255
-train_labels = one_hot_labels(y_train[0:train_size])
+train_inputs = x_train[0:args.train_size].reshape(args.train_size, pixels) / 255 # shape=(N, 784)
+train_labels = one_hot_labels(y_train[0:args.train_size])                        # shape=(N, 10)
 
-test_inputs = x_test[0:test_size].reshape(test_size, pixels) / 255
-test_labels = one_hot_labels(y_test[0:test_size])
+test_inputs = x_test[0:test_size].reshape(test_size, pixels) / 255 # shape=(N, 784)
+test_labels = one_hot_labels(y_test[0:test_size])                  # shape=(N, 10)
 
 #### 2. Trainning the neural network
 # Neural Network: layer_0 * weights_0_1 => layer_1 * weights_1_2 => layer_2
-weights_0_1 = 0.2*np.random.random((pixels, hidden_size)) - 0.1 # [-0.1, 0.1]
-weights_1_2 = 0.2*np.random.random((hidden_size, 10)) - 0.1       # [-0.1, 0.1]
+weights_0_1 = 0.2*np.random.random((pixels, args.hidden_size)) - 0.1 # shape=(784, K), range=(-0.1, 0.1)
+weights_1_2 = 0.2*np.random.random((args.hidden_size, 10)) - 0.1     # shape=(K, 10), range=(-0.1, 0.1)
 trainning_steps = []
 
 t1 = datetime.now().astimezone()
 print()
-print(f"==> 2. Trainning: start_at={t1.isoformat('T')}, train_size={train_size}, test_size={test_size}")
+print(f"==> 2. Trainning: start_at={t1.isoformat('T')}")
 
-for n in range(iterations):
+for n in range(args.iterations):
     n += 1 # iteration number
     correct_cnt, train_error = 0, 0.0
 
-    for i in range(int(train_size/batch_size)):
-        batch_start, batch_end = i * batch_size, (i+1) * batch_size
+    for i in range(int(args.train_size/args.batch_size)):
+        batch_start, batch_end = i * args.batch_size, (i+1) * args.batch_size
         layer_0 = train_inputs[batch_start:batch_end]
-        goal = train_labels[batch_start:batch_end]
+        target = train_labels[batch_start:batch_end]
 
+        # 1. forward propagation
         layer_1 = relu(np.dot(layer_0, weights_0_1))
         # dropout_mask = np.random.randint(2, size=layer_1.shape)
         dropout_mask = np.random.choice([0, 1], size=layer_1.shape, p=[0.5, 0.5])
@@ -78,32 +89,35 @@ for n in range(iterations):
 
         layer_2 = np.dot(layer_1, weights_1_2)
 
-        delta_2 = (layer_2 - goal)  # predication - target
-        delta_1 = np.dot(delta_2, weights_1_2.T)  * relu2deriv(layer_1)
+        # 2. backward propagation
+        delta_2 = layer_2 - target  # predication - target
+        delta_1 = np.dot(delta_2, weights_1_2.T) * relu2deriv(layer_1)
         delta_1 *= dropout_mask
 
         train_error += np.sum(delta_2** 2)
-        equals = np.argmax(layer_2, axis=1) == np.argmax(goal, axis=1)
+        equals = np.argmax(layer_2, axis=1) == np.argmax(target, axis=1)
         correct_cnt += np.sum(equals.astype(int))
 
-        weights_1_2 -= np.dot(layer_1.T, delta_2) * alpha
-        weights_0_1 -= np.dot(layer_0.T, delta_1) * alpha
+        # 3. update weights
+        weights_0_1 -= np.dot(layer_0.T, delta_1) * args.alpha
+        weights_1_2 -= np.dot(layer_1.T, delta_2) * args.alpha
 
-    train_error, train_acc = train_error/train_size, correct_cnt/train_size
+    train_error, train_acc = train_error/args.train_size, correct_cnt/args.train_size
 
-    if n%10 == 0 or n == iterations:
-        layer_0, goal = test_inputs, test_labels
+    if n%10 == 0 or n == args.iterations:
+        layer_0, target = test_inputs, test_labels
 
         layer_1 = relu(np.dot(layer_0, weights_0_1))
         layer_2 = np.dot(layer_1, weights_1_2)
 
-        test_error = np.sum((goal - layer_2) ** 2)
-        equals = np.argmax(layer_2, axis=1) == np.argmax(goal, axis=1)
+        test_error = np.sum((target - layer_2) ** 2)
+        equals = np.argmax(layer_2, axis=1) == np.argmax(target, axis=1)
         correct_cnt = np.sum(equals.astype(int))
         test_error, test_acc = test_error/test_size, correct_cnt/test_size
 
         trainning_steps.append((n, train_error, train_acc, test_error, test_acc))
-        stdout.write(f"--> I{n:04d}: train_error={train_error:.6f}, train_accuracy={train_acc:.3f}, test_error={test_error:.6f}, test_accuracy={test_acc:.3f}\n")
+        print(f"--> I{n:04d}: train_error={train_error:.6f}, train_accuracy={train_acc:.3f}", end=", ")
+        print(f"test_error={test_error:.6f}, test_accuracy={test_acc:.3f}")
 
 t2 = datetime.now().astimezone()
 
@@ -120,14 +134,16 @@ trainning_steps = pl.from_records(
 )
 
 parameters = {
-  "random_seed": 1,
-  "batch_size": 100,
-  "alpha": 0.001,
-  "iterations": 500,
-  "hidden_size": 120,
+  "random_seed": args.random_seed,
+  "batch_size": args.batch_size,
+  "alpha": args.alpha,
+  "iterations": args.iterations,
+  "hidden_size": args.hidden_size,
   "activation_functions": ["relu"],
-  "train_size": train_size,
+  "train_size": args.train_size,
   "test_size": test_size,
+  "train_accuracy": float(train_acc),
+  "test_accuracy": float(test_acc),
   "start_at": t1.isoformat('T'),
   "end_at": t2.isoformat('T'),
   "elapsed": format_timedelta(t2 - t1),
