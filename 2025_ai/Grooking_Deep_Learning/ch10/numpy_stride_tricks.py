@@ -1,4 +1,6 @@
+#!/usr/bin/env python3
 import numpy as np
+
 
 # 输入数组
 x = np.array([
@@ -8,7 +10,7 @@ x = np.array([
 ])
 
 # 使用 as_strided 提取 2x2 子矩阵
-shape = (2, 2, 2, 2)                   # 输出形状：2x2 个 2x2 子矩阵
+shape = (2, 2, 2, 2)             # 输出形状：2x2 个 2x2 子矩阵
 strides = x.strides + x.strides  # 步幅：沿行和列滑动
 patches = np.lib.stride_tricks.as_strided(x, shape=shape, strides=strides)
 

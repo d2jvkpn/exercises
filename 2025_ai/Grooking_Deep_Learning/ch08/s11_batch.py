@@ -28,6 +28,7 @@ args = parser.parse_args()
 
 np.random.seed(args.random_seed)
 
+# range=(0, +inf)
 relu = lambda x: (x>=0.0).astype("float") * x   # returns x if x > 0, return 0 otherwise
 relu2deriv = lambda y: (y>=0.0).astype("float") # returns 1 for input > 0, return 0 otherwise
 

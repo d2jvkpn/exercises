@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
 
-
-random_seed = 1
-
-import os
+import os, argparse
 from os import path
 from sys import stdout, stderr
 from datetime import datetime, timedelta
@@ -12,22 +9,35 @@ import yaml
 import numpy as np
 import polars as pl
 from keras.datasets import mnist
-np.random.seed(random_seed)
 
 
-batch_size = 100
-alpha = 2
-iterations = 500  # 500, 1000, 2000, 5000
+#random_seed = 1
+#batch_size = 100
+#alpha = 2
+#iterations = 500  # 500, 1000, 2000, 5000
+#num_kernels =  16 # 4, 8, 16, 32
+parser = argparse.ArgumentParser()
+parser.add_argument("--random_seed", type=int, default=1)
+parser.add_argument("--batch_size", type=int, default=100)
+parser.add_argument("--alpha", type=float, default=0.001)
+parser.add_argument("--iterations", type=int, default=500)
+parser.add_argument("--num_kernels", type=int, default=16)
+args = parser.parse_args()
+
+np.random.seed(args.random_seed)
 
 # CNN
 image_shape, kernel_shape = (28, 28), (3, 3)
-num_kernels =  16 # 4, 8, 16, 32
-hidden_size = (image_shape[0] - kernel_shape[0] + 1) * (image_shape[1] - kernel_shape[1] + 1)  * num_kernels
 
+# image_sects=(28-3+1, 28-3+1)=(26, 26)
+image_sects = (image_shape[0] - kernel_shape[0] + 1, image_shape[1] - kernel_shape[1] + 1)
 
+# hidden_size = 26 * 26 * 16
+hidden_size = image_sects[0] * image_sects[1] * args.num_kernels
 
+# range=(-1.0, 1.0)
 tanh = lambda x: np.tanh(x)
-tanh2deriv = lambda y: 1 - y**2
+tanh2deriv = lambda y: 1.0 - y**2
 
 def softmax(x):
      val = np.exp(x)
@@ -60,28 +70,38 @@ def flatten_v1(layer, shape): # matrix(n, 28, 28), tuple(3, 3) -> matrix(n*(28-3
     return result
 
 # TODO: speedup
-def flatten_v2(layer, shape):  # matrix(n, 28, 28), tuple(3, 3) -> matrix(n*(28-3)*(28-3), 3*3)
-    def  cnn_convert(matrix, shape): # Convolutional Neural Networks
+def flatten_v2(layer, shape):  # matrix(n, 28, 28), tuple(3, 3) -> matrix(n*(28-3+1)*(28-3+1), 3*3)
+    def cnn_convert(matrix, shape): # Convolutional Neural Networks
         dims = (matrix.shape[0] - shape[0] + 1, matrix.shape[1] - shape[1] + 1, shape[0], shape[1])
         output = np.lib.stride_tricks.as_strided(matrix, shape=dims, strides=matrix.strides*2)
         return output.reshape(output.shape[0] * output.shape[1], -1)
-
     #np.apply_along_axis(lambda m: flatten(m, (3, 3)), axis=0, arr=layer) # can't do this as the input.shape != output.shape
     #sects =  [cnn_convert(layer[i], (3, 3)) for i in range(layer.shape[0])]
-    #return np.concat(sects, axis=0)
 
     dim2 = (layer.shape[1] - shape[0] + 1) * (layer.shape[2] - shape[1] + 1)
+
     dims = (layer.shape[0], dim2, shape[0] * shape[1])
     result = np.zeros(dims)
 
+# TODO: speedup
+def flatten_v3(layer, shape):  # (n, 28, 28)-> (n*(28-3+1)*(28-3+1), 3*3)
+    sects = (layer.shape[1] - shape[0] + 1, layer.shape[2] - shape[1] + 1)
+
+    def cnn_convert(d): # Convolutional Neural Networks
+        shape_x = (sects[0], sects[1], shape[0], shape[1])
+        output = np.lib.stride_tricks.as_strided(d, shape=shape_x, strides=d.strides * 2)
+        return output.reshape(sects[0] * sects[1], -1)
+
+    dims = (layer.shape[0], sects[0] * sects[1], shape[0] * shape[1])
+    result = np.zeros(dims)
+
     for i in range(layer.shape[0]):
-        result[i] = cnn_convert(layer[i], shape)
+        result[i] = cnn_convert(layer[i])
 
-    return result.reshape((result.shape[0]*result.shape[1], result.shape[2]))
-
+    return result.reshape((layer.shape[0] * sects[0] * sects[1], -1))
 
 print()
-print(f"==> 1. Parameters: random_seed={random_seed}, alpha={alpha}, iterations={iterations}, hidden_size={hidden_size}, num_kernels={num_kernels}")
+print(f"==> 1. Parameters: args={args}")
 
 #### 1. load data
 (x_train, y_train), (x_test, y_test) = mnist.load_data() # ~/.keras/datasets/mnist.npz
@@ -96,22 +116,26 @@ test_inputs = x_test[0:test_size] / 255
 test_labels = one_hot_labels(y_test[0:test_size])
 
 #### 2. Trainning the neural network
-weights_kernels = 0.02*np.random.random((kernel_shape[0] * kernel_shape[1], num_kernels)) - 0.01 # shape=(9, 16)
-weights_1_2 = 0.2*np.random.random((hidden_size, 10)) - 0.1  # range=[-0.1, 0.1], shape=(hidden_size, 10)
+# range=(-0.01, 0.01), shape=(9, 16)
+weights_kernels = np.random.random((kernel_shape[0] * kernel_shape[1], args.num_kernels)) * 0.02 - 0.01
+
+# range=(-0.1, 0.1), shape=(K, 10)
+weights_1_2 = np.random.random((hidden_size, 10)) * 0.2 - 0.1
 trainning_steps = []
 
 t1 = datetime.now().astimezone()
 print()
-print(f"==> 2. Trainning: start_at={t1.isoformat('T')}, train_size={train_size}, test_size={test_size}")
+print(f"==> 2. Trainning: start_at={t1.isoformat('T')}, ", end="")
+print(f"train_size={train_size}, test_size={test_size}")
 
-for n in range(iterations):
+for n in range(args.iterations):
     n += 1 # iteration number
     correct_cnt, train_error = 0, 0.0
 
-    for i in range(int(train_size/batch_size)):
-        batch_start, batch_end = i * batch_size, (i+1) * batch_size
-        layer_0 = train_inputs[batch_start:batch_end] # shape=(100, 28, 28)
-        goal = train_labels[batch_start:batch_end] # shape=(100, 10)
+    for i in range(int(train_size/args.batch_size)):
+        batch_start, batch_end = i * args.batch_size, (i+1) * args.batch_size
+        layer_0 = train_inputs[batch_start:batch_end] # shape=(batch_size, 28, 28)
+        target = train_labels[batch_start:batch_end]  # shape=(batch_size, 10)
 
         #sects = list()
         #for row in range(layer_0.shape[1] - kernel_shape[0]):
@@ -124,46 +148,59 @@ for n in range(iterations):
         #es = expanded_input.shape
         #flattened_input =  expanded_input.reshape(es[0]*es[1], -1) # shape=(67600, 9)=(100 * (28-3+1)**2, 3**2)
 
-        flattened_input = flatten_v2(layer_0, kernel_shape)  # shape=(67600, 9)
+        # 1. forward propagation
+        # sections_size = image_sects[0]*image_sects[1], kernel_size = kernel_shape[0]*kernel_shape[1]
+        # shape=(batch_size * sections_size, kernel_size)
+        flattened_input = flatten_v3(layer_0, kernel_shape)
 
-        kernel_output = np.dot(flattened_input, weights_kernels)    # shape=(67600, 16)
-        layer_1 = tanh(kernel_output.reshape(layer_0.shape[0], -1)) # shape=(100, 10000)
+        # shape=(batch_size * sections_size, num_kernels)
+        # (batch_size * sections_size, kernel_size) dot (kernel_size, num_kernels)
+        kernel_output = np.dot(flattened_input, weights_kernels) # shape=(67600, 16)
 
-        dropout_mask = np.random.choice([0, 1], size=layer_1.shape, p=[0.5, 0.5]) # np.random.randint(2, size=layer_1.shape)
+        # shape=(batch_size, sections_size * num_kernels)
+        layer_1 = tanh(kernel_output.reshape(args.batch_size, -1)) # shape=(100, 10816)
+
+        # np.random.randint(2, size=layer_1.shape)
+        dropout_mask = np.random.choice([0, 1], size=layer_1.shape, p=[0.5, 0.5])
         layer_1 *= (dropout_mask / 0.5)
+        # shape=(batch_size, 10)
         layer_2 = softmax(np.dot(layer_1, weights_1_2)) # shape=(100, 10)
 
-        delta_2 = (layer_2 - goal)  / (layer_0.shape[0] * layer_2.shape[0])
-        delta_1 = np.dot(delta_2, weights_1_2.T)  * tanh2deriv(layer_1)
+        # 2. backward propagation
+        # delta_2 = (layer_2 - target) / (layer_0.shape[0] * layer_2.shape[0]) ??
+        delta_2 = layer_2 - target
+        delta_1 = np.dot(delta_2, weights_1_2.T) * tanh2deriv(layer_1)
         delta_1 *= dropout_mask
 
         # no train_error here
-        equals = np.argmax(layer_2, axis=1) == np.argmax(goal, axis=1)
+        equals = np.argmax(layer_2, axis=1) == np.argmax(target, axis=1)
         correct_cnt += np.sum(equals.astype(int))
 
-        weights_1_2 -= np.dot(layer_1.T, delta_2) * alpha
+        # 3. update weights
+        weights_1_2 -= np.dot(layer_1.T, delta_2) * args.alpha
         l1d_reshape = delta_1.reshape(kernel_output.shape)
-        weights_kernels -= np.dot(flattened_input.T, l1d_reshape) * alpha
+        weights_kernels -= np.dot(flattened_input.T, l1d_reshape) * args.alpha
 
     train_acc = correct_cnt/train_size
 
-    if n%10 == 0 or n == iterations:
-        layer_0, goal = test_inputs, test_labels
+    if n%10 == 0 or n == args.iterations:
+        layer_0, target = test_inputs, test_labels
 
-        flattened_input = flatten_v2(layer_0, kernel_shape)
+        flattened_input = flatten_v3(layer_0, kernel_shape)
         kernel_output = np.dot(flattened_input, weights_kernels)
 
         layer_1 = tanh(kernel_output.reshape(-1, hidden_size))
         layer_2 = np.dot(layer_1, weights_1_2)
 
        # no test_error here
-        equals = np.argmax(layer_2, axis=1) == np.argmax(goal, axis=1)
+        equals = np.argmax(layer_2, axis=1) == np.argmax(target, axis=1)
         correct_cnt = np.sum(equals.astype(int))
         test_acc = correct_cnt/test_size
 
         end_at = datetime.now().astimezone().isoformat('T')
         trainning_steps.append((n, train_acc, test_acc, end_at))
-        stdout.write(f"--> I{n:04d}: train_accuracy={train_acc:.3f}, test_accuracy={test_acc:.3f}, end_at={end_at}\n")
+        print(f"--> I{n:04d}: train_accuracy={train_acc:.3f}, ", end="")
+        print(f"test_accuracy={test_acc:.3f}, end_at={end_at}")
 
 t2 = datetime.now().astimezone()
 
@@ -180,13 +217,13 @@ trainning_steps = pl.from_records(
 )
 
 parameters = {
-  "random_seed": random_seed,
-  "batch_size": batch_size,
-  "alpha": alpha,
-  "iterations": iterations,
-  "hidden_size": hidden_size,
+  "random_seed": args.random_seed,
+  "batch_size": args.batch_size,
+  "alpha": args.alpha,
+  "iterations": args.iterations,
+  "hidden_size": args.hidden_size,
+  "num_kernels": args.num_kernels,
   "kernel_shape": kernel_shape,
-  "num_kernels": num_kernels,
   "activation_functions": ["tanh", "softmax"],
 
   "train_size": train_size,
