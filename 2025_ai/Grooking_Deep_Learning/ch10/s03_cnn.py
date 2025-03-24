@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--random_seed", type=int, default=1)
 parser.add_argument("--batch_size", type=int, default=100)
 parser.add_argument("--alpha", type=float, default=0.001)
-parser.add_argument("--iterations", type=int, default=500)
+parser.add_argument("--iterations", type=int, default=200)
 parser.add_argument("--num_kernels", type=int, default=16)
 args = parser.parse_args()
 
@@ -100,6 +100,24 @@ def flatten_v3(layer, shape):  # (n, 28, 28)-> (n*(28-3+1)*(28-3+1), 3*3)
 
     return result.reshape((layer.shape[0] * sects[0] * sects[1], -1))
 
+def flatten_v4(layer, shape):  # (n, 28, 28)-> (n*(28-3+1)*(28-3+1), 3*3)
+    pixels = layer.shape[1:] # (28, 28)
+    sects = (layer.shape[1] - shape[0] + 1, layer.shape[2] - shape[1] + 1) # (26, 26)
+
+    def cnn_convert(d): # Convolutional Neural Networks
+        d = d.reshape(pixels)
+        shape_x = (sects[0], sects[1], shape[0], shape[1])
+        output = np.lib.stride_tricks.as_strided(d, shape=shape_x, strides=d.strides * 2)
+        return output.reshape(sects[0] * sects[1], -1)
+
+    result = np.apply_along_axis(
+      cnn_convert,
+      axis=1,
+      arr=layer.reshape(layer.shape[0], -1),
+    )
+
+    return result.reshape((layer.shape[0] * sects[0] * sects[1], -1))
+
 print()
 print(f"==> 1. Parameters: args={args}")
 
@@ -151,7 +169,7 @@ for n in range(args.iterations):
         # 1. forward propagation
         # sections_size = image_sects[0]*image_sects[1], kernel_size = kernel_shape[0]*kernel_shape[1]
         # shape=(batch_size * sections_size, kernel_size)
-        flattened_input = flatten_v3(layer_0, kernel_shape)
+        flattened_input = flatten_v4(layer_0, kernel_shape)
 
         # shape=(batch_size * sections_size, num_kernels)
         # (batch_size * sections_size, kernel_size) dot (kernel_size, num_kernels)
@@ -186,7 +204,7 @@ for n in range(args.iterations):
     if n%10 == 0 or n == args.iterations:
         layer_0, target = test_inputs, test_labels
 
-        flattened_input = flatten_v3(layer_0, kernel_shape)
+        flattened_input = flatten_v4(layer_0, kernel_shape)
         kernel_output = np.dot(flattened_input, weights_kernels)
 
         layer_1 = tanh(kernel_output.reshape(-1, hidden_size))
@@ -221,7 +239,7 @@ parameters = {
   "batch_size": args.batch_size,
   "alpha": args.alpha,
   "iterations": args.iterations,
-  "hidden_size": args.hidden_size,
+  "hidden_size": hidden_size,
   "num_kernels": args.num_kernels,
   "kernel_shape": kernel_shape,
   "activation_functions": ["tanh", "softmax"],
@@ -246,4 +264,4 @@ print(f"    wts_kernels={wts_kernels}")
 print(f"    weights_1_2={wts_1_2}")
 
 print()
-print(f"<== 4. Exit: elapsed={t2 - t1}")
+print(f"<== 4. Exit: elapsed={format_timedelta(t2 - t1)}")
