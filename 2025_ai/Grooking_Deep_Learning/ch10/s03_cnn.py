@@ -16,12 +16,14 @@ from keras.datasets import mnist
 #alpha = 2
 #iterations = 500  # 500, 1000, 2000, 5000
 #num_kernels =  16 # 4, 8, 16, 32
-parser = argparse.ArgumentParser()
-parser.add_argument("--random_seed", type=int, default=1)
-parser.add_argument("--batch_size", type=int, default=100)
-parser.add_argument("--alpha", type=float, default=0.001)
-parser.add_argument("--iterations", type=int, default=200)
-parser.add_argument("--num_kernels", type=int, default=16)
+parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument("--random_seed", type=int, default=1, help="random_seed")
+parser.add_argument("--batch_size", type=int, default=100, help="batch_size")
+parser.add_argument("--alpha", type=float, default=0.001, help="alpha")
+parser.add_argument("--iterations", type=int, default=200, help="iterations")
+parser.add_argument("--num_kernels", type=int, default=16, help="num_kernels")
+
 args = parser.parse_args()
 
 np.random.seed(args.random_seed)
@@ -143,8 +145,7 @@ trainning_steps = []
 
 t1 = datetime.now().astimezone()
 print()
-print(f"==> 2. Trainning: start_at={t1.isoformat('T')}, ", end="")
-print(f"train_size={train_size}, test_size={test_size}")
+print(f"==> 2. Trainning: start_at={t1.isoformat('T')}")
 
 for n in range(args.iterations):
     n += 1 # iteration number

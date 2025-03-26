@@ -11,13 +11,15 @@ import polars as pl
 from keras.datasets import mnist
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--train_size", type=int, default=1000)
-parser.add_argument("--batch_size", type=int,default=100)
-parser.add_argument("--alpha", type=float, default=0.001)
-parser.add_argument("--iterations", type=int, default=5000)
-parser.add_argument("--hidden_size", type=int, default=256)
-parser.add_argument("--random_seed", type=int, default=1)
+parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+parser.add_argument("--random_seed", type=int, default=1, help="random_seed")
+parser.add_argument("--train_size", type=int, default=1000, help="train_size")
+parser.add_argument("--batch_size", type=int,default=100, help="batch_size")
+parser.add_argument("--alpha", type=float, default=0.001, help="alpha")
+parser.add_argument("--iterations", type=int, default=5000, help="iterations")
+parser.add_argument("--hidden_size", type=int, default=256, help="hidden_size")
+
 args = parser.parse_args()
 
 #train_size = 1000
