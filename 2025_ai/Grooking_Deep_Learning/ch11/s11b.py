@@ -57,10 +57,10 @@ random.shuffle(dataset)
 
 #### 2. init
 # shape=(vocabs, hidden_size)
-weights_0_1 = (np.random.rand(len(vocabs), args.hidden_size) - 0.5) * 0.2 # range=(-0.1, 0.1)
+weights_0_1 = np.random.rand(len(vocabs), args.hidden_size) * 0.2 - 0.01 # range=(-0.1, 0.1)
 
 # shape=(vocabs, hidden_size)
-weights_1_2 = np.zeros((len(vocabs), args.hidden_size))
+weights_1_2 = np.zeros((len(vocabs), args.hidden_size)) # range=(0.0, 0.0)
 
 target = np.zeros(args.negative + 1)
 target[0] = 1
@@ -70,8 +70,8 @@ def sigmoid(x):
 
 def similar(target="beautiful"):
     index = word2index[target]
-
     scores = Counter()
+
     for w, i in word2index.items():
         difference = weights_0_1[i] - weights_0_1[index]
         squared = difference * difference
@@ -99,12 +99,12 @@ for n in range(train_size):
         left = review[max(0, i - args.window) : i]              # length=window
         right = review[i+1 : min(len(review), i + args.window)] # length=window - 1
 
-        # 1. forward propagation, [left_context..., right_context...] -> [1, 0, 0, 0...]
+        # 1. forward propagation, [left_context..., right_context...] -> [1, 0, 0, 0...](length=negative-1)
         # shape=(hidden_size,)
-        layer_1 = np.mean(weights_0_1[left+right], axis=0)
+        layer_1 = np.mean(weights_0_1[left+right], axis=0) # shape(3, 50) -> shape(50,)
         #print("~~~ step1", weights_0_1[left+right].shape, layer_1.shape)
 
-        # (hidden_size,) * (negative + 1, hidden_size).T = (window * 2 + 2,)
+        # (hidden_size,) * (negative + 1, hidden_size).T = (negative + 1,)
         layer_2 = sigmoid(np.dot(layer_1, weights_1_2[samples].T)) # shape(hidden_size,)
         #print("~~~ step2", weights_1_2[samples].shape, layer_2.shape)
 
@@ -113,7 +113,7 @@ for n in range(train_size):
         # (negative+1,) dot (negative+1, hidden_size)
         delta_1 = np.dot(delta_2, weights_1_2[samples]) # shape=(hidden_size,)
 
-        # 3. update weights
+        # 3. update weights(partial)
         # (2*window - 1, hidden_size) -= (hidden_size)* alpha
         weights_0_1[left+right] -= delta_1 * args.alpha
         # (negative+1,) outer (hidden_size,) -> (negative+1, hidden_size)

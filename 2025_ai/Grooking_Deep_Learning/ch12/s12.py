@@ -45,7 +45,7 @@ layer_1 = layer_0.dot(identity)  + word_vects["sox"]
 layer_2 = layer_1.dot(identity) + word_vects["defeat"]
 
 pred = softmax(layer_2.dot(sent2output)) # shape=(1, 9)
-print(f"pred={pred}")
+print(f"--> pred: {pred}")
 
 #### 4. back propagation
 y = np.array([1., 0., 0., 0., 0., 0., 0., 0., 0.])
@@ -65,5 +65,9 @@ identity -= np.outer(layer_0, delta_1) * alpha
 identity -= np.outer(layer_1, delta_2) * alpha
 sent2output -= np.outer(layer_2,  pred_delta) * alpha
 
-print(f"==> sent2output={sent2output}")
-print(f"==> identity={identity}")
+print(f"""==> result:
+    sent2output:
+    {sent2output}
+
+    identity:
+    {identity}""")
