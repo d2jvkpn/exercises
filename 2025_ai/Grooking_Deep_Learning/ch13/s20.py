@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import sys
+sys.path.append('..')
+
 from lib.tensor import Tensor
 from lib.sgd import SGD
 from lib.layer import Linear, Layer, Sequential, Embedding, Tanh, CrossEntropyLoss
@@ -31,4 +34,4 @@ for n in range(1000):
     loss.backward(Tensor(np.ones_like(loss.data)))
     optim.step()
 
-    print(f"==> I{n:05d}: loss={loss.data}")
+    print(f"==> I{n:05d}: loss={loss.data:.6f}")

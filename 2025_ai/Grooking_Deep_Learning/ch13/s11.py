@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import sys
+sys.path.append('..')
+
 from lib.tensor import Tensor
 from lib.sgd import SGD
 
@@ -31,7 +34,7 @@ for n in range(20):
         break
 
     loss = temp
-    print(f"==> I{n:04d}: loss={loss.data[0]}")
+    print(f"==> I{n:04d}: loss={loss.data[0]:.6f}")
     # np.isnan(loss.data[0]):
 
     loss.backward(Tensor(np.ones_like(loss.data)))

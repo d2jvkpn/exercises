@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 
-import numpy as np
+import sys
+sys.path.append('..')
 
 from lib.tensor import Tensor
+
+import numpy as np
 
 
 ####

@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 
+import sys
+sys.path.append('..')
+
 from lib.tensor import Tensor
 from lib.sgd import SGD
 from lib.layer import Linear, Layer, Sequential, Tanh, Sigmoid, MSELoss
@@ -32,4 +35,4 @@ for n in range(20000):
     optim.step()
 
     if n % 100 == 0:
-        print(f"==> I{n:05d}: loss={loss.data}")
+        print(f"==> I{n:05d}: loss={loss.data[0]:.6f}")

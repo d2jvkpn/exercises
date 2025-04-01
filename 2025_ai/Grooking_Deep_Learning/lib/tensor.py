@@ -25,7 +25,7 @@ class Tensor(object):
             c.children[self.id] = c.children.get(old_id, 0)
             del c.children[old_id]
 
-    def backward(self, grad, grad_origin=None):
+    def backward(self, grad=None, grad_origin=None):
         #self.grad = grad
 
         #if self.creation_op == "add": # recursive
@@ -123,7 +123,7 @@ class Tensor(object):
         #print(f"--> operation: {self.id} + {other.id}")
         data = self.data + other.data
 
-        if self.autograd or other.autograd:
+        if self.autograd and other.autograd:
             return Tensor(data, creators=[self, other], creation_op="add", autograd=True)
         return Tensor(data)
 
