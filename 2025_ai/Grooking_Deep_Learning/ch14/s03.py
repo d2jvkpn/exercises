@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
 import sys
+#sys.path.append("..")
 
+from lib.chrono import Chrono
 from lib.tensor import Tensor
 from lib.layer import Layer, Embedding, CrossEntropyLoss, SGD
 from lib.models import LSTMCell
 
 import numpy as np
+
 
 np.random.seed(0)
 
@@ -27,7 +30,7 @@ model.w_ho.weight.data *= 0
 criterion = CrossEntropyLoss()
 optim = SGD(parameters=model.get_parameters() + embed.get_parameters(), alpha=0.05)
 
-def generate_sample(n=30, init_char=' '):
+def generate_sample(n=30, init_char=' ', temperature=1.0):
     s = ""
     hidden = model.init_hidden(batch_size=1)
     d = Tensor(np.array([word2index[init_char]]))
@@ -35,12 +38,14 @@ def generate_sample(n=30, init_char=' '):
     for i in range(n):
         rnn_input = embed.forward(d)
         output, hidden = model.forward(rnn_input, hidden=hidden)
-#         output.data *= 25
-#         temp_dist = output.softmax()
-#         temp_dist /= temp_dist.sum()
 
-#         m = (temp_dist > np.random.rand()).argmax()
-        m = output.data.argmax()
+        # Apply temperature scaling
+        output.data /= temperature
+        temp_dist = output.softmax()
+        temp_dist /= temp_dist.sum()
+
+        # Sample from the distribution
+        m = np.random.choice(len(vocab), p=temp_dist[0])
         c = vocab[m]
         d = Tensor(np.array([m]))
         s += c
@@ -61,12 +66,16 @@ input_batches = input_batched_indices[:n_bptt*bptt].reshape(n_bptt,bptt, batch_s
 target_batches = target_batched_indices[:n_bptt*bptt].reshape(n_bptt, bptt, batch_size)
 
 min_loss = 1000.0
+
 def train(n):
     global min_loss
     total_loss, n_loss = 0.0, 0.0
 
     hidden = model.init_hidden(batch_size=batch_size)
+    # 分离上一轮的计算图
+    hidden = (Tensor(hidden[0].data.copy()), Tensor(hidden[1].data.copy()))
     batches_to_train = len(input_batches)
+    print(f"==> {Chrono()}: iteration={n:03d}")
 
     for batch_i in range(batches_to_train):
         hidden = (Tensor(hidden[0].data, autograd=True), Tensor(hidden[1].data, autograd=True))
@@ -91,16 +100,22 @@ def train(n):
         total_loss += loss.data / bptt
 
         epoch_loss = np.exp(total_loss / (batch_i+1))
+
         min_loss = min(epoch_loss, min_loss)
 
         if (batch_i+1) % 10 == 0 or batch_i == batches_to_train-1:
             sample = generate_sample(n=70, init_char='T').replace("\n"," ")
-            log = f"--> I{n:04d}: alpha={optim.alpha:.3f}, batch={batch_i+1}/{batches_to_train}"
+            log = f"--> {Chrono()}: iteration={n:03d}, alpha={optim.alpha:.3f}"
+            log += f", batch={batch_i+1:03d}/{batches_to_train}"
             log += f", min_loss={min_loss:.3f}, epoch_loss={epoch_loss:.3f}"
-            log += f'\n      sample="{sample}"'
             print(log)
 
     optim.alpha *= 0.99
 
 for n in range(10):
-    train(n+1)
+    n += 1
+    train(n)
+
+    for temp in [0.5, 1.0, 1.5]:
+        sample = generate_sample(n=70, init_char='T', temperature=temp)
+        print(f"==> {Chrono()}: iteration={n:03d}, temperature={temp:.3f}, sample={repr(sample)}")
