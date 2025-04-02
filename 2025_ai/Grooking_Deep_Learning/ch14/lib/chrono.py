@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-from typing import Union, Any, Self
 from datetime import datetime, timedelta
+from typing import Union, Any, Self
 
 
 class Chrono(object):

@@ -55,12 +55,14 @@ shelve_path = os.path.join("data", "shelve", 's03.shelve')
 shelve_exists = os.path.isfile(shelve_path)
 
 if shelve_exists:
-    print(f"==> {Chrono()} load shelve: path={shelve_path}")
+    print(f"==> {Chrono()} Loading shelve: path={shelve_path}")
     db = shelve_load(shelve_path)
     embed = db["embed"]
     model = db["model"]
     optim = db["optim"]
     min_loss = db["min_loss"]
+    end_at = db.get("end_at", "")
+    print(f"--> last trainning: end_at={end_at}")
 else:
     embed = Embedding(vocab_size=len(vocab), dim=512)
     model = LSTMCell(n_inputs=512, n_hidden=512, n_output=len(vocab))
@@ -69,13 +71,14 @@ else:
     min_loss = 1000.0
 
 def dump(sig, frame):
-    print(f"\n<== {Chrono()} dumping: path={shelve_path}")
+    print(f"\n<== {Chrono()} Dumping model: path={shelve_path}")
 
     db = {
       "embed": embed,
       "model": model,
       "optim": optim,
       "min_loss": min_loss,
+      "end_at": f"{Chrono()}",
     }
 
     shelve_dump(db, shelve_path)
@@ -89,7 +92,7 @@ def generate_sample(n=30, init_char=' ', temperature=1.0):
     hidden = model.init_hidden(batch_size=1)
     d = Tensor(np.array([word2index[init_char]]))
 
-    for i in range(n):
+    for _i in range(n):
         rnn_input = embed.forward(d)
         output, hidden = model.forward(rnn_input, hidden=hidden)
 
@@ -114,9 +117,10 @@ def train(n):
     # 分离上一轮的计算图
     hidden = (Tensor(hidden[0].data.copy()), Tensor(hidden[1].data.copy()))
     batches_to_train = len(input_batches)
-    print(f"==> {Chrono()} starting iteration: {n}")
+    print(f"==> {Chrono()} Starting iteration: {n}")
 
     for batch_i in range(batches_to_train):
+        batch_n = batch_i + 1
         hidden = (Tensor(hidden[0].data, autograd=True), Tensor(hidden[1].data, autograd=True))
         losses = list()
 
@@ -138,23 +142,23 @@ def train(n):
         optim.step()
         total_loss += loss.data / bptt
 
-        epoch_loss = np.exp(total_loss / (batch_i+1))
+        epoch_loss = np.exp(total_loss / batch_n)
 
         min_loss = min(epoch_loss, min_loss)
 
-        if (batch_i+1) % 10 == 0 or batch_i == batches_to_train-1:
-            sample = generate_sample(n=70, init_char='T').replace("\n"," ")
-            print(f"--> {Chrono()} tranning: iteration={n}, alpha={optim.alpha:.3f}", end="")
-            print(f", batch={batch_i+1:03d}/{batches_to_train}", end="")
+        if batch_n % 10 == 0 or batch_n == batches_to_train:
+            sample = generate_sample(n=70, init_char='T')
+            print(f"--> {Chrono()} trainning: iteration={n}", end="")
+            print(f", alpha={optim.alpha:.3f}, batch={batch_n}/{batches_to_train}", end="")
             print(f", min_loss={min_loss:.3f}, epoch_loss={epoch_loss:.3f}")
 
     optim.alpha *= 0.99
 
-for n in range(10):
-    n += 1
+for _i in range(10):
+    n = _i + 1
     train(n)
 
     for temp in [0.5, 1.0, 1.5]:
         sample = generate_sample(n=70, init_char='T', temperature=temp)
-        print(f"==> {Chrono()} sample: iteration={n}", end="")
+        print(f"--> {Chrono()} sample: iteration={n}", end="")
         print(f", temperature={temp:.3f}, sample={repr(sample)}")

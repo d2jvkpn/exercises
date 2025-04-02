@@ -5,13 +5,6 @@ from .tensor import Tensor
 import numpy as np
 
 
-class Layer(object):
-    def __init__(self):
-        self.parameters = list()
-
-    def get_parameters(self):
-        return self.parameters
-
 class SGD(object):
     def __init__(self, parameters, alpha=0.1):
         self.parameters = parameters
@@ -27,6 +20,13 @@ class SGD(object):
 
             if zero:
                 p.grad.data *= 0
+
+class Layer(object):
+    def __init__(self):
+        self.parameters = list()
+
+    def get_parameters(self):
+        return self.parameters
 
 class Linear(Layer):
     def __init__(self, n_inputs, n_outputs, bias=True):
