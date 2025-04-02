@@ -9,11 +9,10 @@ from lib.layer import Layer, Embedding, CrossEntropyLoss, SGD
 from lib.models import LSTMCell
 
 import numpy as np
+np.random.seed(0)
 
 
 #### 1.
-np.random.seed(0)
-
 def shelve_dump(data: dict, filename: str):
     os.makedirs(os.path.dirname(filename), mode=511, exist_ok=True)
 
