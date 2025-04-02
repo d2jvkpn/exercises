@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 import sys, random, math
-sys.path.append('..')
+#sys.path.append('..')
 
 from lib.tensor import Tensor
 from lib.sgd import SGD
