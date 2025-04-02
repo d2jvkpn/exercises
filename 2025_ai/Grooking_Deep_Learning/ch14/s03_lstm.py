@@ -51,7 +51,7 @@ n_bptt = int((n_batches-1) / bptt)
 input_batches = input_batched_indices[:n_bptt*bptt].reshape(n_bptt,bptt, batch_size)
 target_batches = target_batched_indices[:n_bptt*bptt].reshape(n_bptt, bptt, batch_size)
 
-shelve_path = os.path.join("data", "shelve", 's03.shelve')
+shelve_path = os.path.join("data", "shelve", 's03_lstm.shelve')
 shelve_exists = os.path.isfile(shelve_path)
 
 if shelve_exists:
