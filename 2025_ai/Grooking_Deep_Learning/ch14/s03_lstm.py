@@ -60,13 +60,15 @@ if shelve_exists:
     model = db["model"]
     optim = db["optim"]
     min_loss = db["min_loss"]
-    end_at = db.get("end_at", "")
+    trainning_steps = db["trainning_steps"]
+    end_at = db["end_at"] # db.get("end_at", "")
     print(f"--> last trainning: end_at={end_at}")
 else:
     embed = Embedding(vocab_size=len(vocab), dim=512)
     model = LSTMCell(n_inputs=512, n_hidden=512, n_output=len(vocab))
     model.w_ho.weight.data *= 0
     optim = SGD(parameters=model.get_parameters() + embed.get_parameters(), alpha=0.05)
+    trainning_steps = []
     min_loss = 1000.0
 
 def dump(sig, frame):
@@ -78,6 +80,7 @@ def dump(sig, frame):
       "optim": optim,
       "min_loss": min_loss,
       "end_at": f"{Chrono()}",
+      "trainning_steps": trainning_steps,
     }
 
     shelve_dump(db, shelve_path)
@@ -116,7 +119,7 @@ def train(n):
     # 分离上一轮的计算图
     hidden = (Tensor(hidden[0].data.copy()), Tensor(hidden[1].data.copy()))
     batches_to_train = len(input_batches)
-    print(f"==> {Chrono()} Starting iteration: {n}")
+    print(f"==> {Chrono()} Starting iteration {n}")
 
     for batch_i in range(batches_to_train):
         batch_n = batch_i + 1
@@ -140,15 +143,15 @@ def train(n):
         loss.backward()
         optim.step()
         total_loss += loss.data / bptt
-
         epoch_loss = np.exp(total_loss / batch_n)
-
         min_loss = min(epoch_loss, min_loss)
 
         if batch_n % 10 == 0 or batch_n == batches_to_train:
-            sample = generate_sample(n=70, init_char='T')
-            print(f"--> {Chrono()} trainning: iteration={n}", end="")
-            print(f", alpha={optim.alpha:.3f}, batch={batch_n}/{batches_to_train}", end="")
+            now = Chrono()
+            batch = f"{batch_n}/{batches_to_train}"
+            trainning_steps.append([now, n, optim.alpha, batch, min_loss, epoch_loss])
+
+            print(f"--> {now} I{n:03d}: alpha={optim.alpha:.3f}, batch={batch}", end="")
             print(f", min_loss={min_loss:.3f}, epoch_loss={epoch_loss:.3f}")
 
     optim.alpha *= 0.99
