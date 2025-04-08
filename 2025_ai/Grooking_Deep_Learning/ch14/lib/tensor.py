@@ -31,7 +31,7 @@ class Tensor (object):
                 return False
         return True
 
-    def backward(self,grad=None, grad_origin=None):
+    def backward(self, grad=None, grad_origin=None):
         if not self.autograd:
             return
 
@@ -77,7 +77,7 @@ class Tensor (object):
 
         if self.creation_op == "mul":
             new = self.grad * self.creators[1]
-            self.creators[0].backward(new , self)
+            self.creators[0].backward(new, self)
             new = self.grad * self.creators[0]
             self.creators[1].backward(new, self)
 
@@ -112,59 +112,56 @@ class Tensor (object):
             ones = Tensor(np.ones_like(self.grad.data))
             self.creators[0].backward(self.grad * (ones - (self * self)))
 
-        if self.creation_op == "index_select":
-            new_grad = np.zeros_like(self.creators[0].data)
-            indices_ = self.index_select_indices.data.flatten()
-            grad_ = grad.data.reshape(len(indices_), -1)
-            for i in range(len(indices_)):
-                new_grad[indices_[i]] += grad_[i]
-            self.creators[0].backward(Tensor(new_grad))
-
         if self.creation_op == "cross_entropy":
             dx = self.softmax_output - self.target_dist
             self.creators[0].backward(Tensor(dx))
 
+        if self.creation_op == "index_select":
+            new_grad = np.zeros_like(self.creators[0].data)
+            indices_ = self.index_select_indices.data.flatten()
+            grad_ = grad.data.reshape(len(indices_), -1)
+
+            for i in range(len(indices_)):
+                new_grad[indices_[i]] += grad_[i]
+
+            self.creators[0].backward(Tensor(new_grad))
+
     def __add__(self, other):
+        data = self.data + other.data
+
         if self.autograd and other.autograd:
-            return Tensor(
-              self.data + other.data, autograd=True,
-              creators=[self,other],  creation_op="add",
-            )
-        return Tensor(self.data + other.data)
+            return Tensor(data, autograd=True, creators=[self, other],  creation_op="add")
+        return Tensor(data)
 
     def __neg__(self):
+        data = self.data * -1
+
         if self.autograd:
-            return Tensor(
-              self.data * - 1, autograd=True,
-              creators=[self], creation_op="neg",
-            )
-        return Tensor(self.data * -1)
+            return Tensor(data, autograd=True, creators=[self], creation_op="neg")
+        return Tensor(data)
 
     def __sub__(self, other):
+        data = self.data - other.data
+
         if self.autograd and other.autograd:
-            return Tensor(
-              self.data - other.data, autograd=True,
-              creators=[self,other], creation_op="sub",
-            )
-        return Tensor(self.data - other.data)
+            return Tensor(data, autograd=True, creators=[self, other], creation_op="sub")
+        return Tensor(data)
 
     def __mul__(self, other):
+        data = self.data * other.data
+
         if self.autograd and other.autograd:
-            return Tensor(
-              self.data * other.data, autograd=True,
-              creators=[self,other], creation_op="mul",
-            )
-        return Tensor(self.data * other.data)
+            return Tensor(data, autograd=True, creators=[self, other], creation_op="mul")
+        return Tensor(data)
 
     def sum(self, dim):
-        if self.autograd:
-            return Tensor(
-              self.data.sum(dim), autograd=True,
-              creators=[self], creation_op="sum_"+str(dim),
-            )
-        return Tensor(self.data.sum(dim))
+        data = self.data.sum(dim)
 
-    def expand(self, dim,copies):
+        if self.autograd:
+            return Tensor(data, autograd=True, creators=[self], creation_op="sum_" + str(dim))
+        return Tensor(data)
+
+    def expand(self, dim, copies):
         trans_cmd = list(range(0, self.data.ndim))
         trans_cmd.insert(dim, self.data.ndim)
 
@@ -172,83 +169,62 @@ class Tensor (object):
           [copies]).transpose(trans_cmd)
 
         if self.autograd:
-            return Tensor(
-              new_data, autograd=True,
-              creators=[self], creation_op="expand_"+str(dim),
-            )
+            creation_op = "expand_"+str(dim)
+            return Tensor(new_data, autograd=True, creators=[self], creation_op=creation_op)
         return Tensor(new_data)
 
     def transpose(self):
-        if self.autograd:
-            return Tensor(
-              self.data.transpose(), autograd=True,
-              creators=[self], creation_op="transpose",
-            )
+        data = self.data.transpose()
 
-        return Tensor(self.data.transpose())
+        if self.autograd:
+            return Tensor(data, autograd=True, creators=[self], creation_op="transpose")
+        return Tensor(data)
 
     def mm(self, x):
+        data = self.data.dot(x.data)
+
         if self.autograd:
-            return Tensor(
-              self.data.dot(x.data), autograd=True,
-              creators=[self,x], creation_op="mm",
-            )
-        return Tensor(self.data.dot(x.data))
+            return Tensor(data, autograd=True, creators=[self, x], creation_op="mm")
+        return Tensor(data)
 
     def sigmoid(self):
-        val = 1 / (1 + np.exp(-self.data))
+        data = 1 / (1 + np.exp(-self.data))
+
         if self.autograd:
-            return Tensor(
-              val, autograd=True,
-              creators=[self], creation_op="sigmoid",
-            )
-        return Tensor(val)
+            return Tensor(data, autograd=True, creators=[self], creation_op="sigmoid")
+        return Tensor(data)
 
     def tanh(self):
+        data = np.tanh(self.data)
+
         if self.autograd:
-            return Tensor(
-              np.tanh(self.data), autograd=True,
-              creators=[self], creation_op="tanh",
-            )
-        return Tensor(np.tanh(self.data))
+            return Tensor(data, autograd=True, creators=[self], creation_op="tanh")
+        return Tensor(data)
 
     def index_select(self, indices):
+        data = self.data[indices.data]
+
         if self.autograd:
-            new = Tensor(
-              self.data[indices.data], autograd=True,
-              creators=[self], creation_op="index_select",
-            )
+            new = Tensor(data, autograd=True, creators=[self], creation_op="index_select")
             new.index_select_indices = indices
             return new
-        return Tensor(self.data[indices.data])
+        return Tensor(data)
 
     def softmax(self):
-        temp = np.exp(self.data)
-        softmax_output = temp / np.sum(
-          temp,
-          axis=self.data.ndim - 1,
-          keepdims=True,
-        )
-        return softmax_output
+        data = np.exp(self.data)
+        return data / np.sum(data, axis=self.data.ndim - 1, keepdims=True)
 
     def cross_entropy(self, target_indices):
-        temp = np.exp(self.data)
-        softmax_output = temp / np.sum(
-          temp,
-          axis=self.data.ndim - 1,
-          keepdims=True,
-        )
+        data = np.exp(self.data)
+        softmax_output = data / np.sum(data, axis=self.data.ndim - 1, keepdims=True)
 
         t = target_indices.data.flatten()
-        p = softmax_output.reshape(len(t),-1)
+        p = softmax_output.reshape(len(t), -1)
         target_dist = np.eye(p.shape[1])[t]
-        loss = -(np.log(p) * (target_dist)).sum(1).mean()
+        loss = -(np.log(p) * target_dist).sum(1).mean()
 
         if self.autograd:
-            out = Tensor(
-              loss, autograd=True,
-              creators=[self], creation_op="cross_entropy",
-            )
+            out = Tensor(loss, autograd=True, creators=[self], creation_op="cross_entropy")
             out.softmax_output = softmax_output
             out.target_dist = target_dist
             return out

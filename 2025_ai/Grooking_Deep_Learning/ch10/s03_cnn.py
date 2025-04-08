@@ -260,9 +260,9 @@ with open(path.join("data", "trainning_parameters.yaml"), 'w') as file:
     yaml.safe_dump(parameters, file, sort_keys=False)
 
 print()
-print(f"==> 3. Results:")
-print(f"    wts_kernels={wts_kernels}")
-print(f"    weights_1_2={wts_1_2}")
+print(f"""==> 3. Results:
+    wts_kernels={wts_kernels}")
+    weights_1_2={wts_1_2}""")
 
 print()
 print(f"<== 4. Exit: elapsed={format_timedelta(t2 - t1)}")

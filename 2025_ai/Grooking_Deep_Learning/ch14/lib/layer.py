@@ -34,7 +34,9 @@ class Linear(Layer):
 
         self.use_bias = bias
 
-        wts = np.random.randn(n_inputs, n_outputs) * np.sqrt(2.0/(n_inputs))
+        # standard normal distribution: mean(mu)=0, std(sigma)=1, np.std([1, 2, 3, 4])
+        mu, sigma = 0, np.sqrt(2.0 / n_inputs)
+        wts = mu + np.random.randn(n_inputs, n_outputs) * sigma
         self.weight = Tensor(wts, autograd=True)
 
         if self.use_bias:
@@ -47,7 +49,7 @@ class Linear(Layer):
 
     def forward(self, input):
         if self.use_bias:
-            return input.mm(self.weight)+self.bias.expand(0,len(input.data))
+            return input.mm(self.weight) + self.bias.expand(0, len(input.data))
         return input.mm(self.weight)
 
 

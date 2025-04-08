@@ -3,7 +3,7 @@
 import numpy as np
 
 from .tensor import Tensor
-from .layer import Layer, Linear, CrossEntropyLoss
+from .layer import Layer, Linear, CrossEntropyLoss, Sigmoid, Tanh
 
 
 class RNNCell(Layer):
@@ -47,10 +47,12 @@ class LSTMCell(Layer):
         self.n_hidden = n_hidden
         self.n_output = n_output
 
-        self.xf = Linear(n_inputs, n_hidden)
-        self.xi = Linear(n_inputs, n_hidden)
-        self.xo = Linear(n_inputs, n_hidden)
-        self.xc = Linear(n_inputs, n_hidden)
+        self.xf = Linear(n_inputs, n_hidden) # forget gate
+        self.xi = Linear(n_inputs, n_hidden) # input gate
+        self.xo = Linear(n_inputs, n_hidden) # output gate
+        self.xc = Linear(n_inputs, n_hidden) # cell state
+        # u: candidate value
+        # h: hidden state
 
         self.hf = Linear(n_hidden, n_hidden, bias=False)
         self.hi = Linear(n_hidden, n_hidden, bias=False)
@@ -87,8 +89,8 @@ class LSTMCell(Layer):
         return output, (h, c)
 
     def init_hidden(self, batch_size=1):
-        init_hidden = Tensor(np.zeros((batch_size,self.n_hidden)), autograd=True)
-        init_cell = Tensor(np.zeros((batch_size,self.n_hidden)), autograd=True)
+        init_hidden = Tensor(np.zeros((batch_size, self.n_hidden)), autograd=True)
+        init_cell = Tensor(np.zeros((batch_size, self.n_hidden)), autograd=True)
         init_hidden.data[:, 0] += 1
         init_cell.data[:, 0] += 1
         return (init_hidden, init_cell)
