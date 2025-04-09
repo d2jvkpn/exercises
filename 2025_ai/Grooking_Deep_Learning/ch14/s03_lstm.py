@@ -66,15 +66,12 @@ else:
     print(f"--> last trainning: end_at={end_at}")
 
 n_batches = int(indices.shape[0] / batch_size)
+n_bptt = int((n_batches-1) / bptt)
 
 batched_indices = indices[:n_batches*batch_size].reshape(batch_size, n_batches).transpose()
 
-input_batched_indices = batched_indices[0:-1]
-target_batched_indices = batched_indices[1:]
-
-n_bptt = int((n_batches-1) / bptt)
-input_batches = input_batched_indices[:n_bptt*bptt].reshape(n_bptt,bptt, batch_size)
-target_batches = target_batched_indices[:n_bptt*bptt].reshape(n_bptt, bptt, batch_size)
+input_batches = batched_indices[0:-1][:n_bptt*bptt].reshape(n_bptt,bptt, batch_size)
+target_batches = batched_indices[1:][:n_bptt*bptt].reshape(n_bptt, bptt, batch_size)
 
 def dump(sig, frame):
     print(f"\n<== {Chrono()} Dumping to shelve file: path={shelve_path}")

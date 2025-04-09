@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 
+from .tensor import Tensor
+from lib.layer import Linear, Layer, Sigmoid, Tanh
+
 import numpy as np
 
-from .tensor import Tensor
 
 class LSTMCell(Layer):
     def __init__(self, n_inputs, n_hidden, n_output):
@@ -19,7 +21,7 @@ class LSTMCell(Layer):
         # u: candidate value
         # h: hidden state
 
-        self.hf = Linear(n_hidden, n_hidden, use_bias==False)
+        self.hf = Linear(n_hidden, n_hidden, use_bias=False)
         self.hi = Linear(n_hidden, n_hidden, use_bias=False)
         self.ho = Linear(n_hidden, n_hidden, use_bias=False)
         self.hc = Linear(n_hidden, n_hidden, use_bias=False)
