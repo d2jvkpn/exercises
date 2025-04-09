@@ -9,28 +9,24 @@ class Tensor (object):
         self.autograd = autograd
         self.grad = None
 
-        if id is None:
-            self.id = np.random.randint(0, 1000000000)
-        else:
-            self.id = id
+        self.id = np.random.randint(0, 1000000000) if id is None else id
 
         self.creators = creators
         self.creation_op = creation_op
-        self.children = {}
+        self.children = {} # id -> cnt
 
         if creators is not None:
             for c in creators:
-                if self.id not in c.children:
-                    c.children[self.id] = 1
-                else:
-                    c.children[self.id] += 1
+                c.children[self.id] = c.children.get(self.id, 0) + 1
 
+    # counts of all children are zero
     def all_children_grads_accounted_for(self):
         for _, cnt in self.children.items():
             if cnt != 0:
                 return False
         return True
 
+    # grad: grad of children, grad_origin: children
     def backward(self, grad=None, grad_origin=None):
         if not self.autograd:
             return
@@ -58,12 +54,13 @@ class Tensor (object):
         # grads must not have grads of their own
         assert(not grad.autograd)
 
-        # only continue backpropping if there's something to
-        # backprop into and if all gradients (from children)
-        # are accounted for override waiting for children if
-        # "backprop" was called on this variable directly
-        if self.creators is not None and \
-            (self.all_children_grads_accounted_for() or grad_origin is None):
+        # only continue backpropping if there's something to backprop into and if all gradients 
+        # (from children) are accounted for override waiting for children if "backprop" was called
+        # on this variable directly
+        if self.creators is None:
+            return
+
+        if self.all_children_grads_accounted_for() or grad_origin is None:
             self._backward(grad)
 
     def _backward(self, grad):
@@ -71,17 +68,17 @@ class Tensor (object):
              self.creators[0].backward(self.grad, self)
              self.creators[1].backward(self.grad, self)
 
-        if self.creation_op == "sub":
+        elif self.creation_op == "sub":
             self.creators[0].backward(Tensor(self.grad.data), self)
             self.creators[1].backward(Tensor(self.grad.__neg__().data), self)
 
-        if self.creation_op == "mul":
+        elif self.creation_op == "mul":
             new = self.grad * self.creators[1]
             self.creators[0].backward(new, self)
             new = self.grad * self.creators[0]
             self.creators[1].backward(new, self)
 
-        if self.creation_op == "mm":
+        elif self.creation_op == "mm":
             c0 = self.creators[0]
             c1 = self.creators[1]
             new = self.grad.mm(c1.transpose())
@@ -89,34 +86,36 @@ class Tensor (object):
             new = self.grad.transpose().mm(c0).transpose()
             c1.backward(new)
 
-        if self.creation_op == "transpose":
+        elif self.creation_op == "transpose":
             self.creators[0].backward(self.grad.transpose())
 
-        if "sum" in self.creation_op:
+        elif "sum" in self.creation_op:
             dim = int(self.creation_op.split("_")[1])
             self.creators[0].backward(
                 self.grad.expand(dim, self.creators[0].data.shape[dim]))
 
-        if "expand" in self.creation_op:
+        elif "expand" in self.creation_op:
             dim = int(self.creation_op.split("_")[1])
             self.creators[0].backward(self.grad.sum(dim))
 
-        if self.creation_op == "neg":
+        elif self.creation_op == "neg":
             self.creators[0].backward(self.grad.__neg__())
 
-        if self.creation_op == "sigmoid":
+        elif self.creation_op == "sigmoid":
             ones = Tensor(np.ones_like(self.grad.data))
-            self.creators[0].backward(self.grad * (self * (ones - self)))
+            val = self * (ones - self)
+            self.creators[0].backward(self.grad * val)
 
-        if self.creation_op == "tanh":
+        elif self.creation_op == "tanh":
             ones = Tensor(np.ones_like(self.grad.data))
-            self.creators[0].backward(self.grad * (ones - (self * self)))
+            val = ones - (self * self)
+            self.creators[0].backward(self.grad * val)
 
-        if self.creation_op == "cross_entropy":
+        elif self.creation_op == "cross_entropy":
             dx = self.softmax_output - self.target_dist
             self.creators[0].backward(Tensor(dx))
 
-        if self.creation_op == "index_select":
+        elif self.creation_op == "index_select":
             new_grad = np.zeros_like(self.creators[0].data)
             indices_ = self.index_select_indices.data.flatten()
             grad_ = grad.data.reshape(len(indices_), -1)
@@ -165,8 +164,8 @@ class Tensor (object):
         trans_cmd = list(range(0, self.data.ndim))
         trans_cmd.insert(dim, self.data.ndim)
 
-        new_data = self.data.repeat(copies).reshape(list(self.data.shape) + \
-          [copies]).transpose(trans_cmd)
+        shape = list(self.data.shape) + [copies]
+        new_data = self.data.repeat(copies).reshape(shape).transpose(trans_cmd)
 
         if self.autograd:
             creation_op = "expand_"+str(dim)

@@ -29,10 +29,9 @@ class Layer(object):
         return self.parameters
 
 class Linear(Layer):
-    def __init__(self, n_inputs, n_outputs, bias=True):
+    def __init__(self, n_inputs, n_outputs, use_bias=True):
         super().__init__()
-
-        self.use_bias = bias
+        self.use_bias = use_bias
 
         # standard normal distribution: mean(mu)=0, std(sigma)=1, np.std([1, 2, 3, 4])
         mu, sigma = 0, np.sqrt(2.0 / n_inputs)

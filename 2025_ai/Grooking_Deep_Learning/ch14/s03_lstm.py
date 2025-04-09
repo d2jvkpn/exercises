@@ -6,7 +6,7 @@ import os, sys, signal, shelve, argparse
 from lib.chrono import Chrono
 from lib.tensor import Tensor
 from lib.layer import Layer, Embedding, CrossEntropyLoss, SGD
-from lib.models import LSTMCell
+from lib.lstm_cell import LSTMCell
 
 import numpy as np
 np.random.seed(0)
