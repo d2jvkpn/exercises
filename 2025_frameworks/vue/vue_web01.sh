@@ -35,4 +35,6 @@ git commit -m "apply tailwindcss"
 
 
 #### 4. run
+exit
+
 npm run dev -- --port=3000
