@@ -9,7 +9,9 @@ npm install --global npm yarn
 which npm && which yarn
 
 
-##### 2. create project 
+##### 2. create project
+# https://vuejs.org/guide/quick-start.html
+
 #npm install --global @vue/cli
 # which vue && vue --version
 #vue create -d vue-app01
@@ -39,7 +41,6 @@ git add -A
 git commit -m "apply tailwindcss"
 
 
-#### 4. run
 exit
-
+#### 4. run
 npm run dev -- --port=3000
