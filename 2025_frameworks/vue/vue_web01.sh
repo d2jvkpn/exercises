@@ -22,6 +22,11 @@ npm install
 npm run format
 npm fund
 
+cat > Makefile <<EOF
+dev:
+	npm run dev -- --port=3000
+EOF
+
 # git init
 git add -A
 git commit -m "initial commit"
