@@ -24,5 +24,7 @@ cat > src/App.vue <<EOF
 </template>
 EOF
 
-sed -i -e '6i import tailwindcss from "@tailwindcss/vite"' \
-  -e '/plugins:/a \ \ \ \ tailwindcss(),' vite.config.ts vite.config.ts
+sed -i \
+  -e '6i import tailwindcss from "@tailwindcss/vite"' \
+  -e '/plugins:/a \ \ \ \ tailwindcss(),' \
+  vite.config.ts vite.config.ts
