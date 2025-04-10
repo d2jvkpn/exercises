@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu -o pipefail; _wd=$(pwd); _path=$(dirname $0)
+set -eu -o pipefail; _wd=$(pwd); _path=$(dirname $0 | xargs -i readlink -f {})
 
 
 #### 1. node.js
@@ -15,7 +15,7 @@ which npm && which yarn
 #vue create -d vue-app01
 #cd vue-app01
 
-npm create vue@latest web01
+npm create vue@latest web01 # interactive
 cd web01
 
 npm install
