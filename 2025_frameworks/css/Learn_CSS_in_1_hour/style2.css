@@ -1,0 +1,53 @@
+/*
+Cascading Style Sheets
+1. Inline
+2. Internal
+3. External
+*/
+
+body {
+    background-color: #000000;
+}
+
+h1 {
+    color: #FFFFFF;
+    border-color: silver;
+    border-top-style: dotted;
+    border-right-style: groove;
+    border-bottom-style: dashed;
+    border-bottom-width: 2px;
+    border-left-style: double;
+    padding: 5px;
+}
+
+p {
+    color: #FFFFFF;
+    background-color: #333333;
+
+    font-family: sans-serif;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 18px;
+    text-decoration: underline;
+    /* wavy underline, cyan dotted underline*/
+
+    border-style: solid;
+    /* dashed, dotted, double, ridge, groove, inset, outset */
+    border-width: 2px;
+    border-color: gold;
+    border-radius: 5px;
+
+    padding: 5px;
+}
+
+#p1 {
+    color: #ffff00;
+}
+
+.odd {
+    color: red;
+}
+
+.even {
+    color: blue;
+}
