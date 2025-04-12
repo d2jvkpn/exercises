@@ -1,0 +1,32 @@
+/*
+Cascading Style Sheets
+1. Inline
+2. Internal
+3. External
+*/
+
+.fa-twitter {
+    color: aqua;
+}
+
+.fa-youtube {
+    color: red;
+}
+
+body {
+    background-color: white;
+}
+
+h1 {
+    color: #000000;
+    font-size: 24px;
+    text-align: center;
+}
+
+p {
+    color: #FFFFFF;
+    background-color: #333333;
+    padding: 10px;
+    font-size: 16px;
+    font-style: italic;
+}
