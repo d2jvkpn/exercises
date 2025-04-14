@@ -6,11 +6,19 @@
     text-align: center;
     background-color: tomato;
 
+    margin: 5px;
+    float: left; /*left, right*/
+}
+
+img {
+    width: 100px;
+    border: 1px solid;
+
     margin: 3px;
-    float: left;
-    /*left, right*/
+    /* positions an element to the left or right side of a container */
+    float: left; /*left, right*/
 }
 
 p {
-    /*clear: both;*/
+    /*clear: both;*/ /*left, right, both*/
 }
