@@ -1,71 +1,71 @@
 /* #### style of article*/
 
 .testimonial {
-    font-size: var(--fs-400);
-    padding: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 2.5rem 3.75rem 3rem -3rem hsl(var(--clr-secondary-400) / 0.25);
+  font-size: var(--fs-400);
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 2.5rem 3.75rem 3rem -3rem hsl(var(--clr-secondary-400) / 0.25);
 }
 
 /*backgrounds, fonts and borders of articles*/
 .testimonial.quote { /* has both classes(testimonial and quote)*/
-    background-image: url("../images/bg-pattern-quotation.svg");
-    background-repeat: no-repeat;
-    background-position: top right 10%;
+  background-image: url("../images/bg-pattern-quotation.svg");
+  background-repeat: no-repeat;
+  background-position: top right 10%;
 }
 
 .bg-primary-400 {
-    background: hsl(var(--clr-primary-400));
+  background: hsl(var(--clr-primary-400));
 }
 .bg-secondary-400 {
-    background: hsl(var(--clr-secondary-400));
+  background: hsl(var(--clr-secondary-400));
 }
 .bg-secondary-500 {
-    background: hsl(var(--clr-secondary-500));
+  background: hsl(var(--clr-secondary-500));
 }
 .bg-neutral-100 {
-    background: hsl(var(--clr-neutral-100));
+  background: hsl(var(--clr-neutral-100));
 }
 
 .text-neutral-100 {
-    color: hsl(var(--clr-neutral-100));
+  color: hsl(var(--clr-neutral-100));
 }
 .text-secondary-400 {
-    color: hsl(var(--clr-secondary-400));
+  color: hsl(var(--clr-secondary-400));
 }
 
 .border-primary-400 {
-    border: 2px solid #a775f1;
+  border: 2px solid #a775f1;
 }
 
 /* children(tag or classes) of testimonial*/
 .testimonial img {
-    width: 1.75rem;
-    aspect-ratio: 1/1;
-    border-radius: 50%;
+  width: 1.75rem;
+  aspect-ratio: 1/1;
+  border-radius: 50%;
 }
   
 .testimonial .name {
-    font-size: var(--fs-400);
-    font-weight: var(--fw-400);
-    line-height: 1;
+  font-size: var(--fs-400);
+  font-weight: var(--fw-400);
+  line-height: 1;
 }
   
 .testimonial .position {
-    font-size: var(--fs-300);
-    opacity: 0.5;
+  font-size: var(--fs-300);
+  opacity: 0.5;
 }
   
 .testimonial > p:first-of-type {
-    font-size: var(--fs-500);
-    line-height: 1.2;
+  font-size: var(--fs-500);
+  line-height: 1.2;
 }  
 .testimonial > p:last-of-type {
-    opacity: 0.7;
+  opacity: 0.7;
 }
 
 .person { /*.flex article div.person*/
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
 }

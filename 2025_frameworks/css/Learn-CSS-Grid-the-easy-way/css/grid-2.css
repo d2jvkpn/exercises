@@ -7,15 +7,15 @@ if root font size is 16px, then 1rem equals 16px.
 
 /* default grid layout*/
 .testimonial-grid {
-    display: grid;
-    gap: 1.5rem;
-    grid-auto-columns: 1fr; /* make columns alway have the same size */
-    grid-template-areas: "one" "two" "three" "four" "five";
+  display: grid;
+  gap: 1.5rem;
+  grid-auto-columns: 1fr; /* make columns alway have the same size */
+  grid-template-areas: "one" "two" "three" "four" "five";
 
-    /*padding-block-start: 2rem; padding-block-end: 2rem*/
-    padding-block: 2rem 2rem;
-    width: min(95%, 70rem);
-    margin-inline: auto;
+  /*padding-block-start: 2rem; padding-block-end: 2rem*/
+  padding-block: 2rem 2rem;
+  width: min(95%, 70rem);
+  margin-inline: auto;
 }
 
 /* works with @media ...*/
@@ -30,19 +30,19 @@ the following orders shouldn't be changed
 grid-template-areas codes are defined by .testimonial:nth-child
 */
 @media (min-width: 30em) {
-    .testimonial-grid {
-        grid-template-areas:
-            "one one"
-            "two five"
-            "three five"
-            "four four";
-    }
+  .testimonial-grid {
+    grid-template-areas:
+      "one one"
+      "two five"
+      "three five"
+      "four four";
+  }
 }
 
 @media (min-width: 50em) {
-    .testimonial-grid {
-        grid-template-areas:
-            "one one two five"
-            "three four four five";
-    }
+  .testimonial-grid {
+    grid-template-areas:
+      "one one two five"
+      "three four four five";
+  }
 }
