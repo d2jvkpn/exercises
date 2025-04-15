@@ -11,7 +11,7 @@ if root font size is 16px, then 1rem equals 16px.
   grid-template-columns: repeat(4, 1fr); /* 25% 25% 25%; repeat(3, 1fr); */
 
   padding-block: 2rem 2rem;
-  width: min(95%, 70rem);
+  width: min(95%, 100rem);
   margin-inline: auto;
 }
 
