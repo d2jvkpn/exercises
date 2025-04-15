@@ -5,7 +5,18 @@
     background-color: skyblue;
 
     position: sticky;
-    /* static, relative, fixed, sticky */
+    /*
+    #### https://developer.mozilla.org/en-US/docs/Web/CSS/position
+    static: default
+    relative: relative to origin position(static), works with top, left...
+    absolute: The element is removed from the normal document flow, and no space is created for
+      the element in the page layout. The element is positioned relative to its closest positioned
+      ancestor (if any) or to the initial containing block. Its final position is determined by the
+      values of top, right, bottom, and left.
+    fixed: stays in the position of the view port, wotks with top, right...
+    sticky: sticks in the view port
+    */
+
     /* top: 50px; */
     top: 0px;
     right: 0px;
