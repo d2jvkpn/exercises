@@ -32,17 +32,17 @@ grid-template-areas codes are defined by .testimonial:nth-child
 @media (min-width: 30em) {
   .testimonial-grid {
     grid-template-areas:
-      "one one"
-      "two five"
+      "one   one"
+      "two   five"
       "three five"
-      "four four";
+      "four  four";
   }
 }
 
 @media (min-width: 50em) {
   .testimonial-grid {
     grid-template-areas:
-      "one one two five"
+      "one   one  two  five"
       "three four four five";
   }
 }
