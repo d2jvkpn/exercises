@@ -1,0 +1,35 @@
+/*
+- em: It is relative to the font size of the parent. For example, if a parent 
+font size is 20px, then 2em will equal 40px.
+- rem: It's relative to root element font size, usually <html>. For example, 
+if root font size is 16px, then 1rem equals 16px.
+*/
+
+.testimonial-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(4, 1fr); /* 25% 25% 25%; repeat(3, 1fr); */
+
+    padding-block: 2rem 2rem;
+    width: min(95%, 70rem);
+    margin-inline: auto;
+}
+
+.testimonial:nth-child(1) {
+    grid-column: span 2;
+}
+.testimonial:nth-child(4) {
+    grid-column: span 2;
+}
+.testimonial:last-child {
+    background: tomato !important;
+    /* grid-column: 3; grid-column-end: 5 ;*/
+    /* grid-column: 3 / 5; */
+    /* grid-column: 3 / span 2; */
+
+    /* grid-column: 4 / 5; */
+
+    /* grid-column-start: 4; grid-row: 1 / 3; */
+    /* grid-column-start: 4; grid-row-start: 1; grid-row-end: span 2; */
+    grid-column: 4; grid-row: 1 / span 2;
+};
