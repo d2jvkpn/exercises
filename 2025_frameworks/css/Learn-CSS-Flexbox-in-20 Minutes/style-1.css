@@ -1,0 +1,20 @@
+body {
+    min-height: 800px;
+    display: flex;
+    border: 8px solid black;
+
+    flex-direction: row;
+
+    /* main axis, from left to right, value=flex-start, flex-end, center, space-between, space-around*/
+    justify-content: space-evenly;
+
+    /* cross axis, from down to up, default=flex-start */
+    align-items: center;
+}
+
+.box {
+    height: 200px;
+    width: 200px;
+    background-color: skyblue;
+    font-size: 40px;
+}

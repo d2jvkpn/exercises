@@ -1,0 +1,23 @@
+body {
+    min-height: 800px;
+    display: flex;
+
+    /* values=row, row-reverse, column*/
+    flex-direction: row;
+    border: 8px solid black;
+    gap: 20px; /* column-gap & row-gap */
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap; /* nowrap */
+}
+
+.box {
+    height: 200px;
+    width: 200px;
+    background-color: skyblue;
+    font-size: 40px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

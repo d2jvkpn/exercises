@@ -1,0 +1,32 @@
+body {
+    min-height: 800px;
+
+    display: flex;
+    border: 8px solid black;
+    gap: 10px; /* column-gap & row-gap */
+    align-items: flex-start;
+    justify-content: flex-end;
+}
+
+
+#box-1 {
+    /* align-self: flex-end; */ /* isolated this box from other items */
+    margin-right: auto;
+}
+
+.box {
+    height: 200px;
+    width: 200px;
+    background-color: skyblue;
+    font-size: 40px;
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media(max-width: 575px) {
+    body {
+        flex-wrap: wrap;
+    }
+}
