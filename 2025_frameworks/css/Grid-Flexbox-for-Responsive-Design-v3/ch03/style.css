@@ -1,15 +1,18 @@
+
+
+
 /* extremely basic formatting */
 body {
   font-family: "Libre Franklin", sans-serif;
+  font-size: 1rem;
   line-height: 1.5;
+  background-color: black;
 }
 
-/* make image flex with container */
 img {
   max-width: 100%;
 }
 
-/* remove default margin/padding */
 figure {
   margin: 0;
   padding: 0;

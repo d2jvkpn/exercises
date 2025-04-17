@@ -14,6 +14,7 @@ published: May 8, 2024
 - course: https://frontendmasters.com/courses/css-grid/
 - # https://github.com/jen4web/fem-layout
 - https://grid-flexbox.css.education
+- https://alistapart.com/article/responsive-web-design/
 
 2. references
 - https://css-tricks.com
