@@ -17,3 +17,42 @@ figure {
   margin: 0;
   padding: 0;
 }
+
+
+
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+  width: 980px;
+  margin: 0 auto;
+}
+
+img:nth-child(1) {
+  grid-column: 1/span 2;
+  border: 2px solid red;
+}
+
+img:nth-child(2) {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+  border: 2px dotted blue;
+}
+
+img:nth-child(3) {
+  grid-column: 1 / span 2;
+  /* grid-row: 4; */
+  border: 2px double yellow;
+}
+
+img:nth-child(4) {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+img:nth-child(5) {
+  grid-column: 2;
+  grid-row: 3;
+}

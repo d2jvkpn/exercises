@@ -17,7 +17,10 @@ figure {
   border-width: 2px;
 }
 
-/* #### 2. */
+
+
+
+
 .grid-container {
   display: grid;
   gap: 1rem 2rem; /* row-gap column-gap */
