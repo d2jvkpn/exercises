@@ -31,4 +31,44 @@ img {
 .button:hover {
   background-color: #327c94;
 }
-  
+
+
+
+/* 1. */
+.card h2 {
+    border: 2px solid red;
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.card img {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+}
+
+.card:last-child {
+    border: none;
+}
+
+.card {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    padding: 3rem 0;
+    border-bottom: 1px solid #ccc;
+    gap: 0;
+    align-items: center;
+}
+
+.feature img {
+    grid-column: 1 / span 2;
+    grid-row: 2 / 3;
+}
+
+.feature p:not(:has(a)) {
+    display: none;
+}
+
+.feature p:last-child {
+    margin-top: 2rem;
+    grid-row: 3;
+}
