@@ -116,3 +116,36 @@ img {
     grid-column: 1/span 3;
   }
 }
+
+/* 4. */
+@media (min-width: 900px) {
+  .card-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 1rem;
+    gap: 0;
+    align-items: stretch;
+  }
+
+  .card a {
+    font-size: 0.7rem;
+  }
+
+  .feature {
+    grid-column: 1/span 2;
+    grid-row: 1/span 3;
+    display: block;
+  }
+
+  h1 {
+    max-width: 1200px;
+    margin: 3rem auto 2rem auto; /* top right bottom left */
+    border: 2px solid red;
+    text-align: center;
+  }
+}
