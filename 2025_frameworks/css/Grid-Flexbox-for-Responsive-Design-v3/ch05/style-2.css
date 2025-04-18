@@ -1,0 +1,83 @@
+/* extremely basic formatting */
+body {
+  font-family: "Libre Franklin", sans-serif;
+  line-height: 1.5;
+  border: 2px solid silver;
+}
+
+/* make image flex with container */
+img {
+  max-width: 100%;
+}
+
+/* remove default margin/padding */
+figure {
+  margin: 0;
+  padding: 0;
+  border-width: 2px;
+}
+
+
+/* 1. */
+.grid-container {
+  display: grid;
+  gap: 1rem 2rem; /* row-gap column-gap */
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, auto);
+
+  /* grid-template-areas:
+    "feature a"
+    "feature b"
+    "feature c"; */
+}
+
+figure {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: center;
+  border: 2px solid red;
+}
+
+figure:nth-child(3) {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  display: block;
+  min-width: 200px;
+}
+
+figure:last-child {
+  grid-column: 1 / span 2;
+}
+
+figcaption {
+  border: 2px dotted blue;
+}
+
+/* 2. */
+@media (max-width: 750px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  figure::nth-child(3) {
+    display: grid;
+    grid-column: auto;
+    grid-row: auto;
+  }
+  figure::last-child {
+    grid-column: auto;
+}
+
+/* 3. */
+@media (max-width: 500px) {
+  .grid-container {
+    display: block;
+  }
+  figure{
+    display: block;
+  }
+  figcaption {
+    margin-bottom: 2rem;
+  }
+}
