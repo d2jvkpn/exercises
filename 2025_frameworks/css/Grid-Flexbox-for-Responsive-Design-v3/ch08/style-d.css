@@ -11,7 +11,12 @@ body {
   font-family: "Libre Franklin", sans-serif;
   font-size: 1.5rem;
   line-height: 1.5;
-  margin: 0;
+  margin: 0;    <div>
+  <p>
+    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Vitae aliquid suscipit dolores explicabo animi numquam
+    voluptatem officiis ad porro et.
+  </p>
+  </div>
   padding: 0;
 }
 
@@ -38,7 +43,10 @@ body {
 
 .container {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  /* grid-template-columns: 1fr 1fr 1fr; */
+  /* grid-template-columns: repeat(3, minmax(200px, 1fr)); */
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  /* grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); */
   gap: 2rem;
 }
 
