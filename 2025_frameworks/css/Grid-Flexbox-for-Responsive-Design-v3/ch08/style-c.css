@@ -1,0 +1,27 @@
+img {
+  max-width: 100%;
+}
+
+.pluto {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto;
+}
+
+.pluto img:first-child,
+.pluto img:last-child {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.pluto img:last-child {
+  grid-column: 1;
+  grid-row: 1;
+  animation: pluto-fade 2s infinite alternate ease-in-out;
+  /*normal alternate alternate-reverse */
+}
+
+@keyframes pluto-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

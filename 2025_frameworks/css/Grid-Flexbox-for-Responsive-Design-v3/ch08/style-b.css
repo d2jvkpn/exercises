@@ -10,33 +10,33 @@ section {
 }
 
 section div:nth-child(1) {
-    grid-column: 1 / span 2;
-    grid-row: 1 / span 2;
+  grid-column: 1 / span 2;
+  grid-row: 1 / span 2;
 }
 
 section div:nth-child(2) {
-    grid-column: 3 / span 2;
-    grid-row: 1 / span 2;
+  grid-column: 3 / span 2;
+  grid-row: 1 / span 2;
 }
 
 section div:nth-child(3) {
-    grid-column: 1 / span 2;
-    grid-row: 3 / span 2;
+  grid-column: 1 / span 2;
+  grid-row: 3 / span 2;
 }
 
 section div:nth-child(4) {
-    grid-column: 3 / span 2;
-    grid-row: 3 / span 2;
+  grid-column: 3 / span 2;
+  grid-row: 3 / span 2;
 }
 
 section div:last-child {
-    grid-column: 2 / span 2;
-    grid-row: 2 / span 2;
-    border: 1vw solid white; /* 1vw=1% viewport width */
-    transform: rotate(45deg);
-    overflow: hidden; /* visible | hidden | scroll | auto | clip; */
+  grid-column: 2 / span 2;
+  grid-row: 2 / span 2;
+  border: 1vw solid white; /* 1vw=1% viewport width */
+  transform: rotate(45deg);
+  overflow: hidden; /* visible | hidden | scroll | auto | clip; */
 }
 
 section div:last-child img {
-    transform: rotate(-45deg) scale(1.42);
+  transform: rotate(-45deg) scale(1.42);
 }
