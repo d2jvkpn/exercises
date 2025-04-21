@@ -1,0 +1,48 @@
+/* extremely basic formatting */
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  font-family: "Libre Franklin", sans-serif;
+  font-size: 1.5rem;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+.container > div > * {
+  h2, p {
+    margin: 0;
+  }
+}
+
+.container > *:nth-child(3n+1) {
+  border: 2px solid #26547c;
+  background-color: #26547c33;
+}
+
+.container > *:nth-child(3n+2) {
+  border: 2px solid #ef476f;
+  background-color: #ef476f33;
+}
+
+.container > *:nth-child(3n+3) {
+  border: 2px solid #ffd166;
+  background-color: #ffd16633;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2rem;
+}
+
+.container > * {
+  padding: 1rem;
+  margin: 0;
+}
