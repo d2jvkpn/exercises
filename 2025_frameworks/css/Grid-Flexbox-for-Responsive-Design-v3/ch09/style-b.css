@@ -152,9 +152,10 @@ h1 {
     gap: 1rem;
     padding: 1rem;
     align-items: stretch;
-
     grid-template-columns: 1fr 1fr;
     grid-template-rows: auto;
+
+    grid-row: span 1;
   }
 
   .feature {
