@@ -110,12 +110,13 @@ h1 {
 }
 
 @media (min-width: 700px) {
-.card-container {
+  .card-container {
     grid-template-columns: repeat(3, 1fr);
-}
-.feature {
+  }
+
+  .feature {
     grid-column: 1/4;
-}
+  }
 }
 
 @media (min-width: 900px) {
@@ -151,7 +152,7 @@ h1 {
   }
 
   .card h2 {
-    grid-column: 1/2;
+    sgrid-column: 1/2;
     grid-row: 1/2;
   }
 
@@ -159,4 +160,3 @@ h1 {
     font-size: 0.7rem;
   }
 }
-
