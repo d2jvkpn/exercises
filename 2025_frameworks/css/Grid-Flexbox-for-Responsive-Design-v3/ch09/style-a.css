@@ -13,6 +13,7 @@ body {
   line-height: 1.5;
   margin: 0;
   padding: 0;
+  /* border: 1px solid tomato; */
 }
 
 .button {
@@ -51,15 +52,43 @@ img {
   margin: 0;
 }
 
+.card > * {
+  margin: 0;
+}
+
 .container {
   display: grid;
   grid-template-columns: repeat(4, minmax(200px, 1fr));
-  gap: 2rem;
+  gap: 1rem;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 2rem auto;
+
+  /* grid-template-rows: repeat(3, 1fr); */
+  /* grid-template-rows: 0.2fr 1fr 0.1fr; */
+}
+
+/* .one {
+  grid-column: 1/3;
+  grid-row: 1/3
+} 
+
+.card {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: repeat(3, 1fr);
+} */
+
+.card {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+
+  grid-template-rows: subgrid;
+  grid-row: span 3;
 }
 
 .one {
-  grid-column: 1/3;
-  grid-row: 1/3
+  grid-column: 1/span 2;
+  grid-row: 1/span 6; /* 2(rows) * 3(spans) */
 }
+
