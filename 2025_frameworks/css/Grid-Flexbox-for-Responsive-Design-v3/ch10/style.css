@@ -32,3 +32,143 @@ img {
 .button:hover {
   background-color: #327c94;
 }
+
+h1 {
+  margin: 2rem 2rem;
+  text-align: center;
+}
+
+@media (min-width: 500px) {
+  .card-container {
+    margin: 0rem 2rem;
+    display: grid;
+    gap: 0rem;
+    grid-template-columns: 1fr;
+  }
+
+  ul {
+    list-style-type: none;
+    display: grid;
+    gap: 0rem;
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+
+  ul > li {
+    padding: 2rem;
+    border-bottom: 1px solid silver;
+    margin: 0;
+  }
+
+  article:first-child {
+    display: block;
+  }
+
+  article {
+    border-bottom: 1px solid silver;
+    display: grid;
+    gap: 0rem;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr auto;
+  }
+
+  article > img {
+    grid-column: 2/span 1;
+    grid-row: 1/span 2;
+  }
+
+  article > p.text {
+    grid-column: 1/span 1;
+    grid-row: 2/span 2;
+  }
+
+  article > p.link {
+    grid-column: 1/span 1;
+    grid-row: 4/span 1;
+  }
+}
+
+@media (min-width: 750px) {
+  .card-container {
+    margin: 0 2rem;
+    display: grid;
+    gap: 0rem;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  article:first-child {
+    display: block;
+    grid-column: 1/ span 2;
+  }
+
+  article {
+    display: grid;
+    gap: 0rem;
+    padding: 1rem;
+    border-bottom: 1px solid silver;
+    border-right: 1px solid silver;
+    border-top: 1px solid silver;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: auto auto 1fr;
+    /* grid-template-rows: subgrid;
+    grid-row: span 4; */
+  }
+
+  article > h2 {
+    margin: 0;
+    grid-column: 1/span 2;
+    grid-row: 1/span 1;
+  }
+
+  article > img {
+    grid-column: 3/span 1;
+    grid-row: 1/span 1;
+  }
+
+  article > p.text {
+    grid-column: 1/span 3;
+  }
+
+  article > p.link {
+    grid-column: 1/span 3;
+  }
+}
+
+a {
+  color: #2D697C;
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+@media (min-width: 1000px) {
+  .card-container {
+    margin: 0 2rem;
+    display: grid;
+    gap: 0rem;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+  }
+
+  article:first-child {
+    display: block;
+    grid-column: 1/ span 3;
+    grid-row: 1/span 2;
+  }
+
+  article:nth-child(n+4) {
+    grid-column: span 2;
+  }
+
+  ul {
+    display: grid;
+    gap: 0rem;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 2rem;
+  }
+
+  li:nth-child(2n) {
+    border-left: 1px solid silver;
+    border-right: 1px solid silver;
+  }
+}
