@@ -1,0 +1,72 @@
+/* default styling, no changes needed here, even with responsive design */
+
+/* set the layout to border box model */
+html {
+  box-sizing: border-box;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+/* set font family and background gradient */
+body {
+  font-family: "Libre Franklin", sans-serif;
+  line-height: 1.5;
+}
+img {
+  max-width: 100%;
+}
+img {
+  max-width: 100%;
+}
+.button {
+  background-color: #2d697c;
+  padding: 0.5rem;
+  color: white;
+  text-decoration: none;
+  font-size: 0.8rem;
+}
+.button:hover {
+  background-color: #327c94;
+}
+a {
+  color: #2d697c;
+}
+a:hover {
+  text-decoration: none;
+}
+
+
+/* 1. */
+/* 
+article {
+  width: 20rem;
+} */
+
+@media (min-width: 600px) {
+  .photo-cards {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly; /* flex-start */
+    align-items: flex-end;
+    column-gap: 2%;
+    row-gap: 2rem;
+  }
+
+  .card {
+    flex-basis: 32%;
+  }
+}
+
+@media (min-width: 850px) {
+  .photo-cards {
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    align-items: flex-end;
+  }
+
+  .card {
+    flex-basis: auto;
+  }
+}

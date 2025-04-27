@@ -21,4 +21,6 @@ published: May 8, 2024
 - https://developer.mozilla.org/en-US/docs/Web/CSS/grid
 - https://cssgridgarden.com
 - https://codingfantasy.com/games/css-grid-attack
+- https://codingfantasy.com/games/flexboxadventure
 - https://gridcritters.com
+- https://flexboxfroggy.com/
