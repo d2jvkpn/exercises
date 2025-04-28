@@ -16,6 +16,7 @@ published: May 8, 2024
 
 2. references
 - https://alistapart.com/article/responsive-web-design/
+- https://alistapart.com/article/responsive-images-in-practise
 - https://github.com/jen4web/fem-layout
 - https://css-tricks.com
 - https://developer.mozilla.org/en-US/docs/Web/CSS/grid
@@ -24,3 +25,5 @@ published: May 8, 2024
 - https://codingfantasy.com/games/flexboxadventure
 - https://gridcritters.com
 - https://flexboxfroggy.com/
+- https://ericportis.com/posts/2014/srcset-sizes/
+- https://responsivebreakpoints.com

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title> Index </title>
+
+  <link rel="stylesheet" type="text/css" href="style.css">
+  <!--script type="text/javascript" src="hello.js"> </script-->
+  <!-- <style>
+    @media (max-width: 500px) {
+      .big { display: none; }
+    }
+
+    @media (min-width: 501px) {
+      .tiny { display: none; }
+    }
+  </style> -->
+  
+  <style>
+    @media(max-width: 700px) {
+      body {
+        background-image: url(img/small.jpg)
+      }
+    }
+
+    @media(min-width: 701px) {
+      body {
+        background-image: url(img/large.jpg)
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- <div class="fake-responsive">
+    <img src="tiny.jpg" class="tiny"/>
+    <img src="big.jpg" class="big">
+  </div> -->
+
+
+  <picture>
+    <source src="img/balloons-lg.png" media="(min-width: 850px)"/>
+
+    <img src="img/balloons-cropped.png" alt="Hot air ballons rise over the desert."/>
+  </picture>
+
+  <picture>
+    <source src="img/balloons-landscape.webp" type="image/webp"/>
+
+    <source src="img/balloons-landscape.png" ype="image/png"/>
+
+    <img src="img/balloons-fallback.png" alt="Hot air ballons rise over the desert."/>
+  </picture>
+
+  <img
+    src="img/small.jpg"
+    alt="A rad wolf"
+    srcset="img/large.jpg 1024w, img/medium.jpg 640w, img/small.jpg 320w"
+    sizes="(min-width: 35em) 33.3vw, 100vw"
+  />
+
+  <img
+    src="img/standard.jpg"
+    srcset="img/retina.jpg 2x, img/super-retina.jpg 3x"
+  />
+
+  <picture>
+    <!-- 16:9 crop -->
+    <source
+      media="(min-width: 36em)"
+      srcset="img/detail/large.jpg 1920w, img/detail/medium.jpg 960w, img/detail/small.jpg 480w"
+    />
+
+    <!-- square crop -->
+    <source
+      srcset="img/square/large.jpg 822w, img/square/medium.jpg 640w, img/square/small.jpg 320w"
+    />
+
+    <img src="img/detail/medium.jpg" />
+  </picture>
+
+  <picture>
+    <!-- 16:9 crop -->
+    <source
+      media="(aspect-ratio: 16/9)"
+      srcset="img/detail/large.jpg 1920w, img/detail/medium.jpg 960w, img/detail/small.jpg 480w"
+    />
+
+    <!-- square crop -->
+    <source
+    media="(aspect-ratio: 1/1)"
+      srcset="img/square/large.jpg 822w, img/square/medium.jpg 640w, img/square/small.jpg 320w"
+    />
+
+    <img src="img/detail/medium.jpg" />
+  </picture>
+
+</body>
+</html>
