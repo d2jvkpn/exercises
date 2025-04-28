@@ -6,13 +6,21 @@
   <title> Index </title>
 
   <link rel="stylesheet" type="text/css" href="style.css">
-  <!--script type="text/javascript" src="hello.js"> </script-->
 </head>
 
 <body>
 
-  <h1>Planets and Moons</h1>
+<div class="color-test">
+<div class="color-container">
+
+  <label>
+  <input type="checkbox" id="theme-box">
+  check for dark theme
+</label>
+
+<h1>Planets and Moons</h1>
   <div class="card-container">
+
     <div class="card">
       <h2>Our Solar System</h2>
       <img src="https://assets.codepen.io/296057/fem-new-system.jpg" alt="Many of the planets in the solar system, plus a few moons." />
@@ -51,5 +59,24 @@
     </div>
   </div>
 
+</div>
+</div>
+
+<script>
+  const checkbox = document.querySelector('#theme-box');
+  const colortest = document.querySelector('.color-test');
+
+  checkbox.addEventListener('change', colorTheme);
+
+  function colorTheme(e) {
+    console.log(`~~~ colorTheme: ${e}`);
+    // runs when checkbox changes
+    if (checkbox.checked == false) {
+      colortest.style.setProperty('--dark-theme', 'false');
+    } else {
+      colortest.style.setProperty('--dark-theme', 'true');
+    }
+  }
+</script>
 </body>
 </html>
