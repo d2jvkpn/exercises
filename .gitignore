@@ -56,11 +56,10 @@ wk*/
 *.wasm
 wasm_exec.js
 
+cache
 data
 configs
 gcm.cache
 logs/
-*.local
-local
 *.git
 __pycache__
