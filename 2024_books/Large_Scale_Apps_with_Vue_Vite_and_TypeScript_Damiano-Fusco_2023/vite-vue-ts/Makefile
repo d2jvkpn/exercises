@@ -9,22 +9,22 @@ run:
 	npm run dev -- --port=${PORT} --host=0.0.0.0 # --mode dev
 
 build:
-	rm -rf target/static
+	rm -rf target/dist
 	# node node_modules/vite/bin/vite.js build --help
-	npm run build -- --base=${VITE_BASE} --outDir=target/static${VITE_BASE} # --mode dev
+	npm run build -- --base=${VITE_BASE} --outDir=target/dist${VITE_BASE} # --mode dev
 	ls -alt target/static
 
 image-local:
-	region=cn GIT_Pull=false DOCKER_Pull=false DOCKER_Push=false bash deploy/build.sh dev
+	region=cn GIT_Pull=false DOCKER_Pull=false bash deploy/build_image.sh deploy/build_image.yaml local
 
 image-dev-cn:
-	region=cn DOCKER_Pull=false DOCKER_Push=false bash deploy/build.sh dev
+	region=cn bash deploy/build_image.sh deploy/build_image.yaml dev
 
 image-dev:
-	DOCKER_Pull=false DOCKER_Push=false bash deploy/build.sh dev
+	bash deploy/build_image.sh deploy/build_image.yaml dev
 
 image-test:
-	DOCKER_Pull=false DOCKER_Push=false bash deploy/build.sh test
+	bash deploy/build_image.sh deploy/build_image.yaml test
 
 image-main:
-	DOCKER_Pull=false DOCKER_Push=false bash deploy/build.sh main
+	bash deploy/build_image.sh deploy/build_image.yaml main

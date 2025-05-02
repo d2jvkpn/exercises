@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu -o pipefail; _wd=$(pwd); _path=$(dirname $0 | xargs -i readlink -f {})
+set -eu -o pipefail; _wd=$(pwd); _dir=$(dirname $0 | xargs -i readlink -f {})
 
 
 #### 1. node.js
@@ -17,8 +17,8 @@ which npm && which yarn
 #vue create -d vue-app01
 #cd vue-app01
 
-npm create vue@latest web01 # interactive
-cd web01
+npm create vue@latest hello-vue # interactive
+cd hello-vue
 
 npm install
 npm run format
@@ -35,12 +35,7 @@ git commit -m "initial commit"
 
 
 #### 3. apply tailwindcss
-bash ${_path}/tailwindcss.sh
+bash ${_dir}/tailwindcss.sh
 
 git add -A
 git commit -m "apply tailwindcss"
-
-
-exit
-#### 4. run
-npm run dev -- --port=3000

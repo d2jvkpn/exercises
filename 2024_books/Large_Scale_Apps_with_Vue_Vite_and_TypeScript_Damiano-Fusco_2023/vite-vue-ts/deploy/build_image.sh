@@ -1,22 +1,22 @@
 #!/bin/bash
-set -eu -o pipefail; _wd=$(pwd); _path=$(dirname $0)
+set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 #### 1.
-tag=$1
+#yaml=${yaml:-${_dir}/build_image.yaml}
+yaml=$1
+tag=$2
+
 # GIT_Pull=$(printenv GIT_Pull || true)
 GIT_Pull=${GIT_Pull:-"true"}
 DOCKER_Pull=${DOCKER_Pull:-false}
-DOCKER_Push=${DOCKER_Push:-false}
 region=${region:-""}
-
-yaml=${yaml:-${_path}/build.yaml}
 
 # app_name=$(yq -p json -o yaml package.json | yq .name)
 # app_version=$(yq -p json -o yaml package.json | yq .version)
 app_name=$(yq .app_name $yaml)
 app_version=$(yq .app_version $yaml)
 
-image_name=$(yq .image_name $yaml)
+image_name=$(yq .$tag.image_name $yaml)
 image_tag=$(yq .$tag.image_tag $yaml)
 image=$image_name:$image_tag
 
@@ -44,13 +44,13 @@ VITE_BASE=$(yq .$tag.VITE_BASE $yaml)
 
 
 #### 2.
-mkdir -p cache.local
+mkdir -p target node_modules
 
-cat > cache.local/env <<EOF
+cat > target/env <<EOF
 $(yq .$tag $yaml | grep "^VITE_" | sed 's/: /=/')
 EOF
 
-cat > cache.local/build.yaml <<EOF
+cat > target/build.yaml <<EOF
 app_name: $app_name
 app_version: $app_version
 
@@ -64,11 +64,11 @@ build_time: $build_time
 $(yq .$tag $yaml | grep "^VITE_")
 EOF
 
-yq -o json cache.local/build.yaml > cache.local/build.json
+yq -o json target/build.yaml > target/build.json
 
 #### 3. pull image
 [[ "$DOCKER_Pull" != "false" ]] && \
-for base in $(awk '/^FROM/{print $2}' ${_path}/Containerfile); do
+for base in $(awk '/^FROM/{print $2}' ${_dir}/Containerfile); do
     echo ">>> Pull $base"
     docker pull $base
 
@@ -90,14 +90,16 @@ echo "==> Building image=$image, base_path=$VITE_BASE"
 
 # --build-arg=mode=$mode
 docker build --no-cache --tag $image \
-  --file ${_path}/Containerfile \
+  --file ${_dir}/Containerfile \
   --build-arg=APP_Name=$app_name \
   --build-arg=APP_Version=$app_version \
   --build-arg=BASE_Path="$VITE_BASE" \
   --build-arg=region="$region" \
   ./
 
-[ "$DOCKER_Push" != "false" ] && docker push $image
+if [[ "$image_name" != "local/"* ]]; then
+    docker push $image
+fi
 
 #### 5.
 docker image prune --force --filter label=app=${app_name} --filter label=stage=build &> /dev/null

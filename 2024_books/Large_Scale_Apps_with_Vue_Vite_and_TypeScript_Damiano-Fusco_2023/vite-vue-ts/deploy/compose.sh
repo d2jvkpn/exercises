@@ -1,12 +1,10 @@
 #!/bin/bash
-set -eu -o pipefail; _wd=$(pwd); _path=$(dirname $0)
+set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
-IMAGE_Tag="$1"; HTTP_Port="$2"
 
-#### deploy
-export IMAGE_Tag="${IMAGE_Tag}" HTTP_Port="${HTTP_Port}"
+export IMAGE_Tag="$1" HTTP_Port="$2"
 
-envsubst < ${_path}/compose.template.yaml > compose.yaml
+envsubst < ${_dir}/compose.vite-vue-ts.yaml > compose.yaml
 
 exit 0
 
