@@ -12,7 +12,7 @@ build:
 	rm -rf target/dist
 	# node node_modules/vite/bin/vite.js build --help
 	npm run build -- --base=${VITE_BASE} --outDir=target/dist${VITE_BASE} # --mode dev
-	ls -alt target/static
+	ls -alt target/dist
 
 image-local:
 	region=cn GIT_Pull=false DOCKER_Pull=false bash deploy/build_image.sh deploy/build_image.yaml local

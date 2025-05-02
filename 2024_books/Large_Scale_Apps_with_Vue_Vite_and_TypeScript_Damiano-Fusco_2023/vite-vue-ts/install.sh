@@ -2,10 +2,11 @@
 set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 
+app="$1"
 # npm init vite@latest # interactive
-npm init vite@latest vite-vue-ts -- --template=vue-ts
+npm init vite@latest $app -- --template=vue-ts
 
-cd vite-vue-ts
+cd $app
 
 npm install
 npm run dev
