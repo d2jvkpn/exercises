@@ -17,8 +17,10 @@ which npm && which yarn
 #vue create -d vue-app01
 #cd vue-app01
 
-npm create vue@latest hello-vue # interactive
-cd hello-vue
+app=hello-vue
+
+npm create vue@latest $app  # interactive
+cd $app
 
 npm install
 npm run format
