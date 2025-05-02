@@ -26,5 +26,9 @@ dist-ssr
 .env
 .env.*
 target/
-cache
-configs
+configs/
+
+docker-compose.yaml
+docker-compose.yml
+compose.yaml
+compose.yml
