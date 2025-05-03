@@ -38,16 +38,20 @@
 .login-container {
   border: 1px solid grey;
   border-radius: 5px;
-  padding: 1rem;
+  padding: 2rem 2rem;
   margin: 1rem 1rem;
   display: grid;
-  gap: 1rem;
-  grid-template-columns: 0.5fr 2fr;
+  row-gap: 1rem;
+  column-gap: 0.5rem;
+  grid-template-columns: 1fr 3fr;
+  /*justify-content: center;*/
+  align-items: center;
+  font-size: 1.5rem;
 }
 
 .login-container > input {
   border: 1px solid blue;
-  padding: 0.2rem;
+  padding: 0.5rem;
   min-width: 15rem;
 }
 
@@ -55,8 +59,7 @@
   background-color: green;
   border-radius: 5px;
   padding: 0.2rem;
-  font-size: 1.2rem;
-  text-align: center;
+  font-size: 1.8rem;
   color: white;
   grid-column: 1 / span 2;
 }
