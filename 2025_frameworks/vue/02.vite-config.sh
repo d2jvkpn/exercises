@@ -7,9 +7,6 @@ function extract_embeded() {
     sed -n "/^__${key}-0__$/,/^__${key}-1__/p" "$0" | tail -n +2 | head -n -1
 }
 
-# https://tailwindcss.com/docs/installation/using-vite
-npm install tailwindcss @tailwindcss/vite
-
 mv src/App.vue src/App.vue.bk
 mv vite.config.ts vite.config.ts.bk
 # ?? src/assets/main.css
@@ -42,7 +39,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
 import vueDevTools from 'vite-plugin-vue-devtools'
-import path from 'path'
+import { fileURLToPath, URL } from 'node:url'
 import tailwindcss from "@tailwindcss/vite"
 
 // https://vite.dev/config/
@@ -54,8 +51,10 @@ export default defineConfig({
   ],
 
   resolve: {
-    '@': path.resolve(__dirname, 'src'),
-    // extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+      // extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
+    },
   },
 })
 __VITE-0__

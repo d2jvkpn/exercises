@@ -12,7 +12,10 @@ npm install
 npm fund
 
 
-npm install -D vite-plugin-vue-devtools
+npm install --save-dev vite-plugin-vue-devtools @types/node
+
+# https://tailwindcss.com/docs/installation/using-vite
+npm install tailwindcss @tailwindcss/vite
 
 
 cat > env <<"EOF"
