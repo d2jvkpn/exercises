@@ -15,7 +15,7 @@ npm fund
 npm install --save-dev vite-plugin-vue-devtools @types/node
 
 # https://tailwindcss.com/docs/installation/using-vite
-npm install tailwindcss @tailwindcss/vite
+npm install vue-router tailwindcss @tailwindcss/vite
 
 
 cat > env <<"EOF"
