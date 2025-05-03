@@ -2,5 +2,5 @@
 PORT=3001
 
 VITE_ENV=local
-VITE_BASE=/site
+VITE_BASE=/
 VITE_API_URL=localhost:3011

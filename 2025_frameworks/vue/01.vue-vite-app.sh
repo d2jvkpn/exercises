@@ -1,37 +1,26 @@
 #!/bin/bash
-set -eu -o pipefail; _wd=$(pwd); _dir=$(dirname $0 | xargs -i readlink -f {})
+set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 
-#### 1. node.js
-which node && node --version
+app=${1:-hello-vue}
 
-npm install --global npm yarn
-which npm && which yarn
-
-
-##### 2. create project
-# https://vuejs.org/guide/quick-start.html
-
-#npm install --global @vue/cli
-# which vue && vue --version
-#vue create -d vue-app01
-#cd vue-app01
-
-app=hello-vue
-
-npm init vite@latest $app -- --template=vue-ts  # interactive
+npm init vite@latest $app -- --template=vue-ts
 cd $app
 
 npm install
 #npm run format
 npm fund
 
+
+npm install -D vite-plugin-vue-devtools
+
+
 cat > env <<"EOF"
 # path: .env
 PORT=3001
 
 VITE_ENV=local
-VITE_BASE=/site
+VITE_BASE=/
 VITE_API_URL=localhost:3011
 EOF
 
@@ -56,7 +45,8 @@ build:
 	ls -alt target/dist
 EOF
 
-cat >> ..gitignore <<EOF
+
+cat >> .gitignore <<EOF
 
 
 .env
@@ -69,14 +59,3 @@ docker-compose.yml
 compose.yaml
 compose.yml
 EOF
-
-# git init
-git add -A
-git commit -m "initial commit"
-
-
-#### 3. apply tailwindcss
-bash ${_dir}/tailwindcss.sh
-
-git add -A
-git commit -m "apply tailwindcss"

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -eu -o pipefail; _wd=$(pwd); _dir=$(dirname $0 | xargs -i readlink -f {})
+set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 
 #### 1. node.js
