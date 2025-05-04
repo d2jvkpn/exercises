@@ -4,12 +4,9 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const vite = {
-  VITE_BASE_PATH: import.meta.env.VITE_BASE_PATH,
-  VITE_API_URL: import.meta.env.VITE_API_URL,
-};
+let metaEnv = import.meta.env;
 
-console.log(`==> Login page: ${JSON.stringify(vite)}`);
+console.log(`==> Login page: ${JSON.stringify(metaEnv)}`);
 
 const loginForm = ref({ account: '', password: ''});
 const errorMsg = ref('');
@@ -29,7 +26,7 @@ const submitLogin = async () => {
     // await new Promise(resolve => setTimeout(resolve, 1000));
     // throw new Error('This is a test error.');
     const response = await fetch(
-      vite.VITE_API_URL + "/login",
+      metaEnv.VITE_API_URL + "/login",
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -92,6 +89,7 @@ const submitLogin = async () => {
   justify-content: flex-end;
   align-items: center;
   background-color: white;
+  min-width: 20rem;
 }
 
 .login-form {
@@ -115,7 +113,7 @@ const submitLogin = async () => {
 .login-form > input {
   border: 1px solid blue;
   padding: 0.5rem;
-  min-width: 15rem;
+  min-width: 10rem;
 }
 
 .login-error-msg {
