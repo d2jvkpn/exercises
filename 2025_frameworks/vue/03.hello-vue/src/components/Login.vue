@@ -45,7 +45,7 @@ const submitLogin = async () => {
 
     // localStorage.setItem('token', data.token);
     router.push('/dashboard')
-  } catch (err) {
+  } catch (err: any) {
     console.log(`!!! ${err}`);
     errorMsg.value = err.message || 'Login Failed';
   } finally {

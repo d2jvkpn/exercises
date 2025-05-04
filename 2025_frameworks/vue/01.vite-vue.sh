@@ -17,7 +17,7 @@ npm install --save-dev vite-plugin-vue-devtools @types/node
 # https://tailwindcss.com/docs/installation/using-vite
 npm install vue-router
 npm install tailwindcss @tailwindcss/vite
-npm install ant-design-vue @ant-design/icons-vue
+# npm install ant-design-vue @ant-design/icons-vue
 
 
 cat > env <<"EOF"

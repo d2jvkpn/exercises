@@ -3,14 +3,11 @@ import Login from '../components/Login.vue'
 
 const routes = [
   {
-    path: '/login',
-    name: 'Login',
-    component: Login,
+    path: '/login', name: 'Login', component: Login,
     meta: { title: 'Login' },
   },
   {
-    path: '/about',
-    name: 'About',
+    path: '/about', name: 'About',
     component: () => import('../components/HelloWorld.vue'),
     meta: { title: 'About' },
   },
@@ -20,8 +17,7 @@ const routes = [
   },
   /*
   {
-    path: '/:pathMatch(.*)*',
-    name: 'NotFound',
+    path: '/:pathMatch(.*)*', name: 'NotFound',
     component: () => import('../components/NotFound.vue'),
   }
   */
@@ -32,9 +28,9 @@ const router = createRouter({
   routes
 })
 
-router.beforeEach((to, from, next) => {
-  document.title = to.meta.title || 'Page Not Found';
-  next()
+router.beforeEach((to, _from, next) => {
+  document.title = String(to.meta.title) || 'Page Not Found';
+  next();
 })
 
 export default router;
