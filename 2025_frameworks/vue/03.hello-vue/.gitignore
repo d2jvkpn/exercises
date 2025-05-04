@@ -27,7 +27,6 @@ dist-ssr
 .env
 .env.*
 target/
-configs/
 
 docker-compose.yaml
 docker-compose.yml

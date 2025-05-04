@@ -1,21 +1,55 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
-console.log(`==> login page: VITE_API_URL=${import.meta.env.VITE_API_URL}`);
+const router = useRouter();
+
+const vite = {
+  VITE_BASE_PATH: import.meta.env.VITE_BASE_PATH,
+  VITE_API_URL: import.meta.env.VITE_API_URL,
+};
+
+console.log(`==> Login page: ${JSON.stringify(vite)}`);
 
 const loginForm = ref({ account: '', password: ''});
 const errorMsg = ref('');
 const isSubmitting = ref(false);
 
 const submitLogin = async () => {
+  if (!loginForm.value.account || !loginForm.value.password) {
+    errorMsg.value = "Please enter account and password";
+    return;
+  }
   isSubmitting.value = true;
+  errorMsg.value = "";
+
+  console.log(`--> account login: ${JSON.stringify(loginForm.value)}`);
 
   try {
-    console.log(`--> account login: ${loginForm.value.account}`); // JSON.stringify(loginForm.value)
     // await new Promise(resolve => setTimeout(resolve, 1000));
-    throw new Error('This is a test error.');
+    // throw new Error('This is a test error.');
+    const response = await fetch(
+      vite.VITE_API_URL + "/login",
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(loginForm.value),
+      }
+    );
+
+    if (!response.ok) {
+      const responseErr = await response.json();
+      throw new Error(responseErr.msg || 'Login Failed');
+      return;
+    }
+
+    const responsData = await response.json();
+    console.log('--> Login success', responsData);
+
+    // localStorage.setItem('token', data.token);
+    router.push('/dashboard')
   } catch (err) {
-    // console.log(`!!! ${err}`);
+    console.log(`!!! ${err}`);
     errorMsg.value = err.message || 'Login Failed';
   } finally {
     isSubmitting.value = false;
@@ -97,5 +131,11 @@ const submitLogin = async () => {
   font-size: 1.5rem;
   color: white;
   grid-column: 1 / span 2;
+}
+
+@media (max-width: 720px) {
+  .login-page {
+    justify-content: center;
+  }
 }
 </style>

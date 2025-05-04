@@ -11,5 +11,5 @@ run:
 build:
 	rm -rf target/dist
 	# node node_modules/vite/bin/vite.js build --help
-	npm run build -- --base=$(VITE_BASE) --outDir=target/dist$(VITE_BASE) # --mode dev
+	npm run build -- --base=$(VITE_BASE_PATH) --outDir=target/dist$(VITE_BASE_PATH) # --mode dev
 	ls -alt target/dist

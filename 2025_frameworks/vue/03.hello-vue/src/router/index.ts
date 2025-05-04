@@ -3,7 +3,7 @@ import Login from '../components/Login.vue'
 
 const routes = [
   {
-    path: '/login',
+    path: import.meta.env.VITE_BASE_PATH + '/login',
     name: 'Login',
     component: Login,
     meta: {
@@ -11,16 +11,16 @@ const routes = [
     }
   },
   {
-    path: '/',
-    redirect: '/login',
-  },
-  {
-    path: '/about',
+    path: import.meta.env.VITE_BASE_PATH + '/about',
     name: 'About',
     component: () => import('../components/HelloWorld.vue'),
     meta: {
       title: 'About',
     }
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: import.meta.env.VITE_BASE_PATH + '/login',
   },
   /*{
     path: '/:pathMatch(.*)*',
@@ -40,4 +40,4 @@ router.beforeEach((to, from, next) => {
   next()
 })
 
-export default router
+export default router;
