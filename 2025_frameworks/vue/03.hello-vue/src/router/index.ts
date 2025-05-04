@@ -22,7 +22,8 @@ const routes = [
     path: '/:pathMatch(.*)*',
     redirect: import.meta.env.VITE_BASE_PATH + '/login',
   },
-  /*{
+  /*
+  {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
     component: () => import('../components/NotFound.vue'),
