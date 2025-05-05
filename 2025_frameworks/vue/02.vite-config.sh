@@ -4,37 +4,26 @@ set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 function extract_embeded() {
     key=$1
-    sed -n "/^__${key}-0__$/,/^__${key}-1__/p" "$0" | tail -n +2 | head -n -1
+    sed -n "/^__${key}_START__$/,/^__${key}_END__/p" "$0" | tail -n +2 | head -n -1
 }
 
-mv src/App.vue src/App.vue.bk
-mv vite.config.ts vite.config.ts.bk
-# ?? src/assets/main.css
-mv src/style.css src/style.css.bk
+mkdir -p  archive/src
 
+mv vite.config.ts archive/
+extract_embeded VITE > vite.config.ts
+
+mv src/App.vue archive/src/
+extract_embeded APP > src/App.vue
+
+# ?? src/assets/main.css
+mv src/style.css archive/src/
 echo '@import "tailwindcss"' > src/style.css
 
-extract_embeded APP > src/App.vue
-extract_embeded VITE > vite.config.ts
 
 exit 0
 
-# src/App.vue
-__APP-0__
-<script setup lang="ts">
-</script>
-
-<template>
-  <div
-    class="flex items-center justify-center gap-8 min-h-screen bg-gradient-to-br from-green-500 to-sky-400"
-  >
-    <p>Hello, world!</p>
-  </div>
-</template>
-__APP-1__
-
 # vite.config.ts
-__VITE-0__
+__VITE_START__
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
@@ -57,4 +46,18 @@ export default defineConfig({
     },
   },
 })
-__VITE-0__
+__VITE_END__
+
+# src/App.vue
+__VUE_START__
+<script setup lang="ts">
+</script>
+
+<template>
+  <div
+    class="flex items-center justify-center gap-8 min-h-screen bg-gradient-to-br from-green-500 to-sky-400"
+  >
+    <p>Hello, world!</p>
+  </div>
+</template>
+__VUE_END__

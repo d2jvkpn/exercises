@@ -4,12 +4,12 @@ import Login from '../components/Login.vue'
 const routes = [
   {
     path: '/login', name: 'Login', component: Login,
-    meta: { title: 'Login' },
+    meta: { title: 'Hello - Login' },
   },
   {
     path: '/about', name: 'About',
     component: () => import('../components/HelloWorld.vue'),
-    meta: { title: 'About' },
+    meta: { title: 'Hello - About' },
   },
   {
     path: '/:pathMatch(.*)*',

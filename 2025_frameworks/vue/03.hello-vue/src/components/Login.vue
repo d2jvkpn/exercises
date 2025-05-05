@@ -8,7 +8,7 @@ let metaEnv = import.meta.env;
 
 console.log(`==> Login page: ${JSON.stringify(metaEnv)}`);
 
-const loginForm = ref({ account: '', password: ''});
+const loginForm = ref({ account: '', password: '' });
 const errorMsg = ref('');
 const isSubmitting = ref(false);
 
@@ -17,6 +17,7 @@ const submitLogin = async () => {
     errorMsg.value = "Please enter account and password";
     return;
   }
+
   isSubmitting.value = true;
   errorMsg.value = "";
 
@@ -31,21 +32,32 @@ const submitLogin = async () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(loginForm.value),
-      }
+      },
     );
 
+    // response.ok: boolean, 200-299 -> true
+    // response.status: number, 200, 404, 500
+    // response.statusText: string, "OK", "Not Found"
+    // response.headers: Headers,  response.headers.get('Content-Type')
+    // response.redirected: boolean
+    // response.url: string
     if (!response.ok) {
       const responseErr = await response.json();
       throw new Error(responseErr.msg || 'Login Failed');
       return;
     }
 
+    // response.text(), response.json(), response.blob(), response.arrayBuffer(), response.formData()
     const responsData = await response.json();
-    console.log('--> Login success', responsData);
+    const data = responsData.data;
+    console.log(`--> Login success: code=${responsData.code}, msg=${responsData.msg}`);
 
-    // localStorage.setItem('token', data.token);
-    router.push('/dashboard')
+    localStorage.setItem('token', data.token);
+    router.push(`/dashboard?accountId=${data.accountId}`);
   } catch (err: any) {
+    // err instanceof TypeError && err.message.startsWith("NetworkError")
+    // err instanceof TypeError
+    // err instanceof SyntaxError
     console.log(`!!! ${err}`);
     errorMsg.value = err.message || 'Login Failed';
   } finally {

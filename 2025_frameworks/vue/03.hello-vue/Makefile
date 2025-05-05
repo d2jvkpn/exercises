@@ -6,7 +6,7 @@ SHELL = /bin/bash
 
 run:
 	# node node_modules/vite/bin/vite.js --help
-	npm run dev -- --port=$(PORT) --host=0.0.0.0 # --mode dev
+	npm run dev -- --port=$(PORT) --host=0.0.0.0 # --mode local
 
 build:
 	rm -rf target/dist
