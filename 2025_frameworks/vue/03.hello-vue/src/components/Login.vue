@@ -68,7 +68,8 @@ const submitLogin = async () => {
 
 
 <template>
-<div class="login-page bg-gradient-to-br from-green-500 to-sky-400">
+<!--div class="login-page bg-gradient-to-br from-green-500 to-sky-400"-->
+<div class="login-page">
   <form class="login-form" @submit.prevent="submitLogin">
     <span> Account </span>
     <input

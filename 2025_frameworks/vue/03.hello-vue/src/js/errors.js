@@ -1,10 +1,11 @@
 class ApiError extends Error {
-  constructor(statusCode, code, msg) {
+  constructor(code, msg, details = {}) {
     super(msg);
 
     this.name = 'ApiError';
-    this.statusCode = statusCode;
     this.code = code;
+    this.msg = msg;
+    this.details = details; // {statusCode: 404, requestId: xxx}
 
     Object.setPrototypeOf(this, ApiError.prototype);
 
@@ -15,22 +16,40 @@ class ApiError extends Error {
 }
 
 function biz() {
-  throw new ApiError(404, 'not_exists', "account not found");
+  throw new ApiError('not_exists', "account not found", { statusCode: 404, requestId: "xxxx-xxxx" });
 }
 
 try {
   let ans = biz();
 } catch (err) {
-  console.log((err instanceof Error) && (err instanceof ApiError));
-  console.log(`--> Error: name=${err.name}, statusCode=${err.statusCode}, code=${err.code}, msg=${err.message}`);
+  // console.log((err instanceof Error) && (err instanceof ApiError));
+  // console.log(`${err}`);
+  console.log(`--> ApiError: code=${err.code}, statusCode=${err.msg}, details=${JSON.stringify(err.details)}`);
 }
 
 /*
-NetworkError
-TypeError: Content-Type != application/json, (SyntaxError) json error
-ServerError: statusCode >= 500
-UnknownError: 
+1. NetworkError
+if (err instanceof TypeError && err.message.startsWith("NetworkError")) {}
 
-auth_failed
-denied
+2. ?? SyntaxError
+if (err instanceof SyntaxError) {}
+
+3. ServerError
+if (response.statusCode >= 500) {}
+?? response.statusCode >= 600
+
+4. BadRequest(400, http.StatusBadRequest)
+
+5. Unauthorized(401, http.StatusUnauthorized)
+if (code == "unauthorized") {}
+
+6. Forbidden(403, http.StatusForbidden)
+if (code == "forbidden") {}
+
+7. ApiError
+callback(err)
+
+8. OK
+response={"code": "ok", "requestId": "xxxx-xxxx", "data": {}}
+callback(data)
 */
