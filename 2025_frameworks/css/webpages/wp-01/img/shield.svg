@@ -1,0 +1,28 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#00BFFF" stop-opacity="0.6"></stop>
+      <stop offset="100%" stop-color="transparent"></stop>
+    </radialGradient>
+  </defs>
+
+  <!-- 发光底座 -->
+  <ellipse cx="64" cy="110" rx="36" ry="8" fill="url(#glow)"></ellipse>
+
+  <!-- 底座轮廓 -->
+  <ellipse cx="64" cy="110" rx="36" ry="8" fill="none" stroke="#007BFF" stroke-width="2"></ellipse>
+
+  <!-- 盾牌轮廓 -->
+  <path d="M64,20 C48,20 36,30 36,44 C36,68 64,98 64,98 C64,98 92,68 92,44 C92,30 80,20 64,20 Z" fill="url(#shieldGrad)" stroke="#007BFF" stroke-width="2"></path>
+
+  <!-- 盾牌渐变 -->
+  <defs>
+    <linearGradient id="shieldGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#66CCFF"></stop>
+      <stop offset="100%" stop-color="#007BFF"></stop>
+    </linearGradient>
+  </defs>
+
+  <!-- 闪电标志 -->
+  <path d="M60 45 L70 45 L66 60 H74 L58 85 L64 60 H56 Z" fill="white"></path>
+</svg>
