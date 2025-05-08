@@ -8,7 +8,7 @@ const router = useRouter()
 
 const login = () => {
   if (username.value && password.value) {
-    localStorage.setItem('token', `{username.value}:{password.value}`)
+    localStorage.setItem('token', `${username.value}:${password.value}`)
 
     router.push('/dashboard')
   } else {

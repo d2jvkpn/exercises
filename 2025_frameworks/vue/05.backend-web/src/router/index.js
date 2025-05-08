@@ -24,27 +24,20 @@ const routes = [
     // component: () => import('../views/Settings.vue'),
     children: [
       {
-        path: '/profile',
+        path: 'profile',
         component: () => import('../views/settings/Profile.vue'),
         meta: { title: "Settings / Profile", layout: 'admin' },
       },
       {
-        path: '/security',
+        path: 'security',
         component: () => import('../views/settings/Security.vue'),
         meta: { title: "Settings / Security", layout: 'admin' },
       },
     ],
   },
 
-  {
-    path: '/',
-    redirect: '/login',
-  },
-
-  {
-    path: '/:pathMatch(.*)*',
-    redirect: '/dashboard',
-  },
+  { path: '/', redirect: '/login' },
+  { path: '/:pathMatch(.*)*', redirect: '/dashboard' },
 ]
 
 //export default createRouter({
@@ -53,7 +46,6 @@ const routes = [
 //})
 
 const router = createRouter({
-  // history: createWebHistory(),
   history: createWebHistory(import.meta.env.VITE_BASE_PATH),
   routes,
 })
