@@ -20,6 +20,7 @@ npm install --save-dev vite-plugin-vue-devtools
 # https://tailwindcss.com/docs/installation/using-vite
 npm install vue-router
 npm install tailwindcss @tailwindcss/vite
+npm install element-plus @element-plus/icons-vue
 
 #### 3. setup env
 cat > env <<"EOF"

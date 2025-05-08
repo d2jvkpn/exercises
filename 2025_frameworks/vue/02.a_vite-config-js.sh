@@ -7,16 +7,19 @@ function extract_embeded() {
     sed -n "/^__START_${key}__$/,/^__END_${key}__/p" "$0" | tail -n +2 | head -n -1
 }
 
-mkdir -p archive/src/components src/router
+mkdir -p archive/src/components src/router src/style
 mv vite.config.js archive/
 mv src/App.vue archive/src/
-mv src/components/HelloWorld.vue archive/src/components/
 mv src/style.css archive/src/
+mv src/main.js archive/src/
+mv src/components/HelloWorld.vue archive/src/components/
+
 
 extract_embeded Vite > vite.config.js
 extract_embeded App > src/App.vue
+extract_embeded Main > src/main.js
+echo '@import "tailwindcss"' > src/style/style.css
 extract_embeded Hello > src/components/Hello.vue
-echo '@import "tailwindcss"' > src/style.css
 extract_embeded Router src/router/index.js
 
 
@@ -126,3 +129,23 @@ router.beforeEach((to, _from, next) => {
 
 export default router;
 __END_Router__
+
+
+__START_Main__
+import { createApp } from 'vue'
+import './style/style.css'
+import App from './App.vue'
+
+import router from './router'
+import ElementPlus from 'element-plus'
+import 'element-plus/dist/index.css'
+
+// createApp(App).mount('#app')
+
+const app = createApp(App)
+
+app.use(ElementPlus)
+app.use(router)
+
+app.mount('#app')
+__END_Main__
