@@ -7,7 +7,7 @@ function extract_embeded() {
     sed -n "/^__START_${key}__$/,/^__END_${key}__/p" "$0" | tail -n +2 | head -n -1
 }
 
-mkdir -p archive/src/components src/router src/style
+mkdir -p archive/src/components src/router src/styles
 mv vite.config.js archive/
 mv src/App.vue archive/src/
 mv src/style.css archive/src/
@@ -18,7 +18,7 @@ mv src/components/HelloWorld.vue archive/src/components/
 extract_embeded Vite > vite.config.js
 extract_embeded App > src/App.vue
 extract_embeded Main > src/main.js
-echo '@import "tailwindcss"' > src/style/style.css
+echo '@import "tailwindcss"' > src/styles/style.css
 extract_embeded Hello > src/components/Hello.vue
 extract_embeded Router src/router/index.js
 
@@ -133,12 +133,13 @@ __END_Router__
 
 __START_Main__
 import { createApp } from 'vue'
-import './style/style.css'
+//import './style.css'
 import App from './App.vue'
 
 import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
+import './styles/style.css'
 
 // createApp(App).mount('#app')
 
