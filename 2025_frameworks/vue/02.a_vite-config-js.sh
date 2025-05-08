@@ -4,26 +4,26 @@ set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 function extract_embeded() {
     key=$1
-    sed -n "/^__${key}_START__$/,/^__${key}_END__/p" "$0" | tail -n +2 | head -n -1
+    sed -n "/^__START_${key}__$/,/^__END_${key}__/p" "$0" | tail -n +2 | head -n -1
 }
 
-mkdir -p  archive/src
-
+mkdir -p archive/src/components src/router
 mv vite.config.js archive/
-extract_embeded VITE > vite.config.js
-
 mv src/App.vue archive/src/
-extract_embeded APP > src/App.vue
-
-# ?? src/assets/main.css
+mv src/components/HelloWorld.vue archive/src/components/
 mv src/style.css archive/src/
+
+extract_embeded Vite > vite.config.js
+extract_embeded App > src/App.vue
+extract_embeded Hello > src/components/Hello.vue
 echo '@import "tailwindcss"' > src/style.css
+extract_embeded Router src/router/index.js
 
 
 exit 0
 
 # vite.config.js
-__VITE_START__
+__START_Vite__
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 
@@ -46,10 +46,35 @@ export default defineConfig({
     },
   },
 })
-__VITE_END__
+__END_Vite__
 
-# src/App.vue
-__VUE_START__
+
+__START_App__
+<template>
+<div id="app">
+  <!--
+  <nav>
+    <router-link to="/"> Login  </router-link>
+    <router-link to="/about"> Abount </router-link>
+  </nav>
+  -->
+
+  <router-view />
+</div>
+</template>
+
+<!--style>
+#app {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  text-align: center;
+  color: #2c3e50;
+  margin-top: 60px;
+}
+</style-->
+__END_App__
+
+
+__START_Hello__
 <script setup lang="js">
 </script>
 
@@ -60,4 +85,44 @@ __VUE_START__
   <p>Hello, world!</p>
 </div>
 </template>
-__VUE_END__
+__END_Hello__
+
+
+__START_Router__
+import { createRouter, createWebHistory } from 'vue-router'
+import Hello from '../components/Hello.vue'
+
+const routes = [
+  {
+    path: '/hello', name: 'Hello', component: Hello,
+    meta: { title: 'Vue - Hello' },
+  },
+  {
+    path: '/world', name: 'World',
+    component: () => import('../components/Hello.vue'),
+    meta: { title: 'Vue - World' },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/hello',
+  },
+  /*
+  {
+    path: '/:pathMatch(.*)*', name: 'NotFound',
+    component: () => import('../components/NotFound.vue'),
+  }
+  */
+]
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.VITE_BASE_PATH),
+  routes
+})
+
+router.beforeEach((to, _from, next) => {
+  document.title = String(to.meta.title) || 'Page Not Found';
+  next();
+})
+
+export default router;
+__END_Router__
