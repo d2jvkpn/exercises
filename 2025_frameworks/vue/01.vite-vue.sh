@@ -2,9 +2,10 @@
 set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 
-app=${1:-"hello-vue"}
+app=${1:-"hello-vue-ts"}
 
 #### 1. create the project
+# --template=vue # vue javascript project
 npm init vite@latest $app -- --template=vue-ts
 cd $app
 
