@@ -6,27 +6,30 @@ const routes = [
     component: () => import('../components/Login.vue'),
     meta: { title: "Login", layout: 'none' },
   },
+
   {
     path: '/dashboard',
     component: () => import('../views/Dashboard.vue'),
     meta: { title: "Dashboard", layout: 'admin' },
   },
+
   {
     path: '/accounts',
     component: () => import('../views/Accounts.vue'),
     meta: { title: "Accounts", layout: 'admin' },
   },
+
   {
     path: '/settings',
     // component: () => import('../views/Settings.vue'),
     children: [
       {
-        path: 'profile',
+        path: '/profile',
         component: () => import('../views/settings/Profile.vue'),
         meta: { title: "Settings / Profile", layout: 'admin' },
       },
       {
-        path: 'security',
+        path: '/security',
         component: () => import('../views/settings/Security.vue'),
         meta: { title: "Settings / Security", layout: 'admin' },
       },
@@ -36,7 +39,12 @@ const routes = [
   {
     path: '/',
     redirect: '/login',
-  }
+  },
+
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/dashboard',
+  },
 ]
 
 //export default createRouter({
