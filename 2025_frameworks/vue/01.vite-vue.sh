@@ -27,8 +27,8 @@ cat > env <<"EOF"
 PORT=3001
 
 VITE_ENV=local
-VITE_BASE_PATH=/
-VITE_API_URL=localhost:3011
+VITE_BASE_PATH=/local
+VITE_API_URL=http://localhost:3011
 EOF
 
 cp env .env
