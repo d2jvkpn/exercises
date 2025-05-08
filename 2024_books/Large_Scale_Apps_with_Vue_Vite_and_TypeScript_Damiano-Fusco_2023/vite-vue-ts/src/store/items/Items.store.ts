@@ -14,13 +14,13 @@ const actions = {
   // action that we invoke to load the items from an api:
   loadItems: async () => {
 
-  // set loading to true and clear current data:
-  itemsState.loading = true
-  itemsState.items = []
+    // set loading to true and clear current data:
+    itemsState.loading = true
+    itemsState.items = []
 
-  const data = await apiClient.items.fetchItems()
-  itemsState.items = data
-  itemsState.loading = false
+    const data = await apiClient.items.fetchItems()
+    itemsState.items = data
+    itemsState.loading = false
   },
 
   toggleItemSelected: async (id: number) => {

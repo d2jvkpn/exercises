@@ -28,28 +28,60 @@ try {
 }
 
 /*
-1. NetworkError
-if (err instanceof TypeError && err.message.startsWith("NetworkError")) {}
 
-2. ?? SyntaxError
-if (err instanceof SyntaxError) {}
+1. NetworkError
+if (err instanceof TypeError && err.message.startsWith("NetworkError")) {
+  return;
+}
+
+2. SyntaxError
+if (err instanceof SyntaxError) {
+  return;
+}
 
 3. ServerError
-if (response.statusCode >= 500) {}
-?? response.statusCode >= 600
+if (response.statusCode >= 500) { // response.statusCode >= 600
+  return;
+}
 
 4. BadRequest(400, http.StatusBadRequest)
 
 5. Unauthorized(401, http.StatusUnauthorized)
-if (code == "unauthorized") {}
+if (code == "unauthorized") {
+  return;
+}
 
 6. Forbidden(403, http.StatusForbidden)
-if (code == "forbidden") {}
+if (code == "forbidden") {
+  return;
+}
 
 7. ApiError
-callback(err)
+responseData={"requestId": "xxxx-xxxx", "code": "not_found", "msg": "item not found"}
+
+let err = new ApiError(
+  responseData.code, responseData.msg,
+  {requestId: response.requestId, statusCode: response.statusCode},
+);
+
+callback.error(err);
 
 8. OK
-response={"code": "ok", "requestId": "xxxx-xxxx", "data": {}}
-callback(data)
+responseData={"requestId": "xxxx-xxxx", "code": "ok", "data": {}}
+callback.ok(responseData.data);
+
+
+function newCallback(ok=null, error=null) {
+  let callback = {ok, error};
+
+  if (!callback.ok) {
+    callback.ok = (data) => {};
+  }
+
+  if (!callback.error) {
+    callback.error = (err) => {};
+  }
+
+  return callback;
+}
 */
