@@ -8,4 +8,7 @@
 </template>
 
 <style scoped>
+  div {
+    color: tomato;
+  }
 </style>
