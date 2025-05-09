@@ -1,56 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-
-const allRoutes = [
-  {
-    path: '/login',
-    // name: "Login",
-    component: () => import('../pages/Login.vue'),
-    meta: { title: "Login", layout: 'none' },
-  },
-
-  {
-    path: '/hello',
-    component: () => import('../pages/Hello.vue'),
-    meta: { title: "Hello", layout: 'none' },
-  },
-
-  {
-    path: '/dashboard',
-    component: () => import('../layout/Dashboard.vue'),
-    meta: { title: "Dashboard", layout: 'overview' },
-  },
-
-  {
-    path: '/accounts',
-    component: () => import('../layout/Accounts.vue'),
-    meta: { title: "Accounts", layout: 'overview' },
-  },
-
-  {
-    path: '/settings',
-    // component: () => import('../views/Settings.vue'),
-    children: [
-      {
-        path: 'profile',
-        component: () => import('../layout/settings/Profile.vue'),
-        meta: { title: "Settings / Profile", layout: 'overview' },
-      },
-      {
-        path: 'security',
-        component: () => import('../layout/settings/Security.vue'),
-        meta: { title: "Settings / Security", layout: 'overview' },
-      },
-    ],
-  },
-
-  { path: '/', redirect: '/login' },
-  { path: '/:pathMatch(.*)*', redirect: '/dashboard' },
-]
-
-//export default createRouter({
-//  history: createWebHistory(),
-//  routes,
-//})
+import { allRoutes } from './routes'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_BASE_PATH),

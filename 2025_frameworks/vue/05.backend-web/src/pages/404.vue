@@ -5,7 +5,7 @@
 <div
   class="flex flex-col items-center justify-center gap-8 min-h-screen bg-gradient-to-br from-green-500 to-sky-400"
 >
-  <p>Hello, world!</p>
+  <p>404 Page not found</p>
 </div>
 </template>
 

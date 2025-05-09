@@ -11,6 +11,7 @@ const login = () => {
   if (account.value && password.value) {
     localStorage.setItem('token', `${account.value}:${password.value}`)
     localStorage.setItem('accountName', "Jane Doe")
+    localStorage.setItem('role', "admin")
 
     router.push('/dashboard')
   } else {
