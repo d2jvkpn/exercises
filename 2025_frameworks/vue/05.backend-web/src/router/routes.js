@@ -3,14 +3,14 @@ export const allRoutes = [
     path: '/login',
     name: "Login",
     component: () => import('../pages/Login.vue'),
-    meta: { title: "Login", layout: 'none', roles: ["any"] },
+    meta: { title: "Login", layout: 'none', roles: ["Any"] },
   },
 
   {
     path: '/404',
     name: "404",
     component: () => import('../pages/404.vue'),
-    meta: { title: "Page not found", layout: 'none', roles: ["any"] },
+    meta: { title: "Page not found", layout: 'none', roles: ["Any"] },
   },
 
   {
@@ -31,7 +31,7 @@ export const allRoutes = [
     path: '/settings',
     name: "Settings",
     // component: () => import('../views/Settings.vue'),
-    meta: { title: "Settings", layout: 'overview', roles: ["any"] },
+    meta: { title: "Settings", layout: 'overview', roles: ["Any"] },
     children: [
       {
         path: 'profile',
