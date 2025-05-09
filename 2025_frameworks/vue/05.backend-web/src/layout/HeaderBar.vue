@@ -39,7 +39,7 @@ const handleCommand = (command) => {
         <component :is="isSidebarHidden ? Expand : Fold" />
        </el-icon>
     </el-button>
-    <div class="headerbar-logo"> 🌿 Welcome </div>
+    <div class="headerbar-logo"> 🌀 Welcome </div>
   </div>
 
   <el-dropdown @command="handleCommand">
