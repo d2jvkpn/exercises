@@ -18,7 +18,7 @@ mv src/components/HelloWorld.vue archive/src/components/
 extract_embeded Vite > vite.config.js
 extract_embeded App > src/App.vue
 extract_embeded Main > src/main.js
-echo '@import "tailwindcss"' > src/styles/style.css
+eextract_embeded Style > src/styles/style.css
 extract_embeded Hello > src/components/Hello.vue
 extract_embeded Router src/router/index.js
 
@@ -138,7 +138,6 @@ import App from './App.vue'
 
 import router from './router'
 import ElementPlus from 'element-plus'
-import 'element-plus/dist/index.css'
 import './styles/style.css'
 
 // createApp(App).mount('#app')
@@ -150,3 +149,9 @@ app.use(router)
 
 app.mount('#app')
 __END_Main__
+
+
+__START_Style__
+@import "tailwindcss";
+@import 'element-plus/dist/index.css';
+__END_Style__
