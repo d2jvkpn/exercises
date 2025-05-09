@@ -14,7 +14,7 @@ const layoutComponent = computed(() => {
     return Overview
   }
 
-  return 'div';
+  return 'div'
 })
 </script>
 

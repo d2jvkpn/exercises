@@ -15,3 +15,13 @@
   </el-menu>
 </aside>
 </template>
+
+
+<style>
+.sidebar {
+  width: 200px;
+  color: #fff;
+  padding-top: 10px;
+  overflow-y: auto;
+}
+</style>
