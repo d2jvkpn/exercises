@@ -5,7 +5,10 @@ import { useRoute } from 'vue-router'
 import { allRoutes } from '@/router/index'
 
 const route = useRoute()
-const roles = new Set(JSON.parse(localStorage.getItem('roles')));
+
+const props = defineProps({
+  roles: Set,
+})
 
 //console.log(`--> role: ${role}`)
 //console.log(`~~~ ${allRoutes.length}`);
@@ -20,7 +23,7 @@ const visibleRouteNames = computed(() => {
       }
 
       // console.log(`~~~ ${item.name}`)
-      if (item.meta.roles?.includes("Any") || item.meta.roles?.some(e => roles.has(e))) {
+      if (item.meta.roles?.includes("Any") || item.meta.roles?.some(e => props.roles.has(e))) {
         result.push(item.name)
       }
 

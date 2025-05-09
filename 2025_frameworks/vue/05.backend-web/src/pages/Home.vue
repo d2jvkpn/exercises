@@ -7,6 +7,7 @@ import HeaderBar from "../layout/home/HeaderBar.vue"
 
 //
 const accountName = localStorage.getItem('accountName')
+const roles = new Set(JSON.parse(localStorage.getItem('roles')))
 
 //
 const isHidden = ref(false)
@@ -36,7 +37,7 @@ const toggleCollapse = () => {
   />
 
   <div class="home-main">
-    <Sidebar v-show="!isHidden" />
+    <Sidebar v-show="!isHidden" :roles="roles" />
 
     <main class="home-content">
       <router-view v-slot="{ Component }">
