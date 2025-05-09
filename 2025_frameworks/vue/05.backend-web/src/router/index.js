@@ -2,12 +2,15 @@ import { createRouter, createWebHistory } from 'vue-router'
 import PageNotFound from '@/pages/PageNotFound.vue'
 
 export const allRoutes = [
+  { path: '/', redirect: '/login' },
+
   {
     path: '/login',
     name: "Login",
     meta: { title: "App - Login", layout: 'none', roles: ["Any"] },
     component: () => import('@/pages/Login.vue'),
   },
+
 
   {
     path: '/home/dashboard',
@@ -44,6 +47,7 @@ export const allRoutes = [
     ],
   },
 
+
   {
     path: '/page-not-found',
     name: "PageNotFound",
@@ -51,7 +55,6 @@ export const allRoutes = [
     component: () => PageNotFound,
   },
 
-  { path: '/', redirect: '/login' },
   { path: '/:pathMatch(.*)*', redirect: '/page-not-found' },
 ]
 
