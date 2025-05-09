@@ -26,6 +26,7 @@ const toggleCollapse = () => {
 }
 </script>
 
+
 <template>
 <div class="overview">
   <HeaderBar
@@ -45,6 +46,7 @@ const toggleCollapse = () => {
   </div>
 </div>
 </template>
+
 
 <style scoped>
 .overview {

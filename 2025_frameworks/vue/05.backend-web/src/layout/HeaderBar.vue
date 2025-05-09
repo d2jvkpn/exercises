@@ -30,6 +30,7 @@ const handleCommand = (command) => {
 }
 </script>
 
+
 <template>
 <header class="headerbar">
   <div class="headerbar-left">
@@ -57,6 +58,7 @@ const handleCommand = (command) => {
   </el-dropdown>
 </header>
 </template>
+
 
 <style scoped>
 .headerbar {

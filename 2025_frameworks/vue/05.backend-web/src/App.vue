@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 
 import Overview from './pages/Overview.vue'
 
-
 const route = useRoute()
 
 const layoutComponent = computed(() => {

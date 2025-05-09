@@ -1,44 +1,45 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import PageNotFound from '@/pages/PageNotFound.vue'
 
 export const allRoutes = [
   {
     path: '/login',
     name: "Login",
-    component: () => import('@/pages/Login.vue'),
     meta: { title: "Login", layout: 'none', roles: ["Any"] },
+    component: () => import('@/pages/Login.vue'),
   },
 
   {
     path: '/dashboard',
     name: "Dashboard",
-    component: () => import('@/layout/Dashboard.vue'),
     meta: { title: "Dashboard", layout: 'overview', roles: ["editor", "admin"] },
+    component: () => import('@/layout/Dashboard.vue'),
   },
 
   {
     path: '/accounts',
     name: "Accounts",
-    component: () => import('@/layout/Accounts.vue'),
     meta: { title: "Accounts", layout: 'overview', roles: ["admin"] },
+    component: () => import('@/layout/Accounts.vue'),
   },
 
   {
     path: '/settings',
     name: "Settings",
-    // component: () => import('@/views/Settings.vue'),
     meta: { title: "Settings", layout: 'overview', roles: ["Any"] },
+    // component: () => import('@/layout/Settings.vue'),
     children: [
       {
         path: 'profile',
         name: "Profile",
-        component: () => import('@/layout/settings/Profile.vue'),
         meta: { title: "Settings / Profile", layout: 'overview', roles: ["editor"] },
+        component: () => import('@/layout/settings/Profile.vue'),
       },
       {
         path: 'security',
         name: "Security",
-        component: () => import('@/layout/settings/Security.vue'),
         meta: { title: "Settings / Security", layout: 'overview', roles: ["admin"] },
+        component: () => import('@/layout/settings/Security.vue'),
       },
     ],
   },
@@ -46,8 +47,8 @@ export const allRoutes = [
   {
     path: '/page-not-found',
     name: "PageNotFound",
-    component: () => import('@/pages/PageNotFound.vue'),
     meta: { title: "Page not found", layout: 'none', roles: ["Any"] },
+    component: () => PageNotFound,
   },
 
   { path: '/', redirect: '/login' },

@@ -2,7 +2,6 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-
 const account = ref('')
 const password = ref('')
 const router = useRouter()
@@ -21,6 +20,7 @@ const login = () => {
 
 console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`);
 </script>
+
 
 <template>
 <div class="login">
@@ -42,6 +42,7 @@ console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`);
   </el-card>
 </div>
 </template>
+
 
 <style scoped>
 .login {
