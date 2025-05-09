@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { allRoutes } from '../router/index'
+import { allRoutes } from '@/router/index'
 
 const route = useRoute()
 const roles = new Set(JSON.parse(localStorage.getItem('roles')));
@@ -40,21 +40,21 @@ const visibleRouteNames = computed(() => {
 <template>
 <aside class="sidebar">
   <el-menu :default-active="$route.path" router>
-    <el-menu-item index="/dashboard" v-if="visibleRouteNames.includes('Dashboard')">
+    <el-menu-item index="/home/dashboard" v-if="visibleRouteNames.includes('Dashboard')">
       Dashboard
     </el-menu-item>
 
-    <el-menu-item index="/accounts" v-if="visibleRouteNames.includes('Accounts')">
+    <el-menu-item index="/home/accounts" v-if="visibleRouteNames.includes('Accounts')">
       Accounts
     </el-menu-item>
 
-    <el-sub-menu index="/settings" v-if="visibleRouteNames.includes('Settings')">
+    <el-sub-menu index="/home/settings" v-if="visibleRouteNames.includes('Settings')">
       <template #title>Settings</template>
-      <el-menu-item index="/settings/profile" v-if="visibleRouteNames.includes('Profile')">
+      <el-menu-item index="/home/settings/profile" v-if="visibleRouteNames.includes('Profile')">
         Profile
       </el-menu-item>
 
-      <el-menu-item index="/settings/security" v-if="visibleRouteNames.includes('Security')">
+      <el-menu-item index="/home/settings/security" v-if="visibleRouteNames.includes('Security')">
         Security
       </el-menu-item>
     </el-sub-menu>

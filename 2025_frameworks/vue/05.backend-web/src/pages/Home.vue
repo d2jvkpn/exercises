@@ -2,8 +2,8 @@
 import { ref, onMounted, watchEffect} from 'vue'
 import { Fold, Expand, ArrowDown } from '@element-plus/icons-vue'
 
-import Sidebar from "../layout/Sidebar.vue"
-import HeaderBar from "../layout/HeaderBar.vue"
+import Sidebar from "../layout/home/Sidebar.vue"
+import HeaderBar from "../layout/home/HeaderBar.vue"
 
 //
 const accountName = localStorage.getItem('accountName')
@@ -28,17 +28,17 @@ const toggleCollapse = () => {
 
 
 <template>
-<div class="overview">
+<div class="home">
   <HeaderBar
     :accountName="accountName"
     :isSidebarHidden="isHidden"
     @toggleSidebar="isHidden = !isHidden"
   />
 
-  <div class="overview-main">
+  <div class="home-main">
     <Sidebar v-show="!isHidden" />
 
-    <main class="overview-content">
+    <main class="home-content">
       <router-view v-slot="{ Component }">
         <KeepAlive> <component :is="Component" /> </KeepAlive>
       </router-view>
@@ -49,19 +49,19 @@ const toggleCollapse = () => {
 
 
 <style scoped>
-.overview {
+.home {
   height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.overview-main {
+.home-main {
   display: flex;
   flex: 1;
   overflow: hidden;
 }
 
-.overview-content {
+.home-content {
   position: relative;
   flex: 1;
   padding: 20px;

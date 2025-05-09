@@ -6,3 +6,9 @@
 */
 
 @import "element-plus/dist/index.css";
+
+@media (max-width: 720px) {
+  body {
+    margin: 0 2px;
+  }
+}

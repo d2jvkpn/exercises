@@ -12,7 +12,7 @@ const login = () => {
     localStorage.setItem('accountName', "Jane Doe")
     localStorage.setItem('roles', JSON.stringify(["admin"]))
 
-    router.push('/dashboard')
+    router.push('/home/dashboard')
   } else {
     alert('Please enter acocunt and password!')
   }
@@ -55,7 +55,7 @@ console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`);
 
 .login-card {
   width: 30rem;
-  /* margin-bottom: 10rem; */
+  margin: 0rem 2rem;
 }
 
 .login-button {

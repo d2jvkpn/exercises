@@ -16,7 +16,7 @@ const router = useRouter()
 const handleCommand = (command) => {
   switch (command) {
     case 'profile':
-      router.push('/settings/profile')
+      router.push('/home/settings/profile')
       break
     case 'change_password':
       console.log("~~~ TODO: Change password")
@@ -39,7 +39,7 @@ const handleCommand = (command) => {
         <component :is="isSidebarHidden ? Expand : Fold" />
        </el-icon>
     </el-button>
-    <div class="headerbar-logo"> 🌀 Welcome </div>
+    <div class="headerbar-logo"> 🌀 Home </div>
   </div>
 
   <el-dropdown @command="handleCommand">

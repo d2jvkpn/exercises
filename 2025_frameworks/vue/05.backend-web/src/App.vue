@@ -2,15 +2,15 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-import Overview from './pages/Overview.vue'
+import Home from './pages/Home.vue'
 
 const route = useRoute()
 
 const layoutComponent = computed(() => {
   const layout = route.meta.layout
 
-  if (layout === 'overview') {
-    return Overview
+  if (layout === 'home') {
+    return Home
   }
 
   return 'div'
