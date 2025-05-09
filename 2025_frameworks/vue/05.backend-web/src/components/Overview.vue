@@ -1,48 +1,45 @@
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watchEffect} from 'vue'
 import { Fold, Expand, ArrowDown } from '@element-plus/icons-vue'
 
 import Sidebar from "./Sidebar.vue"
 import HeaderBar from "./HeaderBar.vue"
 
-const username = ref('Jane')
+//
+const accountName = localStorage.getItem('accountName')
+
+//
 const isHidden = ref(false)
+
+onMounted(() => {
+  const mediaQuery = window.matchMedia('(max-width: 720px)')
+
+  isHidden.value = mediaQuery.matches
+
+  mediaQuery.addEventListener('change', (e) => {
+    isHidden.value = e.matches
+  })
+})
 
 const toggleCollapse = () => {
   isHidden.value = !isHidden.value
-}
-
-const router = useRouter()
-
-const handleCommand = (command) => {
-  switch (command) {
-    case 'profile':
-      router.push('/settings/profile')
-      break
-    case 'security':
-      router.push('/settings/security')
-      break
-    case 'logout':
-      localStorage.removeItem('token')
-      router.push('/login')
-      break
-  }
 }
 </script>
 
 <template>
 <div class="overview">
-  <HeaderBar :username="username" @toggleSidebar="isHidden = !isHidden" />
+  <HeaderBar
+    :accountName="accountName"
+    :isSidebarHidden="isHidden"
+    @toggleSidebar="isHidden = !isHidden"
+  />
 
   <div class="overview-main">
     <Sidebar v-show="!isHidden" />
 
     <main class="overview-content">
       <router-view v-slot="{ Component }">
-        <KeepAlive>
-          <component :is="Component" />
-        </KeepAlive>
+        <KeepAlive> <component :is="Component" /> </KeepAlive>
       </router-view>
     </main>
   </div>

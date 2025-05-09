@@ -6,3 +6,6 @@
   Welcome to dashboard!
 </div>
 </template>
+
+<style>
+</style>

@@ -6,3 +6,6 @@
   Welcome to accounts!
 </div>
 </template>
+
+<style>
+</style>

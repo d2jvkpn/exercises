@@ -16,6 +16,8 @@ npm fund
 #### 2. add packages
 npm install --save-dev @types/node
 npm install --save-dev vite-plugin-vue-devtools
+npm install --save-dev unplugin-vue-components
+# npm install --save-dev unplugin-auto-import
 
 # https://tailwindcss.com/docs/installation/using-vite
 npm install vue-router
@@ -60,6 +62,7 @@ cat >> .gitignore <<EOF
 .env
 .env.*
 target/
+cache/
 
 docker-compose.yaml
 docker-compose.yml

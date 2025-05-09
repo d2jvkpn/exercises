@@ -6,3 +6,6 @@
   Welcome to settings!
 </div>
 </template>
+
+<style>
+</style>

@@ -1,42 +1,18 @@
-<template>
-<header class="headerbar-layout">
-  <div class="headerbar-left">
-    <el-button text circle @click="$emit('toggleSidebar')" class="headerbar-toggle-btn">
-      <el-icon>
-        <component :is="isHidden ? Expand : Fold" />
-       </el-icon>
-    </el-button>
-    <div class="headerbar-logo"> 🌿 Welcome </div>
-  </div>
-
-  <!--div class="headerbar-account"> {{username}} </div-->
-  <el-dropdown @command="handleCommand">
-    <span class="headerbar-account el-dropdown-link">
-      {{ username }}
-      <el-icon><ArrowDown /></el-icon>
-    </span>
-
-    <template #dropdown>
-      <el-dropdown-menu>
-        <el-dropdown-item command="profile">👤 Profile </el-dropdown-item>
-        <el-dropdown-item command="security">⚙️ Security </el-dropdown-item>
-        <el-dropdown-item divided command="logout">🚪 Logout </el-dropdown-item>
-      </el-dropdown-menu>
-    </template>
-  </el-dropdown>
-</header>
-</template>
-
 <script setup>
-import { ArrowDown, Fold } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
+import { ArrowDown, Fold, Expand } from '@element-plus/icons-vue'
 
+
+//
 const props = defineProps({
-  username: String
+  accountName: String,
+  isSidebarHidden: Boolean,
 })
 
-const router = useRouter()
 const emit = defineEmits(['toggleSidebar'])
+
+//
+const router = useRouter()
 
 const handleCommand = (command) => {
   switch (command) {
@@ -54,8 +30,36 @@ const handleCommand = (command) => {
 }
 </script>
 
+<template>
+<header class="headerbar">
+  <div class="headerbar-left">
+    <el-button text circle @click="$emit('toggleSidebar')" class="headerbar-toggle-btn">
+      <el-icon>
+        <component :is="isSidebarHidden ? Expand : Fold" />
+       </el-icon>
+    </el-button>
+    <div class="headerbar-logo"> 🌿 Welcome </div>
+  </div>
+
+  <el-dropdown @command="handleCommand">
+    <span class="headerbar-account el-dropdown-link">
+      {{ accountName }}
+      <el-icon> <ArrowDown /> </el-icon>
+    </span>
+
+    <template #dropdown>
+      <el-dropdown-menu>
+        <el-dropdown-item command="profile">👤 Profile </el-dropdown-item>
+        <el-dropdown-item command="security">⚙️ Security </el-dropdown-item>
+        <el-dropdown-item divided command="logout">🚪 Logout </el-dropdown-item>
+      </el-dropdown-menu>
+    </template>
+  </el-dropdown>
+</header>
+</template>
+
 <style scoped>
-.headerbar-layout {
+.headerbar {
   height: 60px;
   background-color: #fff;
   padding: 0 20px;
@@ -69,17 +73,17 @@ const handleCommand = (command) => {
 .headerbar-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 0.2rem;
 }
 
 .headerbar-toggle-btn {
-  padding: 4px;
+  font-size: 1.2rem;
   /*
   position: absolute;
   top: 2px;
   left: 2px;
   z-index: 10;
-  */
+*/
 }
 
 .headerbar-logo {

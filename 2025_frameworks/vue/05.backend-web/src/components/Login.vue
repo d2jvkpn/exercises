@@ -2,28 +2,32 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const username = ref('')
+
+const account = ref('')
 const password = ref('')
 const router = useRouter()
 
 const login = () => {
-  if (username.value && password.value) {
-    localStorage.setItem('token', `${username.value}:${password.value}`)
+  if (account.value && password.value) {
+    localStorage.setItem('token', `${account.value}:${password.value}`)
+    localStorage.setItem('accountName', "Jane Doe")
 
     router.push('/dashboard')
   } else {
     alert('Please enter acocunt and password!')
   }
 }
+
+console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`);
 </script>
 
 <template>
-<div class="login-page">
-  <el-card>
+<div class="login">
+  <el-card class="login-card">
     <template #header>Please Login</template>
     <el-form @submit.prevent="login">
       <el-form-item>
-        <el-input v-model="username" placeholder="email or phone" />
+        <el-input v-model="account" placeholder="email or phone" />
       </el-form-item>
 
       <el-form-item>
@@ -39,7 +43,7 @@ const login = () => {
 </template>
 
 <style>
-.login-page {
+.login {
   width: 100vw;
   height: 100vh;
   display: flex;
@@ -47,7 +51,7 @@ const login = () => {
   align-items: center;
 }
 
-.el-card {
+.login-card {
   width: 30rem;
   /* margin-bottom: 10rem; */
 }

@@ -2,7 +2,7 @@
 set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 
-function extract_embeded() {
+function read_embeded() {
     key=$1
     sed -n "/^__START_${key}__$/,/^__END_${key}__/p" "$0" | tail -n +2 | head -n -1
 }
@@ -15,12 +15,12 @@ mv src/main.js archive/src/
 mv src/components/HelloWorld.vue archive/src/components/
 
 
-extract_embeded Vite > vite.config.js
-extract_embeded App > src/App.vue
-extract_embeded Main > src/main.js
-eextract_embeded Style > src/styles/style.css
-extract_embeded Hello > src/components/Hello.vue
-extract_embeded Router src/router/index.js
+read_embeded Vite > vite.config.js
+read_embeded App > src/App.vue
+read_embeded Main > src/main.js
+read_embeded Style > src/styles/style.css
+read_embeded Hello > src/components/Hello.vue
+read_embeded Router src/router/index.js
 
 
 exit 0
@@ -33,13 +33,20 @@ import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import { fileURLToPath, URL } from 'node:url'
 import tailwindcss from "@tailwindcss/vite"
+import Components from 'unplugin-vue-components/vite'
+// import AutoImport from 'unplugin-auto-import/vite'
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
+
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+
     vueDevTools(),
     tailwindcss(),
+    // AutoImport({ resolvers: [ElementPlusResolver()] }),
+    Components({ resolvers: [ElementPlusResolver()] }),
   ],
 
   resolve: {

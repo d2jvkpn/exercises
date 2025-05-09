@@ -6,3 +6,6 @@
   This is page profile!
 </div>
 </template>
+
+<style>
+</style>
