@@ -2,12 +2,21 @@
 set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 
 
-app=${1:-"hello-vue-ts"}
+app=$1
+language=${2}
 
 #### 1. create the project
 # --template=vue # vue javascript project
-npm init vite@latest $app -- --template=vue-ts
-cd $app
+if [[ "$language" == "ts" || "$language" == "typescript" ]]; then
+    npm init vite@latest $app -- --template=vue-ts
+elif [[ "$language" == "js" || "$language" == "javascript" ]]; then
+    npm init vite@latest $app -- --template=vue
+else
+    >&2 echo 'unknown language: js/javascript ts/typescript'
+    exit 1
+fi
+
+cd "$app"
 
 npm install
 #npm run format

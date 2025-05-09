@@ -20,7 +20,7 @@ read_embeded App > src/App.vue
 read_embeded Main > src/main.js
 read_embeded Style > src/styles/style.css
 read_embeded Hello > src/components/Hello.vue
-read_embeded Router src/router/index.js
+read_embeded Router > src/router/index.js
 
 
 exit 0
@@ -34,7 +34,7 @@ import vueDevTools from 'vite-plugin-vue-devtools'
 import { fileURLToPath, URL } from 'node:url'
 import tailwindcss from "@tailwindcss/vite"
 import Components from 'unplugin-vue-components/vite'
-// import AutoImport from 'unplugin-auto-import/vite'
+//import AutoImport from 'unplugin-auto-import/vite'
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 
 
@@ -45,7 +45,7 @@ export default defineConfig({
 
     vueDevTools(),
     tailwindcss(),
-    // AutoImport({ resolvers: [ElementPlusResolver()] }),
+    //AutoImport({ resolvers: [ElementPlusResolver()] }),
     Components({ resolvers: [ElementPlusResolver()] }),
   ],
 
@@ -160,5 +160,5 @@ __END_Main__
 
 __START_Style__
 @import "tailwindcss";
-@import 'element-plus/dist/index.css';
+@import "element-plus/dist/index.css";
 __END_Style__

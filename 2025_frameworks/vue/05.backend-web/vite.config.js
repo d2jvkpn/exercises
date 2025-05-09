@@ -16,7 +16,7 @@ export default defineConfig({
 
     vueDevTools(),
     tailwindcss(),
-    // AutoImport({resolvers: [ElementPlusResolver()]}),
+    //AutoImport({resolvers: [ElementPlusResolver()]}),
     Components({resolvers: [ElementPlusResolver()]}),
   ],
 
