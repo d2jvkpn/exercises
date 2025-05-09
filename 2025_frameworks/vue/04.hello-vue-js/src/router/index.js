@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Login from '../components/Login.vue'
+import Login from '../pages/Login.vue'
 
 const routes = [
   {
@@ -8,7 +8,7 @@ const routes = [
   },
   {
     path: '/hello', name: 'Hello',
-    component: () => import('../components/Hello.vue'),
+    component: () => import('../pages/Hello.vue'),
     meta: { title: 'Vue - Hello' },
   },
   {

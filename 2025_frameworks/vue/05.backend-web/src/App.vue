@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-import Overview from './components/Overview.vue'
+import Overview from './pages/Overview.vue'
 
 
 const route = useRoute()

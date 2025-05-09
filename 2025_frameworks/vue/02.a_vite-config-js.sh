@@ -7,7 +7,7 @@ function read_embeded() {
     sed -n "/^__START_${key}__$/,/^__END_${key}__/p" "$0" | tail -n +2 | head -n -1
 }
 
-mkdir -p archive/src/components src/router src/styles
+mkdir -p archive/src/components src/router src/styles src/layout src/pages src/utils
 mv vite.config.js archive/
 mv src/App.vue archive/src/
 mv src/style.css archive/src/
@@ -19,7 +19,7 @@ read_embeded Vite > vite.config.js
 read_embeded App > src/App.vue
 read_embeded Main > src/main.js
 read_embeded Style > src/styles/style.css
-read_embeded Hello > src/components/Hello.vue
+read_embeded Hello > src/pages/Hello.vue
 read_embeded Router > src/router/index.js
 
 
@@ -103,7 +103,7 @@ __END_Hello__
 
 __START_Router__
 import { createRouter, createWebHistory } from 'vue-router'
-import Hello from '../components/Hello.vue'
+import Hello from '../pages/Hello.vue'
 
 const routes = [
   {
@@ -112,7 +112,7 @@ const routes = [
   },
   {
     path: '/world', name: 'World',
-    component: () => import('../components/Hello.vue'),
+    component: () => import('../pages/Hello.vue'),
     meta: { title: 'Vue - World' },
   },
   {
@@ -122,7 +122,7 @@ const routes = [
   /*
   {
     path: '/:pathMatch(.*)*', name: 'NotFound',
-    component: () => import('../components/NotFound.vue'),
+    component: () => import('../pages/NotFound.vue'),
   }
   */
 ]

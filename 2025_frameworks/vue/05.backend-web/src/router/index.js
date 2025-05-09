@@ -3,25 +3,25 @@ import { createRouter, createWebHistory } from 'vue-router'
 const routes = [
   {
     path: '/login',
-    component: () => import('../components/Login.vue'),
+    component: () => import('../pages/Login.vue'),
     meta: { title: "Login", layout: 'none' },
   },
 
   {
     path: '/hello',
-    component: () => import('../components/Hello.vue'),
+    component: () => import('../pages/Hello.vue'),
     meta: { title: "Hello", layout: 'none' },
   },
 
   {
     path: '/dashboard',
-    component: () => import('../views/Dashboard.vue'),
+    component: () => import('../layout/Dashboard.vue'),
     meta: { title: "Dashboard", layout: 'admin' },
   },
 
   {
     path: '/accounts',
-    component: () => import('../views/Accounts.vue'),
+    component: () => import('../layout/Accounts.vue'),
     meta: { title: "Accounts", layout: 'admin' },
   },
 
@@ -31,12 +31,12 @@ const routes = [
     children: [
       {
         path: 'profile',
-        component: () => import('../views/settings/Profile.vue'),
+        component: () => import('../layout/settings/Profile.vue'),
         meta: { title: "Settings / Profile", layout: 'admin' },
       },
       {
         path: 'security',
-        component: () => import('../views/settings/Security.vue'),
+        component: () => import('../layout/settings/Security.vue'),
         meta: { title: "Settings / Security", layout: 'admin' },
       },
     ],
