@@ -28,9 +28,11 @@ npm install --save-dev vite-plugin-vue-devtools
 npm install --save-dev unplugin-vue-components
 # npm install --save-dev unplugin-auto-import
 
+npm install --save-dev tailwindcss @tailwindcss/vite postcss autoprefixer
+# npx tailwindcss init -p
+
 # https://tailwindcss.com/docs/installation/using-vite
 npm install vue-router
-npm install tailwindcss @tailwindcss/vite
 npm install element-plus @element-plus/icons-vue
 
 #### 3. setup env

@@ -8,6 +8,12 @@ const routes = [
   },
 
   {
+    path: '/hello',
+    component: () => import('../components/Hello.vue'),
+    meta: { title: "Hello", layout: 'none' },
+  },
+
+  {
     path: '/dashboard',
     component: () => import('../views/Dashboard.vue'),
     meta: { title: "Dashboard", layout: 'admin' },

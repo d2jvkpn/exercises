@@ -159,6 +159,10 @@ __END_Main__
 
 
 __START_Style__
-@import "tailwindcss";
+/* @import "tailwindcss"; */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import "element-plus/dist/index.css";
 __END_Style__
