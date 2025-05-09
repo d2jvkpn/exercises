@@ -1,7 +1,7 @@
 <template>
 <header class="headerbar-layout">
   <div class="headerbar-left">
-    <el-button text circle @click="$emit('toggleSidebar')" class="headerbar-menu-btn">
+    <el-button text circle @click="$emit('toggleSidebar')" class="headerbar-toggle-btn">
       <el-icon>
         <component :is="isHidden ? Expand : Fold" />
        </el-icon>
@@ -72,7 +72,7 @@ const handleCommand = (command) => {
   gap: 12px;
 }
 
-.headerbar-menu-btn {
+.headerbar-toggle-btn {
   padding: 4px;
   /*
   position: absolute;
