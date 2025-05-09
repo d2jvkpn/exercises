@@ -9,6 +9,6 @@
 
 <style scoped>
   div {
-    color: grey;
+    color: #ffd166;
   }
 </style>

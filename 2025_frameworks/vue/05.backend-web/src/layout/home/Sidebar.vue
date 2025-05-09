@@ -23,7 +23,7 @@ const visibleRouteNames = computed(() => {
       }
 
       // console.log(`~~~ ${item.name}`)
-      if (item.meta.roles?.includes("Any") || item.meta.roles?.some(e => props.roles.has(e))) {
+      if (item.meta.roles?.includes("any") || item.meta.roles?.some(e => props.roles.has(e))) {
         result.push(item.name)
       }
 
@@ -68,8 +68,8 @@ const visibleRouteNames = computed(() => {
 
 <style scoped>
 .sidebar {
-  width: 200px;
-  color: #fff;
+  width: 15rem;
+  color: #001219;
   padding-top: 10px;
   overflow-y: auto;
 }

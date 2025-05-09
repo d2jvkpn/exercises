@@ -11,6 +11,6 @@
 
 <style scoped>
   div {
-    color: blue;
+    color: skyblue;
   }
 </style>

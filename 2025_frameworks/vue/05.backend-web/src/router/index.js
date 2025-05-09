@@ -7,7 +7,7 @@ export const allRoutes = [
   {
     path: '/login',
     name: "Login",
-    meta: { title: "App - Login", layout: 'none', roles: ["Any"] },
+    meta: { title: "App - Login", layout: 'none', roles: ["any"] },
     component: () => import('@/pages/Login.vue'),
   },
 
@@ -29,13 +29,13 @@ export const allRoutes = [
   {
     path: '/home/settings',
     name: "Settings",
-    meta: { title: "App - Settings", layout: 'home', roles: ["Any"] },
+    meta: { title: "App - Settings", layout: 'home', roles: ["any"] },
     // component: () => import('@/layout/settings/Settings.vue'),
     children: [
       {
         path: 'profile',
         name: "Profile",
-        meta: { title: "App - Profile", layout: 'home', roles: ["editor"] },
+        meta: { title: "App - Profile", layout: 'home', roles: ["any"] },
         component: () => import('@/layout/settings/Profile.vue'),
       },
       {
@@ -51,7 +51,7 @@ export const allRoutes = [
   {
     path: '/page-not-found',
     name: "PageNotFound",
-    meta: { title: "App - Page not found", layout: 'none', roles: ["Any"] },
+    meta: { title: "App - Page not found", layout: 'none', roles: ["any"] },
     component: () => PageNotFound,
   },
 
