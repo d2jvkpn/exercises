@@ -17,7 +17,7 @@
 </template>
 
 
-<style>
+<style scoped>
 .sidebar {
   width: 200px;
   color: #fff;

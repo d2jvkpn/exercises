@@ -42,7 +42,7 @@ console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`);
 </div>
 </template>
 
-<style>
+<style scoped>
 .login {
   width: 100vw;
   height: 100vh;

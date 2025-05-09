@@ -46,7 +46,7 @@ const toggleCollapse = () => {
 </div>
 </template>
 
-<style>
+<style scoped>
 .overview {
   height: 100vh;
   display: flex;

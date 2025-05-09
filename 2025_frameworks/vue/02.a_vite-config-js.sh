@@ -45,8 +45,8 @@ export default defineConfig({
 
     vueDevTools(),
     tailwindcss(),
-    //AutoImport({ resolvers: [ElementPlusResolver()] }),
-    Components({ resolvers: [ElementPlusResolver()] }),
+    //AutoImport({resolvers: [ElementPlusResolver()]}),
+    Components({resolvers: [ElementPlusResolver()]}),
   ],
 
   resolve: {
@@ -90,11 +90,14 @@ __START_Hello__
 
 <template>
 <div
-  class="flex items-center justify-center gap-8 min-h-screen bg-gradient-to-br from-green-500 to-sky-400"
+  class="flex flex-col items-center justify-center gap-8 min-h-screen bg-gradient-to-br from-green-500 to-sky-400"
 >
   <p>Hello, world!</p>
 </div>
 </template>
+
+<style scoped>
+</style>
 __END_Hello__
 
 
@@ -159,10 +162,12 @@ __END_Main__
 
 
 __START_Style__
-/* @import "tailwindcss"; */
+@import "tailwindcss";
+/*
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+*/
 
 @import "element-plus/dist/index.css";
 __END_Style__
