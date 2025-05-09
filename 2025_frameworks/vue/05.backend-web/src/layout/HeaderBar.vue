@@ -2,7 +2,6 @@
 import { useRouter } from 'vue-router'
 import { ArrowDown, Fold, Expand } from '@element-plus/icons-vue'
 
-
 //
 const props = defineProps({
   accountName: String,
@@ -20,10 +19,11 @@ const handleCommand = (command) => {
       router.push('/settings/profile')
       break
     case 'change_password':
-      console.log("~~~ Change password")
+      console.log("~~~ TODO: Change password")
       break
     case 'logout':
-      localStorage.removeItem('token')
+      // localStorage.removeItem('token')
+      localStorage.clear()
       router.push('/login')
       break
   }
@@ -50,14 +50,15 @@ const handleCommand = (command) => {
 
     <template #dropdown>
       <el-dropdown-menu>
-        <el-dropdown-item command="profile">👤 Profile </el-dropdown-item>
-        <el-dropdown-item command="change_password">⚙️ Change password </el-dropdown-item>
-        <el-dropdown-item divided command="logout">🚪 Logout </el-dropdown-item>
+        <el-dropdown-item command="profile"> 👤 Profile </el-dropdown-item>
+        <el-dropdown-item command="change_password"> 🔒 Change password </el-dropdown-item>
+        <el-dropdown-item divided command="logout"> ❌ Logout </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
 </header>
 </template>
+
 
 
 <style scoped>
