@@ -52,7 +52,7 @@ const handleCommand = (command) => {
       <el-dropdown-menu>
         <el-dropdown-item command="profile"> 👤 Profile </el-dropdown-item>
         <el-dropdown-item command="change_password"> 🔒 Change password </el-dropdown-item>
-        <el-dropdown-item divided command="logout"> ❌ Logout </el-dropdown-item>
+        <el-dropdown-item divided command="logout"> ⏻ Logout </el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
