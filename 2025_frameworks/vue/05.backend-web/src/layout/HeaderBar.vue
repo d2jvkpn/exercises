@@ -19,8 +19,8 @@ const handleCommand = (command) => {
     case 'profile':
       router.push('/settings/profile')
       break
-    case 'security':
-      router.push('/settings/security')
+    case 'change_password':
+      console.log("~~~ Change password")
       break
     case 'logout':
       localStorage.removeItem('token')
@@ -50,7 +50,7 @@ const handleCommand = (command) => {
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item command="profile">👤 Profile </el-dropdown-item>
-        <el-dropdown-item command="security">⚙️ Security </el-dropdown-item>
+        <el-dropdown-item command="change_password">⚙️ Change password </el-dropdown-item>
         <el-dropdown-item divided command="logout">🚪 Logout </el-dropdown-item>
       </el-dropdown-menu>
     </template>

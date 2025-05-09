@@ -2,13 +2,14 @@
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-import { allRoutes } from '@/router/routes'
+import { allRoutes } from '../router/index'
 
 const route = useRoute()
-const role = localStorage.getItem('role');
-console.log(`--> role: ${role}`)
+const roles = new Set(JSON.parse(localStorage.getItem('roles')));
 
-/*
+//console.log(`--> role: ${role}`)
+//console.log(`~~~ ${allRoutes.length}`);
+
 const visibleRouteNames = computed(() => {
   const result = []
 
@@ -19,7 +20,7 @@ const visibleRouteNames = computed(() => {
       }
 
       // console.log(`~~~ ${item.name}`)
-      if (item.meta.roles?.includes(role) || item.meta.roles?.includes("Any")) {
+      if (item.meta.roles?.includes("Any") || item.meta.roles?.some(e => roles.has(e))) {
         result.push(item.name)
       }
 
@@ -33,24 +34,11 @@ const visibleRouteNames = computed(() => {
   // console.log(`--> ${JSON.stringify(result)}`)
   return result
 })
-*/
-
-const filterRoutesByRole = (routes) => {
-  return routes
-    .filter(r => r.meta?.roles?.includes(role))
-    .map(r => ({
-      ...r,
-      children: r.children ? filterRoutesByRole(r.children) : undefined
-    }))
-}
-
-const visibleRoutes = computed(() => filterRoutesByRole(allRoutes))
 </script>
 
 <template>
 <aside class="sidebar">
   <el-menu :default-active="$route.path" router>
-    <!-->
     <el-menu-item index="/dashboard" v-if="visibleRouteNames.includes('Dashboard')">
       Dashboard
     </el-menu-item>
@@ -69,16 +57,6 @@ const visibleRoutes = computed(() => filterRoutesByRole(allRoutes))
         Security
       </el-menu-item>
     </el-sub-menu>
-    <-->
-
-    <template v-for="item in visibleRoutes" :key="item.path">
-      <el-sub-menu v-if="item.children" :index="item.path">
-        <template #title> {{ item.meta.title }} </template>
-        <el-menu-item v-for="child in item.children" :key="child.path" :index="child.path">
-          {{ child.meta.title }}
-        </el-menu-item>
-      </el-sub-menu>
-    </template>
   </el-menu>
 </aside>
 </template>
