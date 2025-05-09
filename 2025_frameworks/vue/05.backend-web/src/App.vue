@@ -10,7 +10,7 @@ const route = useRoute()
 const layoutComponent = computed(() => {
   const layout = route.meta.layout
 
-  if (layout === 'admin') {
+  if (layout === 'overview') {
     return Overview
   }
 
@@ -20,7 +20,11 @@ const layoutComponent = computed(() => {
 
 
 <template>
-  <component :is="layoutComponent">
-    <router-view />
-  </component>
+<component :is="layoutComponent">
+  <router-view />
+</component>
 </template>
+
+
+<style scoped>
+</style>

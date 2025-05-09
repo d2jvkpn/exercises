@@ -1,8 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const routes = [
+const allRoutes = [
   {
     path: '/login',
+    // name: "Login",
     component: () => import('../pages/Login.vue'),
     meta: { title: "Login", layout: 'none' },
   },
@@ -16,13 +17,13 @@ const routes = [
   {
     path: '/dashboard',
     component: () => import('../layout/Dashboard.vue'),
-    meta: { title: "Dashboard", layout: 'admin' },
+    meta: { title: "Dashboard", layout: 'overview' },
   },
 
   {
     path: '/accounts',
     component: () => import('../layout/Accounts.vue'),
-    meta: { title: "Accounts", layout: 'admin' },
+    meta: { title: "Accounts", layout: 'overview' },
   },
 
   {
@@ -32,12 +33,12 @@ const routes = [
       {
         path: 'profile',
         component: () => import('../layout/settings/Profile.vue'),
-        meta: { title: "Settings / Profile", layout: 'admin' },
+        meta: { title: "Settings / Profile", layout: 'overview' },
       },
       {
         path: 'security',
         component: () => import('../layout/settings/Security.vue'),
-        meta: { title: "Settings / Security", layout: 'admin' },
+        meta: { title: "Settings / Security", layout: 'overview' },
       },
     ],
   },
@@ -53,7 +54,7 @@ const routes = [
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_BASE_PATH),
-  routes,
+  routes: allRoutes,
 })
 
 router.beforeEach((to, from, next) => {
@@ -61,7 +62,7 @@ router.beforeEach((to, from, next) => {
 
   const isLoggedIn = !!localStorage.getItem('token');
 
-  if (to.meta.layout === 'admin' && !isLoggedIn) {
+  if (to.meta.layout === 'overview' && !isLoggedIn) {
     next('/login')
   } else {
     next()
