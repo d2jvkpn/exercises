@@ -25,7 +25,7 @@ console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`);
 <template>
 <div class="login">
   <el-card class="login-card">
-    <template #header>Please Login</template>
+    <template #header> Please Login </template>
     <el-form @submit.prevent="login">
       <el-form-item>
         <el-input v-model="account" placeholder="email or phone" />
@@ -36,7 +36,7 @@ console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`);
       </el-form-item>
 
       <div class="login-button">
-        <el-button type="primary" @click="login">Login</el-button>
+        <el-button type="primary" @click="login"> Login </el-button>
       </div>
     </el-form>
   </el-card>
