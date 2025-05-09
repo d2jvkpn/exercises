@@ -90,7 +90,7 @@ const handleCommand = (command) => {
 }
 
 .headerbar-logo {
-  font-size: 18px;
+  font-size: 1.0rem;
   color: #409eff;
   font-weight: bold;
 }
