@@ -1,6 +1,9 @@
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { ArrowDown, Fold, Expand } from '@element-plus/icons-vue'
+
+import ChangePassword from './ChangePassword.vue'
 
 //
 const props = defineProps({
@@ -8,6 +11,14 @@ const props = defineProps({
   isSidebarHidden: Boolean,
 })
 
+const showChangePassword = ref(false)
+
+const handlePasswordSubmit = () => {
+  showChangePassword.value = false
+  // 你也可以加 Toast 或调用修改密码 API
+}
+
+//
 const emit = defineEmits(['toggleSidebar'])
 
 //
@@ -20,6 +31,7 @@ const handleCommand = (command) => {
       break
     case 'change_password':
       console.log("~~~ TODO: Change password")
+      showChangePassword.value = true
       break
     case 'logout':
       // localStorage.removeItem('token')
@@ -57,8 +69,13 @@ const handleCommand = (command) => {
     </template>
   </el-dropdown>
 </header>
-</template>
 
+<ChangePassword
+  :visible="showChangePassword"
+  @close="showChangePassword = false"
+  @submit="() => showChangePassword = false"
+/>
+</template>
 
 
 <style scoped>

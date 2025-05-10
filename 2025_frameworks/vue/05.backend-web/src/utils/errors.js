@@ -57,18 +57,18 @@ if (code == "forbidden") {
 }
 
 7. ApiError
-responseData={"requestId": "xxxx-xxxx", "code": "not_found", "msg": "item not found"}
+res = { "requestId": "xxxx-xxxx", "code": "not_found", "msg": "item not found" }
 
 let err = new ApiError(
-  responseData.code, responseData.msg,
-  {requestId: response.requestId, statusCode: response.statusCode},
+  res.code, res.msg,
+  { requestId: response.requestId, statusCode: response.statusCode },
 );
 
 callback.error(err);
 
 8. OK
-responseData={"requestId": "xxxx-xxxx", "code": "ok", "data": {}}
-callback.ok(responseData.data);
+res = { "requestId": "xxxx-xxxx", "code": "ok", "data": {} }
+callback.ok(res.data);
 
 
 function newCallback(ok=null, error=null) {
