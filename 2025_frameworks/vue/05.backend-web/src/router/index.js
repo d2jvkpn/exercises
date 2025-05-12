@@ -11,7 +11,6 @@ export const allRoutes = [
     component: () => import('@/pages/Login.vue'),
   },
 
-
   {
     path: '/home/dashboard',
     name: "Dashboard",
@@ -47,7 +46,6 @@ export const allRoutes = [
     ],
   },
 
-
   {
     path: '/page-not-found',
     name: "PageNotFound",
@@ -69,10 +67,17 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = !!localStorage.getItem('token');
 
   if (to.meta.layout === 'home' && !isLoggedIn) {
-    next('/login')
-  } else {
-    next()
+    return next('/login')
   }
+
+  /* TODO: pemission denied
+  let roles = new Set(JSON.parse(localStorage.getItem('roles')));
+  if (!meta.roles?.includes("any") && !item.meta.roles?.some(e => roles.has(e))) {
+    return next('/pemission-denied')
+  }
+  */
+
+  next()
 })
 
 export default router

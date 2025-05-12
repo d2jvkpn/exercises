@@ -27,6 +27,7 @@ npm install --save-dev @types/node
 npm install --save-dev vite-plugin-vue-devtools
 npm install --save-dev unplugin-vue-components
 # npm install --save-dev unplugin-auto-import
+npm install pinia pinia-plugin-persistedstate
 
 npm install --save-dev tailwindcss @tailwindcss/vite postcss autoprefixer
 # npx tailwindcss init -p
