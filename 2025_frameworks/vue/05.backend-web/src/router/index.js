@@ -15,33 +15,32 @@ export const allRoutes = [
     path: '/home/dashboard',
     name: "Dashboard",
     meta: { title: "App - Dashboard", layout: 'home', roles: ["editor", "admin"] },
-    component: () => import('@/layout/Dashboard.vue'),
+    component: () => import('@/pages/home/Dashboard.vue'),
   },
 
   {
     path: '/home/accounts',
     name: "Accounts",
     meta: { title: "App - Accounts", layout: 'home', roles: ["admin"] },
-    component: () => import('@/layout/Accounts.vue'),
+    component: () => import('@/pages/home/Accounts.vue'),
   },
 
   {
     path: '/home/settings',
     name: "Settings",
     meta: { title: "App - Settings", layout: 'home', roles: ["any"] },
-    // component: () => import('@/layout/settings/Settings.vue'),
     children: [
       {
         path: 'profile',
         name: "Profile",
         meta: { title: "App - Profile", layout: 'home', roles: ["any"] },
-        component: () => import('@/layout/settings/Profile.vue'),
+        component: () => import('@/pages/home/Profile.vue'),
       },
       {
         path: 'security',
         name: "Security",
         meta: { title: "App - Security", layout: 'home', roles: ["admin"] },
-        component: () => import('@/layout/settings/Security.vue'),
+        component: () => import('@/pages/home/Security.vue'),
       },
     ],
   },

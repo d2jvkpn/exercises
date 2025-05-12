@@ -25,16 +25,14 @@ npm fund
 #### 2. add packages
 npm install --save-dev @types/node
 npm install --save-dev vite-plugin-vue-devtools
-npm install --save-dev unplugin-vue-components
-# npm install --save-dev unplugin-auto-import
-npm install pinia pinia-plugin-persistedstate
-
+npm install --save-dev unplugin-vue-components # unplugin-auto-import
 npm install --save-dev tailwindcss @tailwindcss/vite postcss autoprefixer
-# npx tailwindcss init -p
+# ?? error: npx tailwindcss init -p
 
 # https://tailwindcss.com/docs/installation/using-vite
 npm install vue-router
 npm install element-plus @element-plus/icons-vue
+npm install pinia pinia-plugin-persistedstate
 
 #### 3. setup env
 cat > env <<"EOF"

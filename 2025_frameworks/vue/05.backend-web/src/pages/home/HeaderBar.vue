@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import { ArrowDown, Fold, Expand } from '@element-plus/icons-vue'
 
 import ChangePassword from './ChangePassword.vue'
+// import { useUserStore } from '@/js/stores/user'
 
 //
 const props = defineProps({
@@ -23,6 +25,28 @@ const emit = defineEmits(['toggleSidebar'])
 
 //
 const router = useRouter()
+// const userStore = useUserStore()
+
+const confirmLogout = () => {
+  ElMessageBox.confirm(
+    'Are you sure you want to log out?',
+    'Logout Confirmation',
+    {
+      confirmButtonText: 'Logout',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }
+  )
+  .then(() => {
+    // userStore.logout()
+    localStorage.clear()
+    router.push('/login')
+    ElMessage.success('You have been logged out.')
+  })
+  .catch(() => {
+    ElMessage.info('Logout canceled.')
+  })
+}
 
 const handleCommand = (command) => {
   switch (command) {
@@ -35,11 +59,13 @@ const handleCommand = (command) => {
       break
     case 'logout':
       // localStorage.removeItem('token')
-      localStorage.clear()
-      router.push('/login')
+      // localStorage.clear()
+      // router.push('/login')
+      confirmLogout()
       break
   }
 }
+
 </script>
 
 

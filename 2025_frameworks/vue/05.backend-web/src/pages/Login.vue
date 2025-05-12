@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
 
 const account = ref('')
 const password = ref('')
@@ -8,10 +9,12 @@ const router = useRouter()
 
 const login = () => {
   if (account.value && password.value) {
+    let username = "Jane Doe"
     localStorage.setItem('token', `${account.value}:${password.value}`)
-    localStorage.setItem('accountName', "Jane Doe")
+    localStorage.setItem('accountName', username)
     localStorage.setItem('roles', JSON.stringify(["admin"]))
 
+    ElMessage.success(`Welcome back, ${username}!`)
     router.push('/home/dashboard')
   } else {
     alert('Please enter acocunt and password!')
