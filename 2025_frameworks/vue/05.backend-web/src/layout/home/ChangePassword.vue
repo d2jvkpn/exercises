@@ -52,7 +52,7 @@ const submit = () => {
     <div class="modal">
       <header class="modal-header">🔒 Change Password </header>
 
-      <el-form ref="formRef" :model="form" :rules="rules" label-width="10rem" class="form">
+      <el-form ref="formRef" :model="form" :rules="rules" label-width="10rem" class="modal-form">
         <el-form-item label="old password" prop="oldPassword">
           <el-input v-model="form.oldPassword" type="password" clearable />
         </el-form-item>
@@ -101,14 +101,14 @@ const submit = () => {
   margin-bottom: 1rem;
 }
 
+.modal-form {
+  margin-top: 1rem;
+}
+
 .modal-footer {
   margin-top: 2rem;
   display: flex;
   justify-content: flex-end;
   gap: 2rem;
-}
-
-.form {
-  margin-top: 1rem;
 }
 </style>

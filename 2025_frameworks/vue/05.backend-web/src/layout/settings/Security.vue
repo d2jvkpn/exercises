@@ -8,7 +8,7 @@
 </template>
 
 <style scoped>
-  div {
-    color: tomato;
-  }
+div {
+  color: tomato;
+}
 </style>

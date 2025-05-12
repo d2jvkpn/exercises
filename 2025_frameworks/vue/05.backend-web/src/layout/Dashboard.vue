@@ -10,7 +10,7 @@
 
 
 <style scoped>
-  div {
-    color: skyblue;
-  }
+div {
+  color: skyblue;
+}
 </style>
