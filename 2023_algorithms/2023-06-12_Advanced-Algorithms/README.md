@@ -10,10 +10,13 @@
 - 00006 Fast and Slow Pointers
 - 00007 Trie, Prefix Tree
 - 00008 Union-Find, Disjoin sets
+
 - 00010 Interative DFS
 - 00012 Subsets
 - 00013 Combinations
+
 - 00015 Dijkstra's, shortest path
+
 - 00020 Longest Common Subsequence
 - 00021 Palindrones
 

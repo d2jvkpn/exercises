@@ -1,6 +1,10 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { ElMessage } from 'element-plus'
+import { ArrowDown } from '@element-plus/icons-vue'
+
+// import { hello } from "@/js/utils/hello.js"
+// hello()
 
 const allColumns = [
   { prop: 'id', label: 'ID' },
@@ -88,15 +92,15 @@ const handleSizeChange = (size) => {
   <div class="toolbar-right"> <!-- 右侧：列选择、批量删除 -->
     <el-dropdown trigger="click">
       <el-button type="primary">
-        👁️ Choose columns
-        <el-icon> <arrow-down/> </el-icon>
+        Columns
+        <el-icon> <ArrowDown /> </el-icon>
       </el-button>
 
       <template #dropdown>
         <el-dropdown-menu class="column-dropdown">
           <el-checkbox-group v-model="visibleColumns">
             <el-dropdown-item v-for="col in allColumns" :key="col.prop" class="no-hover">
-              <el-checkbox :label="col.prop">{{ col.label }}</el-checkbox>
+              <el-checkbox :value="col.prop"> {{ col.label }} </el-checkbox>
             </el-dropdown-item>
           </el-checkbox-group>
         </el-dropdown-menu>
@@ -104,7 +108,7 @@ const handleSizeChange = (size) => {
     </el-dropdown>
 
     <el-button type="danger" @click="deleteSelected" :disabled="!selectedRows.length">
-      🗑️ Batch delete
+      Delete
     </el-button>
   </div>
 </div>

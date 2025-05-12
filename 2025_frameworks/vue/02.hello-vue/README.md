@@ -32,6 +32,6 @@ npm run dev
 npm run build
 ```
 
-#### ch01.
+#### ch01
 1. docs
-- https://www.youtube.com/watch?v=CJXF5pkUEkg
+- - https://www.youtube.com/watch?v=CJXF5pkUEkg
