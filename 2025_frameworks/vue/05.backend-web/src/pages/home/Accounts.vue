@@ -89,7 +89,7 @@ const handleSizeChange = (size) => {
   <el-button @click="resetFilters">Reset</el-button>
   </div>
 
-  <div class="toolbar-right"> <!-- 右侧：列选择、批量删除 -->
+  <div class="toolbar-right">
     <el-dropdown trigger="click">
       <el-button type="primary">
         Columns
@@ -118,7 +118,7 @@ const handleSizeChange = (size) => {
   border
   style="margin-top: 10px;"
   @selection-change="selectedRows = $event"
-> <!-- 表格 -->
+>
   <el-table-column type="selection" width="50" />
   <el-table-column
     v-for="col in visibleTableColumns"

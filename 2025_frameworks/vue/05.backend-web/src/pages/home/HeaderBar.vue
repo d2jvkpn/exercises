@@ -70,7 +70,7 @@ const handleCommand = (command) => {
 
 
 <template>
-<header class="headerbar">
+<header>
   <div class="headerbar-left">
     <el-button text circle @click="$emit('toggleSidebar')" class="headerbar-toggle-btn">
       <el-icon>
@@ -94,28 +94,17 @@ const handleCommand = (command) => {
       </el-dropdown-menu>
     </template>
   </el-dropdown>
-</header>
 
 <ChangePassword
   :visible="showChangePassword"
   @close="showChangePassword = false"
   @submit="() => showChangePassword = false"
 />
+</header>
 </template>
 
 
 <style scoped>
-.headerbar {
-  height: 60px;
-  background-color: #fff;
-  padding: 0 20px;
-  font-size: 16px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
 .headerbar-left {
   display: flex;
   align-items: center;

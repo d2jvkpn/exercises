@@ -31,13 +31,14 @@ const toggleCollapse = () => {
 <template>
 <div class="home">
   <HeaderBar
+    class="home-headerbar"
     :accountName="accountName"
     :isSidebarHidden="isHidden"
     @toggleSidebar="isHidden = !isHidden"
   />
 
   <div class="home-main">
-    <Sidebar v-show="!isHidden" :roles="roles" />
+    <Sidebar class="home-sidebar" v-show="!isHidden" :roles="roles" />
 
     <main class="home-content">
       <router-view v-slot="{ Component }">
@@ -56,10 +57,28 @@ const toggleCollapse = () => {
   flex-direction: column;
 }
 
+.home-headerbar {
+  height: 60px;
+  background-color: #fff;
+  padding: 0 20px;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .home-main {
   display: flex;
   flex: 1;
   overflow: hidden;
+}
+
+.home-sidebar {
+  width: 15rem;
+  color: #001219;
+  padding-top: 10px;
+  overflow-y: auto;
 }
 
 .home-content {
