@@ -17,7 +17,6 @@ const showChangePassword = ref(false)
 
 const handlePasswordSubmit = () => {
   showChangePassword.value = false
-  // 你也可以加 Toast 或调用修改密码 API
 }
 
 //
@@ -54,7 +53,6 @@ const handleCommand = (command) => {
       router.push('/home/settings/profile')
       break
     case 'change_password':
-      console.log("~~~ TODO: Change password")
       showChangePassword.value = true
       break
     case 'logout':
@@ -70,20 +68,17 @@ const handleCommand = (command) => {
 
 
 <template>
-<header>
+<header class=headerbar>
   <div class="headerbar-left">
     <el-button text circle @click="$emit('toggleSidebar')" class="headerbar-toggle-btn">
-      <el-icon>
-        <component :is="isSidebarHidden ? Expand : Fold" />
-       </el-icon>
+      <el-icon> <component :is="isSidebarHidden ? Expand : Fold" /> </el-icon>
     </el-button>
     <div class="headerbar-logo"> 🌀 Home </div>
   </div>
 
   <el-dropdown @command="handleCommand">
     <span class="headerbar-account el-dropdown-link">
-      {{ accountName }}
-      <el-icon> <ArrowDown /> </el-icon>
+      {{ accountName }} <el-icon> <ArrowDown /> </el-icon>
     </span>
 
     <template #dropdown>
@@ -95,16 +90,22 @@ const handleCommand = (command) => {
     </template>
   </el-dropdown>
 
-<ChangePassword
-  :visible="showChangePassword"
-  @close="showChangePassword = false"
-  @submit="() => showChangePassword = false"
-/>
+<ChangePassword :visible="showChangePassword" @close="showChangePassword = false"/>
 </header>
 </template>
 
 
 <style scoped>
+.headerbar {
+  background-color: #fff;
+  padding: 0 0.8rem;
+  font-size: 2rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .headerbar-left {
   display: flex;
   align-items: center;
@@ -112,7 +113,7 @@ const handleCommand = (command) => {
 }
 
 .headerbar-toggle-btn {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   /*
   position: absolute;
   top: 2px;
@@ -129,7 +130,6 @@ const handleCommand = (command) => {
 
 .headerbar-account {
   cursor: pointer;
-  font-size: 14px;
   color: #333;
   display: flex;
   align-items: center;

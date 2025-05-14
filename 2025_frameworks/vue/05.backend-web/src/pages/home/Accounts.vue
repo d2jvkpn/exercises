@@ -92,8 +92,7 @@ const handleSizeChange = (size) => {
   <div class="toolbar-right">
     <el-dropdown trigger="click">
       <el-button type="primary">
-        Columns
-        <el-icon> <ArrowDown /> </el-icon>
+        Columns <el-icon> <ArrowDown /> </el-icon>
       </el-button>
 
       <template #dropdown>

@@ -59,26 +59,16 @@ const toggleCollapse = () => {
 
 .home-headerbar {
   height: 60px;
-  background-color: #fff;
-  padding: 0 20px;
-  font-size: 16px;
-  border-bottom: 1px solid #eee;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .home-main {
   display: flex;
-  flex: 1;
+  flex: 1; /* flex-grow: 1; flex-shrink: 1; flex-basis: 0%; */
   overflow: hidden;
 }
 
 .home-sidebar {
   width: 15rem;
-  color: #001219;
-  padding-top: 10px;
-  overflow-y: auto;
 }
 
 .home-content {
