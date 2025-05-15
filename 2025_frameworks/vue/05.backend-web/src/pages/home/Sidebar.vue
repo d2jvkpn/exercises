@@ -45,23 +45,28 @@ const visibleRouteNames = computed(() => {
 <aside>
   <el-menu :default-active="$route.path" router>
     <el-menu-item index="/home/dashboard" v-if="visibleRouteNames.includes('Dashboard')">
-      <el-icon> <Histogram /> </el-icon> Dashboard
+      <el-icon> <Histogram /> </el-icon>
+      Dashboard
     </el-menu-item>
 
     <el-menu-item index="/home/accounts" v-if="visibleRouteNames.includes('Accounts')">
-      <el-icon> <User /> </el-icon> Accounts
+      <el-icon> <User /> </el-icon>
+      Accounts
     </el-menu-item>
 
     <el-sub-menu index="/home/settings" v-if="visibleRouteNames.includes('Settings')">
       <template #title>
-        <el-icon> <Setting /> </el-icon> Settings
+        <el-icon> <Setting /> </el-icon>
+        Settings
       </template>
       <el-menu-item index="/home/settings/profile" v-if="visibleRouteNames.includes('Profile')">
-        <el-icon> <Postcard /> </el-icon> Profile
+        <el-icon><Postcard /></el-icon>
+        Profile
       </el-menu-item>
 
       <el-menu-item index="/home/settings/security" v-if="visibleRouteNames.includes('Security')">
-        <el-icon> <Box /> </el-icon> Security
+        <el-icon><Box /></el-icon>
+        Security
       </el-menu-item>
     </el-sub-menu>
   </el-menu>
