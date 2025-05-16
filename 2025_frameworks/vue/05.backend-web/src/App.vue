@@ -10,7 +10,7 @@ console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`);
 const config = ref({});
 
 onBeforeMount(() => {
-  fetch(`${import.meta.env.DEV ? "" : import.meta.env.BASE_PATH}/config.json`)
+  fetch('config.json')
     .then(response => response.json())
     .then((data) => {
       config.value = data;

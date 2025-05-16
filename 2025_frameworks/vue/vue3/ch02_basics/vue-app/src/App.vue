@@ -6,8 +6,10 @@ import Ch02 from './components/Ch02.vue'
 
 const config = ref({});
 
+console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`)
+
 onBeforeMount(() => {
-  fetch("config.json")
+  fetch(`config.json`)
     .then(response => response.json())
     .then((data) => {
       config.value = data;
