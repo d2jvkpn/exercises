@@ -10,7 +10,7 @@ const props = defineProps({
   },
 })
 
-console.log(`??? ${props.page.title}`)
+// console.log(`??? ${props.page.title}`)
 </script>
 
 <template>

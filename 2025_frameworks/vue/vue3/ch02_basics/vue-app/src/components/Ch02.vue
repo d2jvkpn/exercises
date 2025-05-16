@@ -1,11 +1,12 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, onBeforeMount } from "vue"
 
 import Navbar from "./Ch02Navbar.vue"
 import Page from "./Ch02Page.vue"
 
 const activePage = ref(0)
 
+/*
 const pages = ref([
   {
     link: { text: "Home", url: "index.html" },
@@ -23,21 +24,26 @@ const pages = ref([
     content: "This is the contact contents.",
   },
 ])
+*/
+
+
+const pages = ref([]);
+
+onBeforeMount(() => {
+  fetch("pages.json")
+    .then(response => response.json())
+    .then(data => pages.value = data)
+    .catch(error => console.error(`!!! Error loading pages: ${error}`));
+});
+
 </script>
 
 <template>
-<!--nav
-  class="navbar navbar-expand-lg"
-  :class="{ 'navbar-light bg-light': !useDarkNavbar, 'navbar-dark bg-dark': useDarkNavbar }"
--->
-
-<!--nav class="navbar navbar-expand-lg" :class="navbarClasses"-->
-
 
 <Navbar
   :pages="pages" :activePage="activePage"
   :navlinkClick="(i) => activePage = i"
-  @hello="(name) => console.log(`==> Hello, ${name}!`)"
+  @hello="(v) => console.log(`==> Hello, ${v}!`)"
 />
 <Page :page="pages[activePage]" />
 

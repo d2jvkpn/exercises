@@ -8,7 +8,7 @@ import { allRoutes } from '@/router/index'
 const route = useRoute()
 
 const props = defineProps({
-  roles: Set,
+  roles: { type: Set },
 })
 
 //console.log(`--> role: ${role}`)

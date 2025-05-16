@@ -1,6 +1,20 @@
 <script setup>
+import { ref, onBeforeMount } from "vue";
+
 //import HelloWorld from './components/HelloWorld.vue'
 import Ch02 from './components/Ch02.vue'
+
+const config = ref({});
+
+onBeforeMount(() => {
+  fetch("config.json")
+    .then(response => response.json())
+    .then((data) => {
+      config.value = data;
+      console.log(`==> Got config: ${JSON.stringify(data)}`)
+    })
+    .catch(error => console.error(`!!! Error loading config: ${error}`));
+});
 </script>
 
 <template>

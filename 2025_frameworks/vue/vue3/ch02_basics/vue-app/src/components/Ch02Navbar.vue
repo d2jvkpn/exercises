@@ -36,6 +36,13 @@ function changeTheme() {
 </script>
 
 <template>
+<!--nav
+  class="navbar navbar-expand-lg"
+  :class="{ 'navbar-light bg-light': !useDarkNavbar, 'navbar-dark bg-dark': useDarkNavbar }"
+-->
+
+<!--nav class="navbar navbar-expand-lg" :class="navbarClasses"-->
+
 <nav class="navbar navbar-expand-lg" :class="[`navbar-${theme}`, `bg-${theme}`]">
   <div class="container-fluid">
     <!--a class="nav-brand" href="#"> My Vue </a-->
@@ -43,7 +50,7 @@ function changeTheme() {
     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
       <li v-for="(e, i) in pages" class="nav-item" :key="i">
         <a
-          class="nav-link"
+          class="nav-link emphasize"
           :class="{active: activePage == i}"
           aria-current="e"
           :href="e.link.url"
@@ -61,3 +68,14 @@ function changeTheme() {
 </nav>
 </template>
 
+
+<style>
+.emphasize {
+  text-decoration: none;
+}
+
+.emphasize:active {
+  color: skyblue !important;
+  text-decoration: underline !important;
+}
+</style>
