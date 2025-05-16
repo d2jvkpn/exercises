@@ -16,7 +16,8 @@ mv src/components/HelloWorld.vue archive/src/components/
 
 
 read_embeded Vite > vite.config.js
-read_embeded App > src/App.vue
+read_embeded AppVue > src/App.vue
+read_embeded AppJSON > public/app.json
 read_embeded Main > src/main.js
 read_embeded Style > src/styles/style.css
 read_embeded Hello > src/pages/Hello.vue
@@ -59,7 +60,7 @@ export default defineConfig({
 __END_Vite__
 
 
-__START_App__
+__START_AppVue__
 <template>
 <div id="app">
   <!--
@@ -81,7 +82,14 @@ __START_App__
   margin-top: 60px;
 }
 </style-->
-__END_App__
+__END_AppVue__
+
+
+__START_AppJSON__
+{
+  "api_url": "http://localhost:4011"
+}
+__END_AppJSON__
 
 
 __START_Hello__
