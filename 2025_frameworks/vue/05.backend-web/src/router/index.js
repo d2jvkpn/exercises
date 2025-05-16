@@ -49,7 +49,7 @@ export const allRoutes = [
     path: '/page-not-found',
     name: "PageNotFound",
     meta: { title: "App - Page not found", layout: 'none', roles: ["any"] },
-    component: () => PageNotFound,
+    component: PageNotFound,
   },
 
   { path: '/:pathMatch(.*)*', redirect: '/page-not-found' },

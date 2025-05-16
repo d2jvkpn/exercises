@@ -16,4 +16,5 @@ build:
 
 preview:
 	make build
-	npm run preview -- --base=$(VITE_BASE_PATH) --outDir=target/dist$(VITE_BASE_PATH) --port=$(PORT) --host=0.0.0.0
+	npm run preview -- --base=$(VITE_BASE_PATH) --outDir=target/dist$(VITE_BASE_PATH) \
+	  --debug --port=$(PORT) --host=0.0.0.0
