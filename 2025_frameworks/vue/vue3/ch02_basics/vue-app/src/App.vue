@@ -9,7 +9,7 @@ const config = ref({});
 console.log(`==> import.meta.env: ${JSON.stringify(import.meta.env)}`)
 
 onBeforeMount(() => {
-  fetch(`app.json`)
+  fetch(`/app.json`)
     .then(response => response.json())
     .then((data) => {
       config.value = data;
