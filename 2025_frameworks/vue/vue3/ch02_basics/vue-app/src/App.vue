@@ -17,6 +17,16 @@ onBeforeMount(() => {
     })
     .catch(error => console.error(`!!! Error loading app.json: ${error}`));
 });
+
+/*
+async function getAppConfig() {
+  const response = await fetch("/app.json")
+  const data = await response.json()
+  return data;
+}
+
+let data = await getAppConfig()
+*/
 </script>
 
 <template>

@@ -35,7 +35,7 @@ npm install element-plus @element-plus/icons-vue
 npm install pinia pinia-plugin-persistedstate
 
 #### 3. setup env
-cat > env <<"EOF"
+cat > .env <<"EOF"
 # path: .env
 PORT=3001
 
@@ -43,7 +43,6 @@ VITE_BASE_PATH=/local
 VITE_API_URL=http://localhost:3011
 EOF
 
-cp env .env
 
 #### 4. setup makefile
 cat > Makefile <<"EOF"
@@ -65,6 +64,7 @@ build:
 
 preview:
 	make build
+	# node node_modules/vite/bin/vite.js preview --help
 	npm run preview -- --base=$(VITE_BASE_PATH) --outDir=target/dist$(VITE_BASE_PATH) \
 	  --debug --port=$(PORT) --host=0.0.0.0
 EOF
@@ -73,7 +73,8 @@ EOF
 cat >> .gitignore <<EOF
 
 ####
-.env
+#.env
+#public/app.json
 .env.*
 target/
 cache/
