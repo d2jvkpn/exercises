@@ -45,6 +45,8 @@ onBeforeMount(() => {
   :navlinkClick="(i) => activePage = i"
   @hello="(v) => console.log(`==> Hello, ${v}!`)"
 />
-<Page :page="pages[activePage]" />
+
+<Page v-if="pages.length > 0" :page="pages[activePage]" />
+<!--Page v-show="pages.length > 0" :page="pages[activePage]" /-->
 
 </template>

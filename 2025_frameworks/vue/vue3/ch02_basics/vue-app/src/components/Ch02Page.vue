@@ -6,7 +6,10 @@ defineProps(["page"])
 const props = defineProps({
   page: {
     type: Object,
-    default: { title: "Default Page Title", content: "Default page content" },
+    /* default: { title: "Default Page Title", content: "Default page content" }, */
+    default(rawProps) {
+      return { title: "Default Page Title", content: "Default page content" };
+    }
   },
 })
 
