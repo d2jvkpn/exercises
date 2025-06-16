@@ -1,8 +1,8 @@
 #![allow(dead_code)]
+use std::fs;
 
 use anyhow::Result;
 use serde_yaml::Value;
-use std::fs;
 
 pub fn load_yaml(path: &str) -> Result<Value> {
     let contents = fs::read_to_string(path).unwrap();
