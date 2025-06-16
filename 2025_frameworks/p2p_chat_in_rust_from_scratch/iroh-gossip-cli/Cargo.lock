@@ -1665,8 +1665,8 @@ name = "iroh-gossip-cli"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "base64",
  "clap",
- "data-encoding",
  "futures-lite",
  "iroh",
  "iroh-gossip",

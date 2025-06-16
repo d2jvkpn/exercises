@@ -5,8 +5,8 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1"
+base64 = "0.22"
 clap = { version = "4", features = ["derive"] }
-data-encoding = "2.9"
 futures-lite = "2.6"
 iroh = "0.35"
 iroh-gossip = "0.35"

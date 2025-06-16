@@ -1,13 +1,17 @@
-use std::{collections::HashMap, fmt, str::FromStr};
+use std::fmt::{self, Debug};
+use std::{collections::HashMap, path::Path, str::FromStr};
 
 use anyhow::Result;
-use clap::{Args, Parser};
-use data_encoding::BASE32_NOPAD;
+use base64::{Engine, engine::general_purpose};
+use clap::{ArgAction, Args, Parser};
 use futures_lite::StreamExt;
 use iroh::{Endpoint, NodeAddr, NodeId, PublicKey, SecretKey, protocol::Router};
 use iroh_gossip::net::{Event, Gossip, GossipEvent, GossipReceiver, GossipSender};
 use iroh_gossip::{ALPN, proto::TopicId};
+use rand::{prelude::*, thread_rng};
 use serde::{Deserialize, Serialize};
+use tokio::fs::{self, File};
+use tokio::io::AsyncWriteExt;
 
 /// Chat over iroh-gossip
 ///
@@ -17,14 +21,16 @@ use serde::{Deserialize, Serialize};
 ///
 /// By default, we use the default n0 discovery services to dial by `NodeId`.
 #[derive(Parser, Debug)]
-#[command(name = "myapp", version = "1.0", about = "A CLI application with subcommands")]
+#[command(name = "iroh-gossip-cli", version = "1.0", about = "p2p chat inrust from scratch")]
 struct Cli {
     #[clap(subcommand)]
     command: Command,
 
-    // Set the bind port for our socket. By default, a random port will be used.
-    //#[clap(short, long, default_value = "0")]
-    //bind_port: u16,
+    /*
+    /// Set the bind port for our socket. By default, a random port will be used.
+    #[clap(short, long, default_value = "0")]
+    bind_port: u16,
+    */
     /// Set your nickname.
     #[clap(short, long)]
     name: String,
@@ -36,7 +42,7 @@ enum Command {
     Open,
     /// Join a chat room from a ticket.
     Join {
-        /// The ticket, as base32 string.
+        /// The ticket, as base64 string.
         ticket: String,
     },
     // Join(JoinCommand),
@@ -45,6 +51,14 @@ enum Command {
 #[derive(Debug, Args)]
 struct JoinCommand {
     ticket: String,
+
+    // --ticket t1 --ticket t2 --ticket t3
+    #[arg(short = 't', long = "ticket", action = ArgAction::Append)]
+    tickets_v1: Vec<String>,
+
+    /// t1 t2 t3
+    #[arg(required = true, num_args = 1..)]
+    tickets_v2: Vec<String>,
 }
 
 #[tokio::main]
@@ -65,10 +79,11 @@ async fn main() -> Result<()> {
     };
 
     let secret_key = SecretKey::generate(rand::rngs::OsRng);
-    println!("--> secret_key: {secret_key}");
 
-    let endpoint = Endpoint::builder().secret_key(secret_key).discovery_n0().bind().await?;
-    println!("--> node_id: {:?}", endpoint.node_id());
+    let endpoint = Endpoint::builder().secret_key(secret_key.clone()).discovery_n0().bind().await?;
+    let node_id = endpoint.node_id();
+    // Get our address information, includes our `NodeId`, our `RelayUrl`, and any direct addresses.
+    let node_addr = endpoint.node_addr().await?;
 
     // Build and instance of the gossip protocol and add a clone of the endpoint we have built.
     // The gossip protocol will use the endpoint to make connections.
@@ -80,37 +95,45 @@ async fn main() -> Result<()> {
 
     // in our main file, after we create a topic `id`:
     // print a ticket that includes our own node id and endpoint addresses
-    let ticket = {
-        // Get our address information, includes our `NodeId`, our `RelayUrl`, and any direct
-        // addresses.
-        let me = endpoint.node_addr().await?;
-        let nodes = vec![me];
-        Ticket { topic, nodes }
-    };
-    println!("--> ticket to join us: {ticket}");
+
+    let mut rng = thread_rng();
+    let mut addresses: Vec<NodeAddr> =
+        nodes.choose_multiple(&mut rng, 2).map(|x| (*x).clone()).collect();
+
+    addresses.push(node_addr.clone());
+    let ticket = Ticket { topic, nodes: addresses };
+    println!("--> node: {node_addr:?}\n    ticket: {ticket}");
+
+    let dir = Path::new("configs");
+    fs::create_dir_all(dir).await?;
+
+    let filepath = dir.join(format!("{}.ticket", args.name));
+    let mut file = File::create(&filepath).await?;
+    //file.write_all(&ticket.to_bytes()).await?;
+    file.write_all(&ticket.to_bytes()).await?;
+    file.write_all(b"\n").await?;
 
     // join the gossip topic by connecting to known nodes, if any
     let node_ids = nodes.iter().map(|p| p.node_id).collect();
 
     if nodes.is_empty() {
         println!("--> waiting for nodes to join us...");
-    } else {
-        println!("--> trying to connect to {} nodes...", nodes.len());
-        // add the peer addrs from the ticket to our endpoint's addressbook so that they can be
-        // dialed
-        for node in nodes.into_iter() {
-            endpoint.add_node_addr(node)?;
+    }
+    // add the peer addrs from the ticket to our endpoint's addressbook so that they can be dialed
+    for node in nodes.into_iter() {
+        println!("--> trying to connect to node: {:?}...", node);
+        if let Err(e) = endpoint.add_node_addr(node.clone()) {
+            println!("!!! can't connect to node: {e:?}");
         }
-    };
+    }
 
     let (sender, receiver) = gossip.subscribe_and_join(topic, node_ids).await?.split();
-    println!("--> connected!");
+    println!("--> node(s) connected!");
 
-    let message =
-        Message::new(MessageBody::AboutMe { from: endpoint.node_id(), name: args.name.clone() });
+    let message = Message::new(MessageBody::AboutMe { from: node_id, name: args.name.clone() });
     sender.broadcast(message.to_vec().into()).await?;
 
-    tokio::spawn(subscribe_loop(endpoint.node_id(), args.name.clone(), sender.clone(), receiver));
+    tokio::spawn(subscribe_loop(node_id, args.name.clone(), sender.clone(), receiver));
 
     // spawn an input thread that reads stdin create a multi-provider, single-consumer channel
     let (line_tx, mut line_rx) = tokio::sync::mpsc::channel(1);
@@ -157,29 +180,40 @@ async fn subscribe_loop(
     mut receiver: GossipReceiver,
 ) -> Result<()> {
     let mut names = HashMap::new();
-
-    let me = Message::new(MessageBody::AboutMe { from: node_id, name: name.clone() });
+    let abount_me = Message::new(MessageBody::AboutMe { from: node_id, name: name.clone() });
 
     while let Some(event) = receiver.try_next().await? {
-        if let Event::Gossip(GossipEvent::Received(msg)) = event {
-            // deserialize the message and match on the message type:
-            match Message::from_bytes(&msg.content)?.body {
-                MessageBody::AboutMe { from, name } => {
-                    // if it's an `AboutMe` message add and entry into the map and print the name
-                    if !names.contains_key(&from) {
-                        names.insert(from, name.clone());
-                        println!("<-- {} is now known as {}", from.fmt_short(), name);
-                    }
+        let msg = match event {
+            Event::Gossip(GossipEvent::Received(msg)) => msg,
+            Event::Gossip(msg) => {
+                println!("--> event Gossip: {msg:?}");
+                continue;
+            }
+            Event::Lagged => {
+                println!("--> event Lagged");
+                continue;
+            }
+        };
 
-                    sender.broadcast(me.to_vec().into()).await?;
+        // deserialize the message and match on the message type:
+        match Message::from_bytes(&msg.content)?.body {
+            MessageBody::AboutMe { from, name } => {
+                // if it's an `AboutMe` message add and entry into the map and print the name
+                if !names.contains_key(&from) {
+                    names.insert(from, name.clone());
+                    println!("<-- {} is now known as {:?}", from.fmt_short(), name);
                 }
-                MessageBody::Message { from, text } => {
-                    // if it's a `Message` message, get the name from the map and print the message
-                    let name = names.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
-                    println!("<<< {:?}: {}", name, text.trim());
+
+                if let Err(e) = sender.broadcast(abount_me.to_vec().into()).await {
+                    println!("!!! broadcast error: {e:?}");
                 }
             }
-        } // else if Event::Lagged() {}
+            MessageBody::Message { from, text } => {
+                // if it's a `Message` message, get the name from the map and print the message
+                let name = names.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
+                println!("<<< {:?}: {}", name, text.trim());
+            }
+        }
     }
 
     Ok(())
@@ -230,16 +264,16 @@ impl Ticket {
 
 impl fmt::Display for Ticket {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut text = BASE32_NOPAD.encode(&self.to_bytes()[..]);
-        text.make_ascii_lowercase();
+        let text = general_purpose::STANDARD.encode(&self.to_bytes()[..]);
         write!(f, "{}", text)
     }
 }
 
 impl FromStr for Ticket {
     type Err = anyhow::Error;
+
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let bytes = BASE32_NOPAD.decode(s.to_ascii_uppercase().as_bytes())?;
+        let bytes = general_purpose::STANDARD.decode(s.as_bytes())?;
         Self::from_bytes(&bytes)
     }
 }
