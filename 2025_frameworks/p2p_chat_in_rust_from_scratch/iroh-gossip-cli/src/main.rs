@@ -10,7 +10,6 @@ use iroh_gossip::net::{Event, Gossip, GossipEvent, GossipReceiver, GossipSender}
 use iroh_gossip::{ALPN, proto::TopicId};
 use rand::prelude::*;
 use serde::{Deserialize, Serialize};
-use serde_yaml::Value;
 use tokio::fs::{self, File};
 use tokio::io::AsyncWriteExt;
 
@@ -64,16 +63,6 @@ struct JoinCommand {
     /// t1 t2 t3
     #[arg(required = true, num_args = 1..)]
     tickets_v2: Vec<String>,
-}
-
-pub async fn load_yaml(path: &str) -> Result<Value> {
-    let contents = fs::read_to_string(path).await?;
-    let yaml: Value = serde_yaml::from_str(&contents)?;
-    Ok(yaml)
-}
-
-pub fn config_get<'a>(yaml: &'a Value, path: &str) -> Option<&'a Value> {
-    path.split('.').fold(Some(yaml), |acc, key| acc?.get(key))
 }
 
 #[tokio::main]
