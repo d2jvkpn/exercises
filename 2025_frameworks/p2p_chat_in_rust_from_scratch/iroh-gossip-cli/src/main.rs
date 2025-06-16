@@ -118,11 +118,10 @@ async fn main() -> Result<()> {
     // in our main file, after we create a topic `id`:
     // print a ticket that includes our own node id and endpoint addresses
 
-    let mut rng = rand::rng(); // rand::thread_rng();
     let mut addresses: Vec<NodeAddr> =
-        nodes.choose_multiple(&mut rng, 2).map(|x| (*x).clone()).collect();
-
+        nodes.choose_multiple(&mut rand::rng(), 2).map(|x| (*x).clone()).collect();
     addresses.push(node_addr.clone());
+
     let ticket = Ticket { topic, nodes: addresses };
     println!("--> node: {node_addr:?}\n    ticket: {ticket}");
 
