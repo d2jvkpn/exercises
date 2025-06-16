@@ -1,11 +1,11 @@
 use std::{collections::HashMap, fmt, str::FromStr};
 
 use anyhow::Result;
-use clap::Parser;
+use clap::{Args, Parser};
 use data_encoding::BASE32_NOPAD;
 use futures_lite::StreamExt;
-use iroh::{Endpoint, NodeAddr, NodeId, SecretKey, protocol::Router};
-use iroh_gossip::net::{Event, Gossip, GossipEvent, GossipReceiver};
+use iroh::{Endpoint, NodeAddr, NodeId, PublicKey, SecretKey, protocol::Router};
+use iroh_gossip::net::{Event, Gossip, GossipEvent, GossipReceiver, GossipSender};
 use iroh_gossip::{ALPN, proto::TopicId};
 use serde::{Deserialize, Serialize};
 
@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 /// By default, we use the default n0 discovery services to dial by `NodeId`.
 #[derive(Parser, Debug)]
 #[command(name = "myapp", version = "1.0", about = "A CLI application with subcommands")]
-struct Args {
+struct Cli {
     #[clap(subcommand)]
     command: Command,
 
@@ -39,26 +39,33 @@ enum Command {
         /// The ticket, as base32 string.
         ticket: String,
     },
+    // Join(JoinCommand),
+}
+
+#[derive(Debug, Args)]
+struct JoinCommand {
+    ticket: String,
 }
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let args = Args::parse();
+    let args = Cli::parse();
 
     let (topic, nodes) = match &args.command {
         Command::Open => {
             let topic = TopicId::from_bytes(rand::random());
-            println!("==> opening chat room for topic {topic}");
+            println!("==> Opening chat room for topic {topic}");
             (topic, vec![])
         }
         Command::Join { ticket } => {
             let Ticket { topic, nodes } = Ticket::from_str(&ticket)?;
-            println!("==> joining chat room for topic {topic}");
+            println!("==> Joining chat room for topic {topic}");
             (topic, nodes)
         }
     };
 
     let secret_key = SecretKey::generate(rand::rngs::OsRng);
+    println!("--> secret_key: {secret_key}");
 
     let endpoint = Endpoint::builder().secret_key(secret_key).discovery_n0().bind().await?;
     println!("--> node_id: {:?}", endpoint.node_id());
@@ -99,10 +106,11 @@ async fn main() -> Result<()> {
     let (sender, receiver) = gossip.subscribe_and_join(topic, node_ids).await?.split();
     println!("--> connected!");
 
-    let message = Message::new(MessageBody::AboutMe { from: endpoint.node_id(), name: args.name });
+    let message =
+        Message::new(MessageBody::AboutMe { from: endpoint.node_id(), name: args.name.clone() });
     sender.broadcast(message.to_vec().into()).await?;
 
-    tokio::spawn(subscribe_loop(receiver));
+    tokio::spawn(subscribe_loop(endpoint.node_id(), args.name.clone(), sender.clone(), receiver));
 
     // spawn an input thread that reads stdin create a multi-provider, single-consumer channel
     let (line_tx, mut line_rx) = tokio::sync::mpsc::channel(1);
@@ -142,8 +150,15 @@ fn input_loop(line_tx: tokio::sync::mpsc::Sender<String>) -> Result<()> {
     }
 }
 
-async fn subscribe_loop(mut receiver: GossipReceiver) -> Result<()> {
+async fn subscribe_loop(
+    node_id: PublicKey,
+    name: String,
+    sender: GossipSender,
+    mut receiver: GossipReceiver,
+) -> Result<()> {
     let mut names = HashMap::new();
+
+    let me = Message::new(MessageBody::AboutMe { from: node_id, name: name.clone() });
 
     while let Some(event) = receiver.try_next().await? {
         if let Event::Gossip(GossipEvent::Received(msg)) = event {
@@ -151,8 +166,12 @@ async fn subscribe_loop(mut receiver: GossipReceiver) -> Result<()> {
             match Message::from_bytes(&msg.content)?.body {
                 MessageBody::AboutMe { from, name } => {
                     // if it's an `AboutMe` message add and entry into the map and print the name
-                    names.insert(from, name.clone());
-                    println!("<== {} is now known as {}", from.fmt_short(), name);
+                    if !names.contains_key(&from) {
+                        names.insert(from, name.clone());
+                        println!("<-- {} is now known as {}", from.fmt_short(), name);
+                    }
+
+                    sender.broadcast(me.to_vec().into()).await?;
                 }
                 MessageBody::Message { from, text } => {
                     // if it's a `Message` message, get the name from the map and print the message

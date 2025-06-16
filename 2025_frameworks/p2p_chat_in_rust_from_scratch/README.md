@@ -17,6 +17,8 @@ version: 0.1.0
 cargo run -- --name Alice open
 
 cargo run -- --name Bob join <ticket>
+
+cargo run -- --name Jone join <ticket>
 ```
 
 3. TODO
