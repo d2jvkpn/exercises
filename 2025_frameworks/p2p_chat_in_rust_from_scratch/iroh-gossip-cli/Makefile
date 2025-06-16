@@ -1,5 +1,8 @@
 SHELL = /bin/bash
 
+secret_key:
+	head -c 32 /dev/urandom | xxd -p -c 32
+
 Alice:
 	cargo run -- --name Alice open
 

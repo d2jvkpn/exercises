@@ -8,8 +8,9 @@ use futures_lite::StreamExt;
 use iroh::{Endpoint, NodeAddr, NodeId, PublicKey, SecretKey, protocol::Router};
 use iroh_gossip::net::{Event, Gossip, GossipEvent, GossipReceiver, GossipSender};
 use iroh_gossip::{ALPN, proto::TopicId};
-use rand::{prelude::*, thread_rng};
+use rand::prelude::*;
 use serde::{Deserialize, Serialize};
+use serde_yaml::Value;
 use tokio::fs::{self, File};
 use tokio::io::AsyncWriteExt;
 
@@ -25,6 +26,10 @@ use tokio::io::AsyncWriteExt;
 struct Cli {
     #[clap(subcommand)]
     command: Command,
+
+    /// Set your nickname.
+    #[clap(short, long, default_value = "configs/local.yaml")]
+    config: String,
 
     /*
     /// Set the bind port for our socket. By default, a random port will be used.
@@ -61,6 +66,16 @@ struct JoinCommand {
     tickets_v2: Vec<String>,
 }
 
+pub async fn load_yaml(path: &str) -> Result<Value> {
+    let contents = fs::read_to_string(path).await?;
+    let yaml: Value = serde_yaml::from_str(&contents)?;
+    Ok(yaml)
+}
+
+pub fn config_get<'a>(yaml: &'a Value, path: &str) -> Option<&'a Value> {
+    path.split('.').fold(Some(yaml), |acc, key| acc?.get(key))
+}
+
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Cli::parse();
@@ -78,9 +93,16 @@ async fn main() -> Result<()> {
         }
     };
 
-    let secret_key = SecretKey::generate(rand::rngs::OsRng);
+    //let secret_key = SecretKey::generate(rand::rngs::OsRng); // rand 0.8
+    //let endpoint =
+    //Endpoint::builder().secret_key(secret_key.clone()).discovery_n0().bind().await?;
+    //dbg!(&secret_key);
 
-    let endpoint = Endpoint::builder().secret_key(secret_key.clone()).discovery_n0().bind().await?;
+    let yaml = load_yaml(&args.config).await?;
+    let secret_key = config_get(&yaml, "iroh.secret_key").and_then(|v| v.as_str()).unwrap();
+    let secret_key = SecretKey::from_str(secret_key).unwrap();
+    let endpoint = Endpoint::builder().secret_key(secret_key).discovery_n0().bind().await?;
+
     let node_id = endpoint.node_id();
     // Get our address information, includes our `NodeId`, our `RelayUrl`, and any direct addresses.
     let node_addr = endpoint.node_addr().await?;
@@ -96,7 +118,7 @@ async fn main() -> Result<()> {
     // in our main file, after we create a topic `id`:
     // print a ticket that includes our own node id and endpoint addresses
 
-    let mut rng = thread_rng();
+    let mut rng = rand::rng(); // rand::thread_rng();
     let mut addresses: Vec<NodeAddr> =
         nodes.choose_multiple(&mut rng, 2).map(|x| (*x).clone()).collect();
 
