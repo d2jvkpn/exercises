@@ -91,14 +91,16 @@ async fn main() -> Result<()> {
         .map(RelayNode::from)
         .map(RelayMap::from)
         .unwrap_or_else(|| RelayMap::empty());
-    dbg!(&relay_map);
 
-    let endpoint = Endpoint::builder()
-        .relay_mode(RelayMode::Custom(relay_map))
-        .secret_key(iroh_secret_key())
-        .discovery_n0()
-        .bind()
-        .await?;
+    let endpoint = if relay_map.is_empty() {
+        Endpoint::builder()
+    } else {
+        Endpoint::builder().relay_mode(RelayMode::Custom(relay_map))
+    }
+    .secret_key(iroh_secret_key())
+    .discovery_n0()
+    .bind()
+    .await?;
 
     //let relay_url = endpoint.home_relay().initialized().await.unwrap();
     //println!("==> relay_url: {:?}", relay_url);
