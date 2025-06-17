@@ -49,20 +49,20 @@ pub async fn subscribe_loop(
         let msg = match event {
             Event::Gossip(GossipEvent::Received(msg)) => msg,
             Event::Gossip(GossipEvent::NeighborDown(msg)) => {
-                println!("--> NeighborDown: {msg:?}");
+                println!("<-- NeighborDown: {msg:?}");
                 members.remove_entry(&msg);
                 continue;
             }
             Event::Gossip(GossipEvent::NeighborUp(msg)) => {
-                println!("--> NeighborUp: {msg:?}");
+                println!("<-- NeighborUp: {msg:?}");
                 continue;
             }
             Event::Gossip(GossipEvent::Joined(msg)) => {
-                println!("--> Joined: {msg:?}");
+                println!("<-- Joined: {msg:?}");
                 continue;
             }
             Event::Lagged => {
-                println!("--> Lagged");
+                println!("<-- Lagged");
                 continue;
             }
         };
@@ -70,18 +70,22 @@ pub async fn subscribe_loop(
         // deserialize the message and match on the message type:
         match Message::from_bytes(&msg.content)?.body {
             MessageBody::Bye { from } => match members.remove_entry(&from) {
-                Some((node_id, name)) => println!("--> Bye: {node_id}, {name:?}"),
-                None => println!("--> Bye: {from}, UNKNOWN\n{BRAEKING}"),
+                Some((node_id, name)) => println!("<-- Bye: {node_id}, {name:?}"),
+                None => println!("<-- Bye: {from}, UNKNOWN\n{BRAEKING}"),
             },
             MessageBody::AboutMe { from, name } => {
                 // if it's an `AboutMe` message add and entry into the map and print the name
                 if !members.contains_key(&from) {
                     members.insert(from, name.clone());
-                    println!("<-- {} is now known as {:?}\n{BRAEKING}", from.fmt_short(), name);
+                    println!(
+                        "<-- New peer: {} is now known as {:?}\n{BRAEKING}",
+                        from.fmt_short(),
+                        name
+                    );
                 }
 
                 if let Err(e) = sender.broadcast(abount_me.to_vec().into()).await {
-                    println!("!!! broadcast error: {e:?}");
+                    println!("!!! Broadcast error: {e:?}");
                 }
             }
             MessageBody::Message { from, text } => {

@@ -181,7 +181,8 @@ async fn main() -> Result<()> {
         // broadcast the encoded message
         sender.broadcast(message.to_vec().into()).await?;
         // print to ourselves the text that we sent
-        println!(">>> YOU({:?}): {}\n{BRAEKING}", name, text);
+        // println!(">>> YOU({:?}): {}\n{BRAEKING}", name, text);
+        println!("{BRAEKING}");
     }
 
     let message = Message::new(MessageBody::Bye { from: node_id });
