@@ -89,8 +89,8 @@ async fn main() -> Result<()> {
         Some(v) => {
             let yaml = load_yaml(&v).unwrap();
             let val = config_get(&yaml, "iroh.secret_key").unwrap();
-            let val = serde_yaml::to_string(val).unwrap();
-            SecretKey::from_str(&val.trim()).unwrap()
+            let val = serde_yaml::to_string(val)?;
+            SecretKey::from_str(&val.trim())?
         }
         None => iroh_secret_key(),
     };
