@@ -2,14 +2,12 @@ use std::{fmt::Debug, path::Path, str::FromStr};
 
 use iroh_gossip_cli::handlers::{input_loop, subscribe_loop};
 use iroh_gossip_cli::structs::{Message, MessageBody, Ticket};
-use iroh_gossip_cli::utils::iroh_secret_key;
-use iroh_gossip_cli::utils::{config_get, load_yaml};
+use iroh_gossip_cli::utils::{config_get, iroh_secret_key, load_yaml};
 
 use anyhow::{Result, anyhow};
 use clap::{ArgAction, Args, Parser};
-use iroh::{
-    Endpoint, NodeAddr, RelayMap, RelayMode, RelayNode, RelayUrl, SecretKey, protocol::Router,
-};
+use iroh::protocol::Router;
+use iroh::{Endpoint, NodeAddr, RelayMap, RelayMode, RelayNode, RelayUrl, SecretKey};
 use iroh_gossip::{ALPN, net::Gossip, proto::TopicId};
 use rand::prelude::*;
 
