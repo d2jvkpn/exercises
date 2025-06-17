@@ -1,15 +1,15 @@
-use std::fmt::{self, Debug};
-use std::{collections::HashMap, path::Path, str::FromStr};
+use std::{fmt::Debug, path::Path, str::FromStr};
 
-use anyhow::Result;
-use base64::{Engine, engine::general_purpose};
+use iroh_gossip_cli::handlers::{input_loop, subscribe_loop};
+use iroh_gossip_cli::structs::{Message, MessageBody, Ticket};
+use iroh_gossip_cli::utils::iroh_secret_key;
+
+use anyhow::{Result, anyhow};
 use clap::{ArgAction, Args, Parser};
-use futures_lite::StreamExt;
-use iroh::{Endpoint, NodeAddr, NodeId, PublicKey, SecretKey, protocol::Router};
-use iroh_gossip::net::{Event, Gossip, GossipEvent, GossipReceiver, GossipSender};
-use iroh_gossip::{ALPN, proto::TopicId};
+use iroh::{Endpoint, NodeAddr, protocol::Router};
+use iroh_gossip::{ALPN, net::Gossip, proto::TopicId};
 use rand::prelude::*;
-use serde::{Deserialize, Serialize};
+
 use tokio::fs::{self, File};
 use tokio::io::AsyncWriteExt;
 
@@ -22,9 +22,9 @@ use tokio::io::AsyncWriteExt;
 /// By default, we use the default n0 discovery services to dial by `NodeId`.
 #[derive(Parser, Debug)]
 #[command(name = "iroh-gossip-cli", version = "1.0", about = "p2p chat inrust from scratch")]
-struct Cli {
+struct Command {
     #[clap(subcommand)]
-    command: Command,
+    subcommand: Subcommand,
 
     /// Set your nickname.
     #[clap(short, long, default_value = "configs/local.yaml")]
@@ -41,7 +41,7 @@ struct Cli {
 }
 
 #[derive(Parser, Debug)]
-enum Command {
+enum Subcommand {
     /// Open a chat room for a topic and print a ticket for others to join.
     Open,
     /// Join a chat room from a ticket.
@@ -67,36 +67,22 @@ struct JoinCommand {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let args = Cli::parse();
+    let args = Command::parse();
 
-    let (topic, nodes) = match &args.command {
-        Command::Open => {
+    let (topic, nodes) = match &args.subcommand {
+        Subcommand::Open => {
             let topic = TopicId::from_bytes(rand::random());
             println!("==> Opening chat room for topic {topic}");
             (topic, vec![])
         }
-        Command::Join { ticket } => {
+        Subcommand::Join { ticket } => {
             let Ticket { topic, nodes } = Ticket::from_str(&ticket)?;
             println!("==> Joining chat room for topic {topic}");
             (topic, nodes)
         }
     };
 
-    // let secret_key = SecretKey::generate(rand::rngs::ThreadRng); // !!! rand 0.8
-    // let endpoint =
-    // Endpoint::builder().secret_key(secret_key.clone()).discovery_n0().bind().await?;
-    // dbg!(&secret_key);
-
-    //let yaml = load_yaml(&args.config).await?;
-    //let secret_key = config_get(&yaml, "iroh.secret_key").and_then(|v| v.as_str()).unwrap();
-    //let secret_key = SecretKey::from_str(secret_key).unwrap();
-    //let endpoint = Endpoint::builder().secret_key(secret_key).discovery_n0().bind().await?;
-
-    let mut rng = rand::rng();
-    let mut buf = [0u8; 32];
-    rng.fill_bytes(&mut buf);
-    let secret_key = SecretKey::from_bytes(&buf);
-    let endpoint = Endpoint::builder().secret_key(secret_key).discovery_n0().bind().await?;
+    let endpoint = Endpoint::builder().secret_key(iroh_secret_key()).discovery_n0().bind().await?;
 
     let node_id = endpoint.node_id();
     // Get our address information, includes our `NodeId`, our `RelayUrl`, and any direct addresses.
@@ -114,20 +100,11 @@ async fn main() -> Result<()> {
     // print a ticket that includes our own node id and endpoint addresses
 
     let mut addresses: Vec<NodeAddr> =
-        nodes.choose_multiple(&mut rng, 2).map(|x| (*x).clone()).collect();
+        nodes.choose_multiple(&mut rand::rng(), 2).map(|x| (*x).clone()).collect();
     addresses.push(node_addr.clone());
 
     let ticket = Ticket { topic, nodes: addresses };
-    println!("--> node: {node_addr:?}\n    ticket: {ticket}");
-
-    let configs = Path::new("configs");
-    fs::create_dir_all(configs).await?;
-
-    let filepath = configs.join(format!("{}.ticket", args.name));
-    let mut file = File::create(&filepath).await?;
-    //file.write_all(&ticket.to_bytes()).await?;
-    file.write_all(&ticket.to_bytes()).await?;
-    file.write_all(b"\n").await?;
+    write_ticket(&ticket, &args.name).await?;
 
     // join the gossip topic by connecting to known nodes, if any
     let node_ids = nodes.iter().map(|p| p.node_id).collect();
@@ -173,123 +150,23 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-/// Read input from stdin
-fn input_loop(line_tx: tokio::sync::mpsc::Sender<String>) -> Result<()> {
-    // create a new string buffer
-    let mut buffer = String::new();
-    // get a handle on `Stdin`
-    let stdin = std::io::stdin(); // We get `Stdin` here.
-    loop {
-        // loop through reading from the buffer...
-        stdin.read_line(&mut buffer)?;
-        // and then sending over the channel
-        line_tx.blocking_send(buffer.clone())?;
-        // clear the buffer after we've sent the content
-        buffer.clear();
-    }
-}
+async fn write_ticket(ticket: &Ticket, name: &str) -> Result<()> {
+    let node_addr = ticket.nodes.last().ok_or_else(|| anyhow!("nodes is empty"))?;
 
-async fn subscribe_loop(
-    node_id: PublicKey,
-    name: String,
-    sender: GossipSender,
-    mut receiver: GossipReceiver,
-) -> Result<()> {
-    let mut names = HashMap::new();
-    let abount_me = Message::new(MessageBody::AboutMe { from: node_id, name: name.clone() });
+    let configs = Path::new("configs");
+    fs::create_dir_all(configs).await?;
 
-    while let Some(event) = receiver.try_next().await? {
-        let msg = match event {
-            Event::Gossip(GossipEvent::Received(msg)) => msg,
-            Event::Gossip(msg) => {
-                println!("--> event Gossip: {msg:?}");
-                continue;
-            }
-            Event::Lagged => {
-                println!("--> event Lagged");
-                continue;
-            }
-        };
-
-        // deserialize the message and match on the message type:
-        match Message::from_bytes(&msg.content)?.body {
-            MessageBody::AboutMe { from, name } => {
-                // if it's an `AboutMe` message add and entry into the map and print the name
-                if !names.contains_key(&from) {
-                    names.insert(from, name.clone());
-                    println!("<-- {} is now known as {:?}", from.fmt_short(), name);
-                }
-
-                if let Err(e) = sender.broadcast(abount_me.to_vec().into()).await {
-                    println!("!!! broadcast error: {e:?}");
-                }
-            }
-            MessageBody::Message { from, text } => {
-                // if it's a `Message` message, get the name from the map and print the message
-                let name = names.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
-                println!("<<< {:?}: {}", name, text.trim());
-            }
-        }
-    }
+    let filepath = configs.join(format!("{}.ticket", name));
+    let mut file = File::create(&filepath).await?;
+    //file.write_all(&ticket.to_bytes()).await?;
+    file.write_all(&ticket.to_bytes()).await?;
+    file.write_all(b"\n").await?;
+    // println!("--> node: {node_addr:?}\n    ticket: {ticket}");
+    println!("--> node_id: {}", node_addr.node_id);
+    println!("    relay_url: {:?}", node_addr.relay_url());
+    println!("    direct_addresses: {:?}", node_addr.direct_addresses().collect::<Vec<_>>());
+    println!("    ticket_path: {}", filepath.display());
+    println!("    ticket: {ticket}");
 
     Ok(())
-}
-
-// add the message code to the bottom
-#[derive(Debug, Serialize, Deserialize)]
-struct Message {
-    body: MessageBody,
-    nonce: [u8; 16],
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-enum MessageBody {
-    AboutMe { from: NodeId, name: String },
-    Message { from: NodeId, text: String },
-}
-
-impl Message {
-    fn from_bytes(bytes: &[u8]) -> Result<Self> {
-        serde_json::from_slice(bytes).map_err(Into::into)
-    }
-
-    pub fn new(body: MessageBody) -> Self {
-        Self { body, nonce: rand::random() }
-    }
-
-    pub fn to_vec(&self) -> Vec<u8> {
-        serde_json::to_vec(self).expect("serde_json::to_vec is infallible")
-    }
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-struct Ticket {
-    topic: TopicId,
-    nodes: Vec<NodeAddr>,
-}
-
-impl Ticket {
-    fn from_bytes(bytes: &[u8]) -> Result<Self> {
-        serde_json::from_slice(bytes).map_err(Into::into)
-    }
-
-    pub fn to_bytes(&self) -> Vec<u8> {
-        serde_json::to_vec(self).expect("serde_json::to_vec is infallible")
-    }
-}
-
-impl fmt::Display for Ticket {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let text = general_purpose::STANDARD.encode(&self.to_bytes()[..]);
-        write!(f, "{}", text)
-    }
-}
-
-impl FromStr for Ticket {
-    type Err = anyhow::Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let bytes = general_purpose::STANDARD.decode(s.as_bytes())?;
-        Self::from_bytes(&bytes)
-    }
 }

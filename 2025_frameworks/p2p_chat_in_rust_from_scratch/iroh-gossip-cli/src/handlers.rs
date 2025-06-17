@@ -1,0 +1,70 @@
+use std::collections::HashMap;
+
+use crate::structs::{Message, MessageBody};
+
+use anyhow::Result;
+use futures_lite::StreamExt;
+use iroh::PublicKey;
+use iroh_gossip::net::{Event, GossipEvent, GossipReceiver, GossipSender};
+
+/// Read input from stdin
+pub fn input_loop(line_tx: tokio::sync::mpsc::Sender<String>) -> Result<()> {
+    // create a new string buffer
+    let mut buffer = String::new();
+    // get a handle on `Stdin`
+    let stdin = std::io::stdin(); // We get `Stdin` here.
+    loop {
+        // loop through reading from the buffer...
+        stdin.read_line(&mut buffer)?;
+        // and then sending over the channel
+        line_tx.blocking_send(buffer.clone())?;
+        // clear the buffer after we've sent the content
+        buffer.clear();
+    }
+}
+
+pub async fn subscribe_loop(
+    node_id: PublicKey,
+    name: String,
+    sender: GossipSender,
+    mut receiver: GossipReceiver,
+) -> Result<()> {
+    let mut names = HashMap::new();
+    let abount_me = Message::new(MessageBody::AboutMe { from: node_id, name: name.to_string() });
+
+    while let Some(event) = receiver.try_next().await? {
+        let msg = match event {
+            Event::Gossip(GossipEvent::Received(msg)) => msg,
+            Event::Gossip(msg) => {
+                println!("--> event Gossip: {msg:?}");
+                continue;
+            }
+            Event::Lagged => {
+                println!("--> event Lagged");
+                continue;
+            }
+        };
+
+        // deserialize the message and match on the message type:
+        match Message::from_bytes(&msg.content)?.body {
+            MessageBody::AboutMe { from, name } => {
+                // if it's an `AboutMe` message add and entry into the map and print the name
+                if !names.contains_key(&from) {
+                    names.insert(from, name.clone());
+                    println!("<-- {} is now known as {:?}", from.fmt_short(), name);
+                }
+
+                if let Err(e) = sender.broadcast(abount_me.to_vec().into()).await {
+                    println!("!!! broadcast error: {e:?}");
+                }
+            }
+            MessageBody::Message { from, text } => {
+                // if it's a `Message` message, get the name from the map and print the message
+                let name = names.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
+                println!("<<< {:?}: {}", name, text.trim());
+            }
+        }
+    }
+
+    Ok(())
+}
