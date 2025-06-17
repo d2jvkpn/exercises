@@ -1,20 +1,30 @@
 #![allow(dead_code)]
-use std::fs;
+use std::path::Path;
 
-use anyhow::Result;
+use crate::structs::Ticket;
+
+use anyhow::{Result, anyhow};
 use iroh::SecretKey;
 //use rand::RngCore;
+use chrono::{Local, SecondsFormat};
 use rand::prelude::*;
 use serde_yaml::Value;
+use tokio::fs::{self, File};
+use tokio::io::AsyncWriteExt;
 
 pub fn load_yaml(path: &str) -> Result<Value> {
-    let contents = fs::read_to_string(path)?;
+    let contents = std::fs::read_to_string(path)?;
     let yaml: Value = serde_yaml::from_str(&contents)?;
     Ok(yaml)
 }
 
 pub fn config_get<'a>(yaml: &'a Value, path: &str) -> Option<&'a Value> {
     path.split('.').fold(Some(yaml), |acc, key| acc?.get(key))
+}
+
+pub fn now() -> String {
+    let now = Local::now();
+    return now.to_rfc3339_opts(SecondsFormat::Millis, true);
 }
 
 pub fn iroh_secret_key() -> SecretKey {
@@ -33,6 +43,34 @@ pub fn iroh_secret_key() -> SecretKey {
     rng.fill_bytes(&mut buf);
 
     SecretKey::from_bytes(&buf)
+}
+
+pub async fn write_ticket(ticket: &Ticket, filename: &str) -> Result<()> {
+    let node_addr = ticket.nodes.last().ok_or_else(|| anyhow!("nodes is empty"))?;
+
+    let configs = Path::new("configs");
+    fs::create_dir_all(configs).await?;
+
+    let filepath = configs.join(format!("{}.ticket", filename));
+    let mut file = File::create(&filepath).await?;
+    //file.write_all(&ticket.to_bytes()).await?;
+    file.write_all(&ticket.to_bytes()).await?;
+    file.write_all(b"\n").await?;
+    // println!("--> node: {node_addr:?}\n    ticket: {ticket}");
+    println!("--> node_id: {}", node_addr.node_id);
+    println!("    filepath: {}", filepath.display());
+    println!("    relay_url: {:?}", node_addr.relay_url());
+    println!("    direct_addresses: {:?}", node_addr.direct_addresses().collect::<Vec<_>>());
+    println!("    ticket: {ticket}");
+
+    Ok(())
+}
+
+pub fn split_first_space(s: &str) -> (&str, Option<&str>) {
+    match s.split_once(' ') {
+        Some((first, rest)) => (first, Some(rest)),
+        None => (s, None), // when no space in s
+    }
 }
 
 #[cfg(test)]

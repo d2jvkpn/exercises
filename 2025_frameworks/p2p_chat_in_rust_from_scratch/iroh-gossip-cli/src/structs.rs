@@ -6,7 +6,7 @@ use iroh::{NodeAddr, NodeId};
 use iroh_gossip::proto::TopicId;
 use serde::{Deserialize, Serialize};
 
-pub const QUIT: &str = ":q!";
+pub const COMMAND_QUIT: &str = ":quit";
 pub const BRAEKING: &str = "----------------------------------------------------------------";
 
 // add the message code to the bottom
@@ -18,9 +18,9 @@ pub struct Message {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum MessageBody {
-    AboutMe { from: NodeId, name: String },
+    AboutMe { from: NodeId, name: String, at: String },
     Message { from: NodeId, text: String },
-    Bye { from: NodeId },
+    Bye { from: NodeId, at: String },
 }
 
 impl Message {

@@ -1,17 +1,18 @@
-use std::{fmt::Debug, path::Path, str::FromStr};
+use std::{fmt::Debug, str::FromStr};
 
 use iroh_gossip_cli::handlers::{input_loop, subscribe_loop};
-use iroh_gossip_cli::structs::{BRAEKING, Message, MessageBody, QUIT, Ticket};
-use iroh_gossip_cli::utils::{config_get, iroh_secret_key, load_yaml};
+use iroh_gossip_cli::structs::{BRAEKING, COMMAND_QUIT, Message, MessageBody, Ticket};
+use iroh_gossip_cli::utils::{
+    config_get, iroh_secret_key, load_yaml, now, split_first_space, write_ticket,
+};
 
-use anyhow::{Result, anyhow};
+use anyhow::Result;
 use clap::{ArgAction, Args, Parser};
 use iroh::protocol::Router;
 use iroh::{Endpoint, NodeAddr, RelayMap, RelayMode, RelayNode, RelayUrl, SecretKey};
 use iroh_gossip::{ALPN, net::Gossip, proto::TopicId};
 use rand::prelude::*;
-use tokio::fs::{self, File};
-use tokio::{io::AsyncWriteExt, sync::mpsc, time};
+use tokio::{sync::mpsc, time};
 
 /// Chat over iroh-gossip
 ///
@@ -141,24 +142,25 @@ async fn main() -> Result<()> {
     let node_ids = ticket_nodes.iter().map(|p| p.node_id).collect();
 
     if ticket_nodes.is_empty() {
-        println!("--> waiting for nodes to join us...");
+        println!("--> {} waiting for nodes to join us...", now());
     } else {
         // add the peer addrs from the ticket to our endpoint's addressbook,
         // so that they can be dialed
         for node in ticket_nodes.into_iter() {
             // println!("--> trying to connect to node: {:?}...", node);
             if let Err(e) = endpoint.add_node_addr(node.clone()) {
-                println!("!!! can't connect to node: {e:?}");
+                println!("!!! {} can't connect to node: {}, {e:?}", now(), node.node_id);
             } else {
-                println!("--> connected to node: {}", node.node_id);
+                println!("--> {} connected to node: {}", now(), node.node_id);
             }
         }
     }
 
     let (sender, receiver) = gossip.subscribe_and_join(topic, node_ids).await?.split();
-    println!("--> node(s) connected!");
+    println!("--> {} connected!", now());
 
-    let message = Message::new(MessageBody::AboutMe { from: node_id, name: name.clone() });
+    let message =
+        Message::new(MessageBody::AboutMe { from: node_id, name: name.clone(), at: now() });
     sender.broadcast(message.to_vec().into()).await?;
 
     tokio::spawn(subscribe_loop(node_id, name.clone(), sender.clone(), receiver));
@@ -169,50 +171,30 @@ async fn main() -> Result<()> {
     std::thread::spawn(move || input_loop(line_tx));
 
     // broadcast each line we type
-    println!("==> type a message and hit enter to broadcast...");
+    println!("==> Type a message and hit enter to broadcast...");
     // listen for lines that we have typed to be sent from `stdin`
     while let Some(text) = line_rx.recv().await {
         // create a message from the text
-        if text == QUIT {
-            break;
+        match split_first_space(&text) {
+            (COMMAND_QUIT, _) => break,
+            _ => {}
         }
 
         let message = Message::new(MessageBody::Message { from: node_id, text: text.clone() });
         // broadcast the encoded message
         sender.broadcast(message.to_vec().into()).await?;
         // print to ourselves the text that we sent
-        // println!(">>> YOU({:?}): {}\n{BRAEKING}", name, text);
-        println!("{BRAEKING}");
+        // println!(">>> You({:?}): {}\n{BRAEKING}", name, text);
+        println!(">>> {} You({:?})\n{BRAEKING}", now(), name);
     }
 
-    let message = Message::new(MessageBody::Bye { from: node_id });
+    let message = Message::new(MessageBody::Bye { from: node_id, at: now() });
     // broadcast the encoded message
     sender.broadcast(message.to_vec().into()).await?;
 
     time::sleep(time::Duration::from_millis(100)).await;
-    println!("<== Quit");
+    println!("<== {} Quit", now());
 
     router.shutdown().await?;
-    Ok(())
-}
-
-async fn write_ticket(ticket: &Ticket, name: &str) -> Result<()> {
-    let node_addr = ticket.nodes.last().ok_or_else(|| anyhow!("nodes is empty"))?;
-
-    let configs = Path::new("configs");
-    fs::create_dir_all(configs).await?;
-
-    let filepath = configs.join(format!("{}.ticket", name));
-    let mut file = File::create(&filepath).await?;
-    //file.write_all(&ticket.to_bytes()).await?;
-    file.write_all(&ticket.to_bytes()).await?;
-    file.write_all(b"\n").await?;
-    // println!("--> node: {node_addr:?}\n    ticket: {ticket}");
-    println!("--> node_id: {}", node_addr.node_id);
-    println!("    filepath: {}", filepath.display());
-    println!("    relay_url: {:?}", node_addr.relay_url());
-    println!("    direct_addresses: {:?}", node_addr.direct_addresses().collect::<Vec<_>>());
-    println!("    ticket: {ticket}");
-
     Ok(())
 }

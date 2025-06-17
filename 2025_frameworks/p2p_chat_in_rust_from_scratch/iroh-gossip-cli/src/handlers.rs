@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
-use crate::structs::{BRAEKING, Message, MessageBody, QUIT};
+use crate::structs::{BRAEKING, COMMAND_QUIT, Message, MessageBody};
+use crate::utils::now;
 
 use anyhow::Result;
 use futures_lite::StreamExt;
@@ -26,7 +27,7 @@ pub fn input_loop(line_tx: mpsc::Sender<String>) -> Result<()> {
         }
 
         let line = buffer.trim_end();
-        let quit = line == QUIT;
+        let quit = line == COMMAND_QUIT;
         line_tx.blocking_send(line.to_string())?; // and then sending over the channel
         buffer.clear(); // clear the buffer after we've sent the content
 
@@ -43,55 +44,57 @@ pub async fn subscribe_loop(
     mut receiver: GossipReceiver,
 ) -> Result<()> {
     let mut members = HashMap::new();
-    let abount_me = Message::new(MessageBody::AboutMe { from: node_id, name: name.to_string() });
+    let abount_me =
+        Message::new(MessageBody::AboutMe { from: node_id, name: name.to_string(), at: now() });
 
     while let Some(event) = receiver.try_next().await? {
         let msg = match event {
-            Event::Gossip(GossipEvent::Received(msg)) => msg,
-            Event::Gossip(GossipEvent::NeighborDown(msg)) => {
-                println!("<-- NeighborDown: {msg:?}");
-                members.remove_entry(&msg);
-                continue;
-            }
-            Event::Gossip(GossipEvent::NeighborUp(msg)) => {
-                println!("<-- NeighborUp: {msg:?}");
-                continue;
-            }
-            Event::Gossip(GossipEvent::Joined(msg)) => {
-                println!("<-- Joined: {msg:?}");
-                continue;
-            }
             Event::Lagged => {
-                println!("<-- Lagged");
+                println!("<-- {} Lagged", now());
                 continue;
             }
+            Event::Gossip(GossipEvent::Joined(node_ids)) => {
+                println!("<-- {} Joined: {:?}", now(), node_ids);
+                continue;
+            }
+            Event::Gossip(GossipEvent::NeighborUp(from)) => {
+                println!("<-- {} NeighborUp: {from}", now());
+                continue;
+            }
+            Event::Gossip(GossipEvent::NeighborDown(from)) => {
+                match members.remove_entry(&from) {
+                    Some((_, name)) => {
+                        println!("<-- {} NeighborDown: {name:?}, {}", now(), from.fmt_short())
+                    }
+                    None => println!("<-- {} NeighborDown: UNKNOWN, {}", now(), from),
+                };
+                continue;
+            }
+            Event::Gossip(GossipEvent::Received(msg)) => msg,
         };
 
         // deserialize the message and match on the message type:
         match Message::from_bytes(&msg.content)?.body {
-            MessageBody::Bye { from } => match members.remove_entry(&from) {
-                Some((node_id, name)) => println!("<-- Bye: {node_id}, {name:?}"),
-                None => println!("<-- Bye: {from}, UNKNOWN\n{BRAEKING}"),
+            MessageBody::Bye { from, at: _ } => match members.remove_entry(&from) {
+                Some((_, name)) => println!("<-- {} Bye: {name:?}, {}", now(), from.fmt_short()),
+                None => println!("<-- {} Bye: UNKNOWN, {}", now(), from),
             },
-            MessageBody::AboutMe { from, name } => {
+            MessageBody::AboutMe { from, name, at } => {
                 // if it's an `AboutMe` message add and entry into the map and print the name
                 if !members.contains_key(&from) {
                     members.insert(from, name.clone());
-                    println!(
-                        "<-- New peer: {} is now known as {:?}\n{BRAEKING}",
-                        from.fmt_short(),
-                        name
-                    );
+                    // println!("<-- Peer: {} is now known as {:?}", from, name);
+                    println!("<-- {} Peer: {}, {:?}, {}", now(), from, name, at);
                 }
 
                 if let Err(e) = sender.broadcast(abount_me.to_vec().into()).await {
-                    println!("!!! Broadcast error: {e:?}");
+                    println!("!!! {} BroadcastError: {e:?}", now());
                 }
             }
             MessageBody::Message { from, text } => {
                 // if it's a `Message` message, get the name from the map and print the message
                 let name = members.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
-                println!("<<< {:?}: {}\n{BRAEKING}", name, text.trim_end());
+                println!("<<< {} {:?}:\n{}\n{BRAEKING}", now(), name, text.trim_end());
             }
         }
     }
