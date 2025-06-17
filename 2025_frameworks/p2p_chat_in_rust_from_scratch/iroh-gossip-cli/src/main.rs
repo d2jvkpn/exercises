@@ -3,10 +3,13 @@ use std::{fmt::Debug, path::Path, str::FromStr};
 use iroh_gossip_cli::handlers::{input_loop, subscribe_loop};
 use iroh_gossip_cli::structs::{Message, MessageBody, Ticket};
 use iroh_gossip_cli::utils::iroh_secret_key;
+use iroh_gossip_cli::utils::{config_get, load_yaml};
 
 use anyhow::{Result, anyhow};
 use clap::{ArgAction, Args, Parser};
-use iroh::{Endpoint, NodeAddr, RelayMap, RelayMode, RelayNode, RelayUrl, protocol::Router};
+use iroh::{
+    Endpoint, NodeAddr, RelayMap, RelayMode, RelayNode, RelayUrl, SecretKey, protocol::Router,
+};
 use iroh_gossip::{ALPN, net::Gossip, proto::TopicId};
 use rand::prelude::*;
 
@@ -26,8 +29,8 @@ struct Command {
     #[clap(subcommand)]
     subcommand: Subcommand,
 
-    #[clap(short, long, default_value = "configs/local.yaml")]
-    config: String,
+    #[clap(short, long)] // default_value = "configs/local.yaml"
+    config: Option<String>,
 
     #[clap(short, long)]
     relay_url: Option<String>,
@@ -85,6 +88,16 @@ async fn main() -> Result<()> {
         }
     };
 
+    let secret_key: SecretKey = match args.config {
+        Some(v) => {
+            let yaml = load_yaml(&v).unwrap();
+            let val = config_get(&yaml, "iroh.secret_key").unwrap();
+            let val = serde_yaml::to_string(val).unwrap();
+            SecretKey::from_str(&val.trim()).unwrap()
+        }
+        None => iroh_secret_key(),
+    };
+
     let relay_map: RelayMap = args
         .relay_url
         .and_then(|v| Some(v.parse::<RelayUrl>().ok()?))
@@ -97,7 +110,7 @@ async fn main() -> Result<()> {
     } else {
         Endpoint::builder().relay_mode(RelayMode::Custom(relay_map))
     }
-    .secret_key(iroh_secret_key())
+    .secret_key(secret_key)
     .discovery_n0()
     .bind()
     .await?;
@@ -119,7 +132,6 @@ async fn main() -> Result<()> {
 
     // in our main file, after we create a topic `id`:
     // print a ticket that includes our own node id and endpoint addresses
-
     let mut all_nodes: Vec<NodeAddr> =
         ticket_nodes.choose_multiple(&mut rand::rng(), 2).map(|x| (*x).clone()).collect();
 
@@ -169,7 +181,7 @@ async fn main() -> Result<()> {
         // broadcast the encoded message
         sender.broadcast(message.to_vec().into()).await?;
         // print to ourselves the text that we sent
-        println!(">>> You: {}", text.trim());
+        println!(">>> You({:?}): {}", name, text.trim());
     }
 
     router.shutdown().await?;

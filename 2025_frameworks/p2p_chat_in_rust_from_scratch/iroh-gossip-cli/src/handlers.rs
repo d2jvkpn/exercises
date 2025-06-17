@@ -29,18 +29,27 @@ pub async fn subscribe_loop(
     sender: GossipSender,
     mut receiver: GossipReceiver,
 ) -> Result<()> {
-    let mut names = HashMap::new();
+    let mut members = HashMap::new();
     let abount_me = Message::new(MessageBody::AboutMe { from: node_id, name: name.to_string() });
 
     while let Some(event) = receiver.try_next().await? {
         let msg = match event {
             Event::Gossip(GossipEvent::Received(msg)) => msg,
-            Event::Gossip(msg) => {
-                println!("--> event Gossip: {msg:?}");
+            Event::Gossip(GossipEvent::NeighborDown(msg)) => {
+                println!("--> NeighborDown: {msg:?}");
+                members.remove_entry(&msg);
+                continue;
+            }
+            Event::Gossip(GossipEvent::NeighborUp(msg)) => {
+                println!("--> NeighborUp: {msg:?}");
+                continue;
+            }
+            Event::Gossip(GossipEvent::Joined(msg)) => {
+                println!("--> Joined: {msg:?}");
                 continue;
             }
             Event::Lagged => {
-                println!("--> event Lagged");
+                println!("--> Lagged");
                 continue;
             }
         };
@@ -49,8 +58,8 @@ pub async fn subscribe_loop(
         match Message::from_bytes(&msg.content)?.body {
             MessageBody::AboutMe { from, name } => {
                 // if it's an `AboutMe` message add and entry into the map and print the name
-                if !names.contains_key(&from) {
-                    names.insert(from, name.clone());
+                if !members.contains_key(&from) {
+                    members.insert(from, name.clone());
                     println!("<-- {} is now known as {:?}", from.fmt_short(), name);
                 }
 
@@ -60,7 +69,7 @@ pub async fn subscribe_loop(
             }
             MessageBody::Message { from, text } => {
                 // if it's a `Message` message, get the name from the map and print the message
-                let name = names.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
+                let name = members.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
                 println!("<<< {:?}: {}", name, text.trim());
             }
         }
