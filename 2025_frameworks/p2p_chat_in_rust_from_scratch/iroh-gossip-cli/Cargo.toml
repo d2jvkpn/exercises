@@ -2,6 +2,16 @@
 name = "iroh-gossip-cli"
 version = "0.1.0"
 edition = "2024"
+default-run = "main"
+
+[[bin]]
+name = "chat"
+path = "src/chat.rs"
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
+
 
 [dependencies]
 anyhow = "1"

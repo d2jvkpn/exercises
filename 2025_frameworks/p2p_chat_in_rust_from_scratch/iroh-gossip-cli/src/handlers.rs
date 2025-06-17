@@ -1,29 +1,38 @@
 use std::collections::HashMap;
 
-use crate::structs::{Message, MessageBody};
+use crate::structs::{Message, MessageBody, QUIT};
 
 use anyhow::Result;
 use futures_lite::StreamExt;
 use iroh::PublicKey;
 use iroh_gossip::net::{Event, GossipEvent, GossipReceiver, GossipSender};
+use tokio::sync::mpsc;
 
 /// Read input from stdin
-pub fn input_loop(line_tx: tokio::sync::mpsc::Sender<String>) -> Result<()> {
+pub fn input_loop(line_tx: mpsc::Sender<String>) -> Result<()> {
     // create a new string buffer
     let mut buffer = String::new();
+    let eol = &['\r', '\n'][..];
     // get a handle on `Stdin`
     let stdin = std::io::stdin(); // We get `Stdin` here.
+
     loop {
         stdin.read_line(&mut buffer)?; // loop through reading from the buffer...
         // let line = buffer.trim_end().to_string();
-        if buffer.trim_end_matches(&['\r', '\n'][..]).ends_with(' ') {
+        if buffer.trim_end_matches(eol).ends_with(' ') {
             buffer.truncate(buffer.trim_end().len());
             buffer.push('\n');
             continue;
         }
 
-        line_tx.blocking_send(buffer.trim_end().to_string())?; // and then sending over the channel
+        let line = buffer.trim_end();
+        let quit = line == QUIT;
+        line_tx.blocking_send(line.to_string())?; // and then sending over the channel
         buffer.clear(); // clear the buffer after we've sent the content
+
+        if quit {
+            break Ok(());
+        }
     }
 }
 
@@ -60,10 +69,10 @@ pub async fn subscribe_loop(
 
         // deserialize the message and match on the message type:
         match Message::from_bytes(&msg.content)?.body {
-            MessageBody::Bye { from } => {
-                let name = members.remove_entry(&from);
-                println!("--> Bye: {from}, {name:?}");
-            }
+            MessageBody::Bye { from } => match members.remove_entry(&from) {
+                Some((node_id, name)) => println!("--> Bye: {node_id}, {name:?}"),
+                None => println!("--> Bye: {from}, ????"),
+            },
             MessageBody::AboutMe { from, name } => {
                 // if it's an `AboutMe` message add and entry into the map and print the name
                 if !members.contains_key(&from) {

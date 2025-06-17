@@ -6,6 +6,8 @@ use iroh::{NodeAddr, NodeId};
 use iroh_gossip::proto::TopicId;
 use serde::{Deserialize, Serialize};
 
+pub const QUIT: &str = ":q!";
+
 // add the message code to the bottom
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Message {
