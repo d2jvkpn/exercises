@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::structs::{Message, MessageBody, QUIT};
+use crate::structs::{BRAEKING, Message, MessageBody, QUIT};
 
 use anyhow::Result;
 use futures_lite::StreamExt;
@@ -71,13 +71,13 @@ pub async fn subscribe_loop(
         match Message::from_bytes(&msg.content)?.body {
             MessageBody::Bye { from } => match members.remove_entry(&from) {
                 Some((node_id, name)) => println!("--> Bye: {node_id}, {name:?}"),
-                None => println!("--> Bye: {from}, ????"),
+                None => println!("--> Bye: {from}, UNKNOWN\n{BRAEKING}"),
             },
             MessageBody::AboutMe { from, name } => {
                 // if it's an `AboutMe` message add and entry into the map and print the name
                 if !members.contains_key(&from) {
                     members.insert(from, name.clone());
-                    println!("<-- {} is now known as {:?}", from.fmt_short(), name);
+                    println!("<-- {} is now known as {:?}\n{BRAEKING}", from.fmt_short(), name);
                 }
 
                 if let Err(e) = sender.broadcast(abount_me.to_vec().into()).await {
@@ -87,7 +87,7 @@ pub async fn subscribe_loop(
             MessageBody::Message { from, text } => {
                 // if it's a `Message` message, get the name from the map and print the message
                 let name = members.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
-                println!("<<< {:?}: {}", name, text.trim_end());
+                println!("<<< {:?}: {}\n{BRAEKING}", name, text.trim_end());
             }
         }
     }

@@ -1,7 +1,7 @@
 use std::{fmt::Debug, path::Path, str::FromStr};
 
 use iroh_gossip_cli::handlers::{input_loop, subscribe_loop};
-use iroh_gossip_cli::structs::{Message, MessageBody, QUIT, Ticket};
+use iroh_gossip_cli::structs::{BRAEKING, Message, MessageBody, QUIT, Ticket};
 use iroh_gossip_cli::utils::{config_get, iroh_secret_key, load_yaml};
 
 use anyhow::{Result, anyhow};
@@ -181,7 +181,7 @@ async fn main() -> Result<()> {
         // broadcast the encoded message
         sender.broadcast(message.to_vec().into()).await?;
         // print to ourselves the text that we sent
-        println!(">>> You({:?}): {}", name, text);
+        println!(">>> YOU({:?}): {}\n{BRAEKING}", name, text);
     }
 
     let message = Message::new(MessageBody::Bye { from: node_id });

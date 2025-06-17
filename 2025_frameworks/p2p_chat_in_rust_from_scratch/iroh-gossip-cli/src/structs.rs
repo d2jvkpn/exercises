@@ -7,6 +7,7 @@ use iroh_gossip::proto::TopicId;
 use serde::{Deserialize, Serialize};
 
 pub const QUIT: &str = ":q!";
+pub const BRAEKING: &str = "----------------------------------------------------------------";
 
 // add the message code to the bottom
 #[derive(Debug, Serialize, Deserialize)]

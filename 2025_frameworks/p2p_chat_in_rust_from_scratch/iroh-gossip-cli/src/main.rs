@@ -8,28 +8,32 @@ use tokio::time::{self, Duration};
 async fn main() -> io::Result<()> {
     let mut stdin_lines = BufReader::new(io::stdin()).lines();
 
-    println!(
-        "==> Type something, or press Ctrl+C to exit. Auto-exits after 60 seconds of inactivity."
-    );
+    println!("==> Type something, or press Ctrl+C to exit.");
+    println!("    Auto-exits after 60 seconds of inactivity.");
 
     loop {
         tokio::select! {
             // If the user types within 60 seconds, read and print
+            // maybe_line =  stdin_lines.next_line() => {
             maybe_line = time::timeout(Duration::from_secs(60), stdin_lines.next_line()) => {
-                match maybe_line {
-                    Ok(Ok(Some(line))) => {
-                        println!(">>> You typed: {}", line);
+                let line = match maybe_line {
+                    Ok(v) => v,
+                    Err(_) => {
+                      println!("!!! No input received in 60 seconds. Exiting gracefully.");
+                      break;
                     }
-                    Ok(Ok(None)) => {
+                };
+
+                match line {
+                    Ok(Some(v)) => {
+                        println!(">>> YOU: {}", v);
+                    }
+                    Ok(None) => {
                         println!("<== End of input (EOF). Exiting.");
                         break;
                     }
-                    Ok(Err(e)) => {
+                    Err(e) => {
                         eprintln!("!!! Error reading input: {}", e);
-                        break;
-                    }
-                    Err(_) => {
-                        println!("!!! No input received in 60 seconds. Exiting.");
                         break;
                     }
                 }
