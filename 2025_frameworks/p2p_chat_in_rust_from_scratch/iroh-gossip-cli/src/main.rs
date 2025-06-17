@@ -6,7 +6,7 @@ use iroh_gossip_cli::utils::iroh_secret_key;
 
 use anyhow::{Result, anyhow};
 use clap::{ArgAction, Args, Parser};
-use iroh::{Endpoint, NodeAddr, protocol::Router};
+use iroh::{Endpoint, NodeAddr, RelayMap, RelayMode, RelayNode, RelayUrl, protocol::Router};
 use iroh_gossip::{ALPN, net::Gossip, proto::TopicId};
 use rand::prelude::*;
 
@@ -26,9 +26,11 @@ struct Command {
     #[clap(subcommand)]
     subcommand: Subcommand,
 
-    /// Set your nickname.
     #[clap(short, long, default_value = "configs/local.yaml")]
     config: String,
+
+    #[clap(short, long)]
+    relay_url: Option<String>,
 
     /*
     /// Set the bind port for our socket. By default, a random port will be used.
@@ -68,8 +70,9 @@ struct JoinCommand {
 #[tokio::main]
 async fn main() -> Result<()> {
     let args = Command::parse();
+    let name = args.name.clone();
 
-    let (topic, nodes) = match &args.subcommand {
+    let (topic, ticket_nodes) = match &args.subcommand {
         Subcommand::Open => {
             let topic = TopicId::from_bytes(rand::random());
             println!("==> Opening chat room for topic {topic}");
@@ -82,7 +85,23 @@ async fn main() -> Result<()> {
         }
     };
 
-    let endpoint = Endpoint::builder().secret_key(iroh_secret_key()).discovery_n0().bind().await?;
+    let relay_map: RelayMap = args
+        .relay_url
+        .and_then(|v| Some(v.parse::<RelayUrl>().ok()?))
+        .map(RelayNode::from)
+        .map(RelayMap::from)
+        .unwrap_or_else(|| RelayMap::empty());
+    dbg!(&relay_map);
+
+    let endpoint = Endpoint::builder()
+        .relay_mode(RelayMode::Custom(relay_map))
+        .secret_key(iroh_secret_key())
+        .discovery_n0()
+        .bind()
+        .await?;
+
+    //let relay_url = endpoint.home_relay().initialized().await.unwrap();
+    //println!("==> relay_url: {:?}", relay_url);
 
     let node_id = endpoint.node_id();
     // Get our address information, includes our `NodeId`, our `RelayUrl`, and any direct addresses.
@@ -99,34 +118,39 @@ async fn main() -> Result<()> {
     // in our main file, after we create a topic `id`:
     // print a ticket that includes our own node id and endpoint addresses
 
-    let mut addresses: Vec<NodeAddr> =
-        nodes.choose_multiple(&mut rand::rng(), 2).map(|x| (*x).clone()).collect();
-    addresses.push(node_addr.clone());
+    let mut all_nodes: Vec<NodeAddr> =
+        ticket_nodes.choose_multiple(&mut rand::rng(), 2).map(|x| (*x).clone()).collect();
 
-    let ticket = Ticket { topic, nodes: addresses };
-    write_ticket(&ticket, &args.name).await?;
+    all_nodes.push(node_addr);
+
+    let ticket = Ticket { topic, nodes: all_nodes };
+    write_ticket(&ticket, &name).await?;
 
     // join the gossip topic by connecting to known nodes, if any
-    let node_ids = nodes.iter().map(|p| p.node_id).collect();
+    let node_ids = ticket_nodes.iter().map(|p| p.node_id).collect();
 
-    if nodes.is_empty() {
+    if ticket_nodes.is_empty() {
         println!("--> waiting for nodes to join us...");
-    }
-    // add the peer addrs from the ticket to our endpoint's addressbook so that they can be dialed
-    for node in nodes.into_iter() {
-        println!("--> trying to connect to node: {:?}...", node);
-        if let Err(e) = endpoint.add_node_addr(node.clone()) {
-            println!("!!! can't connect to node: {e:?}");
+    } else {
+        // add the peer addrs from the ticket to our endpoint's addressbook,
+        // so that they can be dialed
+        for node in ticket_nodes.into_iter() {
+            // println!("--> trying to connect to node: {:?}...", node);
+            if let Err(e) = endpoint.add_node_addr(node.clone()) {
+                println!("!!! can't connect to node: {e:?}");
+            } else {
+                println!("--> connected to node: {}", node.node_id);
+            }
         }
     }
 
     let (sender, receiver) = gossip.subscribe_and_join(topic, node_ids).await?.split();
     println!("--> node(s) connected!");
 
-    let message = Message::new(MessageBody::AboutMe { from: node_id, name: args.name.clone() });
+    let message = Message::new(MessageBody::AboutMe { from: node_id, name: name.clone() });
     sender.broadcast(message.to_vec().into()).await?;
 
-    tokio::spawn(subscribe_loop(node_id, args.name.clone(), sender.clone(), receiver));
+    tokio::spawn(subscribe_loop(node_id, name.clone(), sender.clone(), receiver));
 
     // spawn an input thread that reads stdin create a multi-provider, single-consumer channel
     let (line_tx, mut line_rx) = tokio::sync::mpsc::channel(1);
@@ -163,9 +187,9 @@ async fn write_ticket(ticket: &Ticket, name: &str) -> Result<()> {
     file.write_all(b"\n").await?;
     // println!("--> node: {node_addr:?}\n    ticket: {ticket}");
     println!("--> node_id: {}", node_addr.node_id);
+    println!("    filepath: {}", filepath.display());
     println!("    relay_url: {:?}", node_addr.relay_url());
     println!("    direct_addresses: {:?}", node_addr.direct_addresses().collect::<Vec<_>>());
-    println!("    ticket_path: {}", filepath.display());
     println!("    ticket: {ticket}");
 
     Ok(())
