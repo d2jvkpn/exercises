@@ -82,14 +82,21 @@ async fn main() -> Result<()> {
         }
     };
 
-    let secret_key = SecretKey::generate(rand::rngs::OsRng); // rand 0.8
-    let endpoint = Endpoint::builder().secret_key(secret_key.clone()).discovery_n0().bind().await?;
+    // let secret_key = SecretKey::generate(rand::rngs::ThreadRng); // !!! rand 0.8
+    // let endpoint =
+    // Endpoint::builder().secret_key(secret_key.clone()).discovery_n0().bind().await?;
     // dbg!(&secret_key);
 
     //let yaml = load_yaml(&args.config).await?;
     //let secret_key = config_get(&yaml, "iroh.secret_key").and_then(|v| v.as_str()).unwrap();
     //let secret_key = SecretKey::from_str(secret_key).unwrap();
     //let endpoint = Endpoint::builder().secret_key(secret_key).discovery_n0().bind().await?;
+
+    let mut rng = rand::rng();
+    let mut buf = [0u8; 32];
+    rng.fill_bytes(&mut buf);
+    let secret_key = SecretKey::from_bytes(&buf);
+    let endpoint = Endpoint::builder().secret_key(secret_key).discovery_n0().bind().await?;
 
     let node_id = endpoint.node_id();
     // Get our address information, includes our `NodeId`, our `RelayUrl`, and any direct addresses.
@@ -107,7 +114,7 @@ async fn main() -> Result<()> {
     // print a ticket that includes our own node id and endpoint addresses
 
     let mut addresses: Vec<NodeAddr> =
-        nodes.choose_multiple(&mut rand::thread_rng(), 2).map(|x| (*x).clone()).collect();
+        nodes.choose_multiple(&mut rng, 2).map(|x| (*x).clone()).collect();
     addresses.push(node_addr.clone());
 
     let ticket = Ticket { topic, nodes: addresses };
