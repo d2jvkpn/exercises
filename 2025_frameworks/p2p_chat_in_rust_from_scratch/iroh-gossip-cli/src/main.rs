@@ -174,13 +174,20 @@ async fn main() -> Result<()> {
     // listen for lines that we have typed to be sent from `stdin`
     while let Some(text) = line_rx.recv().await {
         // create a message from the text
-        let message =
-            Message::new(MessageBody::Message { from: endpoint.node_id(), text: text.clone() });
+        if text == ":q!" {
+            let message = Message::new(MessageBody::Bye { from: node_id });
+            // broadcast the encoded message
+            sender.broadcast(message.to_vec().into()).await?;
+            break;
+        }
+        let message = Message::new(MessageBody::Message { from: node_id, text: text.clone() });
         // broadcast the encoded message
         sender.broadcast(message.to_vec().into()).await?;
         // print to ourselves the text that we sent
-        println!(">>> You({:?}): {}", name, text.trim());
+        println!(">>> You({:?}): {}", name, text);
     }
+
+    println!("<== Quit");
 
     router.shutdown().await?;
     Ok(())

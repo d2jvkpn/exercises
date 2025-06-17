@@ -14,12 +14,16 @@ pub fn input_loop(line_tx: tokio::sync::mpsc::Sender<String>) -> Result<()> {
     // get a handle on `Stdin`
     let stdin = std::io::stdin(); // We get `Stdin` here.
     loop {
-        // loop through reading from the buffer...
-        stdin.read_line(&mut buffer)?;
-        // and then sending over the channel
-        line_tx.blocking_send(buffer.clone())?;
-        // clear the buffer after we've sent the content
-        buffer.clear();
+        stdin.read_line(&mut buffer)?; // loop through reading from the buffer...
+        // let line = buffer.trim_end().to_string();
+        if buffer.trim_end_matches(&['\r', '\n'][..]).ends_with(' ') {
+            buffer.truncate(buffer.trim_end().len());
+            buffer.push('\n');
+            continue;
+        }
+
+        line_tx.blocking_send(buffer.trim_end().to_string())?; // and then sending over the channel
+        buffer.clear(); // clear the buffer after we've sent the content
     }
 }
 
@@ -56,6 +60,10 @@ pub async fn subscribe_loop(
 
         // deserialize the message and match on the message type:
         match Message::from_bytes(&msg.content)?.body {
+            MessageBody::Bye { from } => {
+                let name = members.remove_entry(&from);
+                println!("--> Bye: {from}, {name:?}");
+            }
             MessageBody::AboutMe { from, name } => {
                 // if it's an `AboutMe` message add and entry into the map and print the name
                 if !members.contains_key(&from) {
@@ -70,7 +78,7 @@ pub async fn subscribe_loop(
             MessageBody::Message { from, text } => {
                 // if it's a `Message` message, get the name from the map and print the message
                 let name = members.get(&from).map_or_else(|| from.fmt_short(), String::to_string);
-                println!("<<< {:?}: {}", name, text.trim());
+                println!("<<< {:?}: {}", name, text.trim_end());
             }
         }
     }

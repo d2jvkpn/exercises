@@ -17,6 +17,7 @@ pub struct Message {
 pub enum MessageBody {
     AboutMe { from: NodeId, name: String },
     Message { from: NodeId, text: String },
+    Bye { from: NodeId },
 }
 
 impl Message {
