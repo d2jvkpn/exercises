@@ -134,7 +134,7 @@ async fn main() -> Result<()> {
     std::thread::spawn(move || input_loop(line_tx));
 
     // broadcast each line we type
-    println!("--> type a message and hit enter to broadcast...");
+    println!("==> type a message and hit enter to broadcast...");
     // listen for lines that we have typed to be sent from `stdin`
     while let Some(text) = line_rx.recv().await {
         // create a message from the text
