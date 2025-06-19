@@ -2,15 +2,15 @@
 name = "iroh-chat-cli"
 version = "0.1.0"
 edition = "2024"
-default-run = "main"
+default-run = "chat"
 
 [[bin]]
 name = "chat"
 path = "src/chat.rs"
 
 [[bin]]
-name = "main"
-path = "src/main.rs"
+name = "a01"
+path = "src/a01.rs"
 
 
 [dependencies]
