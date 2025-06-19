@@ -1,10 +1,8 @@
 use std::{fmt::Debug, str::FromStr};
 
-use iroh_gossip_cli::handlers::{input_loop, subscribe_loop};
-use iroh_gossip_cli::structs::{BRAEKING, COMMAND_QUIT, Message, MessageBody, Ticket};
-use iroh_gossip_cli::utils::{
-    config_get, iroh_secret_key, load_yaml, now, split_first_space, write_ticket,
-};
+use iroh_chat_cli::handlers::{input_loop, subscribe_loop};
+use iroh_chat_cli::structs::{COMMAND_QUIT, EOF_MESSAGE, Message, MessageBody, Ticket};
+use iroh_chat_cli::utils::{self, now};
 
 use anyhow::Result;
 use clap::{ArgAction, Args, Parser};
@@ -88,12 +86,12 @@ async fn main() -> Result<()> {
 
     let secret_key: SecretKey = match args.config {
         Some(v) => {
-            let yaml = load_yaml(&v).unwrap();
-            let val = config_get(&yaml, "iroh.secret_key").unwrap();
+            let yaml = utils::load_yaml(&v).unwrap();
+            let val = utils::config_get(&yaml, "iroh.secret_key").unwrap();
             let val = serde_yaml::to_string(val)?;
             SecretKey::from_str(&val.trim())?
         }
-        None => iroh_secret_key(),
+        None => utils::iroh_secret_key(),
     };
 
     let relay_map: RelayMap = args
@@ -136,7 +134,7 @@ async fn main() -> Result<()> {
     all_nodes.push(node_addr);
 
     let ticket = Ticket { topic, nodes: all_nodes };
-    write_ticket(&ticket, &name).await?;
+    utils::write_ticket(&ticket, &name).await?;
 
     // join the gossip topic by connecting to known nodes, if any
     let node_ids = ticket_nodes.iter().map(|p| p.node_id).collect();
@@ -175,7 +173,7 @@ async fn main() -> Result<()> {
     // listen for lines that we have typed to be sent from `stdin`
     while let Some(text) = line_rx.recv().await {
         // create a message from the text
-        match split_first_space(&text) {
+        match utils::split_first_space(&text) {
             (COMMAND_QUIT, _) => break,
             _ => {}
         }
@@ -185,7 +183,7 @@ async fn main() -> Result<()> {
         sender.broadcast(message.to_vec().into()).await?;
         // print to ourselves the text that we sent
         // println!(">>> You({:?}): {}\n{BRAEKING}", name, text);
-        println!(">>> {} You({:?})\n{BRAEKING}", now(), name);
+        println!(">>> {} You({:?})\n{EOF_MESSAGE}", now(), name);
     }
 
     let message = Message::new(MessageBody::Bye { from: node_id, at: now() });

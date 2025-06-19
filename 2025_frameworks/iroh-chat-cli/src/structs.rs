@@ -7,7 +7,10 @@ use iroh_gossip::proto::TopicId;
 use serde::{Deserialize, Serialize};
 
 pub const COMMAND_QUIT: &str = ":quit";
-pub const BRAEKING: &str = "----------------------------------------------------------------";
+
+pub const EOF_MESSAGE: &str = "--------------------------------";
+pub const EOF_EVENT: &str = "++++++++++++++++++++++++++++++++";
+pub const EOF_ERROR: &str = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 
 // add the message code to the bottom
 #[derive(Debug, Serialize, Deserialize)]

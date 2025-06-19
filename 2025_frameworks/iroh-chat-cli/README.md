@@ -9,7 +9,7 @@ version: 0.1.0
 
 #### ch01. 
 1. docs
-- https://www.youtube.com/watch?v=ogN_mBkWu7o
+- p2p chat, in rust, from scratch https://www.youtube.com/watch?v=ogN_mBkWu7o
 - https://www.iroh.computer/docs/examples/gossip-chat
 - https://www.iroh.computer
 
