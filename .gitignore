@@ -63,3 +63,4 @@ gcm.cache
 logs/
 *.git
 __pycache__
+.env
