@@ -46,7 +46,7 @@ def get_ticket_price(destination_city):
 
     city = destination_city.lower()
 
-    return ticket_prices.get(city, "Unknown")
+    return ticket_prices.get(city, "unknown")
 
 
 # There's a particular dictionary structure that's required to describe our function:
@@ -81,7 +81,7 @@ def handle_tool_call(message):
     # communicate in json: json.loads and json.dumps
     arguments = json.loads(function.arguments)
 
-    print(f"~~~ tool_call: type={tool_call.type}, function={function.name}, arguments={function.arguments}")
+    # print(f"~~~ tool_call: type={tool_call.type}, function={function.name}, arguments={function.arguments}")
 
     city = arguments.get('destination_city')
     price = get_ticket_price(city)
@@ -173,10 +173,14 @@ def chat_v1(history):
     if response.choices[0].finish_reason == "tool_calls":
         msg = response.choices[0].message
         # print(f"~~~ message: {msg}")
-        # ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[], audio=None, function_call=None, tool_calls=[ChatCompletionMessageToolCall(id='call_YKA81w9Ky4m1YKSUpQB7fbWN', function=Function(arguments='{"destination_city":"London"}', name='get_ticket_price'), type='function')])
+        # ChatCompletionMessage(content=None, refusal=None, role='assistant', annotations=[],
+        # audio=None, function_call=None, tool_calls=[ChatCompletionMessageToolCall(
+        #   id='call_YKA81w9Ky4m1YKSUpQB7fbWN',
+        #   function=Function(arguments='{"destination_city":"London"}',
+        #   name='get_ticket_price'), type='function')])
 
         response, city = handle_tool_call(msg)
-        print("???", [msg, response])
+        # print("???", [msg, response])
         messages.extend([msg, response])
         #image = artist(city)
         response = client.chat.completions.create(model="gpt-4o", messages=messages)
@@ -233,7 +237,7 @@ def chat_v2(history):
         tool_call = tool_calls[0]
         args = json.loads(tool_call['function']['arguments'])
         city = args.get('destination_city')
-        price = get_ticket_price(city)
+        price = get_ticket_price(**args)
 
         msg = {
             "role": "assistant",
