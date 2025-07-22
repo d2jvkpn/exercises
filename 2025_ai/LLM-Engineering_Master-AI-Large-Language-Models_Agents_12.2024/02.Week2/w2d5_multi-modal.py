@@ -236,26 +236,18 @@ def chat_v2(history):
     if len(tool_calls) > 0 and tool_calls[0]["function"]["name"] == "get_ticket_price":
         tool_call = tool_calls[0]
         args = json.loads(tool_call['function']['arguments'])
-        city = args.get('destination_city')
         price = get_ticket_price(**args)
+        msg = {"role": "assistant", "content": None, "tool_calls": [tool_call]}
 
-        msg = {
-            "role": "assistant",
-            "content": None,
-            "tool_calls": [tool_call],
-        }
-
-        response = {
-            "role": "tool",
-            "content": json.dumps({"destination_city": city, "price": price}),
-            "tool_call_id": tool_call['id'],
-        }
+        content = json.dumps({"destination_city": args.get('destination_city'), "price": price})
+        response = { "role": "tool", "content": content, "tool_call_id": tool_call['id'] }
 
         messages.extend([msg, response])
         #image = artist(city)
         response = client.chat.completions.create(model="gpt-4o", messages=messages, stream=True)
         #msg = response.choices[0].message
         history.append({"role":"assistant", "content": ""})
+
         for chunk in response:
             history[-1]['content'] += chunk.choices[0].delta.content or ""
             yield history, image
