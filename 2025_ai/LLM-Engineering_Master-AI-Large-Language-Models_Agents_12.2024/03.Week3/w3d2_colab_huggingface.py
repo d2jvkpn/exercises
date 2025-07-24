@@ -19,13 +19,6 @@ print(f"Return Code: {result.returncode}\nOutput: {result.stdout}")
 #print(result.stdout)
 
 
-!pip install -q --upgrade torch==2.5.1+cu124 torchvision==0.20.1+cu124 torchaudio==2.5.1+cu124 --index-url https://download.pytorch.org/whl/cu124
-!pip install -q --upgrade transformers==4.48.3 datasets==3.2.0 diffusers
-
-#!pip cache dir
-#!pip cache purge
-
-
 import torch
 from google.colab import userdata
 from huggingface_hub import login
