@@ -11,7 +11,7 @@ pip show transformers datasets diffusers
 pip install bitsandbytes sentencepiece
 
 
-# pip install -U transformers accelerate
+# pip install -U transformers accelerate torch
 # pip install -U bitsandbytes sentencepiece
 
 # pip cache dir
