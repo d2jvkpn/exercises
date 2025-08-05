@@ -93,7 +93,7 @@ llm = ChatOpenAI(temperature=0.7, model_name=model)
 memory = ConversationBufferMemory(memory_key='chat_history', return_messages=True)
 
 # the retriever is an abstraction over the VectorStore that will be used during RAG
-retriever = vectorstore.as_retriever()
+retriever = vectorstore.as_retriever(search_kwargs={"k": 25})
 
 conversation_chain = ConversationalRetrievalChain.from_llm(
     llm=llm, retriever=retriever, memory=memory, callbacks=[StdOutCallbackHandler()],
