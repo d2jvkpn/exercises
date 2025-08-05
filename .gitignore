@@ -64,4 +64,6 @@ logs/
 *.git
 __pycache__
 .env
-\.*
+
+.*
+!.gitignore
