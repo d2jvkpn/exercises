@@ -10,22 +10,24 @@
 import os, re, math
 from datetime import datetime
 
-from tqdm import tqdm
 from google.colab import userdata
+os.environ['HF_HOME'] = "data/huggingface"
+os.environ['HF_USER'] = userdata.get('HF_USER')
+os.environ['HF_TOKEN'] = userdata.get('HF_TOKEN')
+
+# Log in to HuggingFace
+#hf_token = userdata.get('HF_TOKEN')
+#login(hf_token, add_to_git_credential=True)
+
+from tqdm import tqdm
 from huggingface_hub import login
 import torch, transformers
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import BitsAndBytesConfig, TrainingArguments, set_seed
 from peft import LoraConfig, PeftModel
 
-
-# Log in to HuggingFace
-hf_token = userdata.get('HF_TOKEN')
-login(hf_token, add_to_git_credential=True)
-
 # Constants
-#BASE_MODEL = "meta-llama/Meta-Llama-3.1-8B"
-BASE_MODEL = "mistralai/Mistral-7B-v0.3"
+BASE_MODEL = "meta-llama/Meta-Llama-3.1-8B"
 FINETUNED_MODEL = "ed-donner/pricer-2024-09-13_13.04.39"
 
 # Hyperparameters for QLoRA Fine-Tuning
