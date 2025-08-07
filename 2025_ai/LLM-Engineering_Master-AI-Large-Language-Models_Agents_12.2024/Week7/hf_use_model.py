@@ -9,11 +9,20 @@ import torch
 from transformers import AutoTokenizer, AutoModel, AutoModelForCausalLM, BitsAndBytesConfig
 
 
-model_id = "meta-llama/Llama-3.2-1B"
+def model_abspath(model_id):
+    hf_home = os.environ.get('HF_HOME')
+    if hf_home is None:
+        hf_home = os.path.join(os.environ["HOME"], ".cache", "huggingface")
 
-model_hf = Path(os.environ['HF_HOME']) / "hub" / ("models--" + model_id.replace("/", "--"))
-model_ref = (model_hf / "refs" / "main").read_text(encoding="utf-8").strip()
-model_path = model_hf / "snapshots" / model_ref
+    model_hf = Path(hf_home) / "hub" / ("models--" + model_id.replace("/", "--"))
+    model_ref = (model_hf / "refs" / "main").read_text(encoding="utf-8").strip()
+    model_path = model_hf / "snapshots" / model_ref
+
+    return model_path
+
+model_id = "meta-llama/Llama-3.2-1B"
+model_path = model_abspath(model_id)
+
 
 quant_config = BitsAndBytesConfig(
     load_in_4bit=True,
