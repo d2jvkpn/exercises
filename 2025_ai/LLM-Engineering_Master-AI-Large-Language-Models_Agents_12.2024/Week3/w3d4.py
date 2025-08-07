@@ -66,7 +66,7 @@ model
 
 del inputs, outputs, model
 
-torch..cuda.empty_cache()
+torch.cuda.empty_cache()
 
 
 ####
