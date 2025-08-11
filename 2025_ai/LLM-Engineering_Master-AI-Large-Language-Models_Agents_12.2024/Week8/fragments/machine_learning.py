@@ -5,17 +5,18 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_squared_error, r2_score
 
+
 with open('data/test.pkl', 'rb') as file:
     test = pickle.load(file)
 
 with open('data/train.pkl', 'rb') as file:
     train = pickle.load(file)
 
+
 result = collection.get(include=['embeddings', 'documents', 'metadatas'])
 vectors = np.array(result['embeddings'])
 documents = result['documents']
 prices = [metadata['price'] for metadata in result['metadatas']]
-
 
 def find_similars(item):
     results = collection.query(query_embeddings=vector(item).astype(float).tolist(), n_results=5)
