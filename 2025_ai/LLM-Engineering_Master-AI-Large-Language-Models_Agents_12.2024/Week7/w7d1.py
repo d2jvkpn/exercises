@@ -10,10 +10,10 @@
 import os, re, math
 from datetime import datetime
 
+from dotenv import load_dotenv
+load_dotenv("configs/local.env")
+
 from google.colab import userdata
-os.environ['HF_HOME'] = "data/huggingface"
-os.environ['HF_USER'] = userdata.get('HF_USER')
-os.environ['HF_TOKEN'] = userdata.get('HF_TOKEN')
 
 # Log in to HuggingFace
 #hf_token = userdata.get('HF_TOKEN')
@@ -36,7 +36,7 @@ LORA_ALPHA = 64
 TARGET_MODULES = ["q_proj", "v_proj", "k_proj", "o_proj"]
 
 # Load the Base Model without quantization
-base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL, cache_dir="data/huggingface", device_map="auto")
+base_model = AutoModelForCausalLM.from_pretrained(BASE_MODEL, device_map="auto")
 print(f"Memory footprint: {base_model.get_memory_footprint() / 1e9:,.1f} GB")
 
 
