@@ -1,3 +1,6 @@
+#!/bin/bash
+set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
+
 
 #### colab: gpu=T4, Python 3.11.13
 pip install -q --upgrade torch==2.5.1+cu124 --index-url https://download.pytorch.org/whl/cu124

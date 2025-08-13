@@ -67,7 +67,6 @@ y = pd.Series(prices)
 
 joblib.dump(lr, 'ensemble_model.pkl')
 
-
 np.random.seed(42)
 
 lr = LinearRegression()
@@ -90,6 +89,6 @@ ensemble = EnsembleAgent(collection)
 ensemble.price(product)
 
 def ensemble_pricer(item):
-    return max(0,ensemble.price(description(item)))
+    return max(0, ensemble.price(description(item)))
 
 Tester.test(ensemble_pricer, test)

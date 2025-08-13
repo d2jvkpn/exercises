@@ -70,3 +70,4 @@ def find_similars(text):
     return documents, prices
 
 documents, prices = find_similars("Quadcast HyperX condenser mic for high quality podcasting")
+print(zip(documents, prices))
