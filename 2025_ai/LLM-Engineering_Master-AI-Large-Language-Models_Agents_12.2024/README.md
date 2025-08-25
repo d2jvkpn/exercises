@@ -15,3 +15,4 @@ version: 0.1.0
 - https://docs.wandb.ai/guides/track/environment-variables/
 - https://docs.wandb.ai/support/run_wandb_offline/
 - https://sbert.net/
+- https://huggingface.co/docs/trl/v0.20.0/en/sft_trainer#language-modeling
