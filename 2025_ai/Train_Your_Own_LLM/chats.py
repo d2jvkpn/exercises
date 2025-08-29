@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
-import json
+import os, json
+from pathlib import Path
 
+import dotenv
+dotenv.load_dotenv("configs/local.env")
 import pandas as pd
+from datasets import load_dataset
 
 
 def generate_chats(df: pd.DataFrame):
@@ -32,30 +36,49 @@ def convert_chat(chat):
 
     return [{"role": v["role"], "content": v["content"]} for v in chat]
 
-####
-train = pd.read_csv("data/tokenizer/train.tsv", sep="\t")
-train = train[["message_id", "parent_id", "text", "role"]]
-train = train.rename(columns={"text": "content"})
-train["role"] = train["role"].replace({"prompter": "user"})
 
-train_chats = generate_chats(train)
+#### 1. load hf data
+tokenizer_dir = Path("data") / "tokenizer"
+tokenizer_dir.mkdir(parents=True, exist_ok=True)
+
+repo_id = "OpenAssistant/oasst1"
+ds = load_dataset(repo_id)
+
+train_data = ds['train'].data.to_pandas()
+val_data = ds['validation'].data.to_pandas()
+
+train_data = train_data[train_data['lang'] == 'en']
+train_data.to_csv(tokenizer_dir / 'train.tsv', sep="\t", index=False)
+print(f"--> saved {tokenizer_dir / 'train.tsv'}: {train_data.shape}")
+
+val_data = val_data[val_data['lang'] == 'en']
+val_data.to_csv(tokenizer_dir / 'validation.tsv', sep="\t", index=False)
+print(f"--> saved {tokenizer_dir / 'validation.tsv'}: {val_data.shape}")
+
+
+#### 2. train data
+#train_df = pd.read_csv("data/tokenizer/train.tsv", sep="\t")
+train_df = train_data[["message_id", "parent_id", "text", "role"]]
+train_df = train_df.rename(columns={"text": "content"})
+train_df["role"] = train_df["role"].replace({"prompter": "user"})
+
+train_chats = generate_chats(train_df)
 chats = [ convert_chat(v) for v in train_chats if len(convert_chat(v)) > 0]
 
-filepath = "data/tokenizer/train.chats.json"
-with open(filepath, 'w', encoding='utf-8') as f:
+with open(tokenizer_dir / 'train.chats.json', 'w', encoding='utf-8') as f:
     json.dump(chats, f, ensure_ascii=False, indent=2)
-    print(f"--> saved {len(chats)} chats to {filepath}")
+    print(f"--> saved {len(chats)} chats to {tokenizer_dir / 'train.chats.json'}")
 
-####
-val = pd.read_csv("data/tokenizer/validation.tsv", sep="\t")
-val = val[["message_id", "parent_id", "text", "role"]]
-val = val.rename(columns={"text": "content"})
-val["role"] = val["role"].replace({"prompter": "user"})
 
-val_chats = generate_chats(val)
+#### 3. validation data
+#val = pd.read_csv("data/tokenizer/validation.tsv", sep="\t")
+val_df = val_data[["message_id", "parent_id", "text", "role"]]
+val_df = val_df.rename(columns={"text": "content"})
+val_df["role"] = val_df["role"].replace({"prompter": "user"})
+
+val_chats = generate_chats(val_df)
 chats = [ convert_chat(v) for v in val_chats if len(convert_chat(v)) > 0]
 
-filepath = "data/tokenizer/validation.chats.json"
-with open(filepath, 'w', encoding='utf-8') as f:
+with open(tokenizer_dir / 'validation.chats.json', 'w', encoding='utf-8') as f:
     json.dump(chats, f, ensure_ascii=False, indent=2)
-    print(f"--> saved {len(chats)} chats to {filepath}")
+    print(f"--> saved {len(chats)} chats to {tokenizer_dir / 'validation.chats.json'}")
