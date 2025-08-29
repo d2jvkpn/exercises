@@ -13,6 +13,7 @@ class Head(nn.Module):
         self.key = nn.Linear(n_embd, head_size, bias=False)
         self.query = nn.Linear(n_embd, head_size, bias=False)
         self.value = nn.Linear(n_embd, head_size, bias=False)
+
         self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
         self.dropout = nn.Dropout(dropout)
 
@@ -34,10 +35,12 @@ class MultiHeadAttention(nn.Module):
 
     def __init__(self, n_embd: int, num_heads: int, head_size: int, block_size: int, dropout: float) -> None:
         super().__init__()
+
         self.heads = nn.ModuleList([
             Head(n_embd, head_size, block_size, dropout)
             for _ in range(num_heads)
         ])
+
         self.projection = nn.Linear(head_size * num_heads, n_embd)
         self.dropout = nn.Dropout(dropout)
 
@@ -52,6 +55,7 @@ class FeedForward(nn.Module):
 
     def __init__(self, n_embd: int, dropout: float) -> None:
         super().__init__()
+
         self.net = nn.Sequential(
             nn.Linear(n_embd, 4 * n_embd),
             nn.ReLU(),
@@ -68,9 +72,11 @@ class Block(nn.Module):
 
     def __init__(self, n_embd: int, n_head: int, block_size: int, dropout: float) -> None:
         super().__init__()
+
         head_size = n_embd // n_head
         error_message = f"n_embd {n_embd} must be divisible by n_head {n_head}"
         assert head_size * n_head == n_embd, error_message
+
         self.self_attention = MultiHeadAttention(
             n_embd=n_embd,
             num_heads=n_head,
@@ -78,6 +84,7 @@ class Block(nn.Module):
             block_size=block_size,
             dropout=dropout,
         )
+
         self.feed_forward = FeedForward(n_embd, dropout)
         self.layer_norm_1 = nn.LayerNorm(n_embd)
         self.layer_norm_2 = nn.LayerNorm(n_embd)
@@ -101,16 +108,19 @@ class GPTLanguageModel(nn.Module):
         ignore_index: int = -100
     ) -> None:
         super().__init__()
+
         self.ignore_index = ignore_index
         self.block_size = block_size
         self.device = device
 
         self.token_embedding_table = nn.Embedding(vocab_size, n_embd)
         self.position_embedding_table = nn.Embedding(block_size, n_embd)
+
         self.blocks = nn.Sequential(*[
             Block(n_embd, n_head, block_size, dropout)
             for _ in range(n_layer)
         ])
+
         self.final_layer_norm = nn.LayerNorm(n_embd)
         self.final_linear_layer = nn.Linear(n_embd, vocab_size)
 
@@ -130,8 +140,8 @@ class GPTLanguageModel(nn.Module):
         B, T = input_tokens.shape
 
         token_embedding = self.token_embedding_table(input_tokens)
-        positional_embedding = self.position_embedding_table(
-            torch.arange(T, device=self.device))
+        positional_embedding = self.position_embedding_table(torch.arange(T, device=self.device))
+
         x = token_embedding + positional_embedding
         x = self.blocks(x)
         x = self.final_layer_norm(x)
@@ -244,7 +254,7 @@ if __name__ == "__main__":
     print(f"Model size: {model_size / 1e6:.2f}M parameters")
 
     print("Model created with embedding_size={}, number_of_heads={}, head_size={}".format(
-            embedding_size, number_of_heads, embedding_size//number_of_heads,
+        embedding_size, number_of_heads, embedding_size//number_of_heads,
     ))
 
     # Create dummy input
