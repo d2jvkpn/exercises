@@ -5,12 +5,12 @@ import pandas as pd
 
 
 def generate_chats(df: pd.DataFrame):
-    mask = df["message_id"].isin(df["parent_id"])
-    leaf_df = df[~mask]
-    parent_df = df[mask]
+    has_parent = df["message_id"].isin(df["parent_id"])
+    leaves = df[~has_parent]
+    parents = df[has_parent]
 
-    chats = [[v] for v in leaf_df.to_dict(orient="records")]
-    parent_dict = { v["message_id"]: v for v in parent_df.to_dict(orient="records") }
+    chats = [[v] for v in leaves.to_dict(orient="records")]
+    parent_dict = { v["message_id"]: v for v in parents.to_dict(orient="records") }
 
     for chat in chats:
         k = chat[0].get("parent_id")
@@ -28,8 +28,8 @@ def generate_chats(df: pd.DataFrame):
 def convert_chat(chat):
     if chat[0]['role'] != 'user':
         chat = chat[1:]
-
     chat = chat[:len(chat) // 2 * 2]
+
     return [{"role": v["role"], "content": v["content"]} for v in chat]
 
 ####
@@ -39,7 +39,7 @@ train = train.rename(columns={"text": "content"})
 train["role"] = train["role"].replace({"prompter": "user"})
 
 train_chats = generate_chats(train)
-chats = [ convert_chat(v) for v in train_chats ]
+chats = [ convert_chat(v) for v in train_chats if len(convert_chat(v)) > 0]
 
 filepath = "data/tokenizer/train.chats.json"
 with open(filepath, 'w', encoding='utf-8') as f:
@@ -53,7 +53,7 @@ val = val.rename(columns={"text": "content"})
 val["role"] = val["role"].replace({"prompter": "user"})
 
 val_chats = generate_chats(val)
-chats = [ convert_chat(v) for v in val_chats ]
+chats = [ convert_chat(v) for v in val_chats if len(convert_chat(v)) > 0]
 
 filepath = "data/tokenizer/validation.chats.json"
 with open(filepath, 'w', encoding='utf-8') as f:
