@@ -163,3 +163,16 @@ class Tokenizer:
         self.merges = merges
         self.special_tokens = special_tokens
         self.vocab = self._build_vocab()
+
+    def add_special_tokens(self, special_tokens):
+        max_vocab_id = list(self.vocab.keys())[-1]
+        added = []
+
+        for token in special_tokens:
+            if token not in self.special_tokens:
+                max_vocab_id += 1
+                self.vocab[max_vocab_id] = token.encode('utf-8')
+                self.special_tokens[token] = max_vocab_id
+                added.append(token)
+
+        return added

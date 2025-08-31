@@ -32,9 +32,11 @@ def generate_chats(df: pd.DataFrame):
 def convert_chat(chat):
     if chat[0]['role'] != 'user':
         chat = chat[1:]
+
     chat = chat[:len(chat) // 2 * 2]
 
-    return [{"role": v["role"], "content": v["content"]} for v in chat]
+    #return [{"role": v["role"], "content": v["content"]} for v in chat]
+    return chat
 
 
 #### 1. load hf data
@@ -45,16 +47,16 @@ repo_id = "OpenAssistant/oasst1"
 ds = load_dataset(repo_id)
 
 train_data = ds['train'].data.to_pandas()
+
+train_data.to_csv(tokenizer_dir / 'train.dataset.tsv', sep="\t", index=False)
+print(f"--> saved {tokenizer_dir / 'train.dataset.tsv'}: {train_data.shape}")
+
 val_data = ds['validation'].data.to_pandas()
+val_data.to_csv(tokenizer_dir / 'validation.dataset.tsv', sep="\t", index=False)
+print(f"--> saved {tokenizer_dir / 'validation.dataset.tsv'}: {val_data.shape}")
 
 train_data = train_data[train_data['lang'] == 'en']
-train_data.to_csv(tokenizer_dir / 'train.tsv', sep="\t", index=False)
-print(f"--> saved {tokenizer_dir / 'train.tsv'}: {train_data.shape}")
-
 val_data = val_data[val_data['lang'] == 'en']
-val_data.to_csv(tokenizer_dir / 'validation.tsv', sep="\t", index=False)
-print(f"--> saved {tokenizer_dir / 'validation.tsv'}: {val_data.shape}")
-
 
 #### 2. train data
 #train_df = pd.read_csv("data/tokenizer/train.tsv", sep="\t")
