@@ -57,15 +57,15 @@ with open(tokenizer_dir / "validation.chats.json", 'r') as f:
     val_chats = json.load(f)
 
 
-block_size = 256
+block_size = 256 # ch02: 256, ch03: 512
 padding_token = -100
 
 train_tensors = [chat_to_tensors(v, block_size, padding_token) for v in train_chats]
 val_tensors = [chat_to_tensors(v, block_size, padding_token) for v in val_chats]
 
-train_tensors = torch.stack(list(chain.from_iterable(train_tensors)))
-val_tensors = torch.stack(list(chain.from_iterable(val_tensors)))
+train_tensor = torch.stack(list(chain.from_iterable(train_tensors)))
+val_tensor = torch.stack(list(chain.from_iterable(val_tensors)))
 
-print(f"--> Train: {train_tensors.shape}\n    Validation: {val_tensors.shape}")
-torch.save(train_tensors, tokenizer_dir / 'train.fine-tuning.pt')
-torch.save(val_tensors, tokenizer_dir / 'validation.fine-tuning.pt')
+print(f"--> Train: {train_tensor.shape}\n    Validation: {val_tensor.shape}")
+torch.save(train_tensor, tokenizer_dir / 'train.fine-tuning.pt')
+torch.save(val_tensor, tokenizer_dir / 'validation.fine-tuning.pt')
