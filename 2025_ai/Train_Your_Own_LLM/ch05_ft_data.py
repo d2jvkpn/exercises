@@ -23,29 +23,41 @@ unk_token = "<|unk|>"
 #padding_token = "<|padding|>"
 
 
+def msg2tokens(msg):
+    seq = f"{start_of_text_token}{msg['role']}{separator_token}{msg['content']}{end_of_text_token}"
+    return tokenizer.encode(seq, allowed_special="all")
+
 def chat_to_tensors(chat, block_size, padding_token):
-    result = []
+    combined = []
 
     for i in range(0, len(chat) - 1, 2):
-        role, content = chat[i]["role"], chat[i]["content"]
-        use_msg = f"{start_of_text_token}{role}{separator_token}{content}{end_of_text_token}"
-        tokens = tokenizer.encode(use_msg, allowed_special="all")
+        tokens = msg2tokens(chat[i]) + msg2tokens(chat[i+1])
+        combined.append(tokens[-block_size:])
 
-        role, content = chat[i+1]["role"], chat[i+1]["content"]
-        assiatnt_msg = f"{start_of_text_token}{role}{separator_token}{content}{end_of_text_token}"
-        tokens.extend(tokenizer.encode(assiatnt_msg, allowed_special="all"))
+    current, result = [], []
+    for seq in combined:
+        if len(current) + len(seq) <= block_size:
+            current.extend(seq)
+        else:
+            if len(current) > 0:
+                result.append(current)
+            current = seq.copy()
 
-        tokens = tokens[-block_size:]
+    # Add the last block if it's not empty
+    if current:
+        result.append(current)
 
-        tensor = torch.tensor(tokens)
+    for i in range(len(result)):
+        tensor = torch.tensor(result[i])
+
         padded_tensor = nn.functional.pad(
             input=tensor,
-            #pad=(0, block_size - len(tensor)), # right paddinig
-            pad=(block_size - len(tensor), 0), # left paddinig
+            pad=(0, block_size - len(tensor)), # right paddinig
+            #pad=(block_size - len(tensor), 0), # left paddinig
             value=padding_token,
         )
 
-        result.append(padded_tensor)
+        result[i] = padded_tensor
 
     return result
 
@@ -57,7 +69,7 @@ with open(tokenizer_dir / "validation.chats.json", 'r') as f:
     val_chats = json.load(f)
 
 
-block_size = 256
+block_size = 256 # ch02: 256, ch03: 512
 padding_token = -100
 
 train_tensors = [chat_to_tensors(v, block_size, padding_token) for v in train_chats]
@@ -67,5 +79,5 @@ train_tensor = torch.stack(list(chain.from_iterable(train_tensors)))
 val_tensor = torch.stack(list(chain.from_iterable(val_tensors)))
 
 print(f"--> Train: {train_tensor.shape}\n    Validation: {val_tensor.shape}")
-torch.save(train_tensor, tokenizer_dir / 'ch04_train.ft.pt')
-torch.save(val_tensor, tokenizer_dir / 'ch04_validation.ft.pt')
+torch.save(train_tensor, tokenizer_dir / 'ch05_train.ft.pt')
+torch.save(val_tensor, tokenizer_dir / 'ch05_validation.ft.pt')
