@@ -140,7 +140,10 @@ class GPTLanguageModel(nn.Module):
         B, T = input_tokens.shape
 
         token_embedding = self.token_embedding_table(input_tokens)
-        positional_embedding = self.position_embedding_table(torch.arange(T, device=self.device))
+
+        positional_embedding = self.position_embedding_table(
+            torch.arange(T, device=self.device),
+        )
 
         x = token_embedding + positional_embedding
         x = self.blocks(x)
@@ -211,12 +214,12 @@ class GPTLanguageModel(nn.Module):
             probs = F.softmax(logits, dim=-1)
 
             if top_p is not None:
-                sorted_probs, sorted_indices = torch.sort(
-                    probs, descending=True)
+                sorted_probs, sorted_indices = torch.sort(probs, descending=True)
                 cumulative_probs = torch.cumsum(sorted_probs, dim=-1)
                 sorted_indices_to_remove = cumulative_probs > top_p
                 sorted_indices_to_remove[..., 1:] = sorted_indices_to_remove[..., :-1].clone()
                 sorted_indices_to_remove[..., 0] = 0
+
                 indices_to_remove = torch.zeros_like(logits).scatter_(
                     1, sorted_indices, sorted_indices_to_remove,
                 )
