@@ -1,7 +1,7 @@
+from typing import Optional, Tuple
+
 import torch
 import torch.nn as nn
-
-from typing import Optional, Tuple
 from torch.nn import functional as F
 
 
@@ -11,23 +11,47 @@ class Head(nn.Module):
     def __init__(self, n_embd: int, head_size: int, block_size: int, dropout: float) -> None:
         super().__init__()
         self.key = nn.Linear(n_embd, head_size, bias=False)
+        # print(self.key.weight, self.key.bias)
+        # print(self.key.weight.detach().numpy())
+
         self.query = nn.Linear(n_embd, head_size, bias=False)
         self.value = nn.Linear(n_embd, head_size, bias=False)
 
         self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
+        # tensor([
+        #   [1., 0., 0.],
+        #   [1., 1., 0.],
+        #   [1., 1., 1.],
+        # ])
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
-        _, T, _ = x.shape
-        k = self.key(x)    # (B,T,hs)
-        q = self.query(x)  # (B,T,hs)
-        weights = q @ k.transpose(-2, -1) * k.shape[-1]**-0.5
+        _, T, _ = x.shape  # batch, seq_len, n_embd; seq_len <= block_size
+        k = self.key(x)    # (B, T, hs)
+        q = self.query(x)  # (B, T, hs)
+
+        # k.transpose(-2, -1) = k.transpose(k.shape[0], k.shape[2], k.shape[1])
+        weights = q @ k.transpose(-2, -1) * k.shape[-1]**-0.5 # (B, T, T)
         weights = weights.masked_fill(self.tril[:T, :T] == 0, float('-inf'))
-        weights = F.softmax(weights, dim=-1)
+        # self.tril[:T, :T] == 0
+        # tensor([
+        #   [False, True,  True],
+        #   [False, False, True],
+        #   [False, False, False],
+        # ])
+        # tensor([
+        #   [v, -inf, -inf],
+        #   [v, v,    -inf],
+        #   [v, v,    v],
+        # ])
+
+        weights = F.softmax(weights, dim=-1) # attention (B, T, T)
         weights = self.dropout(weights)
+
         v = self.value(x)
         out = weights @ v
-        return out
+
+        return out # (B, T, n_embd)
 
 
 class MultiHeadAttention(nn.Module):
