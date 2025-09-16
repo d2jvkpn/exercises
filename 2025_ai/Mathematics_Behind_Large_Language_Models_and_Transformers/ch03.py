@@ -29,6 +29,7 @@ tokens = [
 d_model = 3 # embedding
 d_head = 3
 
+
 #### 2. Embedding vector: embedding + positional embedding
 ev = np.array([    # (9, 3)
   [1.0, 0.2, 0.1], # [CLS]
@@ -75,8 +76,11 @@ assert len(tokens) == value_output.shape[0]
 attn_raw = query_output @ key_output.T * 1.0 / math.sqrt(d_head) # shape=(9, 9)
 
 def softmax(x):
-    exp_x = np.exp(x - np.max(x))
-    return exp_x / np.sum(exp_x)
+    #exp_x = np.exp(x - np.max(x))
+    #return exp_x / np.sum(exp_x)
+    x_max = np.max(x, axis=-1, keepdims=True)
+    e_x = np.exp(x - x_max)
+    return e_x / np.sum(e_x, axis=-1, keepdims=True)
 
 def attn_scores_of_word(word):
     word_attn = attn_raw[tokens.index(word)]
@@ -89,7 +93,8 @@ attn_scores_of_word("river")
 attn_scores_of_word("bank")
 attn_scores_of_word("flooded")
 
-attn_softmax = np.array([softmax(v) for v in attn_raw])
+#attn_softmax = np.array([softmax(v) for v in attn_raw])
+attn_softmax = softmax(attn_raw)
 # dropout, ...
 
 #### 5.
