@@ -8,7 +8,6 @@ import numpy as np
 dims, size = 4, 100
 
 #Positiona Encoding
-
 #even_indices(pos=0, 2, 4..., dim=i)
 #pe = math.sin(pos / size ** (2*  dim/dims))
 
@@ -16,7 +15,7 @@ dims, size = 4, 100
 #pe = math.cos(pos / size ** (2*dim/dims))
 
 
-def calc_pe(pos):
+def pe(pos):
     def cal(d):
         v = d // 2 * 2
         v = pos / size**(2 * v / dims)
@@ -27,17 +26,17 @@ def calc_pe(pos):
 
 sent = ["I", "am", "a", "robot"]
 
-embeddings = np.array([
+token_embedding = np.array([
     [1.0, 0.5, 0.3, 0.0], # I
     [0.9, 0.8, 0.2, 1.0], # am
     [0.7, 0.1, 0.4, 0.0], # a
     [1.1, 0.4, 0.3, 1.0], # robot
 ])
 
-pe = np.array([calc_pe(pos) for pos in range(len(sent))])
+position_embeding = np.array([pe(pos) for pos in range(len(sent))])
 
-print(f"Positional Embedding: {pe}")
+print(f"Positional Embedding: {position_embeding}")
 
-output = embeddings + pe
+Eo = token_embedding + position_embeding
 
-print(f"Output: {output}")
+print(f"Embeding output(token_embedding+position_embeding): {Eo}")

@@ -14,15 +14,17 @@ class Head(nn.Module):
         # print(self.key.weight, self.key.bias)
         # print(self.key.weight.detach().numpy())
 
-        self.query = nn.Linear(n_embd, head_size, bias=False)
+        self.query = nn.Linear(n_embd, head_size, bias=False) # (d_model, hs)
         self.value = nn.Linear(n_embd, head_size, bias=False)
 
         self.register_buffer('tril', torch.tril(torch.ones(block_size, block_size)))
         # tensor([
-        #   [1., 0., 0.],
-        #   [1., 1., 0.],
-        #   [1., 1., 1.],
+        #   [1, 0, 0,...],
+        #   [1, 1, 0,...],
+        #   [1, 1, 1,...],
+        #   ...
         # ])
+
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -33,22 +35,23 @@ class Head(nn.Module):
         # k.transpose(-2, -1) = k.transpose(k.shape[0], k.shape[2], k.shape[1])
         weights = q @ k.transpose(-2, -1) * k.shape[-1]**-0.5 # (B, T, T)
         weights = weights.masked_fill(self.tril[:T, :T] == 0, float('-inf'))
-        # self.tril[:T, :T] == 0
         # tensor([
-        #   [False, True,  True],
-        #   [False, False, True],
-        #   [False, False, False],
+        #   [False, True,  True,...],
+        #   [False, False, True,...],
+        #   [False, False, False,...],
+        #   ...
         # ])
         # tensor([
-        #   [v, -inf, -inf],
-        #   [v, v,    -inf],
-        #   [v, v,    v],
+        #   [v, -inf, -inf,...],
+        #   [v, v,    -inf,...],
+        #   [v, v,    v,......],
+        #   ...
         # ])
 
         weights = F.softmax(weights, dim=-1) # attention (B, T, T)
         weights = self.dropout(weights)
 
-        v = self.value(x)
+        v = self.value(x) # (B, T, d_model) @ (d_model, hs) -> (B, T, )
         out = weights @ v
 
         return out # (B, T, n_embd)
@@ -247,6 +250,7 @@ class GPTLanguageModel(nn.Module):
                 indices_to_remove = torch.zeros_like(logits).scatter_(
                     1, sorted_indices, sorted_indices_to_remove,
                 )
+
                 probs[indices_to_remove] = 0.0
                 probs = probs / probs.sum(dim=-1, keepdim=True)
 

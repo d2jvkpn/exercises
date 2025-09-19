@@ -3,74 +3,73 @@
 import numpy as np
 np.random.seed(0)
 
-# Multi-Head Attention
-
-# Focus Areas for Groups of Attention Heads
-# Head 1-12 (Layer 1): Focuse on basic syntax and grammar
-# Head 12-24(Layer 2): Address lexical relationships
-# Head 25-36(Layer 3): Enhance contextual understanding
-# Head 37-48(Layer 4): Process semantic roles and dependencies
-# Head 49-60(Layer 5): Manager discourse and narrative flow
-# ...
-
 # ====== 超参数 ======
-B = 10           # batch size
-T = 42           # seq_len
-d_model = 768    # 隐藏维度
-n_heads = 12     # 头数
-head_size = d_model / n_heads  # 单头维度 d_k = d_v
+B = 10          # batch size
+T = 42          # seq_len
+d_model = 768   # 隐藏维度
+n_heads = 12    # 头数
 
-# ====== 输入 X: [B, T, d_model] ======
-X = np.random.randn(B, T, d_model).astype(np.float32)
+head_size = d_model // n_heads  # 每头维度（这里整除）
+assert d_model == n_heads * head_size
 
-# ====== 线性映射矩阵（权重） ======
-Wq = np.random.randn(d_model, head_size).astype(np.float32)
-Wk = np.random.randn(d_model, head_size).astype(np.float32)
-Wv = np.random.randn(d_model, head_size).astype(np.float32)
+# ====== 输入 ======
+X = np.random.randn(B, T, d_model).astype(np.float32)  # [B, T, d_model]
 
-# ====== 计算 Q, K, V ======
-# 形状: [B, T, head_size]
-Q = X @ Wq 
-K = X @ Wk
-V = X @ Wv
+# ====== 参数（一次性投影 QKV，再输出投影 Wo）======
+# Wqkv: [d_model, 3 * n_heads * head_size]
+Wqkv = np.random.randn(d_model, 3 * n_heads * head_size).astype(np.float32)
+bqkv = np.random.randn(3 * n_heads * head_size).astype(np.float32)  # 可选偏置
 
-# ====== 缩放点积注意力 scores = Q K^T / sqrt(d_k) ======
-# scores 形状: [B, T, T]
-scores = (Q @ np.transpose(K, (0, 2, 1))) / np.sqrt(head_size)
+# Wo: [n_heads * head_size, d_model]
+Wo = np.random.randn(n_heads * head_size, d_model).astype(np.float32)
+bo = np.random.randn(d_model).astype(np.float32)  # 可选偏置
 
-# ====== 因果 Mask（上三角置为 -inf，阻止看未来位）======
-# mask: [T, T]，主对角线以上为 True
-causal_mask = np.triu(np.ones((T, T), dtype=bool), k=1)
-# [False,  True,  True...]
-# [False,  False, True...]
-# [False,  False, False...]
-# ...
-
-# 广播到 batch 维
-#scores = np.where(causal_mask, -1e9, scores) # (B, T, T)
-scores = np.where(causal_mask, -np.inf, scores) # (B, T, T)
-
-# ====== 稳定 softmax ======
 def softmax(x, axis=-1):
-    x = x - x.max(axis=axis, keepdims=True)
+    x = x - x.max(axis=axis, keepdims=True)  # 数值稳定
     e = np.exp(x)
     return e / e.sum(axis=axis, keepdims=True)
 
-attn = softmax(scores, axis=-1)  # [B, T, T]
+# ====== 因果 Mask: 阻止看未来 token ======
+# [T, T]：上三角（不含主对角）为 True
+causal_mask = np.triu(np.ones((T, T), dtype=bool), k=1)
 
-# ====== 输出（该头的上下文表示） O = softmax(scores) V ======
-# O 形状: [B, T, head_size]
-O_head = attn @ V
+# ====== 前向：MHA ======
+# 1) 一次性线性映射到 QKV
+qkv = X @ Wqkv + bqkv  # [B, T, 3*h*hs]
 
-# （可选）将单头输出映射回 d_model 矩阵，用于与多头拼接后的统一维度
-Wo = np.random.randn(head_size, d_model).astype(np.float32) # (head_size, d_model)
-# O_out 形状: [B, T, d_model]
-O_out = O_head @ Wo
+# 2) 拆分成 Q,K,V，并分头
+# 先 reshape 为 [B, T, 3, h, hs]，再分离第三维
+qkv = qkv.reshape(B, T, 3, n_heads, head_size)
+Q = qkv[:, :, 0]  # [B, T, h, hs]
+K = qkv[:, :, 1]
+V = qkv[:, :, 2]
 
-# ====== 打印形状核对 ======
-print("X:", X.shape)                             # (10, 42, 768)
-print("Q/K/V:", Q.shape, K.shape, V.shape)       # (10, 42, 64)
-print("scores:", scores.shape)                   # (10, 42, 42)
-print("attn:", attn.shape)                       # (10, 42, 42)
-print("O_head (单头输出):", O_head.shape)         # (10, 42, 64)
-print("O_out  (映回 d_model，可选):", O_out.shape) # (10, 42, 768)
+# 3) 置换到 [B, h, T, hs] 便于做注意力
+Q = np.transpose(Q, (0, 2, 1, 3))  # [B, h, T, hs]
+K = np.transpose(K, (0, 2, 1, 3))
+V = np.transpose(V, (0, 2, 1, 3))
+
+# 4) scores = Q @ K^T / sqrt(d_k)  -> [B, h, T, T]
+scores = (Q @ np.transpose(K, (0, 1, 3, 2))) / np.sqrt(head_size)
+
+# 5) 应用因果 Mask（广播到 batch/head）
+scores = np.where(causal_mask[None, None, :, :], -1e9, scores)
+
+# 6) 注意力权重
+attn = softmax(scores, axis=-1)  # [B, h, T, T]
+
+# 7) 上下文：attn @ V -> [B, h, T, hs]
+context = attn @ V
+
+# 8) 合并各头：先到 [B, T, h, hs]，再 reshape 到 [B, T, h*hs]
+context = np.transpose(context, (0, 2, 1, 3)).reshape(B, T, n_heads * head_size)
+
+# 9) 输出线性映射回 d_model
+Y = context @ Wo + bo  # [B, T, d_model]
+
+# ====== 打印检查 ======
+print("X:", X.shape)
+print("Q/K/V per-head:", Q.shape, K.shape, V.shape)   # [B, h, T, hs]
+print("scores/attn:", scores.shape, attn.shape)       # [B, h, T, T]
+print("context:", context.shape)                      # [B, T, h*hs]
+print("Y (MHA输出):", Y.shape)                         # [B, T, d_model]
