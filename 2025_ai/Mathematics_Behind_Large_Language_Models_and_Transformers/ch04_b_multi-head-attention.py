@@ -56,7 +56,7 @@ def softmax(x, axis=-1):
     e = np.exp(x)
     return e / e.sum(axis=axis, keepdims=True)
 
-def _dropout(x, drop_prob, training=True):
+def fn_dropout(x, drop_prob, training=True):
     if not training or drop_prob == 0.0:
         return x
 
@@ -65,7 +65,7 @@ def _dropout(x, drop_prob, training=True):
     return (x * mask) / keep_prob
 
 attn = softmax(scores, axis=-1)  # (T, T)
-attn = _dropout(attn, dropout)
+attn = fn_dropout(attn, dropout)
 
 # ====== 输出（该头的上下文表示） O = softmax(scores) V: (T, head_size) ======
 O_head = attn @ V # (T, T) @ (T, head_size)
@@ -82,10 +82,7 @@ W = np.random.randn(head_size * num_heads, d_model) # weights
 b = np.random.randn(d_model)                        # bias
 
 O_projected = O_concat @ W + b
-O_projected = _dropout(O_projected, dropout)
-
-# TODO: LayerNorm(LN)
-# TODO: Feed Forward Network (FFN)
+O_projected = fn_dropout(O_projected, dropout)
 
 # ====== 打印形状核对 ======
 print(f"Parameters: T={T}, d_model={d_model}, num_heads={num_heads}, head_size={head_size}")
