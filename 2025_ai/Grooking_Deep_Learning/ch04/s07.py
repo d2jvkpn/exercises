@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 
 
-data, goal = 0.5, 0.8
+data = 0.5
+goal = 0.8
 weight = 0.5
 step_amount = 0.001
 
-for n in range(1000):
-    n += 1
+for n in range(1, 1001):
     pred = data * weight
     error = (pred - goal) ** 2
 
-    if n%100 == 0:
+    if n % 100 == 0:
         print(f"--> I{n:04d}: prediction={pred:.3f}, error={error:.3f}")
 
     pred = data * (weight + step_amount)

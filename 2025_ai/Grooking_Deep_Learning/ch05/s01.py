@@ -38,7 +38,7 @@ pred = neural_network(input, weights)
 
 delta = pred - goal
 error = delta ** 2
-weight_deltas = ele_mul(delta, input)
+weight_deltas = [round(v, 6) for v in ele_mul(delta, input)]
 
 print(f"--> 1. pred={pred:.6f}, error={error:.6f}, weight_deltas={weight_deltas}")
 

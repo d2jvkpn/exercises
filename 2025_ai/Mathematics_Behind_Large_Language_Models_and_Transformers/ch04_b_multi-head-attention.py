@@ -14,13 +14,13 @@ np.random.seed(0)
 # ...
 
 # ====== 超参数 ======
-#B = 10           # batch size
-T = 42           # seq_len
-d_model = 768    # 隐藏维度, embedding
-num_heads = 12     # 头数
+B = 10                            # batch size
+T = 42                            # seq_len
+d_model = 768                     # 隐藏维度, embedding
+num_heads = 12                    # 头数
 head_size = d_model // num_heads  # 单头维度 d_k = d_v
 assert num_heads * head_size == d_model
-dropout = 0.2
+dropout_p = 0.2
 
 # ====== 输入 X: (T, d_model) ======
 X = np.random.randn(T, d_model).astype(np.float32)
@@ -56,16 +56,16 @@ def softmax(x, axis=-1):
     e = np.exp(x)
     return e / e.sum(axis=axis, keepdims=True)
 
-def fn_dropout(x, drop_prob, training=True):
-    if not training or drop_prob == 0.0:
+def dropout(x, dropout_p, training=True):
+    if not training or dropout_p == 0.0:
         return x
 
-    keep_prob = 1 - drop_prob
+    keep_prob = 1 - dropout_p
     mask = (np.random.rand(*x.shape) < keep_prob).astype(np.float32)
     return (x * mask) / keep_prob
 
 attn = softmax(scores, axis=-1)  # (T, T)
-attn = fn_dropout(attn, dropout)
+attn = dropout(attn, dropout_p)
 
 # ====== 输出（该头的上下文表示） O = softmax(scores) V: (T, head_size) ======
 O_head = attn @ V # (T, T) @ (T, head_size)
@@ -77,12 +77,12 @@ O_concat = np.concatenate(heads, axis=-1)  # (T, d_model)
 #O_stack = np.stack(heads, axis=1)         # (T, num_heads, head_size)
 #O_reshape = O_stack.reshape(T, d_model)   # (T, d_model)
 
-# Projected
-W = np.random.randn(head_size * num_heads, d_model) # weights
+# projection
+W = np.random.randn(num_heads * head_size, d_model) # weights, num_heads * d_v
 b = np.random.randn(d_model)                        # bias
 
 O_projected = O_concat @ W + b
-O_projected = fn_dropout(O_projected, dropout)
+O_projected = dropout(O_projected, dropout_p)
 
 # ====== 打印形状核对 ======
 print(f"Parameters: T={T}, d_model={d_model}, num_heads={num_heads}, head_size={head_size}")

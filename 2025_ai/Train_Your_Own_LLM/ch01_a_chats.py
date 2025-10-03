@@ -38,6 +38,20 @@ def convert_chat(chat):
     #return [{"role": v["role"], "content": v["content"]} for v in chat]
     return chat
 
+def fix_chat(chat):
+    #idx = next((i for i, v in enumerate(chat) if v['role'] == 'prompter'), -1)
+    #chat = chat[idx:]
+    role = 'assistant'
+
+    arr = []
+    for m in chat:
+        if m['role'] != role:
+            arr.append(m)
+            role = m['role']
+
+    arr = arr[:len(arr) // 2 * 2]
+    return arr
+
 
 #### 1. load hf data
 tokenizer_dir = Path("data") / "tokenizer"
@@ -64,12 +78,14 @@ train_df = train_data[["message_id", "parent_id", "text", "role"]]
 train_df = train_df.rename(columns={"text": "content"})
 train_df["role"] = train_df["role"].replace({"prompter": "user"})
 
+#train_chats = generate_chats(train_df)
+#chats = [ convert_chat(v) for v in train_chats if len(convert_chat(v)) > 0]
 train_chats = generate_chats(train_df)
-chats = [ convert_chat(v) for v in train_chats if len(convert_chat(v)) > 0]
+train_chats = [fix_chat(c) for c in train_chats if len(fix_chat(c)) > 0]
 
 with open(tokenizer_dir / 'train.chats.json', 'w', encoding='utf-8') as f:
-    json.dump(chats, f, ensure_ascii=False, indent=2)
-    print(f"--> saved {len(chats)} chats to {tokenizer_dir / 'train.chats.json'}")
+    json.dump(train_chats, f, ensure_ascii=False, indent=2)
+    print(f"--> saved {len(train_chats)} chats to {tokenizer_dir / 'train.chats.json'}")
 
 
 #### 3. validation data
@@ -78,9 +94,11 @@ val_df = val_data[["message_id", "parent_id", "text", "role"]]
 val_df = val_df.rename(columns={"text": "content"})
 val_df["role"] = val_df["role"].replace({"prompter": "user"})
 
+#val_chats = generate_chats(val_df)
+#chats = [ convert_chat(v) for v in val_chats if len(convert_chat(v)) > 0]
 val_chats = generate_chats(val_df)
-chats = [ convert_chat(v) for v in val_chats if len(convert_chat(v)) > 0]
+val_chats = [fix_chat(c) for c in val_chats if len(fix_chat(c)) > 0]
 
 with open(tokenizer_dir / 'validation.chats.json', 'w', encoding='utf-8') as f:
-    json.dump(chats, f, ensure_ascii=False, indent=2)
-    print(f"--> saved {len(chats)} chats to {tokenizer_dir / 'validation.chats.json'}")
+    json.dump(val_chats, f, ensure_ascii=False, indent=2)
+    print(f"--> saved {len(val_chats)} chats to {tokenizer_dir / 'validation.chats.json'}")

@@ -104,6 +104,8 @@ class Block(nn.Module):
         error_message = f"n_embd {n_embd} must be divisible by n_head {n_head}"
         assert head_size * n_head == n_embd, error_message
 
+        self.layer_norm_1 = nn.LayerNorm(n_embd)
+
         self.self_attention = MultiHeadAttention(
             n_embd=n_embd,
             num_heads=n_head,
@@ -113,7 +115,7 @@ class Block(nn.Module):
         )
 
         self.feed_forward = FeedForward(n_embd, dropout)
-        self.layer_norm_1 = nn.LayerNorm(n_embd)
+
         self.layer_norm_2 = nn.LayerNorm(n_embd)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:

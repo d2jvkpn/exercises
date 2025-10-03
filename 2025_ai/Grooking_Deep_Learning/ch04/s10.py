@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 
-
 def neural_network(data, weight):
     pred = data * weight
     return pred

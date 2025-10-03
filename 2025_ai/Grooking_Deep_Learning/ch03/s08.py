@@ -1,6 +1,4 @@
 #!/usr/bin/env python3
-
-
 # one input => multiply outputs
 
 # d1 * wN -> pN

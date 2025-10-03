@@ -9,7 +9,7 @@ def neural_network(data, weights):
     return pred
 
 
-weights = np.array([0.1, 0.2, 0])
+weights = np.array([0.1, 0.2, 0.0])
 
 toes = np.array([8.5, 9.5, 9.9, 9.0])   # number of toes,      weights[0]
 wrate = np.array([0.65, 0.8, 0.8, 0.9]) # historical win rate, weights[1]
@@ -25,3 +25,6 @@ for i in range(len(toes)):
     y = neural_network(x, weights)
 
     print(f"--> I{(i+1):02d}, inputs={x}, output={y:.3f}")
+
+print()
+print(np.array([toes, wrate, nfans]).T.dot(np.array(weights)))

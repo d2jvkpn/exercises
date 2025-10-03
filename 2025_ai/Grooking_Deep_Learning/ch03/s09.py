@@ -2,7 +2,6 @@
 
 import numpy as np
 
-
 def neural_network(data, weights):
     pred = vect_x_mat(data, weights)
     return pred

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-
 # inputs: array[m]
 # weights: matrix[n, m]
 # predications: array[n]
@@ -71,20 +70,30 @@ for i in range(len(goal)):
     deltas[i] = pred[i] - goal[i]
     error[i] = deltas[i] ** 2
 
-print("==> 1. deltas={}\n    error={}, {}".format(deltas, error, sum(error)))
+def round6(vals):
+    if type(vals[0]) == list:
+        return [round6(v) for v in vals]
+    else:
+        return [round(v, 6) for v in vals]
+
+print("==> 1. deltas={}\n    error={}, {}".format(
+    round6(deltas),
+    round6(error),
+    sum(error),
+))
 
 # array[m, n], m is dim of inputs, n is dim of pred
 weight_deltas = outer_prod(inputs, deltas)
 
 print("--> weights={}".format(weights))
 
-print("--> weight_deltas={}".format(weight_deltas))
+print("--> weight_deltas={}".format(round6(weight_deltas)))
 
 for i in range(len(goal)):
     for j in range(len(inputs)):
         weights[i][i] -= weight_deltas[i][j] * alpha
 
-print("--> weights={}".format(weights))
+print("--> weights={}".format(round6(weights)))
 
 #### 2.
 pred = neural_network(inputs, weights)
@@ -93,17 +102,17 @@ for i in range(len(goal)):
     deltas[i] = pred[i] - goal[i]
     error[i] = deltas[i] ** 2
 
-print("==> 2. deltas={}\n    error={}, {}".format(deltas, error, sum(error)))
+print("==> 2. deltas={}\n    error={}, {}".format(round6(deltas), round6(error), sum(error)))
 
 # array[m, n], m is dim of inputs, n is dim of pred
 weight_deltas = outer_prod(inputs, deltas)
 
-print("--> weights={}".format(weights))
+print("--> weights={}".format(round6(weights)))
 
-print("--> weight_deltas={}".format(weight_deltas))
+print("--> weight_deltas={}".format(round6(weight_deltas)))
 
 for i in range(len(goal)):
     for j in range(len(inputs)):
         weights[i][i] -= weight_deltas[i][j] * alpha
 
-print("--> weights={}".format(weights))
+print("--> weights={}".format(round6(weights)))

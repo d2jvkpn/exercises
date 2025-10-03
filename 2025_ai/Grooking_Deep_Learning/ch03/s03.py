@@ -7,7 +7,7 @@ def neural_network(d, weight):
     return predication
 
 
-number_of_toes = [8.5, 9.5, 10, 9]
+number_of_toes = [8.5, 9.5, 10.0, 9.0]
 d = number_of_toes[0]
 
 weight = 0.1

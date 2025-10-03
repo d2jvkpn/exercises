@@ -2,14 +2,19 @@
 
 
 alpha = 1.0
-data, goal = 0.85, 1.0
+data = 0.85
+goal = 1.0
 weight = 0.1
 
-for n in range(10):
+for n in range(50):
     n += 1
     pred = data * weight
     delta = pred - goal
     error = delta ** 2
+
+    if error < 1e-9:
+        break
+
     weight_delta = delta * data     # 误差缩放
     weight -= weight_delta * alpha  # 负值反转
 
