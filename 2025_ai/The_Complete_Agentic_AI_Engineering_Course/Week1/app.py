@@ -2,7 +2,7 @@
 import os, json
 from pathlib import Path
 from dotenv import load_dotenv
-load_dotenv(Path("configs") / "local.env", override=True)
+_ = load_dotenv(Path("configs") / "local.env", override=True)
 
 import requests
 from openai import OpenAI
@@ -11,7 +11,7 @@ import gradio as gr
 
 
 ####
-system_prompt_template = """
+system_prompt_tempate = """
 You are acting as {name}. You are answering questions on {name}'s website, 
 particularly questions related to {name}'s career, background, skills and experience. Your 
 responsibility is to represent {name} for interactions on the website as faithfully as possible. 
@@ -32,8 +32,11 @@ record_user_details tool.
 With this context, please chat with the user, always staying in character as {name}.
 """.replace(" \n", " ").strip()
 
+
 ####
 def push(text):
+    print(f"--> Push: {text}")
+
     requests.post(
         "https://api.pushover.net/1/messages.json",
         data={
@@ -61,20 +64,19 @@ record_user_details_json = {
         "properties": {
             "email": {
                 "type": "string",
-                "description": "The email address of this user"
+                "description": "The email address of this user",
             },
             "name": {
                 "type": "string",
-                "description": "The user's name, if they provided it"
-            }
-            ,
+                "description": "The user's name, if they provided it",
+            },
             "notes": {
                 "type": "string",
-                "description": "Any additional information about the conversation that's worth recording to give context"
+                "description": "Any additional information about the conversation that's worth recording to give context",
             }
         },
         "required": ["email"],
-        "additionalProperties": False
+        "additionalProperties": False,
     }
 }
 
@@ -86,11 +88,11 @@ record_unknown_question_json = {
         "properties": {
             "question": {
                 "type": "string",
-                "description": "The question that couldn't be answered"
+                "description": "The question that couldn't be answered",
             },
         },
         "required": ["question"],
-        "additionalProperties": False
+        "additionalProperties": False,
     }
 }
 
@@ -99,8 +101,8 @@ record_unknown_question_json = {
 class Me:
     def __init__(self):
         self.openai = OpenAI(
-           api_key=os.getenv('OPENAI_API_KEY'),
-           base_url=os.getenv("OPENAI_API_BASE"),
+            api_key=os.getenv('OPENAI_API_KEY'),
+            base_url=os.getenv("OPENAI_API_BASE"),
         )
 
         self.name = "Ed Donner"
@@ -139,7 +141,7 @@ class Me:
         return results
 
     def chat(self, message, history):
-        system_prompt = system_prompt_template.format(
+        system_prompt = system_prompt_tempate.format(
             name=self.name, summary=self.summary, linkedin=self.linkedin,
         )
 
@@ -161,7 +163,7 @@ class Me:
                 done = True
 
         return response.choices[0].message.content
-    
+
 
 if __name__ == "__main__":
     me = Me()
