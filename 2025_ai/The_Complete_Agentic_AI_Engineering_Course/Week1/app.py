@@ -117,8 +117,8 @@ class Me:
             self.summary = f.read()
 
         self.tools = [
-            {"type": "function", "function": record_user_details_json},
-            {"type": "function", "function": record_unknown_question_json},
+            { "type": "function", "function": record_user_details_json },
+            { "type": "function", "function": record_unknown_question_json },
         ]
 
     def handle_tool_call(self, tool_calls):
