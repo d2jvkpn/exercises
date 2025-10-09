@@ -15,6 +15,7 @@ dataset_x = np.array([
     [1, 1, 1],
     [0, 1, 1],
     [1, 0, 1],
+    #...
 ])
 
 # walk_vs_stop: 1x6
@@ -32,7 +33,6 @@ weights = np.random.rand(3)
 
 #data = dataset_x[0]
 #goal = dataset_y[0]
-
 
 def train(x, y):
     global weights
