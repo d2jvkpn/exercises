@@ -16,8 +16,6 @@ crewai create crew debate
 #### 2. uv install addtional packages
 cd debate
 
-crewai uv sync
-
 #uv pip install -U httpx litellm
 #uv pip install "requests[socks]" "httpx[socks]"
 
@@ -28,4 +26,10 @@ uv add requests[socks] httpx[socks]
 uv sync
 
 #### 3. run
+cat > .env <<EOF
+#https_proxy=socks5h://127.0.0.1:1080
+
+OPENAI_API_KEY=sk-xxxxxxxx
+EOF
+
 crewai run
