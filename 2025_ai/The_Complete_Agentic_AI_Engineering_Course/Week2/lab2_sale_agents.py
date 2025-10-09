@@ -8,7 +8,7 @@ load_dotenv(Path("configs") / "local.env", override=True)
 from openai import AsyncOpenAI
 from openai.types.responses import ResponseTextDeltaEvent
 from agents import Agent, Runner, function_tool # trace
-from agents import set_default_openai_client, set_default_openai_api, set_tracing_disabled
+from agents import set_default_openai_client, set_tracing_disabled # set_default_openai_api
 #import sendgrid
 #from sendgrid.helpers.mail import Mail, Email, To, Content
 
@@ -37,7 +37,7 @@ set_default_openai_client(llm_client)
 
 #send_test_email()
 
-#### 2. sales agents
+#### 2. three sales agents
 instructions1 = "You are a sales agent working for ComplAI, a company that provides a SaaS tool \
 for ensuring SOC2 compliance and preparing for audits, powered by AI. You write professional, \
 serious cold emails."
@@ -57,7 +57,6 @@ tool for ensuring SOC2 compliance and preparing for audits, powered by AI. You w
 the point cold emails."
 
 sales_agent3 = Agent(name="Busy Sales Agent", instructions=instructions3, model=model)
-
 
 async def test01_sales_agent1():
     result = Runner.run_streamed(sales_agent1, input="Write a cold sales email")
@@ -138,34 +137,29 @@ def send_html_email(subject: str, html_body: str) -> Dict[str, str]:
     return {"status": "success", "text": html_body}
 
 #### 5. tools
+# ----
 description = "Write a cold sales email"
 tool1 = sales_agent1.as_tool(tool_name="sales_agent1", tool_description=description)
 tool2 = sales_agent2.as_tool(tool_name="sales_agent2", tool_description=description)
 tool3 = sales_agent3.as_tool(tool_name="sales_agent3", tool_description=description)
 
-#tools = [tool1, tool2, tool3, send_text_email]
-
-subject_instructions = "You can write a subject for a cold sales email. You are given a message \
+# ----
+instructions = "You can write a subject for a cold sales email. You are given a message \
 and you need to write a subject for an email that is likely to get a response."
 
-subject_writer = Agent(name="Email subject writer", instructions=subject_instructions, model=model)
+subject_writer = Agent(name="Email subject writer", instructions=instructions, model=model)
 
 subject_tool = subject_writer.as_tool(
     tool_name="subject_writer",
     tool_description="Write a subject for a cold sales email",
 )
 
-
-html_instructions = "You can convert a text email body to an HTML email body. You are given a text \
+# ----
+instructions = "You can convert a text email body to an HTML email body. You are given a text \
 email body which might have some markdown and you need to convert it to an HTML email body with \
 simple, clear, compelling layout and design."
 
-
-html_converter = Agent(
-    name="HTML email body converter",
-    instructions=html_instructions,
-    model=model,
-)
+html_converter = Agent(name="HTML email body converter", instructions=instructions, model=model)
 
 html_tool = html_converter.as_tool(
     tool_name="html_converter",
@@ -223,21 +217,25 @@ async def test04_sales_manager():
     return result
 
 #### 7. test
+# ----
 result = asyncio.run(test01_sales_agent1())
 
 with open(Path("data") / 'lab2_test01_sales_agent1.txt', 'w') as f:
     f.write(result)
 
+# ----
 result = asyncio.run(test02_write_cold_emails())
 
 with open(Path("data") / 'lab2_test02_write_cold_emails.txt', 'w') as f:
     f.write(result)
 
+# ----
 result = asyncio.run(test03_write_a_cold_email())
 
 with open(Path("data") / 'lab2_test03_write_a_cold_email.txt', 'w') as f:
     f.write(result)
 
+# ----
 result = asyncio.run(test04_sales_manager())
 
 with open(Path("data") / 'lab2_test04_sales_manager.txt', 'w') as f:

@@ -5,12 +5,11 @@ from pathlib import Path
 from dotenv import load_dotenv
 load_dotenv(Path("configs") / "local.env", override=True)
 
-
 from openai import AsyncOpenAI
 from openai.types.responses import ResponseTextDeltaEvent
-from agents import Agent, Runner, function_tool # trace
+from agents import Agent, Runner, function_tool, trace
 from agents import OpenAIChatCompletionsModel, input_guardrail, GuardrailFunctionOutput
-from agents import set_default_openai_client, set_default_openai_api, set_tracing_disabled
+from agents import set_default_openai_client, set_tracing_disabled # set_default_openai_api
 #import sendgrid
 #from sendgrid.helpers.mail import Mail, Email, To, Content
 from pydantic import BaseModel
@@ -27,7 +26,7 @@ set_tracing_disabled(True)
 set_default_openai_client(llm_client)
 #set_default_openai_api("chat_completions")
 
-#### 2. 
+#### 2. sale agents
 instructions1 = "You are a sales agent working for ComplAI, a company that provides a SaaS tool \
 for ensuring SOC2 compliance and preparing for audits, powered by AI. You write professional, \
 serious cold emails."
@@ -46,12 +45,16 @@ deepseek_client = AsyncOpenAI(
 )
 
 deepseek_model = OpenAIChatCompletionsModel(model="deepseek-chat", openai_client=deepseek_client)
-sales_agent1 = Agent(name="DeepSeek Sales Agent", instructions=instructions1, model=deepseek_model)
+sales_agent = Agent(name="DeepSeek Sales Agent", instructions=instructions1, model=deepseek_model)
+
+openai_model = OpenAIChatCompletionsModel(model="gpt-4o-mini", openai_client=llm_client)
+openai_agent = Agent(name="DeepSeek Sales Agent", instructions=instructions1, model=openai_model)
 
 description = "Write a cold sales email"
-tool1 = sales_agent1.as_tool(tool_name="sales_agent1", tool_description=description)
+tool1 = sales_agent.as_tool(tool_name="sales_agent1", tool_description=description)
+tool2 = openai_agent.as_tool(tool_name="sales_agent2", tool_description=description)
 
-#### 3.
+#### 3. function tools
 @function_tool
 def send_text_email(body: str):
     """Send out an email with the given body to all sales prospects"""
@@ -79,29 +82,30 @@ def send_html_email(subject: str, html_body: str) -> Dict[str, str]:
     return {"status": "success", "text": html_body}
 
 #### 4. emailer agent
-subject_instructions = "You can write a subject for a cold sales email. You are given a message \
-and you need to write a subject for an email that is likely to get a response."
+# ----
+instructions = "You can write a subject for a cold sales email. You are given a message and you \
+need to write a subject for an email that is likely to get a response."
 
-subject_writer = Agent(name="Email subject writer", instructions=subject_instructions, model=model)
+subject_writer = Agent(name="Email subject writer", instructions=instructions, model=model)
 
 subject_tool = subject_writer.as_tool(
     tool_name="subject_writer",
     tool_description="Write a subject for a cold sales email",
 )
 
-html_instructions = "You can convert a text email body to an HTML email body. You are given a text \
+# ----
+instructions = "You can convert a text email body to an HTML email body. You are given a text \
 email body which might have some markdown and you need to convert it to an HTML email body with \
 simple, clear, compelling layout and design."
 
-html_converter = Agent(name="HTML email body converter", instructions=html_instructions, model=model)
+html_converter = Agent(name="HTML email body converter", instructions=instructions, model=model)
 
 html_tool = html_converter.as_tool(
     tool_name="html_converter",
     tool_description="Convert a text email body to an HTML email body",
 )
 
-email_tools = [subject_tool, html_tool, send_html_email]
-
+# ----
 instructions ="You are an email formatter and sender. You receive the body of an email to be sent. \
 You first use the subject_writer tool to write a subject for the email, then use the \
 html_converter tool to convert the body to HTML. Finally, you use the send_html_email tool to send \
@@ -111,7 +115,7 @@ emailer_agent = Agent(
     name="Email Manager",
     instructions=instructions,
     model=model,
-    tools=email_tools,
+    tools=[subject_tool, html_tool, send_html_email],
     handoff_description="Convert an email to HTML and send it",
 )
 
@@ -140,18 +144,18 @@ sales_manager = Agent(
     name="Sales Manager",
     instructions=sales_manager_instructions,
     model=model,
-    tools=[tool1],
+    tools=[tool1, tool2],
     handoffs=[emailer_agent],
 )
 
 message = "Send out a cold sales email addressed to Dear CEO from Alice"
 
-#with trace("Automated SDR"):
-result = await Runner.run(sales_manager, message)
-with open(Path("data") / 'lab3_sales_manager.txt', 'w') as f:
-    f.write(result.final_output)
+with trace("Automated SDR"):
+    result = await Runner.run(sales_manager, message)
+    with open(Path("data") / 'lab3_sales_manager.txt', 'w') as f:
+        f.write(result.final_output)
 
-#### 6. 
+#### 6. guardrail agent
 class NameCheckOutput(BaseModel):
     is_name_in_message: bool
     name: str
@@ -167,7 +171,7 @@ guardrail_agent = Agent(
 async def guardrail_against_name(ctx, agent, message):
     result = await Runner.run(guardrail_agent, message, context=ctx.context)
     is_name_in_message = result.final_output.is_name_in_message
-    print(f"~~~ guardrail_against_name: {result.final_output.is_name_in_message}")
+    print(f"!!! guardrail_against_name: {is_name_in_message}")
 
     return GuardrailFunctionOutput(
         output_info={ "found_name": result.final_output },
@@ -178,18 +182,17 @@ careful_sales_manager = Agent(
     name="Sales Manager",
     instructions=sales_manager_instructions,
     model=model,
-    tools=[tool1],
+    tools=[tool1, tool2],
     handoffs=[emailer_agent],
     input_guardrails=[guardrail_against_name]
 )
 
 message = "Send out a cold sales email addressed to Dear CEO from Alice"
 
-#with trace("Protected Automated SDR"):
-try:
-    result = await Runner.run(careful_sales_manager, message)
-
-    with open(Path("data") / "lab3_careful_sales_manager.txt", 'w') as f:
-        f.write(result.final_output)
-except Exception as e:
-    print(f"Got an exception: {e}")
+with trace("Protected Automated SDR"):
+    try:
+        result = await Runner.run(careful_sales_manager, message)
+        with open(Path("data") / "lab3_careful_sales_manager.txt", 'w') as f:
+            f.write(result.final_output)
+    except Exception as e:
+        print(f"!!! Got an exception: {e}")
