@@ -21,7 +21,7 @@ set_default_openai_client(openai)
 ####
 agent = Agent(
     name="Jokester",
-    instructions="You are a joke teller",
+    instructions="You are a joke teller", # system prompt
     model="gpt-4o-mini",
 )
 
@@ -29,7 +29,11 @@ agent = Agent(
 # https://platform.openai.com/traces
 async def run():
     with trace("Telling a joke"):
-        result = await Runner.run(agent, "Tell a joke about Autonomous AI Agents")
+        result = await Runner.run(
+            agent,
+            "Tell a joke about Autonomous AI Agents", # user prompt
+        )
+
         # print(result.final_output)
         return result
 
