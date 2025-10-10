@@ -16,9 +16,7 @@ crewai create crew debate
 #### 2. uv install addtional packages
 cd debate
 
-#uv pip install -U httpx litellm
-#uv pip install "requests[socks]" "httpx[socks]"
-
+uv venv .venv
 source .venv/bin/activate
 
 #uv lock --upgrade-package litellm

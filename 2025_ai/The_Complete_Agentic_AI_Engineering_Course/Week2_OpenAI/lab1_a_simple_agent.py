@@ -10,7 +10,7 @@ from agents import set_default_openai_client, set_tracing_disabled # set_default
 
 ####
 openai = AsyncOpenAI(
-    base_url=os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1"),
+    base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
     api_key=os.getenv("OPENAI_API_KEY"),
 )
 

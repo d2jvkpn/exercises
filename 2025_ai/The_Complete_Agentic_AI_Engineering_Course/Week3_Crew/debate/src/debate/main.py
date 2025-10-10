@@ -6,21 +6,21 @@ from debate.crew import Debate
 
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
-# This main file is intended to be a way for you to run your
-# crew locally, so refrain from adding unnecessary logic into this file.
-# Replace with inputs you want to test with, it will automatically
-# interpolate any tasks and agents information
+# This main file is intended to be a way for you to run your crew locally, so refrain from adding 
+# unnecessary logic into this file. Replace with inputs you want to test with, it will 
+# automatically interpolate any tasks and agents information
 
 def run():
-    """
-    Run the crew.
-    """
+    """Run the crew. """
     inputs = {
         'motion': 'There needs to be strict laws to regulate LLMs',
     }
-    
+
     try:
-        result = Debate().crew().kickoff(inputs=inputs)
         print(result.raw)
+        result = Debate().crew().kickoff(inputs=inputs)
+
+        with open("output/crew.txt", 'w') as f:
+            f.write(result.raw)
     except Exception as e:
         raise Exception(f"An error occurred while running the crew: {e}")

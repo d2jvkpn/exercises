@@ -17,7 +17,7 @@ from pydantic import BaseModel, Field
 
 #### 1. init
 llm_client = AsyncOpenAI(
-    base_url=os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1"),
+    base_url=os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1"),
     api_key=os.getenv("OPENAI_API_KEY"),
 )
 
@@ -29,7 +29,7 @@ set_default_openai_client(llm_client)
 
 #### 2. search agent
 # role, goal(inputs and outputs) and rules
-INSTRUCTIONS = "You are a research assistant. Given a search term, you search the web for that \
+instructions = "You are a research assistant. Given a search term, you search the web for that \
 term and produce a concise summary of the results. The summary must 2-3 paragraphs and less than \
 300 words. Capture the main points. Write succintly, no need to have complete sentences or good \
 grammar. This will be consumed by someone synthesizing a report, so it's vital you capture the \
@@ -38,7 +38,7 @@ itself."
 
 search_agent = Agent(
     name="SearchAgent",
-    instructions=INSTRUCTIONS,
+    instructions=instructions,
     model=model,
     model_settings=ModelSettings(tool_choice="required"),
     tools=[
@@ -48,7 +48,7 @@ search_agent = Agent(
 
 async def test_search_agent(
     query = "Latest AI Agent frameworks in 2025",
-    save=Path("data") / "lab4_search_agent.json",
+    save=Path("data") / "lab4-1_search_agent.json",
 ):
     with trace("Search"):
         result = await Runner.run(search_agent, query)
@@ -68,7 +68,7 @@ async def test_search_agent(
 #### 3. planner agent
 HOW_MANY_SEARCHES = 3
 
-INSTRUCTIONS = f"You are a helpful research assistant. Given a query, come up with a set of web \
+instructions = f"You are a helpful research assistant. Given a query, come up with a set of web \
 searches to perform to best answer the query. Output {HOW_MANY_SEARCHES} terms to query for."
 
 # Use Pydantic to define the Schema of our response - this is known as "Structured Outputs"
@@ -85,14 +85,14 @@ class WebSearchPlan(BaseModel):
 
 planner_agent = Agent(
     name="PlannerAgent",
-    instructions=INSTRUCTIONS,
+    instructions=instructions,
     model=model,
     output_type=WebSearchPlan,
 )
 
 async def test_planner_agent(
     query = "Latest AI Agent frameworks in 2025",
-    save=Path("data") / "lab4_planner_agent.json",
+    save=Path("data") / "lab4-1_planner_agent.json",
 ):
     with trace("Planner"):
         result = await Runner.run(planner_agent, query)
@@ -123,19 +123,19 @@ def send_text_email(body: str):
     print("==> send_text_email")
     return {"status": "success", "text": body}
 
-INSTRUCTIONS = "You are able to send a nicely formatted HTML email based on a detailed report. You \
+instructions = "You are able to send a nicely formatted HTML email based on a detailed report. You \
 will be provided with a detailed report. You should use your tool to send one email, providing the \
 report converted into clean, well presented HTML with an appropriate subject line."
 
 email_agent = Agent(
     name="Email agent",
-    instructions=INSTRUCTIONS,
+    instructions=instructions,
     model=model,
     tools=[send_text_email],
 )
 
 #### 5. writer agent
-INSTRUCTIONS = """
+instructions = """
 You are a senior researcher tasked with writing a cohesive report for a research query.
 
 You will be provided with the original query, and some initial research done by a research 
@@ -155,7 +155,7 @@ class ReportData(BaseModel):
 
 writer_agent = Agent(
     name="WriterAgent",
-    instructions=INSTRUCTIONS,
+    instructions=instructions,
     model=model,
     output_type=ReportData,
 )
@@ -192,29 +192,29 @@ async def write_report(query: str, search_results: list[str]):
 
 async def send_report_email(report: ReportData):
     """ Use the email agent to send an email with the report """
-    print("Writing email...")
+    print("--> Writing email...")
     result = await Runner.run(email_agent, report.markdown_report)
-    print("Email sent")
+    print("<-- Email sent")
     return result
 
 ####
 query ="Latest AI Agent frameworks in 2025"
 
 with trace("Research trace"):
-    print("Starting research...")
+    print("==> Starting research...")
     search_plan = await plan_searches(query)
     search_results = await perform_searches(search_plan)
     report = await write_report(query, search_results)
     result = await send_report_email(report)
-    print("Hooray!")
+    print("<== Hooray!")
 
 email = json.loads(result.raw_responses[0].output[0].arguments)['body']
 
-with open(Path("data") / "lab4_research_email.html", 'w') as f:
+with open(Path("data") / "lab4-1_research_email.html", 'w') as f:
     f.write(email)
 
-with open(Path("data") / "lab4_research_report.json", 'w') as f:
+with open(Path("data") / "lab4-1_research_report.json", 'w') as f:
     f.write(report.model_dump_json(indent=2, ensure_ascii=False))
 
-with open(Path("data") / "lab4_research_report.md", 'w') as f:
+with open(Path("data") / "lab4-1_research_report.md", 'w') as f:
     f.write(report.markdown_report)

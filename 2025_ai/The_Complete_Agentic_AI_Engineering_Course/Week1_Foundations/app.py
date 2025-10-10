@@ -102,7 +102,7 @@ class Me:
     def __init__(self):
         self.openai = OpenAI(
             api_key=os.getenv('OPENAI_API_KEY'),
-            base_url=os.getenv("OPENAI_API_BASE"),
+            base_url=os.getenv("OPENAI_BASE_URL"),
         )
 
         self.name = "Ed Donner"
@@ -145,7 +145,8 @@ class Me:
             name=self.name, summary=self.summary, linkedin=self.linkedin,
         )
 
-        messages = [{"role": "system", "content": system_prompt}] + history + [{"role": "user", "content": message}]
+        messages = [{"role": "system", "content": system_prompt}] + history
+        messages.append({"role": "user", "content": message})
 
         done = False
         while not done:
