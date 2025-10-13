@@ -12,16 +12,15 @@ import gradio as gr
 
 ####
 system_prompt_template = """
-You are acting as {name}. You are answering questions on {name}'s website, 
-particularly questions related to {name}'s career, background, skills and experience. Your 
-responsibility is to represent {name} for interactions on the website as faithfully as possible. 
-You are given a summary of {name}'s background and LinkedIn profile which you can use to answer 
-questions. Be professional and engaging, as if talking to a potential client or future employer who 
-came across the website. If you don't know the answer to any question, use your 
-record_unknown_question tool to record the question that you couldn't answer, even if it's about 
-something trivial or unrelated to career. If the user is engaging in discussion, try to steer them 
-towards getting in touch via email; ask for their email and record it using your 
-record_user_details tool.
+You are acting as {name}. You are answering questions on {name}'s website, particularly questions 
+related to {name}'s career, background, skills and experience. Your responsibility is to represent 
+{name} for interactions on the website as faithfully as possible. You are given a summary of 
+{name}'s background and LinkedIn profile which you can use to answer questions. Be professional and 
+engaging, as if talking to a potential client or future employer who came across the website. If 
+you don't know the answer to any question, use your record_unknown_question tool to record the 
+question that you couldn't answer, even if it's about something trivial or unrelated to career. If 
+the user is engaging in discussion, try to steer them towards getting in touch via email; ask for 
+their email and record it using your record_user_details tool.
 
 ## Summary:
 {summary}
@@ -59,7 +58,6 @@ with open(Path("docs") / "me" / "summary.txt", "r", encoding="utf-8") as f:
     summary = f.read()
 
 
-
 ####
 def push(message):
     print(f"--> Push: {message}")
@@ -73,7 +71,7 @@ def push(message):
 
     requests.post(pushover_url, data=payload)
 
-push("HEY!!")
+#push("HEY!!")
 
 def record_user_details(email, name="Name not provided", notes="not provided"):
     push(f"Recording interest from {name} with email {email} and notes {notes}")
@@ -105,7 +103,7 @@ record_user_details_json = {
             }
         },
         "required": ["email"],
-        "additionalProperties": False
+        "additionalProperties": False,
     }
 }
 
@@ -121,13 +119,13 @@ record_unknown_question_json = {
             },
         },
         "required": ["question"],
-        "additionalProperties": False
+        "additionalProperties": False,
     }
 }
 
 tools = [
-    {"type": "function", "function": record_user_details_json},
-    {"type": "function", "function": record_unknown_question_json},
+    { "type": "function", "function": record_user_details_json },
+    { "type": "function", "function": record_unknown_question_json },
 ]
 
 
@@ -156,11 +154,15 @@ def handle_tool_calls(tool_calls):
 system_prompt = system_prompt_template.format(name=name, summary=summary, linkedin=linkedin)
 
 def chat(message, history):
-    messages = [{"role": "system", "content": system_prompt}] + history + [{"role": "user", "content": message}]
-    done = False
+    messages = [{"role": "system", "content": system_prompt}] + history
+    messages.append({"role": "user", "content": message})
 
+    done = False
     while not done:
-        response = openai.chat.completions.create(model="gpt-4o-mini", messages=messages, tools=tools)
+        response = openai.chat.completions.create(
+            model="gpt-4o-mini", messages=messages, tools=tools,
+        )
+
         finish_reason = response.choices[0].finish_reason
 
         # If the LLM wants to call a tool, we do that!
