@@ -17,8 +17,8 @@ def run():
     }
 
     try:
-        print(result.raw)
         result = Debate().crew().kickoff(inputs=inputs)
+        print(result.raw)
 
         with open("output/crew.txt", 'w') as f:
             f.write(result.raw)
