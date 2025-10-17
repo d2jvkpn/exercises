@@ -1,15 +1,17 @@
+from pathlib import Path
 import time
-
-from agents import proposer, opposer, judge
-from tasks import judge_task
-
 from dotenv import load_dotenv
+load_dotenv(Path(".env"), override=True)
+
+from crew_agents import proposer, opposer, judge
+from crew_tasks import judge_task
+
 from crewai import Agent, Task, Crew
 from crewai.memory import LongTermMemory
 import gradio as gr
 from gradio import themes
 
-start_prompt = "开始辩论，先发表你的支持立场的第一条论点: '{motion}'."
+start_prompt = "开始辩论，先发表你的支持立场的第一条论点: {motion}."
 debat_prompt = """对方刚刚说: '{last_debug}'.
 请针对这段发言提出有力的反驳，继续支持本方立场.
 以下是完整的辩论记录: {debate_log}"""
@@ -26,7 +28,6 @@ def format_as_chat_history(messages):
 
 def debate(motion="Being vegan is better for the environment", MAX_ROUNDS=4):
     print("Hello from debate-prep-ai!")
-    load_dotenv(override=True)
 
     debate_log = []
     yield format_as_chat("Starting debate...", [], "assistant")
@@ -35,7 +36,7 @@ def debate(motion="Being vegan is better for the environment", MAX_ROUNDS=4):
     turn = "proposer"
     for i in range(MAX_ROUNDS):
         agent = proposer if i % 2 == 0 else opposer
-        turn = "proposer 正方" if i % 2 == 0 else "opposer 反方"
+        turn = "Proposer" if i % 2 == 0 else "Opposer" # turn.capitalize()
 
         task = Task(
             description=start_prompt if not debate_log else debat_prompt,
@@ -50,7 +51,7 @@ def debate(motion="Being vegan is better for the environment", MAX_ROUNDS=4):
         })
 
         # print(result.raw)
-        message = f"## {turn.capitalize()}: \n{result}"
+        message = f"## {turn}: \n{result}"
         debate_log.append({"role": "user" if i % 2 == 0 else "assistant", "content": ""})
 
         for character in message:
@@ -67,19 +68,17 @@ def debate(motion="Being vegan is better for the environment", MAX_ROUNDS=4):
     )
 
     yield format_as_chat(
-        f"********************************\n\n ### Arguments Completed. \n\n Judging now ...\n\n********************************",
-        debate_log,
-        "assistant",
-    )
+        "================================================================================" + \
+        "\n\n## Arguments Completed. Judging now.....\n\n" + \
+        "================================================================================",
+        debate_log, "user",
+   )
 
     final_crew = Crew(tasks=[judge_task], agents=[judge], verbose=True)
     verdict = final_crew.kickoff(inputs={"motion": motion, "debate_summary": debate_summary})
 
-    debate_log.append({"role": "assistant", "content": ""})
-    for character in f"👨‍⚖️ FINAL VERDICT ARRIVED\n\n\n\n {verdict}":
-        debate_log[-1]['content'] += character
-        time.sleep(0.005)
-        yield debate_log
+    debate_log.append({"role": "assistant", "content": f"👨‍⚖️ FINAL VERDICT ARRIVED\n\n{verdict}"})
+    yield debate_log
 
 intro_markdown = """
 # Debate Prep AI
@@ -125,7 +124,7 @@ def renderInterface():
 
                 max_rounds = gr.Slider(
                     label="Number of Rounds",
-                    value=4,
+                    value=6,
                     minimum=1,
                     maximum=10,
                     step=1,
