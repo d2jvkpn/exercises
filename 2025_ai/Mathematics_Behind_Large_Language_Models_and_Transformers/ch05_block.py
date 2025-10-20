@@ -2,6 +2,8 @@
 import numpy as np
 np.random.seed(0)
 
+import torch.nn as nn
+
 # ====== 超参数 ======
 B = 10                            # batch size
 T = 42                            # seq_len
