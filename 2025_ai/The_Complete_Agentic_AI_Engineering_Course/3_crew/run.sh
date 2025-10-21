@@ -20,7 +20,7 @@ uv venv .venv
 source .venv/bin/activate
 
 #uv lock --upgrade-package litellm
-uv add requests[socks] httpx[socks]
+uv add requests[socks] httpx[socks] python-dotenv
 uv sync
 
 #### 3. run
