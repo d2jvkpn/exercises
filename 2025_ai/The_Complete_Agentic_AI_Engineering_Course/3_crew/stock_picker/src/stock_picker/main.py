@@ -4,7 +4,6 @@ from datetime import datetime
 
 from stock_picker.crew import StockPicker
 
-
 warnings.filterwarnings("ignore", category=SyntaxWarning, module="pysbd")
 
 def run():

@@ -1,6 +1,7 @@
-import os
+import os, json
 from pathlib import Path
-from typing import List
+from datetime import datetime
+from typing import List, Any
 
 from .tools.push_tool import PushNotificationTool
 
@@ -13,6 +14,42 @@ from crewai.memory import LongTermMemory, ShortTermMemory, EntityMemory
 from crewai.memory.storage.rag_storage import RAGStorage
 from crewai.memory.storage.ltm_sqlite_storage import LTMSQLiteStorage
 
+def now():
+    return datetime.now().astimezone().strftime("%FT%T%:z")
+
+def serialize_output(output: Any) -> dict:
+    # 1) 官方 TaskOutput
+    if hasattr(output, "to_dict") and callable(output.to_dict):
+        return output.to_dict()  # 包含 raw/json_dict/pydantic 等（若有）
+
+    # 2) Pydantic 模型（有时你直接拿到的是 BaseModel）
+    if hasattr(output, "model_dump") and callable(output.model_dump):
+        return output.model_dump()
+
+    # 3) 已是可 JSON 的原生类型
+    if isinstance(output, (dict, list, int, float, bool)) or output is None:
+        return {"raw": output}
+
+    # 4) 兜底：转成字符串
+    return { "raw": str(output) }
+
+def step_logger(output, *args, **kwargs):
+    record = {
+        "timestamp": now(),
+        "step_output": str(output).replace("\\'", "'").replace('\\"', '"').replace("\\\\n", '\\n'),
+    }
+
+    with open("logs/steps.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+def task_logger(output, *args, **kwargs):
+    record = {
+        "timestamp": now(),
+        "task_output": serialize_output(output),
+    }
+
+    with open("logs/tasks.jsonl", "a", encoding="utf-8") as f:
+        f.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 class TrendingCompany(BaseModel):
     """A company that is in the news and attracting attetnion"""
@@ -130,6 +167,11 @@ class StockPicker():
             ),
         )
 
+        log_dir = Path("logs")
+        log_dir.mkdir(parents=True, exist_ok=True)
+        data_dir = Path("data")
+        data_dir.mkdir(parents=True, exist_ok=True)
+
         return Crew(
             agents=self.agents,
             tasks=self.tasks,
@@ -142,4 +184,8 @@ class StockPicker():
             short_term_memory=short_term_memory,
             long_term_memory=long_term_memory,
             entity_memory=entity_memory,
+
+            output_log_file="logs/crew_log.json",
+            step_callback=step_logger,
+            task_callback=task_logger,
         )
