@@ -1,10 +1,9 @@
 #! /bin/env python3
+from importlib.metadata import version
 
 import torch
 from torch.utils.data import Dataset, DataLoader
 import tiktoken
-
-from importlib.metadata import version
 
 print("torch version:", version("torch"))
 print("tiktoken version:", version("tiktoken"))

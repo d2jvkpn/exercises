@@ -1,0 +1,13 @@
+python-dotenv
+requests
+requests[socks]
+httpx
+httpx[socks]
+pydantic
+nest_asyncio
+gradio
+
+langchain
+langchain_openai
+langchain_community
+langgraph-checkpoint-sqlite

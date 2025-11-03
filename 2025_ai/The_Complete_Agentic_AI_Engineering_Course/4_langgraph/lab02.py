@@ -6,21 +6,26 @@ from typing import Annotated, TypedDict
 from dotenv import load_dotenv
 import requests
 from pydantic import BaseModel
+import gradio as gr
+import nest_asyncio
+nest_asyncio.apply()
 from langchain_openai import ChatOpenAI
-from langchain.agents import Tool
+from langchain_core.tools import Tool
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 from langchain_community.utilities import GoogleSerperAPIWrapper
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.checkpoint.sqlite import SqliteSaver
-import gradio as gr
+from langchain_community.agent_toolkits import PlayWrightBrowserToolkit
+from langchain_community.tools.playwright.utils import create_async_playwright_browser
+# If you get a NotImplementedError here or later, see the Heads Up at the top of the notebook
 
 
 ####
 load_dotenv(Path("configs") / "local.env", override=True)
 basename = Path(os.sys.argv[0]).name
-print(f"--> basename: {basename}")
+#print(f"--> basename: {basename}")
 Path("data").mkdir(parents=True, exist_ok=True)
 
 ####
@@ -51,13 +56,27 @@ tool_push = Tool(
 )
 #tool_push.invoke("Hello, me!")
 
-tools = [tool_search, tool_push]
+async_browser =  create_async_playwright_browser(headless=False)  # headful mode
+pwb_toolkit = PlayWrightBrowserToolkit.from_browser(async_browser=async_browser)
+#import textwrap
+#navigate_tool = tool_dict.get("navigate_browser")
+#extract_text_tool = tool_dict.get("extract_text")
 
-#memory_saver = MemorySaver()
-conn = sqlite3.connect(Path("data") / "memory.db", check_same_thread=False)
-sql_memory = SqliteSaver(conn)
+#await navigate_tool.arun({"url": "https://www.cnn.com"})
+#text = await extract_text_tool.arun({})
+#print(textwrap.fill(text))
+
+tools = pwb_toolkit.get_tools() + [tool_search, tool_push]
+
+print("tools:")
+for tool in tools:
+    print(f"- name: {tool.name}\n  description: {repr(tool.description)}\n  args: {tool.args}")
 
 ####
+#memory_saver = MemorySaver()
+conn = sqlite3.connect(Path("data") / "lab02.memory.db", check_same_thread=False)
+sql_memory = SqliteSaver(conn)
+
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
@@ -66,36 +85,45 @@ llm = llm.bind_tools(tools)
 
 ####
 def chatbot(state: State):
-    return {"messages": [llm.invoke(state["messages"])]}
+    resp = llm.invoke(state["messages"])
+    return {"messages": [resp]}
 
-graph_builder = StateGraph(State)
-graph_builder.add_node("chatbot", chatbot)
-graph_builder.add_node("tools", ToolNode(tools=tools))
+graph = StateGraph(State)
+graph.add_node("chatbot", chatbot)
+graph.add_node("tools", ToolNode(tools=tools))
 
-graph_builder.add_conditional_edges( "chatbot", tools_condition, "tools")
+graph.add_conditional_edges("chatbot", tools_condition, "tools")
 # Any time a tool is called, we return to the chatbot to decide the next step
-graph_builder.add_edge("tools", "chatbot")
+graph.add_edge("tools", "chatbot")
 
-graph_builder.add_edge(START, "chatbot")
-graph_builder.add_edge("chatbot", END)
+graph.add_edge(START, "chatbot")
+#graph.set_entry_point("chatbot")
+graph.add_edge("chatbot", END)
 
-#graph = graph_builder.compile(checkpointer=memory_saver)
-graph = graph_builder.compile(checkpointer=sql_memory)
+#graph = graph.compile(checkpointer=memory_saver)
+graph = graph.compile(checkpointer=sql_memory)
 
 ####
 with open(Path("data") / f"{basename}.graph.png", 'wb') as f:
     f.write(graph.get_graph().draw_mermaid_png())
 
+config = {"configurable": {"thread_id": "1"}}
+
 def chat(user_input: str, history):
-    result = graph.invoke(
-        {"messages": [
-            {"role": "user", "content": user_input},
-        ]},
-        config={"configurable": {"thread_id": "1"}},
-    )
+    msgs = [{ "role": "user", "content": user_input }]
+    result = graph.invoke({"messages": msgs}, config=config)
 
     return result["messages"][-1].content
 
 gr.ChatInterface(chat, type="messages").launch()
-#graph.get_state(config)
-#list(graph.get_state_history(config))
+# user: Send me a push notification with a news headline from CNN in Chinese.
+# user: Please send me a push notification with the current USD/GBP exchange rate.
+# user: 发一个当前 USD/RMB 汇率的推送通知
+
+os.sys.exit(0)
+state = graph.get_state(config)
+for msg in state.values['messages']:
+    print(f"==> {type(msg)}\n{msg}\n")
+
+for v in graph.get_state_history(config):
+    print(f"==> state:\n{v}\n")
