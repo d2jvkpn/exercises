@@ -62,11 +62,43 @@
 
 - logits = logits[:, -1, :]
 - (B, T, vocab_size) => (B, vocab_size)
-- probas = softmax(logits, dim=-1)
-- idx_next = argmax(probas, dim=-1, keepdim=True) or argmax(logits, dim=-1, keepdim=True)
+
+- idx_next = argmax(logits, dim=-1, keepdim=True)
 - (B, vocab_size) => (B, 1)
 - tokenizer.decode(idx_next.squeeze(0).tolist())
 
+#### 5. temperature
+```
+import torch
+
+ ####
+batch = 10
+vocab_size = 10000
+logits = torch.randn(batch, vocab_size)
+targets = torch.randn(batch, vocab_size)
+
+next_token_idx = torch.argmax(logits, dim=-1, keepdim=True)
+
+loss = torch.nn.functional.cross_entropy(
+    torch.softmax(logits, dim=-1).flatten(0, 1),
+    torch.softmax(targets, dim=-1).flatten(0, 1),
+)
+
+loss = torch.tensor(10.7940)
+perplexity = torch.exp(loss)
+
+ ####
+temperature = 0.2
+top_k = 3
+
+probas = torch.softmax(logits / temperature, dim=-1)
+
+top_logits = probas.sort(descending=True).values[:, top_k]
+
+new_probas = torch.where(probas < top_logits.unsqueeze(-1), torch.tensor(float('-inf')), probas)
+
+next_token_idx = torch.multinomial(new_probas, num_samples=1)
+```
 
 #### 5. 
 torch.set_printoptions(sci_mode=False)
