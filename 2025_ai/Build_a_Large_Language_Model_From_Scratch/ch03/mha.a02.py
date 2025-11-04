@@ -3,9 +3,10 @@ import torch
 from torch import nn
 
 #### 1. large language models
-d_model, context_length, n_heads = 768, 1024, 12 # d_model: embedding size
+n_vocab = 50257
+n_embd, context_length, n_heads = 768, 1024, 12 # n_embd: embedding size
 drop_rate = 0.1
-d_out = d_model
+d_out = n_embd
 
 assert(d_out % n_heads == 0)
 d_head = d_out // n_heads
@@ -14,22 +15,22 @@ mask_bool = torch.triu(torch.ones(context_length, context_length), diagonal=1).b
 dropout = nn.Dropout(drop_rate)
 out_proj = torch.nn.Linear(d_out, d_out)
 
-w_queries = nn.Linear(d_model, d_out, bias=False)
-w_keys = nn.Linear(d_model, d_out, bias=False)
-w_values = nn.Linear(d_model, d_out, bias=False)
+w_queries = nn.Linear(n_embd, d_out, bias=False)
+w_keys = nn.Linear(n_embd, d_out, bias=False)
+w_values = nn.Linear(n_embd, d_out, bias=False)
 
-#### 2. inputs, shape=(B, T, d_model)
+#### 2. inputs, shape=(B, T, n_embd)
 B, T = 10, 42
-x = torch.randn(B, T, d_model)
+x = torch.randn(B, T, n_embd)
 assert(T <= context_length)
 
 #### 3. multi-head attention
-# (B, T, d_model) @ (d_model, d_out) => (B, T, d_model)
+# (B, T, n_embd) @ (n_embd, d_out) => (B, T, n_embd)
 queries = w_queries(x) # x @ Q
 keys = w_keys(x)       # x @ K
 values = w_values(x)   # x @ V
 
-# (B, T, d_model) => (B, T, n_heads, d_head)
+# (B, T, n_embd) => (B, T, n_heads, d_head)
 queries = queries.view(B, T, n_heads, d_head)
 keys = keys.view(B, T, n_heads, d_head)
 values = values.view(B, T, n_heads, d_head)
