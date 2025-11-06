@@ -294,7 +294,7 @@ def main():
         model=model,
         idx=encoded_tensor,
         max_new_tokens=10,
-        context_size=GPT_CONFIG_124M["context_length"]
+        context_size=GPT_CONFIG_124M["context_length"],
     )
 
     decoded_text = tokenizer.decode(out.squeeze(0).tolist())
