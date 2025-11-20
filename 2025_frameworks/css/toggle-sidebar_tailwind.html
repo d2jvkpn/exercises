@@ -66,8 +66,8 @@
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main');
 
-    function toggleSidebar(open) {
-      if (open) {
+    function toggleSidebar(openNow) {
+      if (openNow) {
         sidebar.classList.remove('-translate-x-full');       // 显示侧边栏：从左侧滑入
         sidebar.classList.add('translate-x-0');              // 这个元素在 X 轴（水平方向）移动 0 像素
         main.classList.add('ml-64');                         // 主内容右移一点（和侧边栏错开）
@@ -78,15 +78,16 @@
       }
     }
 
+    let open = null;
     // let open = true;
-    // toggle(open);
-    function applyLayoutByWidth() {
+    // toggleSidebar(open);
+    function applySidebar() {           // applyLayoutByWidth
       open = window.innerWidth >= 1024; // window.matchMedia('(min-width: 1024px)').matches
       toggleSidebar(open);
     }
 
-    window.addEventListener('load', applyLayoutByWidth);   // 页面加载时先根据当前宽度设置一次
-    window.addEventListener('resize', applyLayoutByWidth); // 窗口大小变化时，重新判断
+    window.addEventListener('load', applySidebar);   // 页面加载时先根据当前宽度设置一次
+    window.addEventListener('resize', applySidebar); // 窗口大小变化时，重新判断
 
     btnSidebar.addEventListener('click', () => {
       open = !open;

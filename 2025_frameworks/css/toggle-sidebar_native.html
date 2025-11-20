@@ -163,7 +163,6 @@
     const btnSidebar = document.getElementById('toggleSidebar');
     const sidebar = document.getElementById('sidebar');
     const main = document.getElementById('main');
-    let open = true;
 
     function toggleSidebar(openNow) {
       if (openNow) {
@@ -177,13 +176,16 @@
       }
     }
 
-    function applyLayoutByWidth() {
+    let open = null;
+    // let open = true;
+    // toggleSidebar(open);
+    function applySidebar() {           // applyLayoutByWidth
       open = window.innerWidth >= 1024; // ≥1024 时默认展开
       toggleSidebar(open);
     }
 
-    window.addEventListener('load', applyLayoutByWidth);
-    window.addEventListener('resize', applyLayoutByWidth);
+    window.addEventListener('load', applySidebar);
+    window.addEventListener('resize', applySidebar);
 
     btnSidebar.addEventListener('click', () => {
       open = !open;
