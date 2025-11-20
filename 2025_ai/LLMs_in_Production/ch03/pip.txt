@@ -1,0 +1,4 @@
+ray[default]
+scipy
+torch
+transformers

@@ -1,0 +1,33 @@
+<!-- max-width -->
+
+<div class="w-full max-w-96"> max-w-96 </div>
+<div class="w-full max-w-96"> max-w-80 </div>
+<div class="w-full max-w-96"> max-w-64 </div>
+<div class="w-full max-w-96"> max-w-48 </div>
+<div class="w-full max-w-96"> max-w-40 </div>
+<div class="w-full max-w-96"> max-w-32 </div>
+<div class="w-full max-w-96"> max-w-24 </div>
+
+<div class="w-full sm"> 40rem(640px) @media (width >= 40rem) {...} </div>
+<div class="w-full md"> 48rem(768px) </div>
+<div class="w-full lg"> 64rem(1024px) </div>
+<div class="w-full xl"> 80rem(1280px) </div>
+<div class="w-full 2xl"> 96rem(1536px) </div>
+
+<div class="md:block hidden">
+  <p class="text-white"> I apear on screen wider than 768px. </p>
+</div>
+
+<div class="sm:bg-amber-500 hidden">
+  <p class="text-white"> I apear on screen wider than 768px. </p>
+</div>
+
+<div class="max-sm:bg-amber-500 hidden">
+  <p class="text-white"> I apear on screen wider than 768px. </p>
+</div>
+
+<!-- This will only center text on screens 640px and wider, not on small screens -->
+<div class="sm:text-center"> Hello </div>
+
+<!-- This will center text on mobile, and left align it in screen 640px and wider -->
+<div lcass="text-center sm:text-left"> Hello </div>

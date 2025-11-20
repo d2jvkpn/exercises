@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title> Tailwind 左侧菜单滑动示例 </title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100">
+  <!-- Top Bar -->
+  <div
+    class="fixed top-0 left-0 right-0 h-12 bg-slate-800 text-white
+           flex items-center px-4 z-20"
+  >
+    <!-- Toggle 按钮 -->
+    <button id="toggleSidebar" class="mr-4 focus:outline-none">
+      <span class="block bg-white w-6 h-0.5 mb-1"></span>
+      <span class="block bg-white w-6 h-0.5 mb-1"></span>
+      <span class="block bg-white w-6 h-0.5"></span>
+    </button>
+
+    <div class="font-semibold"> My App </div>
+  </div>
+
+  <!-- Sidebar -->
+  <div
+    id="sidebar"
+    class="fixed bg-slate-900 text-white top-12 left-0 bottom-0 w-64
+           transform transition-transform duration-300 ease-in-out
+           z-10"
+  >
+  <!--
+    -translate-x-full    => transform: translateX(-100%);
+    -translate-x-1/2     => transform: translateX(-50%);
+    translate-x-0        => transform: translateX(0);
+    transition-transform => transition-property: transform;
+    duration-300         => transition-duration: 300ms;
+    ease-in-out          => transition-timing-function: ease-in-out;
+  -->
+    <div class="text-lg font-semibold p-4 border-b border-slate-700">
+      Menu
+    </div>
+    <div class="p-4 hover:bg-slate-800 cursor-pointer">Item 1</div>
+    <div class="p-4 hover:bg-slate-800 cursor-pointer">Item 2</div>
+    <div class="p-4 hover:bg-slate-800 cursor-pointer">Item 3</div>
+  </div>
+
+  <!-- Main Content -->
+  <div
+    id="main"
+    class="pt-12 transition-all duration-300"
+  >
+    <div class="p-4">
+      <h1 class="text-2xl font-bold mb-4"> 主内容区域 </h1>
+      <p class="mb-2">
+         点击左上角的汉堡按钮，可以滑动显示 / 隐藏左侧菜单栏。
+      </p>
+      <p>
+         这是一些示例文本。你可以在这里放页面内容、表格、图表等。
+      </p>
+    </div>
+  </div>
+
+  <!-- 简单的 JS 控制显示/隐藏 -->
+  <script>
+    const btnSidebar = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const main = document.getElementById('main');
+
+    function toggleSidebar(open) {
+      if (open) {
+        sidebar.classList.remove('-translate-x-full');       // 显示侧边栏：从左侧滑入
+        sidebar.classList.add('translate-x-0');              // 这个元素在 X 轴（水平方向）移动 0 像素
+        main.classList.add('ml-64');                         // 主内容右移一点（和侧边栏错开）
+      } else {
+        sidebar.classList.toggle('-translate-x-full', true); // 隐藏侧边栏：滑回去
+        sidebar.classList.toggle('translate-x-0', true);     // 这个元素在 X 轴（水平方向）移动 0 像素
+        main.classList.remove('ml-64');                      // 主内容恢复
+      }
+    }
+
+    // let open = true;
+    // toggle(open);
+    function applyLayoutByWidth() {
+      open = window.innerWidth >= 1024; // window.matchMedia('(min-width: 1024px)').matches
+      toggleSidebar(open);
+    }
+
+    window.addEventListener('load', applyLayoutByWidth);   // 页面加载时先根据当前宽度设置一次
+    window.addEventListener('resize', applyLayoutByWidth); // 窗口大小变化时，重新判断
+
+    btnSidebar.addEventListener('click', () => {
+      open = !open;
+      toggleSidebar(open);
+    });
+  </script>
+</body>
+</html>
