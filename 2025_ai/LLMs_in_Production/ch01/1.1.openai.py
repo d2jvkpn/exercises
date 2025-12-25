@@ -3,6 +3,7 @@ import os
 
 from dotenv import load_dotnenv
 load_dotnenv("configs/local.env")
+
 from openai import OpenAI
 
 # Load your API key from an environment variable

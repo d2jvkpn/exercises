@@ -77,7 +77,6 @@ cat >> .gitignore <<EOF
 #public/app.json
 .env.*
 target/
-cache/
 
 docker-compose.yaml
 docker-compose.yml

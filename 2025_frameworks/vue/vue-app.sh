@@ -6,7 +6,7 @@ set -eu -o pipefail; _wd=$(pwd); _dir=$(readlink -f `dirname "$0"`)
 which node && node --version
 
 npm install --global npm yarn
-which npm && which yarn
+which npm yarn
 
 
 ##### 2. create project
