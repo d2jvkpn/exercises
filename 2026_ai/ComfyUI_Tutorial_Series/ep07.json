@@ -1,0 +1,536 @@
+{
+  "id": "95d153ff-dde2-4602-b39d-f5295137ea7d",
+  "revision": 0,
+  "last_node_id": 24,
+  "last_link_id": 16,
+  "nodes": [
+    {
+      "id": 3,
+      "type": "Text Concatenate",
+      "pos": [
+        527.061676034849,
+        -161.55307081129695
+      ],
+      "size": [
+        270,
+        142
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text_a",
+          "shape": 7,
+          "type": "STRING",
+          "link": 2
+        },
+        {
+          "name": "text_b",
+          "shape": 7,
+          "type": "STRING",
+          "link": 10
+        },
+        {
+          "name": "text_c",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        },
+        {
+          "name": "text_d",
+          "shape": 7,
+          "type": "STRING",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            4,
+            7,
+            8,
+            9,
+            15
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "was-ns",
+        "ver": "3.0.1",
+        "Node name for S&R": "Text Concatenate"
+      },
+      "widgets_values": [
+        ", ",
+        "true"
+      ]
+    },
+    {
+      "id": 17,
+      "type": "JWDatetimeString",
+      "pos": [
+        536.217861717231,
+        49.03919988348261
+      ],
+      "size": [
+        270,
+        58
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": [
+            11
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-various",
+        "ver": "5bd85aaf7616878471469c4ec7e11bbd0cef3bf2",
+        "Node name for S&R": "JWDatetimeString"
+      },
+      "widgets_values": [
+        "Test.%Y-%m-%dT%H-%M-%S"
+      ]
+    },
+    {
+      "id": 11,
+      "type": "SaveText|pysssss",
+      "pos": [
+        927.6447996390501,
+        33.015874939314244
+      ],
+      "size": [
+        270,
+        130
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 7
+        },
+        {
+          "name": "file",
+          "type": "STRING",
+          "widget": {
+            "name": "file"
+          },
+          "link": 11
+        }
+      ],
+      "outputs": [
+        {
+          "name": "STRING",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "1.2.5",
+        "Node name for S&R": "SaveText|pysssss"
+      },
+      "widgets_values": [
+        "output",
+        "[%Y].txt",
+        "overwrite",
+        true
+      ]
+    },
+    {
+      "id": 5,
+      "type": "easy showAnything",
+      "pos": [
+        982.5819137333369,
+        -167.27568686278553
+      ],
+      "size": [
+        210,
+        88
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 4
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "Hello, lion, 2026!"
+      ]
+    },
+    {
+      "id": 15,
+      "type": "SystemNotification|pysssss",
+      "pos": [
+        939.0900317420277,
+        250.4752848958796
+      ],
+      "size": [
+        270,
+        82
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "any",
+          "type": "*",
+          "link": 8
+        },
+        {
+          "name": "message",
+          "type": "STRING",
+          "widget": {
+            "name": "message"
+          },
+          "link": 9
+        }
+      ],
+      "outputs": [
+        {
+          "name": "*",
+          "shape": 6,
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-custom-scripts",
+        "ver": "1.2.5",
+        "Node name for S&R": "SystemNotification|pysssss"
+      },
+      "widgets_values": [
+        "Your notification has triggered.",
+        "always"
+      ]
+    },
+    {
+      "id": 22,
+      "type": "Text Find and Replace",
+      "pos": [
+        920.7776603772627,
+        414.1421039684525
+      ],
+      "size": [
+        284.03332901000977,
+        142
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "text",
+          "type": "STRING",
+          "link": 15
+        }
+      ],
+      "outputs": [
+        {
+          "name": "result_text",
+          "type": "STRING",
+          "links": [
+            16
+          ]
+        },
+        {
+          "name": "replacement_count_number",
+          "type": "NUMBER",
+          "links": null
+        },
+        {
+          "name": "replacement_count_float",
+          "type": "FLOAT",
+          "links": null
+        },
+        {
+          "name": "replacement_count_int",
+          "type": "INT",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "was-ns",
+        "ver": "3.0.1",
+        "Node name for S&R": "Text Find and Replace"
+      },
+      "widgets_values": [
+        "lion",
+        "dog"
+      ]
+    },
+    {
+      "id": 16,
+      "type": "easy positive",
+      "pos": [
+        -2.8525703329922516,
+        228.72934390022348
+      ],
+      "size": [
+        400,
+        200
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "positive",
+          "type": "STRING",
+          "links": [
+            10
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy positive"
+      },
+      "widgets_values": [
+        "2026!"
+      ],
+      "color": "#232",
+      "bgcolor": "#353"
+    },
+    {
+      "id": 24,
+      "type": "Prompt Multiple Styles Selector",
+      "pos": [
+        90.99833291142019,
+        533.1725178394156
+      ],
+      "size": [
+        307.6166595458984,
+        150
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "positive_string",
+          "type": "STRING",
+          "links": null
+        },
+        {
+          "name": "negative_string",
+          "type": "STRING",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "was-ns",
+        "ver": "3.0.1",
+        "Node name for S&R": "Prompt Multiple Styles Selector"
+      },
+      "widgets_values": [
+        "None",
+        "None",
+        "None",
+        "None"
+      ]
+    },
+    {
+      "id": 1,
+      "type": "easy prompt",
+      "pos": [
+        1.0431249938512444,
+        -164.10555316860294
+      ],
+      "size": [
+        400,
+        256
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "prompt",
+          "type": "STRING",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy prompt"
+      },
+      "widgets_values": [
+        "Hello, lion",
+        "Select the prefix to add to the text",
+        "👤Select the subject add to the text",
+        "🎬Select the action add to the text",
+        "👚Select the clothes add to the text",
+        "☀️Select the illumination environment add to the text",
+        "🎞️Select the background add to the text",
+        "🔞Select the nsfw add to the text"
+      ]
+    },
+    {
+      "id": 23,
+      "type": "easy showAnything",
+      "pos": [
+        1292.549013964779,
+        236.2185857257158
+      ],
+      "size": [
+        210,
+        111.4802195192292
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "anything",
+          "shape": 7,
+          "type": "*",
+          "link": 16
+        }
+      ],
+      "outputs": [
+        {
+          "name": "output",
+          "type": "*",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-easy-use",
+        "ver": "1.3.6",
+        "Node name for S&R": "easy showAnything"
+      },
+      "widgets_values": [
+        "Hello, dog, 2026!"
+      ]
+    }
+  ],
+  "links": [
+    [
+      2,
+      1,
+      0,
+      3,
+      0,
+      "STRING"
+    ],
+    [
+      4,
+      3,
+      0,
+      5,
+      0,
+      "STRING"
+    ],
+    [
+      7,
+      3,
+      0,
+      11,
+      0,
+      "STRING"
+    ],
+    [
+      8,
+      3,
+      0,
+      15,
+      0,
+      "STRING"
+    ],
+    [
+      9,
+      3,
+      0,
+      15,
+      1,
+      "STRING"
+    ],
+    [
+      10,
+      16,
+      0,
+      3,
+      1,
+      "STRING"
+    ],
+    [
+      11,
+      17,
+      0,
+      11,
+      1,
+      "STRING"
+    ],
+    [
+      15,
+      3,
+      0,
+      22,
+      0,
+      "STRING"
+    ],
+    [
+      16,
+      22,
+      0,
+      23,
+      0,
+      "STRING"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "workflowRendererVersion": "LG",
+    "ds": {
+      "scale": 0.7770722839533523,
+      "offset": [
+        310.2613303863517,
+        476.48589153563114
+      ]
+    },
+    "frontendVersion": "1.37.11",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}

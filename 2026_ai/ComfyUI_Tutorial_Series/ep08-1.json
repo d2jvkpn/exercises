@@ -1,0 +1,626 @@
+{
+  "id": "27a4617a-1b31-4f80-a8ca-981d962d38fa",
+  "revision": 0,
+  "last_node_id": 64,
+  "last_link_id": 68,
+  "nodes": [
+    {
+      "id": 48,
+      "type": "MaskPreview+",
+      "pos": [
+        793.3801187115226,
+        730.1530422282785
+      ],
+      "size": [
+        153.31709899902344,
+        246.00000000000003
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 49
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 47,
+      "type": "PreviewImage",
+      "pos": [
+        571.7301800878756,
+        712.00426207006
+      ],
+      "size": [
+        159.4008683572456,
+        246.00000000000003
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 48
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.12.2",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 46,
+      "type": "ISNetSegment",
+      "pos": [
+        240.1650940271303,
+        713.0353935280821
+      ],
+      "size": [
+        270,
+        126
+      ],
+      "flags": {},
+      "order": 0,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": null
+        },
+        {
+          "name": "isnet_model",
+          "shape": 7,
+          "type": "ISNET_MODEL",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "segmented",
+          "type": "IMAGE",
+          "links": [
+            48
+          ]
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": [
+            49
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-art-venture",
+        "ver": "090418eb8d466a6821f33981e804531b2e57ebd8",
+        "Node name for S&R": "ISNetSegment"
+      },
+      "widgets_values": [
+        0.5,
+        "AUTO",
+        true
+      ]
+    },
+    {
+      "id": 58,
+      "type": "SAMModelLoader (segment anything)",
+      "pos": [
+        245.47238829636356,
+        1035.6755602462802
+      ],
+      "size": [
+        351.2779296875,
+        58
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "SAM_MODEL",
+          "type": "SAM_MODEL",
+          "links": [
+            56
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_segment_anything",
+        "ver": "ab6395596399d5048639cdab7e44ec9fae857a93",
+        "Node name for S&R": "SAMModelLoader (segment anything)"
+      },
+      "widgets_values": [
+        "sam_vit_h (2.56GB)"
+      ]
+    },
+    {
+      "id": 60,
+      "type": "GroundingDinoModelLoader (segment anything)",
+      "pos": [
+        235.15674123102207,
+        1182.9367293983075
+      ],
+      "size": [
+        419.398046875,
+        58
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 4,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "GROUNDING_DINO_MODEL",
+          "type": "GROUNDING_DINO_MODEL",
+          "links": [
+            60
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_segment_anything",
+        "ver": "ab6395596399d5048639cdab7e44ec9fae857a93",
+        "Node name for S&R": "GroundingDinoModelLoader (segment anything)"
+      },
+      "widgets_values": [
+        "GroundingDINO_SwinT_OGC (694MB)"
+      ]
+    },
+    {
+      "id": 57,
+      "type": "GroundingDinoSAMSegment (segment anything)",
+      "pos": [
+        739.1417375225183,
+        1036.7500165554798
+      ],
+      "size": [
+        422.214453125,
+        122
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 4,
+      "inputs": [
+        {
+          "name": "sam_model",
+          "type": "SAM_MODEL",
+          "link": 56
+        },
+        {
+          "name": "grounding_dino_model",
+          "type": "GROUNDING_DINO_MODEL",
+          "link": 60
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": []
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": []
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui_segment_anything",
+        "ver": "ab6395596399d5048639cdab7e44ec9fae857a93",
+        "Node name for S&R": "GroundingDinoSAMSegment (segment anything)"
+      },
+      "widgets_values": [
+        "floor",
+        0.3
+      ]
+    },
+    {
+      "id": 64,
+      "type": "PreviewImage",
+      "pos": [
+        1604.3520129908175,
+        250.23066828071728
+      ],
+      "size": [
+        140,
+        26
+      ],
+      "flags": {},
+      "order": 11,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "images",
+          "type": "IMAGE",
+          "link": 65
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.12.2",
+        "Node name for S&R": "PreviewImage"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 63,
+      "type": "GroundingDinoModelLoader (segment anything2)",
+      "pos": [
+        429.7676402348449,
+        165.00202104450966
+      ],
+      "size": [
+        427.9361328125,
+        58
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "GROUNDING_DINO_MODEL",
+          "type": "GROUNDING_DINO_MODEL",
+          "links": [
+            62
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-sam2",
+        "ver": "1.0.3",
+        "Node name for S&R": "GroundingDinoModelLoader (segment anything2)"
+      },
+      "widgets_values": [
+        "GroundingDINO_SwinT_OGC (694MB)"
+      ]
+    },
+    {
+      "id": 56,
+      "type": "MaskPreview+",
+      "pos": [
+        1664.8681651154277,
+        488.33971786666365
+      ],
+      "size": [
+        153.31709899902344,
+        26
+      ],
+      "flags": {},
+      "order": 12,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "mask",
+          "type": "MASK",
+          "link": 64
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "cnr_id": "comfyui_essentials",
+        "ver": "9d9f4bedfc9f0321c19faf71855e228c93bd0dc9",
+        "Node name for S&R": "MaskPreview+"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 61,
+      "type": "GroundingDinoSAM2Segment (segment anything2)",
+      "pos": [
+        1048.3988577120133,
+        278.6431056828651
+      ],
+      "size": [
+        439.290625,
+        122
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "sam_model",
+          "type": "SAM2_MODEL",
+          "link": 61
+        },
+        {
+          "name": "grounding_dino_model",
+          "type": "GROUNDING_DINO_MODEL",
+          "link": 62
+        },
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 68
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            65
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": [
+            64
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-sam2",
+        "ver": "1.0.3",
+        "Node name for S&R": "GroundingDinoSAM2Segment (segment anything2)"
+      },
+      "widgets_values": [
+        "floor",
+        0.3
+      ]
+    },
+    {
+      "id": 3,
+      "type": "LoadImage",
+      "pos": [
+        231.31878376495598,
+        280.9181168505037
+      ],
+      "size": [
+        282.798828125,
+        314
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            67
+          ]
+        },
+        {
+          "name": "MASK",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfy-core",
+        "ver": "0.12.2",
+        "Node name for S&R": "LoadImage"
+      },
+      "widgets_values": [
+        "8853e3e09a2d422d47a2a6c7e3c546e8.JPG",
+        "image"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "ImageResizeKJv2",
+      "pos": [
+        605.6955727718946,
+        319.32515677790445
+      ],
+      "size": [
+        270,
+        336.00000000000006
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "name": "image",
+          "type": "IMAGE",
+          "link": 67
+        },
+        {
+          "name": "mask",
+          "shape": 7,
+          "type": "MASK",
+          "link": null
+        }
+      ],
+      "outputs": [
+        {
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            68
+          ]
+        },
+        {
+          "name": "width",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "height",
+          "type": "INT",
+          "links": null
+        },
+        {
+          "name": "mask",
+          "type": "MASK",
+          "links": null
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-kjnodes",
+        "ver": "bfa539e75f181e8dfffe9c9226900cd6831a2512",
+        "Node name for S&R": "ImageResizeKJv2"
+      },
+      "widgets_values": [
+        512,
+        512,
+        "bilinear",
+        "stretch",
+        "0, 0, 0",
+        "center",
+        2,
+        "gpu"
+      ]
+    },
+    {
+      "id": 62,
+      "type": "SAM2ModelLoader (segment anything2)",
+      "pos": [
+        493.08691023063466,
+        46.43923331240014
+      ],
+      "size": [
+        368.3541015625,
+        58
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": "SAM2_MODEL",
+          "type": "SAM2_MODEL",
+          "links": [
+            61
+          ]
+        }
+      ],
+      "properties": {
+        "cnr_id": "comfyui-sam2",
+        "ver": "1.0.3",
+        "Node name for S&R": "SAM2ModelLoader (segment anything2)"
+      },
+      "widgets_values": [
+        "sam2_hiera_small.pt"
+      ]
+    }
+  ],
+  "links": [
+    [
+      48,
+      46,
+      0,
+      47,
+      0,
+      "IMAGE"
+    ],
+    [
+      49,
+      46,
+      1,
+      48,
+      0,
+      "MASK"
+    ],
+    [
+      56,
+      58,
+      0,
+      57,
+      0,
+      "SAM_MODEL"
+    ],
+    [
+      60,
+      60,
+      0,
+      57,
+      1,
+      "GROUNDING_DINO_MODEL"
+    ],
+    [
+      61,
+      62,
+      0,
+      61,
+      0,
+      "SAM2_MODEL"
+    ],
+    [
+      62,
+      63,
+      0,
+      61,
+      1,
+      "GROUNDING_DINO_MODEL"
+    ],
+    [
+      64,
+      61,
+      1,
+      56,
+      0,
+      "MASK"
+    ],
+    [
+      65,
+      61,
+      0,
+      64,
+      0,
+      "IMAGE"
+    ],
+    [
+      67,
+      3,
+      0,
+      9,
+      0,
+      "IMAGE"
+    ],
+    [
+      68,
+      9,
+      0,
+      61,
+      2,
+      "IMAGE"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "workflowRendererVersion": "LG",
+    "ds": {
+      "scale": 0.9016187924117903,
+      "offset": [
+        226.1532766507229,
+        50.27916445605735
+      ]
+    },
+    "frontendVersion": "1.37.11",
+    "VHS_latentpreview": false,
+    "VHS_latentpreviewrate": 0,
+    "VHS_MetadataImage": true,
+    "VHS_KeepIntermediate": true
+  },
+  "version": 0.4
+}
